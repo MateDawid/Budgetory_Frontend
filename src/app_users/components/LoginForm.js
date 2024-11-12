@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Avatar, Container, Paper, TextField} from "@mui/material";
 import Button from "@mui/material/Button";
-import {isLoggedIn, logIn} from "../services/LogInService";
+import {isLoggedIn, logIn} from "../services/LoginService";
 import {Link as RouterLink, Navigate} from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import {useForm} from 'react-hook-form';
