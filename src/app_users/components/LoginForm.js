@@ -11,7 +11,7 @@ import Box from "@mui/material/Box";
 /**
  * LoginForm component handles user login.
  * It manages the email and password input fields,
- * validates the input, and simulates a login process.
+ * validates the input, and performs login process.
  */
 function LoginForm() {
     const {register, handleSubmit, formState: {errors}} = useForm();
@@ -93,7 +93,6 @@ function LoginForm() {
                 </Button>
             </Paper>
         </Container>
-
     )
 }
 
