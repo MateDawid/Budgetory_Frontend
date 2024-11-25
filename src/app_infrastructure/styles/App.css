@@ -1,25 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Patua+One');
-
 body {
-  font-family: 'Patua One', sans-serif;
-}
-
-.logo {
-  font-weight: 400;
-}
-
-.landing {
-  font-size: 72px;
-}
-
-.middle-center {
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 120px;
-  margin: auto auto;
-  position: absolute;
-  text-align: center;
+  margin: 0;
+  background: #3E3E3E;
 }
