@@ -7,7 +7,7 @@ import axios from "axios";
  * @return {Promise} - Request response and isError boolean value.
  */
 export const logIn = async (email, password) => {
-    const url = `${process.env.REACT_APP_BASE_URL}/api/users/token/`;
+    const url = `${process.env.REACT_APP_BASE_URL}/api/users/login/`;
     try {
         const response = await axios.post(url, {'email': email, 'password': password});
         window.localStorage.setItem(
