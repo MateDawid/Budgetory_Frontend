@@ -7,9 +7,15 @@ import Button from '@mui/material/Button';
 import {useNavigate} from "react-router-dom";
 import '../styles/Navbar.css';
 
-
+/**
+ * Navbar component displays navigation bar.
+ */
 export default function Navbar() {
   const navigate = useNavigate();
+
+  /**
+   * Handles User logout by removing token from localStorage.
+   */
   const logOut = () => {
     window.localStorage.removeItem('budgetory.auth');
     navigate('/login')
