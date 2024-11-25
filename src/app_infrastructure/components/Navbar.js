@@ -4,11 +4,20 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import {useNavigate} from "react-router-dom";
+import '../styles/Navbar.css';
 
-export default function ButtonAppBar() {
+
+export default function Navbar() {
+  const navigate = useNavigate();
+  const logOut = () => {
+    window.localStorage.removeItem('budgetory.auth');
+    navigate('/login')
+  };
+
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <Box>
+        <AppBar position="static" sx={{bgcolor: "#BD0000"}}>
         <Toolbar>
           <Typography variant="h6" component="a" href="" sx={{
             flexGrow: 1,
@@ -20,7 +29,7 @@ export default function ButtonAppBar() {
           }}>
             BUDGETORY
           </Typography>
-          <Button color="inherit">Login</Button>
+          <Button color="inherit" onClick={() => logOut()}>Logout</Button>
         </Toolbar>
       </AppBar>
     </Box>
