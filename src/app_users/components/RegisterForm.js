@@ -31,10 +31,9 @@ function RegisterForm() {
      */
     const onSubmit = async (data) => {
         try {
-            const {response, isError} = await registerUser(data.email, data.password);
-            console.log(response.response.data)
+            const {response, isError} = await registerUser(data.email, data.password_1, data.password_2);
             if (isError) {
-                setError(response.response.data.detail.email || response.response.data.detail.password || 'An error occurred. Please try again.');
+                setError(response.response.data.detail.email || response.response.data.detail.password_1 || response.response.data.detail.password_2 || response.response.data.detail.non_field_errors ||'An error occurred. Please try again.');
             } else {
                 navigate('/login');
             }
@@ -86,15 +85,33 @@ function RegisterForm() {
                         label="Password"
                         type="password"
                         autoComplete="current-password"
-                        {...register('password', {
+                        {...register('password_1', {
                             required: 'Password is required',
                             minLength: {
-                                value: 6,
-                                message: 'Password must be at least 6 characters'
+                                value: 8,
+                                message: 'Password must be at least 8 characters'
                             }
                         })}
-                        error={!!errors.password}
-                        helperText={errors.password ? errors.password.message : ''}
+                        error={!!errors.password_1}
+                        helperText={errors.password_1 ? errors.password_1.message : ''}
+                    />
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        label="Repeat password"
+                        type="password"
+                        autoComplete="current-password"
+                        {...register('password_2', {
+                            required: 'Password is required',
+                            minLength: {
+                                value: 8,
+                                message: 'Password must be at least 8 characters'
+                            }
+                        })}
+                        error={!!errors.password_2}
+                        helperText={errors.password_2 ? errors.password_2.message : ''}
                     />
                     <Button type="submit" variant="contained" fullWidth sx={{mt: 1, bgcolor: "#BD0000"}}>
                         Register
