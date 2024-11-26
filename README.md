@@ -75,6 +75,11 @@ $ yarn add cypress@10.11.0 --dev
 ```
 
 ### ESLint run
-```
+```commandline
 npx eslint .
+```
+
+### Cypress run
+```commandline
+yarn run cypress open
 ```
