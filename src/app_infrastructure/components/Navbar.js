@@ -5,7 +5,10 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import {useNavigate} from "react-router-dom";
-import '../styles/Navbar.css';
+
+// TODO: User email from token
+// Cypress
+// Linting
 
 /**
  * Navbar component displays navigation bar.
