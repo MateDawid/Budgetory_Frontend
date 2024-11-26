@@ -86,7 +86,7 @@ function LoginForm() {
                         Log in
                     </Button>
                 </Box>
-                <Typography component="h3" variant="h6" sx={{textAlign: "center"}}>Don't have an account?</Typography>
+                <Typography component="h3" variant="h6" sx={{textAlign: "center"}}>Don&apos;t have an account?</Typography>
                 <Button component={RouterLink} to="/register" variant="contained" fullWidth
                         sx={{mt: 1, bgcolor: "#BD0000"}}>
                     Register
