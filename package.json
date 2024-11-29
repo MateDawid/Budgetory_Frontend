@@ -46,7 +46,8 @@
     ]
   },
   "devDependencies": {
-    "cypress": "10.11.0",
+    "@faker-js/faker": "^9.2.0",
+    "cypress": "^13.16.0",
     "eslint": "^9.15.0",
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^5.0.0"
