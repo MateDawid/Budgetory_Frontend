@@ -1,12 +1,14 @@
 
+/**
+ * Creates new User in API.
+ * @param {string} email - User email.
+ */
 const registerUser = (email) => {
-    cy.intercept('POST', 'register').as('register');
-    cy.visit('/#/register');
-    cy.get('[data-cy="email-field"]').type(email);
-    cy.get('[data-cy="password-1-field"]').type('pAssw0rd', {log: false});
-    cy.get('[data-cy="password-2-field"]').type('pAssw0rd', {log: false});
-    cy.get('[data-cy="register-button"]').click();
-    cy.wait('@register')
+    cy.request(
+        'POST',
+        `${Cypress.config('backendUrl')}/api/users/register/`,
+        {'email': email, 'password_1': 'pAssw0rd', 'password_2': 'pAssw0rd'}
+    ).as('register');
 }
 
 // const loginUser = (email) => {

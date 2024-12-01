@@ -56,9 +56,10 @@ function RegisterForm() {
                     <AppRegistrationOutlinedIcon/>
                 </Avatar>
                 <Typography component="h1" variant="h5" sx={{textAlign: "center"}}>Register</Typography>
-                {error && <Typography color="error">{error}</Typography>}
+                {error && <Typography data-cy='errors-display' color="error">{error}</Typography>}
                 <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{mt: 1}}>
                     <TextField
+                        data-cy='email-field'
                         variant="outlined"
                         margin="normal"
                         required
@@ -78,6 +79,7 @@ function RegisterForm() {
                         sx={{mb: 2}}
                     />
                     <TextField
+                        data-cy='password-1-field'
                         variant="outlined"
                         margin="normal"
                         required
@@ -96,6 +98,7 @@ function RegisterForm() {
                         helperText={errors.password_1 ? errors.password_1.message : ''}
                     />
                     <TextField
+                        data-cy='password-2-field'
                         variant="outlined"
                         margin="normal"
                         required
@@ -113,12 +116,12 @@ function RegisterForm() {
                         error={!!errors.password_2}
                         helperText={errors.password_2 ? errors.password_2.message : ''}
                     />
-                    <Button type="submit" variant="contained" fullWidth sx={{mt: 1, bgcolor: "#BD0000"}}>
+                    <Button data-cy='register-button' type="submit" variant="contained" fullWidth sx={{mt: 1, bgcolor: "#BD0000"}}>
                         Register
                     </Button>
                 </Box>
                 <Typography component="h3" variant="h6" sx={{textAlign: "center"}}>Already have an account?</Typography>
-                <Button component={RouterLink} to="/login" variant="contained" fullWidth
+                <Button data-cy='login-button' component={RouterLink} to="/login" variant="contained" fullWidth
                         sx={{mt: 1, bgcolor: "#BD0000"}}>
                     Log in
                 </Button>
