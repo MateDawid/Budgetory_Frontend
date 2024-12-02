@@ -30,7 +30,10 @@ function LoginForm() {
         try {
             const {response, isError} = await logIn(data.email, data.password);
             if (isError) {
-                setError(response.response.data.detail.non_field_errors || 'An error occurred. Please try again.');
+                setError(
+                    response.response.data.detail.non_field_errors ||
+                    response.response.data.detail ||
+                    'An error occurred. Please try again.');
             }
         } catch (error) {
             setError(error.response.data.message || 'Network error. Please try again later.');
@@ -51,7 +54,7 @@ function LoginForm() {
                     <LockOutlinedIcon/>
                 </Avatar>
                 <Typography component="h1" variant="h5" sx={{textAlign: "center"}}>Log in</Typography>
-                {error && <Typography color="error">{error}</Typography>}
+                {error && <Typography data-cy='errors-display' color="error">{error}</Typography>}
                 <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{mt: 1}}>
                     <TextField
                         variant="outlined"
