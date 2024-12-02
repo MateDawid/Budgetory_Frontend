@@ -68,3 +68,18 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `yarn build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+### Add package
+```commandline
+$ yarn add cypress@10.11.0 --dev
+```
+
+### ESLint run
+```commandline
+npx eslint .
+```
+
+### Cypress run
+```commandline
+yarn run cypress open
+```
