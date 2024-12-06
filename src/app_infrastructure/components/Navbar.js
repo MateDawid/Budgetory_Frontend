@@ -1,46 +1,31 @@
-import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import {useNavigate} from "react-router-dom";
+import {styled} from "@mui/material/styles";
+import MuiAppBar from "@mui/material/AppBar";
+import {sidebarWidth} from "./SidebarParams";
 
-// TODO: User email from token
-// Cypress
-// Linting
 
 /**
- * Navbar component displays navigation bar.
+ * Styled Navbar component to display navigation bar on top of the page.
  */
-export default function Navbar() {
-  const navigate = useNavigate();
-
-  /**
-   * Handles User logout by removing token from localStorage.
-   */
-  const logOut = () => {
-    window.localStorage.removeItem('budgetory.auth');
-    navigate('/login')
-  };
-
-  return (
-      <Box>
-        <AppBar position="static" sx={{bgcolor: "#BD0000"}}>
-        <Toolbar>
-          <Typography variant="h6" component="a" href="" sx={{
-            flexGrow: 1,
-            textDecoration: 'none',
-            fontFamily: 'monospace',
-            fontWeight: 700,
-            letterSpacing: '.3rem',
-            color: 'inherit',
-          }}>
-            BUDGETORY
-          </Typography>
-          <Button color="inherit" onClick={() => logOut()}>Logout</Button>
-        </Toolbar>
-      </AppBar>
-    </Box>
-  );
-}
+export const Navbar = styled(MuiAppBar, {
+      shouldForwardProp: (prop) => prop !== 'open',
+    })(({theme}) => ({
+      backgroundColor: "#BD0000",
+      zIndex: theme.zIndex.drawer + 1,
+      transition: theme.transitions.create(['width', 'margin'], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
+      variants: [
+        {
+          props: ({open}) => open,
+          style: {
+            marginLeft: sidebarWidth,
+            width: `calc(100% - ${sidebarWidth}px)`,
+            transition: theme.transitions.create(['width', 'margin'], {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.enteringScreen,
+            }),
+          },
+        },
+      ],
+    }));
