@@ -9,7 +9,7 @@ function LandingPage() {
     if (!isLoggedIn()) {
         return <Navigate to='/login'/>;
     }
-    return (<></>);
+    return (<><h1>LANDING PAGE</h1></>);
 }
 
 export default LandingPage;
