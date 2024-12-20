@@ -1,5 +1,6 @@
 import {Outlet, useNavigate} from "react-router-dom";
 import * as React from 'react';
+import {useState} from 'react';
 import {useTheme} from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -22,7 +23,7 @@ import {logOut} from "../../app_users/services/LoginService";
  */
 export default function Layout() {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
 
@@ -74,8 +75,7 @@ export default function Layout() {
         <Sidebar variant="permanent" open={open}>
           <SidebarHeader>
             <IconButton onClick={handleSidebarClose}>
-              {theme.direction === 'rtl' ? <ChevronRightIcon style={{color: '#BD0000'}}/> :
-                  <ChevronLeftIcon style={{color: '#BD0000'}}/>}
+                {theme.direction === 'rtl' ? <ChevronRightIcon style={{color: '#BD0000'}}/> : <ChevronLeftIcon style={{color: '#BD0000'}}/>}
             </IconButton>
           </SidebarHeader>
           <Divider sx={{bgcolor: "#3E3E3E"}}/>
