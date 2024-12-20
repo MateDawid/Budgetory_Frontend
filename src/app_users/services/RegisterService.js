@@ -8,7 +8,7 @@ import axios from "axios";
  * @return {Promise} - Request response and isError boolean value.
  */
 export const registerUser = async (email, password_1, password_2) => {
-    const url = `${process.env.REACT_APP_BASE_URL}/api/users/register/`;
+    const url = `${process.env.BACKEND_URL}/api/users/register/`;
     try {
         const response = await axios.post(url, {'email': email, 'password_1': password_1, 'password_2': password_2});
         return {response, isError: false};

@@ -1,4 +1,6 @@
 import axios from "axios";
+import {Navigate} from "react-router-dom";
+import React from "react";
 
 /**
  * Function to log in user with provided credentials. Adds token key in localStorage.
@@ -7,7 +9,7 @@ import axios from "axios";
  * @return {Promise} - Request response and isError boolean value.
  */
 export const logIn = async (email, password) => {
-    const url = `${process.env.REACT_APP_BASE_URL}/api/users/login/`;
+    const url = `${process.env.BACKEND_URL}/api/users/login/`;
     try {
         const response = await axios.post(url, {'email': email, 'password': password});
         window.localStorage.setItem(
@@ -17,15 +19,6 @@ export const logIn = async (email, password) => {
     } catch (error) {
         return {response: error, isError: true};
     }
-};
-
-/**
- * Function to log user out by removing its token from localStorage.
- * @param {NavigateFunction} navigate - function to navigate in browser.
- */
-export const logOut = (navigate) => {
-    window.localStorage.removeItem('budgetory.auth');
-    navigate('/login')
 };
 
 /**
@@ -42,7 +35,7 @@ export const isLoggedIn = () => {
  * @returns {undefined} - undefined if token not present in localStorage.
  */
 export const getAccessToken = () => {
-    const auth = JSON.parse(window.localStorage.getItem('taxi.auth'));
+    const auth = JSON.parse(window.localStorage.getItem('budgetory.auth'));
     if (auth) {
         return auth.access;
     }
