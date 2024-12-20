@@ -5,6 +5,7 @@ import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import ListItemText from "@mui/material/ListItemText";
 import * as React from "react";
 import List from "@mui/material/List";
+import {Link} from "@mui/material";
 
 
 const listItemStyling = {display: 'block'}
@@ -29,7 +30,7 @@ function SidebarList() {
     return (
         <List>
             <ListItem key="Budgets" disablePadding sx={listItemStyling}>
-                <ListItemButton sx={listItemButtonStyling}>
+                <ListItemButton component={Link} to="/#/budget-list" sx={listItemButtonStyling}>
                     <ListItemIcon sx={listItemIconStyling}>
                         <AccountBalanceIcon style={iconComponentStyling}/>
                     </ListItemIcon>
