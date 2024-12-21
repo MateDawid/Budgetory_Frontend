@@ -1,10 +1,11 @@
-import React, {useState} from 'react';
-import {getAccessToken, isLoggedIn} from "../../app_users/services/LoginService";
+import React, {useEffect, useState} from 'react';
+import {getAccessToken} from "../../app_users/services/LoginService";
 import {DataGrid} from "@mui/x-data-grid";
-import Box from "@mui/material/Box";
+import {useNavigate} from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import {Paper} from "@mui/material";
-import {Navigate} from "react-router-dom";
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
 
 // TODO:
 // * tokenRefresh
@@ -12,38 +13,37 @@ import {Navigate} from "react-router-dom";
 // * Table styling
 
 const columns = [
-    {field: 'name', headerName: 'NAME', flex: 1, filterable: false, sortable: false, hidable: false},
+    {field: 'name', headerName: 'NAME', flex: 1, filterable: false, sortable: false},
     {field: 'description', headerName: 'DESCRIPTION', flex: 7, filterable: false, sortable: false},
 ];
 
-const pageSizeOptions = [1, 10, 50, 100]
+const pageSizeOptions = [10, 50, 100]
 
 
 /**
  * BudgetList component to display list of User Budgets.
  */
-function BudgetList() {
+export default function BudgetList() {
     const token = getAccessToken();
-    const [tableRefresh, setTableRefresh] = useState(true)
     const [rows, setRows] = useState([])
     const [rowCount, setRowCount] = useState(0)
     const [paginationModel, setPaginationModel] = React.useState({
         pageSize: pageSizeOptions[0],
         page: 0,
     });
-
-    if (!isLoggedIn()) {
-        return <Navigate to='/login'/>;
-    }
+    const navigate = useNavigate();
 
     /**
-     * Function to fetch Budgets list from API and update DataGrid rows.
+     * useEffect updating DataGrid data or redirecting to login page.
      */
-    function updateRows() {
-        const url = `${process.env.BACKEND_URL}/api/budgets/?` + new URLSearchParams({
+    useEffect(() => {
+        if (!token) {
+            navigate('/login');
+        }
+        const url = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/?` + new URLSearchParams({
             page: paginationModel.page + 1,
             page_size: paginationModel.pageSize,
-        }).toString()
+        }).toString();
 
         fetch(url, {
             method: 'GET',
@@ -51,8 +51,10 @@ function BudgetList() {
         }).then((data) => data.json()).then((data) => {
             setRows(data.results);
             setRowCount(data.count);
-        })
-    }
+        });
+
+    }, [paginationModel, token, navigate]);
+
 
     /**
      * Function to update DataGrid paginationModel.
@@ -60,19 +62,16 @@ function BudgetList() {
      */
     function updatePagination(updatedPaginationModel) {
         setPaginationModel(updatedPaginationModel);
-        setTableRefresh(true);
-    }
-
-    if (tableRefresh) {
-        updateRows();
-        setTableRefresh(false);
     }
 
     return (
         <>
-            <Paper elevation={10} sx={{padding: 2, bgColor: "#F1F1F1", width: '100%', maxWidth: '100%'}}>
-                <Typography>BUDGETS</Typography>
-                <Box sx={{width: '100%'}}>
+            <Paper elevation={24} sx={{padding: 2, bgColor: "#F1F1F1", width: '100%', maxWidth: '100%'}}>
+                <Typography variant="h4" gutterBottom sx={{ display: 'block', color: '#BD0000'}}>
+                    Budgets
+                </Typography>
+                <Divider />
+                <Box sx={{padding: 2, width: '100%'}}>
                     <DataGrid
                         rows={rows}
                         columns={columns}
@@ -87,5 +86,3 @@ function BudgetList() {
             </Paper>
         </>);
 }
-
-export default BudgetList;
