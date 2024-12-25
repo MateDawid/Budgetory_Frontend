@@ -16,7 +16,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import {Navbar} from "./Navbar";
 import {Sidebar} from "./Sidebar";
 import {SidebarHeader} from "./SidebarHeader";
-import {logOut} from "../../app_users/services/LoginService";
+import {logOut, removeTokens} from "../../app_users/services/LoginService";
 
 /**
  * Base layout for subpages.
@@ -40,6 +40,14 @@ export default function Layout() {
   const handleSidebarClose = () => {
     setOpen(false);
   };
+
+   /**
+   * Handles User logout.
+   */
+  const handleLogout = () => {
+      removeTokens();
+      navigate('/login');
+  }
 
   return (
       <Box sx={{display: 'flex'}}>
@@ -69,7 +77,7 @@ export default function Layout() {
                 }}>
               BUDGETORY
             </Typography>
-            <Button color="inherit" onClick={() => logOut(navigate)}>Logout</Button>
+            <Button color="inherit" onClick={handleLogout}>Logout</Button>
           </Toolbar>
         </Navbar>
         <Sidebar variant="permanent" open={open}>
