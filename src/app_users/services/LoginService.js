@@ -50,11 +50,13 @@ export const removeTokens = () => {
  * Function to get User access token.
  * @return {string} - User access token.
  */
-const getAccessToken = () => {
+export const getAccessToken = async () => {
     if (window.localStorage.getItem('budgetory.accessTokenExpiresIn') <= (new Date()).getTime()) {
-        refreshToken().then()
+        await refreshToken()
+        return window.localStorage.getItem('budgetory.accessToken')
+    } else {
+        return window.localStorage.getItem('budgetory.accessToken')
     }
-    return window.localStorage.getItem('budgetory.accessToken')
 }
 
 /**
@@ -81,11 +83,3 @@ const refreshToken = async () => {
     }
 
 }
-
-/**
- * Function to check if User is logged in by checking localStorage content.
- * @return {boolean} - true if token in localStorage, false otherwise.
- */
-export const isLoggedIn = () => {
-    return getAccessToken() !== null;
-};
