@@ -20,6 +20,9 @@ function LoginForm() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
+        /**
+         * Asynchronously obtains access token. If token exists, navigates to landing page.
+         */
         const checkIfTokenExists = async () => {
             getAccessToken().then((token) => {
                 if (token) {
