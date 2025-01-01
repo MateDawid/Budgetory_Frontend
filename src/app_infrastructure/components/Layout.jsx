@@ -1,6 +1,6 @@
 import {Outlet, useNavigate} from "react-router-dom";
 import * as React from 'react';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useTheme} from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -16,15 +16,29 @@ import MenuIcon from "@mui/icons-material/Menu";
 import {Navbar} from "./Navbar";
 import {Sidebar} from "./Sidebar";
 import {SidebarHeader} from "./SidebarHeader";
-import {logOut, removeTokens} from "../../app_users/services/LoginService";
+import {getAccessToken, removeTokens} from "../../app_users/services/LoginService";
 
 /**
  * Base layout for subpages.
  */
 export default function Layout() {
   const theme = useTheme();
-  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+
+    useEffect(() => {
+        /**
+         * Asynchronously obtains access token. If token does not exist, navigates to login page.
+         */
+        const checkIfTokenExists = async () => {
+            getAccessToken().then((token) => {
+                if (!token) {
+                    navigate('/login');
+                }
+            })
+        }
+        checkIfTokenExists()
+    }, []);
 
 
   /**
