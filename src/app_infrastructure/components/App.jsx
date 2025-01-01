@@ -7,7 +7,6 @@ import LandingPage from "./LandingPage";
 import LoginForm from "../../app_users/components/LoginForm";
 import RegisterForm from "../../app_users/components/RegisterForm";
 import BudgetList from "../../budgets/components/BudgetList";
-import ErrorPage from "./ErrorPage";
 
 /**
  * App component handles routing of application.
@@ -21,7 +20,6 @@ function App() {
             </Route>
             <Route path='login' element={<LoginForm/>}/>
             <Route path='register' element={<RegisterForm/>}/>
-            <Route path='error' element={<ErrorPage/>}/>
         </Routes>
     );
 }
