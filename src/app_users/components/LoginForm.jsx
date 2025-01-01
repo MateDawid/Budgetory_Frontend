@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Avatar, Container, Paper, TextField} from "@mui/material";
 import Button from "@mui/material/Button";
-import {isLoggedIn, logIn} from "../services/LoginService";
-import {Link as RouterLink, Navigate} from "react-router-dom";
+import {getAccessToken, logIn} from "../services/LoginService";
+import {Link as RouterLink, useNavigate} from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import {useForm} from 'react-hook-form';
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -15,11 +15,20 @@ import Box from "@mui/material/Box";
  */
 function LoginForm() {
     const {register, handleSubmit, formState: {errors}} = useForm();
+    const navigate = useNavigate();
     const [error, setError] = useState('');
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    if (isLoggedIn()) {
-        return <Navigate to='/'/>;
-    }
+    useEffect(() => {
+        const checkIfTokenExists = async () => {
+            getAccessToken().then((token) => {
+                if (token) {
+                    navigate('/');
+                }
+            })
+        }
+        checkIfTokenExists()
+    }, [isLoggedIn]);
 
     /**
      * Handles form submission.
@@ -34,6 +43,9 @@ function LoginForm() {
                     response.response.data.detail.non_field_errors ||
                     response.response.data.detail ||
                     'An error occurred. Please try again.');
+            }
+            else {
+                setIsLoggedIn(true)
             }
         } catch (error) {
             setError(error.response.data.message || 'Network error. Please try again later.');
