@@ -24,7 +24,7 @@ const pageSizeOptions = [10, 50, 100]
  * BudgetList component to display list of User Budgets.
  */
 export default function BudgetList() {
-    const token = getAccessToken();
+    const [token, setToken] = useState(null)
     const [rows, setRows] = useState([])
     const [rowCount, setRowCount] = useState(0)
     const [paginationModel, setPaginationModel] = React.useState({
@@ -37,9 +37,10 @@ export default function BudgetList() {
      * useEffect updating DataGrid data or redirecting to login page.
      */
     useEffect(() => {
-        if (!token) {
-            navigate('/login');
+        const getToken = async () => {
+            setToken(await getAccessToken())
         }
+        getToken()
         const url = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/?` + new URLSearchParams({
             page: paginationModel.page + 1,
             page_size: paginationModel.pageSize,
