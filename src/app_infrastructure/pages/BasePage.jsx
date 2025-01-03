@@ -8,20 +8,20 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import SidebarList from "./SidebarList";
+import SidebarList from "../components/SidebarList";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import MenuIcon from "@mui/icons-material/Menu";
-import {Navbar} from "./Navbar";
-import {Sidebar} from "./Sidebar";
-import {SidebarHeader} from "./SidebarHeader";
+import {Navbar} from "../components/Navbar";
+import {Sidebar} from "../components/Sidebar";
+import {SidebarHeader} from "../components/SidebarHeader";
 import {getAccessToken, removeTokens} from "../../app_users/services/LoginService";
 
 /**
  * Base layout for subpages.
  */
-export default function Layout() {
+export default function BasePage() {
   const theme = useTheme();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -80,7 +80,7 @@ export default function Layout() {
             <Typography
                 variant="h6"
                 component="a"
-                href=""
+                href="/"
                 sx={{
                   flexGrow: 1,
                   textDecoration: 'none',
