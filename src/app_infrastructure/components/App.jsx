@@ -2,11 +2,11 @@ import React from 'react';
 import {Route, Routes} from 'react-router-dom';
 
 import '../styles/App.css';
-import Layout from "./Layout";
-import LandingPage from "./LandingPage";
-import LoginForm from "../../app_users/components/LoginForm";
-import RegisterForm from "../../app_users/components/RegisterForm";
-import BudgetList from "../../budgets/components/BudgetList";
+import BasePage from "../pages/BasePage";
+import LandingPage from "../pages/LandingPage";
+import LoginForm from "../../app_users/pages/LoginForm";
+import RegisterForm from "../../app_users/pages/RegisterForm";
+import BudgetList from "../../budgets/pages/BudgetList";
 
 /**
  * App component handles routing of application.
@@ -14,7 +14,7 @@ import BudgetList from "../../budgets/components/BudgetList";
 function App() {
     return (
         <Routes>
-            <Route path='/' element={<Layout/>}>
+            <Route path='/' element={<BasePage/>}>
                 <Route index element={<LandingPage/>}/>
                 <Route path='budget-list' element={<BudgetList/>}/>
             </Route>
