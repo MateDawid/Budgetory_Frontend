@@ -1,3 +1,4 @@
+import React from 'react';
 import '@fontsource/roboto/400.css';
 import { StrictMode } from 'react'
 import { BrowserRouter } from 'react-router-dom';
