@@ -7,11 +7,6 @@ import {Paper} from "@mui/material";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 
-// TODO:
-// * tokenRefresh
-// * BudgetListService
-// * Table styling
-
 const columns = [
     {field: 'name', headerName: 'NAME', flex: 1, filterable: false, sortable: false},
     {field: 'description', headerName: 'DESCRIPTION', flex: 7, filterable: false, sortable: false},
@@ -24,7 +19,6 @@ const pageSizeOptions = [10, 50, 100]
  * BudgetList component to display list of User Budgets.
  */
 export default function BudgetList() {
-    const [token, setToken] = useState(null)
     const [rows, setRows] = useState([])
     const [rowCount, setRowCount] = useState(0)
     const [paginationModel, setPaginationModel] = React.useState({
@@ -37,11 +31,11 @@ export default function BudgetList() {
      * useEffect updating DataGrid data or redirecting to login page.
      */
     useEffect(() => {
-        const getToken = async () => {
-            setToken(await getAccessToken())
-        }
-        getToken()
-        const url = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/?` + new URLSearchParams({
+        getAccessToken().then((token) => {
+                if (!token) {
+                    navigate('/login');
+                } else {
+                    const url = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/?` + new URLSearchParams({
             page: paginationModel.page + 1,
             page_size: paginationModel.pageSize,
         }).toString();
@@ -53,8 +47,11 @@ export default function BudgetList() {
             setRows(data.results);
             setRowCount(data.count);
         });
+                }
+            }
+        )
 
-    }, [paginationModel, token, navigate]);
+    }, [paginationModel]);
 
 
     /**
