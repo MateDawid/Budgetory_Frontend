@@ -61,7 +61,7 @@ export default function BudgetList() {
     });
 
     /**
-     * useEffect updating DataGrid data or redirecting to login page.
+     * useEffect updating DataGrid data.
      */
     useEffect(() => {
         const loadBudgets = async () => {
