@@ -16,7 +16,7 @@ function App() {
         <Routes>
             <Route path='/' element={<BasePage/>}>
                 <Route index element={<LandingPage/>}/>
-                <Route path='budget-list' element={<BudgetList/>}/>
+                <Route path='budgets' element={<BudgetList/>}/>
             </Route>
             <Route path='login' element={<LoginForm/>}/>
             <Route path='register' element={<RegisterForm/>}/>

@@ -30,7 +30,7 @@ function SidebarList() {
     return (
         <List>
             <ListItem key="Budgets" disablePadding sx={listItemStyling}>
-                <ListItemButton component={Link} to="/budget-list" sx={listItemButtonStyling}>
+                <ListItemButton component={Link} to="/budgets" sx={listItemButtonStyling}>
                     <ListItemIcon sx={listItemIconStyling}>
                         <AccountBalanceIcon style={iconComponentStyling}/>
                     </ListItemIcon>
