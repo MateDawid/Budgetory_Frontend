@@ -14,3 +14,15 @@ export const getBudgetList = async (paginationModel) => {
     const response = await fetch(url, {method: "GET", headers: {Authorization: `Bearer ${token}`}})
     return await response.json();
 };
+
+/**
+ * Function to get list of User Budgets.
+ * @param {string} budgetId - id of Budget object.
+ * @return {object} - JSON data with API response.
+ */
+export const getBudgetDetail = async (budgetId) => {
+    const token = await getAccessToken()
+    const url = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${budgetId}`
+    const response = await fetch(url, {method: "GET", headers: {Authorization: `Bearer ${token}`}})
+    return await response.json();
+};
