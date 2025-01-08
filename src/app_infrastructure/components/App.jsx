@@ -7,6 +7,7 @@ import LandingPage from "../pages/LandingPage";
 import LoginForm from "../../app_users/pages/LoginForm";
 import RegisterForm from "../../app_users/pages/RegisterForm";
 import BudgetList from "../../budgets/pages/BudgetList";
+import BudgetDetail from "../../budgets/pages/BudgetDetail";
 
 /**
  * App component handles routing of application.
@@ -16,7 +17,11 @@ function App() {
         <Routes>
             <Route path='/' element={<BasePage/>}>
                 <Route index element={<LandingPage/>}/>
-                <Route path='budgets' element={<BudgetList/>}/>
+                <Route path='budgets'>
+                    <Route index element={<BudgetList/>}/>
+                    {/*<Route path='add' element={<BudgetAdd/>}/>*/}
+                    <Route path=':budgetId' element={<BudgetDetail/>}/>
+                </Route>
             </Route>
             <Route path='login' element={<LoginForm/>}/>
             <Route path='register' element={<RegisterForm/>}/>
