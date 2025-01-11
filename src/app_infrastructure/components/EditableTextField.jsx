@@ -13,14 +13,14 @@ import SaveIcon from '@mui/icons-material/Save';
  */
 const EditableTextField = ({label, initialValue, apiFieldName, onSave, ...props}) => {
     const [isDisabled, setIsDisabled] = useState(true);
-    const [value, setValue] = useState(initialValue);
+    const [value, setValue] = useState(initialValue || '');
     const [error, setError] = useState('');
 
     /**
      * useEffect for setting field initial value on component render.
      */
     useEffect(() => {
-        setValue(initialValue);
+        setValue(initialValue || '');
     }, [initialValue]);
 
     /**
