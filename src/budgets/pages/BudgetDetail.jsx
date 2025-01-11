@@ -1,15 +1,16 @@
-import {getBudgetDetail} from "../services/BudgetService";
+import {getBudgetDetail, updateBudget} from "../services/BudgetService";
 import {useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import Alert from "@mui/material/Alert";
 import Divider from "@mui/material/Divider";
-import {InputLabel, Paper, TextField} from "@mui/material";
+import {Paper} from "@mui/material";
 import Grid from '@mui/material/Grid2';
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import EditableTextField from "../../app_infrastructure/components/EditableTextField";
 
 /**
- * BudgetList component to display list of User Budgets.
+ * BudgetDetail component to display single Budget page.
  */
 export default function BudgetDetail() {
     const {budgetId} = useParams();
@@ -31,7 +32,16 @@ export default function BudgetDetail() {
         loadBudget()
     }, []);
 
-    console.log(budget)
+
+    /**
+     * Function for saving Budget on save icon click.
+     * @param {string} apiFieldName - Name of API field to be updated.
+     * @param {object} newValue - New value for updated field.
+     */
+    const saveBudget = async (apiFieldName, newValue) => {
+        const updateResponse = await updateBudget(budgetId, apiFieldName, newValue)
+        setBudget(updateResponse)
+    }
 
     return (
         <>
@@ -46,53 +56,49 @@ export default function BudgetDetail() {
                                     sx={{display: 'block', color: '#BD0000'}}>Budget detail</Typography>
                         <Divider/>
                         <Box sx={{flexGrow: 1, padding: 2, width: '100%'}}>
-                            <Grid container spacing={2}>
-                                <Grid size={4}>
-                                    <InputLabel sx={{display: "flex", fontWeight: 700,}}>Name</InputLabel>
-                                    <TextField
-                                        disabled={true} // use variable
-                                        autoFocus={false} // use variable
+                            <Grid container spacing={2} sx={{minWidth: '250px'}}>
+                                <Grid size={{mobile: 6, tablet: 4, laptop: 4}}>
+                                    <EditableTextField
+                                        label="Name"
+                                        initialValue={budget.name}
+                                        apiFieldName="name"
+                                        onSave={saveBudget}
                                         id="name"
                                         name="name"
                                         size="small"
                                         autoComplete="off"
                                         variant="outlined"
                                         fullWidth
-                                        value={budget.name}
                                     />
                                 </Grid>
-                                <Grid size={4}>
-                                    <InputLabel sx={{display: "flex", fontWeight: 700,}}>
-                                        Description
-                                    </InputLabel>
-                                    <TextField
-                                        disabled={true} // use variable
-                                        autoFocus={false} // use variable
+                                <Grid size={12}>
+                                    <EditableTextField
+                                        label="Description"
+                                        initialValue={budget.description}
+                                        apiFieldName="description"
+                                        onSave={saveBudget}
                                         id="description"
                                         name="description"
                                         size="small"
                                         multiline
-                                        rows={4}
+                                        minRows={4}
                                         autoComplete="off"
                                         variant="outlined"
                                         fullWidth
-                                        value={budget.description}
                                     />
                                 </Grid>
-                                <Grid size={4}>
-                                    <InputLabel sx={{display: "flex", fontWeight: 700,}}>
-                                        Currency
-                                    </InputLabel>
-                                    <TextField
-                                        disabled={true} // use variable
-                                        autoFocus={false} // use variable
+                                <Grid size={{mobile: 6, tablet: 4, laptop: 4}}>
+                                    <EditableTextField
+                                        label="Currency"
+                                        initialValue={budget.currency}
+                                        apiFieldName="currency"
+                                        onSave={saveBudget}
                                         id="currency"
                                         name="currency"
                                         size="small"
                                         autoComplete="off"
                                         variant="outlined"
                                         fullWidth
-                                        value={budget.currency}
                                     />
                                 </Grid>
                             </Grid>
