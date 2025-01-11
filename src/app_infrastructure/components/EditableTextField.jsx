@@ -5,32 +5,37 @@ import SaveIcon from '@mui/icons-material/Save';
 
 /**
  * Extended TextField component for displaying label above field and edit/save icon with value update handling.
+ * @param {string} label - Label displayed above the field.
+ * @param {object} initialValue - Initial field value.
+ * @param {string} apiFieldName - API field name for field value.
+ * @param {function} onSave - Function to be performed on save icon click.
+ * @param {object} props - Additional props passed to TextField.
  */
-const EditableTextField = ({label, value, onSave, ...props}) => {
+const EditableTextField = ({label, initialValue, apiFieldName, onSave, ...props}) => {
     const [isDisabled, setIsDisabled] = useState(true);
-    const [text, setText] = useState(value);
+    const [value, setValue] = useState(initialValue);
     const [error, setError] = useState('');
 
     /**
      * useEffect for setting field initial value on component render.
      */
     useEffect(() => {
-        setText(value);
-    }, [value]);
+        setValue(initialValue);
+    }, [initialValue]);
 
     /**
      * Function to handle edit/save icon click.
      */
-    const handleIconClick = () => {
+    const handleIconClick = async () => {
         if (isDisabled) {
             setIsDisabled(false);
         } else {
-            if (text.trim() === '') {
-                setError('This field cannot be empty');
-            } else {
+            try {
+                await onSave(apiFieldName, value);
                 setIsDisabled(true);
                 setError('');
-                onSave(text);
+            } catch (error) {
+                setError(error.message);
             }
         }
     };
@@ -44,8 +49,8 @@ const EditableTextField = ({label, value, onSave, ...props}) => {
                 disabled={isDisabled}
                 error={!!error}
                 helperText={error}
-                value={text}
-                onChange={(e) => setText(e.target.value)}
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
                 slotProps={{
                     input: {
                         endAdornment: (
