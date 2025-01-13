@@ -28,6 +28,36 @@ export const getBudgetDetail = async (budgetId) => {
 };
 
 /**
+ * Function to create Budget.
+ * @param {object} budgetData - Created Budget data.
+ * @return {object} - JSON data with API response.
+ */
+export const createBudget = async (budgetData) => {
+        try {
+            const token = await getAccessToken()
+            const url = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/`
+            const requestOptions = {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(budgetData)
+            }
+            const response = await fetch(url, requestOptions)
+            if (!response.ok) {
+                const data = await response.json()
+                console.log(typeof (data))
+                return {errorOccurred: true, ...data}
+            }
+            return await response.json();
+        } catch (error) {
+            return {errorOccurred: true, detail: {serverError: "Unexpected error occurred."}}
+        }
+    }
+;
+
+/**
  * Function to update single Budget.
  * @param {string} budgetId - id of Budget object.
  * @param {string} apiFieldName - API field name for field value.
