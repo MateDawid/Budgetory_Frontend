@@ -48,14 +48,13 @@ export default function BudgetDetail() {
             <Paper elevation={24} sx={{
                 padding: 2, bgColor: "#F1F1F1", width: '100%', maxWidth: '100%'
             }}>
-                {error ? (
-                    <Alert sx={{marginTop: 2}} severity="error">{error}</Alert>
-                ) : (
-                    <>
                         <Typography variant="h4" gutterBottom
                                     sx={{display: 'block', color: '#BD0000'}}>Budget detail</Typography>
                         <Divider/>
-                        <Box sx={{flexGrow: 1, padding: 2, width: '100%'}}>
+                {error ? (
+                    <Alert sx={{marginTop: 2}} severity="error">{error}</Alert>
+                ) : (
+                    <Box sx={{flexGrow: 1, padding: 2, width: '100%'}}>
                             <Grid container spacing={2} sx={{minWidth: '250px'}}>
                                 <Grid size={{mobile: 6, tablet: 4, laptop: 4}}>
                                     <EditableTextField
@@ -103,7 +102,6 @@ export default function BudgetDetail() {
                                 </Grid>
                             </Grid>
                         </Box>
-                    </>
                 )}
             </Paper>
         </>)
