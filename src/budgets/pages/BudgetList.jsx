@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {DataGrid, GridActionsCellItem} from "@mui/x-data-grid";
 import Typography from "@mui/material/Typography";
 import {Grid, Link, Paper} from "@mui/material";
@@ -9,6 +9,7 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import {getBudgetList} from "../services/BudgetService";
 import Alert from '@mui/material/Alert';
+import {AlertContext} from "../../app_infrastructure/components/AlertContext";
 
 
 const columns = [
@@ -53,12 +54,12 @@ const pageSizeOptions = [10, 50, 100]
 export default function BudgetList() {
     const [rows, setRows] = useState([])
     const [rowCount, setRowCount] = useState(0)
-    const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const [paginationModel, setPaginationModel] = React.useState({
         pageSize: pageSizeOptions[0],
         page: 0,
     });
+    const {alert, setAlert} = useContext(AlertContext);
 
     /**
      * useEffect updating DataGrid data.
@@ -70,7 +71,7 @@ export default function BudgetList() {
                 setRows(apiResponse.results);
                 setRowCount(apiResponse.count);
             } catch (err) {
-                setError("Failed to load budgets...");
+                setAlert({type: 'error', message: "Failed to load budgets"})
             } finally {
                 setLoading(false);
             }
@@ -101,11 +102,13 @@ export default function BudgetList() {
                                     sx={{display: 'block', color: '#BD0000'}}>Budgets</Typography>
                     </Grid>
                     <Grid size={1}>
-                        <Button startIcon={<AddIcon/>} sx={{color: "#BD0000"}}>Add budget</Button>
+                        <Button startIcon={<AddIcon/>} onClick={() => {
+                            window.location = `/budgets/add`;
+                        }} sx={{color: "#BD0000"}}>Add budget</Button>
                     </Grid>
                 </Grid>
                 <Divider />
-                {error && <Alert sx={{marginTop: 2}} severity="error">{error}</Alert>}
+                {alert && <Alert sx={{marginTop: 2}} severity={alert.type} onClose={() => setAlert(null)}>{alert.message}</Alert>}
                 <Box sx={{padding: 2, width: '100%'}}>
                     <DataGrid
                         rows={rows}
