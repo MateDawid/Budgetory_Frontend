@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
-import {Link as RouterLink, Navigate, useNavigate} from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {Link as RouterLink, useNavigate} from 'react-router-dom';
 import {Avatar, Container, Paper, TextField} from "@mui/material";
 import Button from "@mui/material/Button";
-import {isLoggedIn} from "../services/LoginService";
+import {getAccessToken} from "../services/LoginService";
 import {useForm} from "react-hook-form";
 import {registerUser} from "../services/RegisterService";
 import AppRegistrationOutlinedIcon from '@mui/icons-material/AppRegistrationOutlined';
@@ -20,9 +20,19 @@ function RegisterForm() {
     const {register, handleSubmit, formState: {errors}} = useForm();
     const [error, setError] = useState('');
 
-    if (isLoggedIn()) {
-        return <Navigate to='/'/>;
-    }
+    useEffect(() => {
+        /**
+         * Asynchronously obtains access token. If token exists, navigates to landing page.
+         */
+        const checkIfTokenExists = async () => {
+            getAccessToken().then((token) => {
+                if (token) {
+                    navigate('/');
+                }
+            })
+        }
+        checkIfTokenExists()
+    }, []);
 
     /**
      * Handles form submission.
