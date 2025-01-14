@@ -28,7 +28,7 @@ export default function BudgetAdd() {
         const response = await createBudget(data);
         if (response.errorOccurred) {
             if ("serverError" in response.detail) {
-                setError('serverError', {message: response.detail.serverError.join(', ')})
+                setError('serverError', {message: response.detail.serverError})
             } else {
                 Object.entries(response.detail).forEach(([apiFieldName, errorValue]) => {
                     setError(apiFieldName, {message: errorValue.join(', ')})
