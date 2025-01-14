@@ -47,7 +47,6 @@ export const createBudget = async (budgetData) => {
             const response = await fetch(url, requestOptions)
             if (!response.ok) {
                 const data = await response.json()
-                console.log(typeof (data))
                 return {errorOccurred: true, ...data}
             }
             return await response.json();
@@ -92,5 +91,33 @@ export const updateBudget = async (budgetId, apiFieldName, newValue) => {
             throw new Error("Unexpected error occurred.");
         }
 
+    }
+};
+
+
+/**
+ * Function to delete single Budget.
+ * @param {string} budgetId - id of Budget object.
+ * @return {object} - JSON data with API response.
+ */
+export const deleteBudget = async (budgetId) => {
+    try {
+        const token = await getAccessToken()
+        const url = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${budgetId}/`
+        const requestOptions = {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            }
+        }
+        const response = await fetch(url, requestOptions)
+        if (!response.ok) {
+            const data = await response.json()
+            return {errorOccurred: true, ...data}
+        }
+        return {errorOccurred: false, detail: "Success."};
+    } catch (error) {
+        return {errorOccurred: true, detail: "Unexpected server error."}
     }
 };
