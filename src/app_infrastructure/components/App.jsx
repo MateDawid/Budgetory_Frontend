@@ -10,6 +10,7 @@ import BudgetList from "../../budgets/pages/BudgetList";
 import BudgetDetail from "../../budgets/pages/BudgetDetail";
 import BudgetAdd from "../../budgets/pages/BudgetAdd";
 import {AlertProvider} from "./AlertContext";
+import BudgetingPeriodList from "../../budgets/pages/BudgetingPeriodList";
 
 /**
  * App component handles routing of application.
@@ -23,7 +24,13 @@ function App() {
                     <Route path='budgets'>
                         <Route index element={<BudgetList/>}/>
                         <Route path='add' element={<BudgetAdd/>}/>
-                        <Route path=':budgetId' element={<BudgetDetail/>}/>
+                        <Route path=':budgetId'>
+                            <Route index element={<BudgetDetail/>}/>
+                            {/*<Route path='periods' element={<BudgetingPeriodList/>}/>*/}
+                            <Route path='periods'>
+                                <Route index element={<BudgetingPeriodList/>}/>
+                            </Route>
+                        </Route>
                     </Route>
                 </Route>
                 <Route path='login' element={<LoginForm/>}/>
