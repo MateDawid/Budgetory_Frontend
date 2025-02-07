@@ -6,11 +6,11 @@ import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 import AddIcon from '@mui/icons-material/Add';
-import {getBudgetDetail} from "../services/BudgetService";
 import Alert from '@mui/material/Alert';
 import {AlertContext} from "../../app_infrastructure/components/AlertContext";
 import {getBudgetingPeriodList} from "../services/BudgetingPeriodService";
-import {useParams} from "react-router-dom";
+import BudgetSelector from "../../app_infrastructure/components/BudgetSelector";
+import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
 
 
 const pageSizeOptions = [10, 50, 100]
@@ -20,8 +20,6 @@ const pageSizeOptions = [10, 50, 100]
  * BudgetingPeriodList component to display list of Budget BudgetingPeriods.
  */
 export default function BudgetingPeriodList() {
-    const {budgetId} = useParams();
-    const [budget, setBudget] = useState({})
     const [rows, setRows] = useState([]);
     const [rowCount, setRowCount] = useState(0);
     const [loading, setLoading] = useState(true);
@@ -30,21 +28,43 @@ export default function BudgetingPeriodList() {
         page: 0,
     });
     const {alert, setAlert} = useContext(AlertContext);
+    const {contextBudgetId} = useContext(BudgetContext);
     // const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     // const [budgetToDelete, setBudgetToDelete] = useState(null);
 
     const columns = useMemo(() => [
+        {field: 'name', headerName: 'Name', flex: 2, filterable: false, sortable: false, editable: true},
         {
-            field: 'name',
-            headerClassName: '.datagrid--header',
-            headerName: 'Name',
-            flex: 2,
+            field: 'date_start',
+            type: 'date',
+            headerName: 'Date start',
+            flex: 7,
             filterable: false,
-            sortable: false
+            sortable: false,
+            editable: true,
+            valueGetter: (value) => {
+                return new Date(value);
+            },
+            valueFormatter: (value) => {
+                return value.toLocaleDateString('en-CA')
+            },
         },
-        {field: 'date_start', headerName: 'Date start', flex: 7, filterable: false, sortable: false},
-        {field: 'date_end', headerName: 'Date end', flex: 7, filterable: false, sortable: false},
-        {field: 'is_active', headerName: 'Active', flex: 1, filterable: false, sortable: false}
+        {
+            field: 'date_end',
+            type: 'date',
+            headerName: 'Date end',
+            flex: 7,
+            filterable: false,
+            sortable: false,
+            editable: true,
+            valueGetter: (value) => {
+                return new Date(value);
+            },
+            valueFormatter: (value) => {
+                return value.toLocaleDateString('en-CA')
+            },
+        },
+        {field: 'is_active', headerName: 'Active', flex: 1, filterable: false, sortable: false, editable: true}
         // {
         //     field: 'actions',
         //     type: 'actions',
@@ -54,7 +74,7 @@ export default function BudgetingPeriodList() {
         //     getActions: (params) => [
         //         <GridActionsCellItem key={params.row.id} icon={<EditIcon/>} label="Edit" component={Link}
         //                              onClick={() => {
-        //                                  window.location = `/budgets/${budgetId}/periods/${params.row.id}`;
+        //                                  window.location = `/budgets/${contextBudgetId}/periods/${params.row.id}`;
         //                              }}
         //                              sx={{"& .MuiSvgIcon-root": {color: "#BD0000"}}}
         //         />,
@@ -66,13 +86,17 @@ export default function BudgetingPeriodList() {
         // },
     ], []);
 
-
+    /**
+     * Tries to fetch BudgetingPeriods for selected Budget.
+     */
     useEffect(() => {
         const loadData = async () => {
+            if (!contextBudgetId) {
+                setLoading(false);
+                return
+            }
             try {
-                const budgetResponse = await getBudgetDetail(budgetId);
-                setBudget(budgetResponse);
-                const rowsResponse = await getBudgetingPeriodList(budgetId, paginationModel);
+                const rowsResponse = await getBudgetingPeriodList(contextBudgetId, paginationModel);
                 setRows(rowsResponse.results);
                 setRowCount(rowsResponse.count);
             } catch (err) {
@@ -82,7 +106,7 @@ export default function BudgetingPeriodList() {
             }
         }
         loadData();
-    }, [paginationModel]);
+    }, [contextBudgetId, paginationModel]);
 
     /**
      * Function to update DataGrid pagination model.
@@ -91,6 +115,27 @@ export default function BudgetingPeriodList() {
     function updatePagination(updatedPaginationModel) {
         setPaginationModel(updatedPaginationModel);
     }
+
+    const handleEditCellChange = (params) => {
+        console.log(params)
+        const updatedRows = rows.map((row) =>
+            row.id === params.id ? {...row, [params.field]: params.value} : row
+        );
+        setRows(updatedRows);
+    };
+
+    const handleSubmit = async () => {
+        console.log(rows)
+        // try {
+        //     // Replace with your API endpoint
+        //     const response = await axios.post('https://your-api-endpoint.com/data', rows);
+        //     if (response.status === 200) {
+        //         console.log('Data submitted successfully');
+        //     }
+        // } catch (error) {
+        //     console.error('Error submitting data:', error);
+        // }
+    };
 
     // /**
     //  * Function to open delete row Dialog for selected Budget row.
@@ -145,18 +190,19 @@ export default function BudgetingPeriodList() {
                 <Grid container direction="row" sx={{justifyContent: "space-between", alignItems: "center"}}>
                     <Grid size={1}>
                         <Typography variant="h4" gutterBottom
-                                    sx={{display: 'block', color: '#BD0000'}}>{budget.name} - Periods</Typography>
+                                    sx={{display: 'block', color: '#BD0000'}}>Periods</Typography>
                     </Grid>
                     <Grid size={1}>
                         <Button startIcon={<AddIcon/>} onClick={() => {
-                            window.location = `/budgets/${budgetId}/add`;
+                            window.location = `/budgets/${contextBudgetId}/add`;
                         }} sx={{color: "#BD0000"}}>Add period</Button>
                     </Grid>
                 </Grid>
                 <Divider />
                 {alert && <Alert sx={{marginTop: 2}} severity={alert.type}
                                  onClose={() => setAlert(null)}>{alert.message}</Alert>}
-                <Box sx={{padding: 2, width: '100%'}}>
+                <BudgetSelector/>
+                <Box sx={{flexGrow: 1, marginTop: 2, width: '100%'}}>
                     <DataGrid
                         rows={rows}
                         columns={columns}
@@ -167,6 +213,7 @@ export default function BudgetingPeriodList() {
                         onPaginationModelChange={updatePagination}
                         pageSizeOptions={pageSizeOptions}
                         disableColumnResize={true}
+                        onEditCellChangeCommitted={handleEditCellChange}
                         sx={{
                             backgroundColor: "#EEEEEE",
                             "& .MuiDataGrid-columnHeader": {
@@ -193,6 +240,9 @@ export default function BudgetingPeriodList() {
                     />
                 </Box>
             </Paper>
+            <Button variant="contained" color="primary" onClick={handleSubmit} style={{marginBottom: 16}}>
+                Submit
+            </Button>
             {/*<Dialog*/}
             {/*    open={deleteDialogOpen}*/}
             {/*    onClose={handleCloseDeleteDialog}*/}
