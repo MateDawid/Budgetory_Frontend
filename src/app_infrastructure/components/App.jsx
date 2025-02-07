@@ -11,6 +11,7 @@ import BudgetDetail from "../../budgets/pages/BudgetDetail";
 import BudgetAdd from "../../budgets/pages/BudgetAdd";
 import {AlertProvider} from "./AlertContext";
 import BudgetingPeriodList from "../../budgets/pages/BudgetingPeriodList";
+import {ContextBudgetProvider} from "./BudgetContext";
 
 /**
  * App component handles routing of application.
@@ -18,24 +19,23 @@ import BudgetingPeriodList from "../../budgets/pages/BudgetingPeriodList";
 function App() {
     return (
         <AlertProvider>
+            <ContextBudgetProvider>
             <Routes>
                 <Route path='/' element={<BasePage/>}>
                     <Route index element={<LandingPage/>}/>
                     <Route path='budgets'>
                         <Route index element={<BudgetList/>}/>
                         <Route path='add' element={<BudgetAdd/>}/>
-                        <Route path=':budgetId'>
-                            <Route index element={<BudgetDetail/>}/>
-                            {/*<Route path='periods' element={<BudgetingPeriodList/>}/>*/}
-                            <Route path='periods'>
-                                <Route index element={<BudgetingPeriodList/>}/>
-                            </Route>
-                        </Route>
+                        <Route path=':budgetId' element={<BudgetDetail/>}/>
                     </Route>
+
+                        <Route path='periods' element={<BudgetingPeriodList/>}/>
+
                 </Route>
                 <Route path='login' element={<LoginForm/>}/>
                 <Route path='register' element={<RegisterForm/>}/>
             </Routes>
+            </ContextBudgetProvider>
         </AlertProvider>
     );
 }
