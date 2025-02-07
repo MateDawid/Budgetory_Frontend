@@ -3,24 +3,25 @@ import {Select, MenuItem, InputLabel} from '@mui/material';
 import {getBudgetList} from "../../budgets/services/BudgetService";
 import {AlertContext} from "./AlertContext";
 import Box from "@mui/material/Box";
+import {BudgetContext} from "./BudgetContext";
 
 /**
  * BudgetSelector component to display Budget select field for used by DataGrid to obtain Budget data.
  */
 const BudgetSelector = () => {
+    const {contextBudgetId, setContextBudgetId} = useContext(BudgetContext);
     const [budgets, setBudgets] = useState([]);
     const [selectedBudget, setSelectedBudget] = useState('');
     const {setAlert} = useContext(AlertContext);
 
     /**
-     * Fetch Select component items from API and try to get contextBudget from localStorage.
+     * Fetches Budgets to be selected in Select component from API and tries to get contextBudget from fetched Budgets.
      */
     useEffect(() => {
-        const loadBudgets = async () => {
+        const loadData = async () => {
             try {
                 const apiResponse = await getBudgetList();
                 setBudgets(apiResponse.results);
-                const contextBudgetId = parseInt(localStorage.getItem('budgetory.contextBudget'), 10)
                 const contextBudget = apiResponse.results.find(budget => budget.id === contextBudgetId);
                 if (contextBudget) {
                     setSelectedBudget(contextBudget);
@@ -30,8 +31,8 @@ const BudgetSelector = () => {
                 setBudgets([]);
             }
         }
-        loadBudgets();
-    }, []);
+        loadData();
+    }, [contextBudgetId]);
 
     /**
      * Function to handle selecting new Budget in Select component.
@@ -39,9 +40,7 @@ const BudgetSelector = () => {
      * @param {PointerEvent} event - event on selecting Budget from Select component.
      */
     const handleChange = (event) => {
-        const value = event.target.value;
-        setSelectedBudget(value);
-        localStorage.setItem('budgetory.contextBudget', value.id);
+        setContextBudgetId(event.target.value.id);
     };
 
     return (
