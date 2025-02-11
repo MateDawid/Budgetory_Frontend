@@ -7,13 +7,15 @@ import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 import Alert from '@mui/material/Alert';
 import {AlertContext} from "../../app_infrastructure/components/AlertContext";
-import {getBudgetingPeriodList} from "../services/BudgetingPeriodService";
+import {getBudgetingPeriodList, updateBudgetingPeriod} from "../services/BudgetingPeriodService";
 import BudgetSelector from "../../app_infrastructure/components/BudgetSelector";
 import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CancelIcon from '@mui/icons-material/Close';
 import SaveIcon from "@mui/icons-material/Save";
+import {prepareApiInput} from "../../app_infrastructure/utils/ApiInputFormatters";
+import ApiError from "../../app_infrastructure/utils/ApiError";
 
 
 const pageSizeOptions = [10, 50, 100]
@@ -179,11 +181,42 @@ export default function BudgetingPeriodList() {
      * @param {object} row - Row data.
      */
     const handleSaveClick = (row) => () => {
-        console.log(row)
         setRowModesModel((prevModel) => ({
             ...prevModel,
             [row.id]: {mode: GridRowModes.View},
         }));
+    };
+
+    /**
+     * Function performed after saving changes in DataGrid row.
+     * Makes call to API to update particular row.
+     * @param {number} updatedRow - Data of updated row.
+     */
+    const processRowUpdate = async (updatedRow) => {
+        const processedRow = prepareApiInput(updatedRow)
+        const updateResponse = await updateBudgetingPeriod(contextBudgetId, processedRow);
+        setAlert(null);
+        return updateResponse;
+    };
+
+    /**
+     * Function performed in case of error during processing row update.
+     * @param {Error | ApiError} error - Error occurred during row update.
+     */
+    const handleProcessRowUpdateError = (error) => {
+        error = Error('XD')
+        if (error instanceof ApiError) {
+            let message = 'Invalid data for fields:'
+            Object.keys(error.data.detail).forEach(key => {
+                const column = columns.find(column => column.field === key)
+                message = message + `\n• ${column.headerName} - ${error.data.detail[key]}`
+            });
+            setAlert({type: 'error', message: message});
+        }
+        else {
+            console.error(error)
+            setAlert({type: 'error', message: "Unexected error occurred."});
+        }
     };
 
     /**
@@ -201,17 +234,7 @@ export default function BudgetingPeriodList() {
         if (editedRow.isNew) {
             setRows(rows.filter((row) => row.id !== id));
         }
-    };
-
-    /**
-     * Function performed after saving changes in DataGrid row.
-     * Makes call to API to update particular row.
-     * @param {number} newRow - Data of updated row.
-     */
-    const processRowUpdate = (newRow) => {
-        const updatedRow = {...newRow, isNew: false};
-        setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
-        return updatedRow;
+        setAlert(null);
     };
 
     /**
@@ -228,6 +251,7 @@ export default function BudgetingPeriodList() {
      * @param {object} row - DataGrid row to be marked as "to delete".
      */
     const handleDeleteClick = (row) => {
+        // TODO: After ADD function
         // setBudgetToDelete(row);
         console.log(row)
         setDeleteDialogOpen(true);
@@ -277,7 +301,7 @@ export default function BudgetingPeriodList() {
                 <Typography variant="h4" gutterBottom
                                     sx={{display: 'block', color: '#BD0000'}}>Periods</Typography>
                 <Divider />
-                {alert && <Alert sx={{marginTop: 2}} severity={alert.type}
+                {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}
                                  onClose={() => setAlert(null)}>{alert.message}</Alert>}
                 <BudgetSelector/>
                 <Box sx={{flexGrow: 1, marginTop: 2, width: '100%'}}>
@@ -296,6 +320,7 @@ export default function BudgetingPeriodList() {
                         onRowModesModelChange={handleRowModesModelChange}
                         onRowEditStop={handleRowEditStop}
                         processRowUpdate={processRowUpdate}
+                        onProcessRowUpdateError={handleProcessRowUpdateError}
                         sx={{
                             backgroundColor: "#EEEEEE",
                             "& .MuiDataGrid-columnHeader": {
