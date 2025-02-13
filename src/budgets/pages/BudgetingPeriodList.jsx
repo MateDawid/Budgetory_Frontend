@@ -1,5 +1,10 @@
 import React, {useContext, useEffect, useMemo, useState} from 'react';
-import {DataGrid, GridActionsCellItem, GridRowEditStopReasons, GridRowModes} from "@mui/x-data-grid";
+import {
+    DataGrid,
+    GridActionsCellItem,
+    GridRowEditStopReasons,
+    GridRowModes,
+} from "@mui/x-data-grid";
 import Typography from "@mui/material/Typography";
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Paper} from "@mui/material";
 import Box from "@mui/material/Box";
@@ -7,7 +12,7 @@ import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 import Alert from '@mui/material/Alert';
 import {AlertContext} from "../../app_infrastructure/components/AlertContext";
-import {getBudgetingPeriodList, updateBudgetingPeriod} from "../services/BudgetingPeriodService";
+import {getBudgetingPeriodList, createBudgetingPeriod, updateBudgetingPeriod} from "../services/BudgetingPeriodService";
 import BudgetSelector from "../../app_infrastructure/components/BudgetSelector";
 import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
 import EditIcon from "@mui/icons-material/Edit";
@@ -16,6 +21,7 @@ import CancelIcon from '@mui/icons-material/Close';
 import SaveIcon from "@mui/icons-material/Save";
 import {prepareApiInput} from "../../app_infrastructure/utils/ApiInputFormatters";
 import ApiError from "../../app_infrastructure/utils/ApiError";
+import AddIcon from "@mui/icons-material/Add";
 
 
 const pageSizeOptions = [10, 50, 100]
@@ -27,6 +33,7 @@ const pageSizeOptions = [10, 50, 100]
 export default function BudgetingPeriodList() {
     const [rows, setRows] = useState([]);
     const [rowCount, setRowCount] = useState(0);
+    const [addedObjectId, setAddedObjectId] = useState(null)
     const [rowModesModel, setRowModesModel] = React.useState({});
     const [loading, setLoading] = useState(true);
     const [paginationModel, setPaginationModel] = React.useState({
@@ -141,7 +148,7 @@ export default function BudgetingPeriodList() {
             }
         }
         loadData();
-    }, [contextBudgetId, paginationModel]);
+    }, [contextBudgetId, paginationModel, addedObjectId]);
 
     /**
      * Function to update DataGrid pagination model.
@@ -160,6 +167,23 @@ export default function BudgetingPeriodList() {
         if (params.reason === GridRowEditStopReasons.rowFocusOut) {
             event.defaultMuiPrevented = true;
         }
+    };
+
+    /**
+     * Function to handle clicking "Add" toolbar button.
+     */
+    const handleAddClick = () => {
+        const id = 0
+        setRows((oldRows) => {
+            return [
+                {id, name: '', age: '', role: '', isNew: true},
+                ...oldRows,
+            ]
+        });
+        setRowModesModel((oldModel) => ({
+            ...oldModel,
+            [id]: {mode: GridRowModes.Edit, fieldToFocus: 'name'},
+        }));
     };
 
     /**
@@ -190,13 +214,21 @@ export default function BudgetingPeriodList() {
     /**
      * Function performed after saving changes in DataGrid row.
      * Makes call to API to update particular row.
-     * @param {number} updatedRow - Data of updated row.
+     * @param {object} row - DataGrid row content.
+     * @return {object} - Created/updated object content.
      */
-    const processRowUpdate = async (updatedRow) => {
-        const processedRow = prepareApiInput(updatedRow)
-        const updateResponse = await updateBudgetingPeriod(contextBudgetId, processedRow);
-        setAlert(null);
-        return updateResponse;
+    const processRowUpdate = async (row) => {
+        const processedRow = prepareApiInput(row)
+        if (processedRow.isNew) {
+            const createResponse = await createBudgetingPeriod(contextBudgetId, processedRow);
+            setAlert({type: 'success', message: `Period ${createResponse.name} created successfully.`})
+            setAddedObjectId(createResponse.id)
+            return createResponse;
+        } else {
+            const updateResponse = await updateBudgetingPeriod(contextBudgetId, processedRow);
+            setAlert({type: 'success', message: `Period ${updateResponse.name} updated successfully.`})
+            return updateResponse;
+        }
     };
 
     /**
@@ -204,18 +236,22 @@ export default function BudgetingPeriodList() {
      * @param {Error | ApiError} error - Error occurred during row update.
      */
     const handleProcessRowUpdateError = (error) => {
-        error = Error('XD')
         if (error instanceof ApiError) {
-            let message = 'Invalid data for fields:'
+            let message = 'Invalid data provided:'
             Object.keys(error.data.detail).forEach(key => {
-                const column = columns.find(column => column.field === key)
-                message = message + `\n• ${column.headerName} - ${error.data.detail[key]}`
+                if (key === 'non_field_errors') {
+                    message = message + `\n• ${error.data.detail[key]}`
+                } else {
+                    const column = columns.find(column => column.field === key)
+                    message = message + `\n• "${column.headerName}" field - ${error.data.detail[key]}`
+                }
+
             });
             setAlert({type: 'error', message: message});
         }
         else {
             console.error(error)
-            setAlert({type: 'error', message: "Unexected error occurred."});
+            setAlert({type: 'error', message: "Unexpected error occurred."});
         }
     };
 
@@ -303,7 +339,10 @@ export default function BudgetingPeriodList() {
                 <Divider />
                 {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}
                                  onClose={() => setAlert(null)}>{alert.message}</Alert>}
-                <BudgetSelector/>
+                <Box sx={{display: "flex", justifyContent: "space-between", alignItems: "end"}}>
+                    <BudgetSelector/>
+                    <Button startIcon={<AddIcon/>} onClick={handleAddClick} sx={{color: "#BD0000"}}>Add</Button>
+                </Box>
                 <Box sx={{flexGrow: 1, marginTop: 2, width: '100%'}}>
                     <DataGrid
                         rows={rows}

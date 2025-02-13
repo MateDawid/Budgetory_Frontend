@@ -28,9 +28,7 @@ function App() {
                         <Route path='add' element={<BudgetAdd/>}/>
                         <Route path=':budgetId' element={<BudgetDetail/>}/>
                     </Route>
-
-                        <Route path='periods' element={<BudgetingPeriodList/>}/>
-
+                    <Route path='periods' element={<BudgetingPeriodList/>}/>
                 </Route>
                 <Route path='login' element={<LoginForm/>}/>
                 <Route path='register' element={<RegisterForm/>}/>

@@ -49,7 +49,7 @@ const BudgetSelector = () => {
             <InputLabel sx={{fontWeight: 700, marginRight: 2}}>
                 Budget
             </InputLabel>
-            <Select value={selectedBudget} onChange={handleChange} sx={{width: '20%', maxWidth: "100%"}}>
+            <Select value={selectedBudget} onChange={handleChange} sx={{minWidth: '15%', maxWidth: "35%"}}>
                 {budgets.map(budget => (
                     <MenuItem key={budget.id} value={budget}>
                         {budget.name}
