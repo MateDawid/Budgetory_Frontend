@@ -53,29 +53,6 @@ export const createBudgetingPeriod = async (budgetId, newObject) => {
 
     }
 };
-// export const createBudgetingPeriod = async (budgetId, newObject) => {
-//         try {
-//             const token = await getAccessToken()
-//             const url = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${budgetId}/periods/`
-//             const requestOptions = {
-//                 method: "POST",
-//                 headers: {
-//                     "Authorization": `Bearer ${token}`,
-//                     "Content-Type": "application/json",
-//                 },
-//                 body: JSON.stringify(newObject)
-//             }
-//             const response = await fetch(url, requestOptions)
-//             if (!response.ok) {
-//                 const data = await response.json()
-//                 throw new ApiError('Invalid data', data);
-//             }
-//             return await response.json();
-//         } catch (error) {
-//             return {errorOccurred: true, detail: {serverError: "Unexpected error occurred."}}
-//         }
-//     }
-// ;
 
 /**
  * Function to update single BudgetingPeriod.
@@ -115,29 +92,30 @@ export const updateBudgetingPeriod = async (budgetId, updatedObject) => {
 };
 
 
-// /**
-//  * Function to delete single Budget.
-//  * @param {string} budgetId - id of Budget object.
-//  * @return {object} - JSON data with API response.
-//  */
-// export const deleteBudget = async (budgetId) => {
-//     try {
-//         const token = await getAccessToken()
-//         const url = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${budgetId}/`
-//         const requestOptions = {
-//             method: "DELETE",
-//             headers: {
-//                 "Authorization": `Bearer ${token}`,
-//                 "Content-Type": "application/json",
-//             }
-//         }
-//         const response = await fetch(url, requestOptions)
-//         if (!response.ok) {
-//             const data = await response.json()
-//             return {errorOccurred: true, ...data}
-//         }
-//         return {errorOccurred: false, detail: "Success."};
-//     } catch (error) {
-//         return {errorOccurred: true, detail: "Unexpected server error."}
-//     }
-// };
+/**
+ * Function to delete single BudgetingPeriod.
+ * @param {string} budgetId - id of Budget object.
+ * @param {string} periodId - id of BudgetingPeriod object.
+ * @return {object} - JSON data with API response.
+ */
+export const deleteBudgetingPeriod = async (budgetId, periodId) => {
+    try {
+        const token = await getAccessToken()
+        const url = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${budgetId}/periods/${periodId}/`
+        const requestOptions = {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            }
+        }
+        const response = await fetch(url, requestOptions)
+        if (!response.ok) {
+            const data = await response.json()
+            return {errorOccurred: true, ...data}
+        }
+        return {errorOccurred: false, detail: "Success."};
+    } catch (error) {
+        return {errorOccurred: true, detail: "Unexpected server error."}
+    }
+};
