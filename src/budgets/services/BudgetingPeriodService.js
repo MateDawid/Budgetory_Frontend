@@ -17,27 +17,58 @@ export const getBudgetingPeriodList = async (budgetId, paginationModel) => {
     return await response.json();
 };
 
-// /**
-//  * Function to create Budget.
-//  * @param {object} budgetData - Created Budget data.
-//  * @return {object} - JSON data with API response.
-//  */
-// export const createBudget = async (budgetData) => {
+/**
+ * Function to create BudgetingPeriod.
+ * @param {string} budgetId - id of Budget object.
+ * @param {object} newObject - Payload for API call with new object values.
+ * @return {object} - JSON data with API response.
+ */
+export const createBudgetingPeriod = async (budgetId, newObject) => {
+    let dataErrorRaised = false
+    try {
+        const token = await getAccessToken()
+        const url = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${budgetId}/periods/`
+        const requestOptions = {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newObject)
+        }
+        const response = await fetch(url, requestOptions)
+        if (!response.ok) {
+            const data = await response.json()
+            dataErrorRaised = true
+            throw new ApiError('Invalid data', data);
+        }
+        return await response.json();
+    }
+    catch (error) {
+        if (dataErrorRaised) {
+            throw error;
+        } else {
+            throw new Error("Unexpected error occurred.");
+        }
+
+    }
+};
+// export const createBudgetingPeriod = async (budgetId, newObject) => {
 //         try {
 //             const token = await getAccessToken()
-//             const url = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/`
+//             const url = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${budgetId}/periods/`
 //             const requestOptions = {
 //                 method: "POST",
 //                 headers: {
 //                     "Authorization": `Bearer ${token}`,
 //                     "Content-Type": "application/json",
 //                 },
-//                 body: JSON.stringify(budgetData)
+//                 body: JSON.stringify(newObject)
 //             }
 //             const response = await fetch(url, requestOptions)
 //             if (!response.ok) {
 //                 const data = await response.json()
-//                 return {errorOccurred: true, ...data}
+//                 throw new ApiError('Invalid data', data);
 //             }
 //             return await response.json();
 //         } catch (error) {
