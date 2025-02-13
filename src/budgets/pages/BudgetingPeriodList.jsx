@@ -12,7 +12,12 @@ import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 import Alert from '@mui/material/Alert';
 import {AlertContext} from "../../app_infrastructure/components/AlertContext";
-import {getBudgetingPeriodList, createBudgetingPeriod, updateBudgetingPeriod} from "../services/BudgetingPeriodService";
+import {
+    getBudgetingPeriodList,
+    createBudgetingPeriod,
+    updateBudgetingPeriod,
+    deleteBudgetingPeriod
+} from "../services/BudgetingPeriodService";
 import BudgetSelector from "../../app_infrastructure/components/BudgetSelector";
 import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
 import EditIcon from "@mui/icons-material/Edit";
@@ -43,7 +48,7 @@ export default function BudgetingPeriodList() {
     const {alert, setAlert} = useContext(AlertContext);
     const {contextBudgetId} = useContext(BudgetContext);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-    // const [budgetToDelete, setBudgetToDelete] = useState(null);
+    const [periodToDelete, setPeriodToDelete] = useState(null);
 
     const columns = useMemo(() => [
         {field: 'name', headerName: 'Name', flex: 3, filterable: false, sortable: false, editable: true},
@@ -59,7 +64,11 @@ export default function BudgetingPeriodList() {
                 return new Date(value);
             },
             valueFormatter: (value) => {
-                return value.toLocaleDateString('en-CA')
+                try {
+                    return value.toLocaleDateString('en-CA')
+                } catch (error) {
+                    return value
+                }
             },
         },
         {
@@ -74,7 +83,11 @@ export default function BudgetingPeriodList() {
                 return new Date(value);
             },
             valueFormatter: (value) => {
-                return value.toLocaleDateString('en-CA')
+                try {
+                    return value.toLocaleDateString('en-CA')
+                } catch (error) {
+                    return value
+                }
             },
         },
         {
@@ -287,8 +300,7 @@ export default function BudgetingPeriodList() {
      * @param {object} row - DataGrid row to be marked as "to delete".
      */
     const handleDeleteClick = (row) => {
-        // TODO: After ADD function
-        // setBudgetToDelete(row);
+        setPeriodToDelete(row);
         console.log(row)
         setDeleteDialogOpen(true);
     };
@@ -296,35 +308,35 @@ export default function BudgetingPeriodList() {
     /**
      * Function to close delete row Dialog.
      */
-    const handleCancelDelete = () => {
+    const handleCloseDeleteDialog = () => {
         setDeleteDialogOpen(false);
-        // setBudgetToDelete(null);
+        setPeriodToDelete(null);
     };
 
-    // /**
-    //  * Function to perform API call for deleting selected Budget.
-    //  */
-    // const handleDeleteBudget = async () => {
-    //     try {
-    //         const deleteResponse = await deleteBudget(budgetToDelete.id);
-    //         if (deleteResponse.errorOccurred) {
-    //             setAlert({
-    //                 type: 'error',
-    //                 message: `Budget was not deleted because of an error: ${deleteResponse.detail}`
-    //             });
-    //         } else {
-    //             const listResponse = await getBudgetList(paginationModel);
-    //             setRows(listResponse.results);
-    //             setRowCount(listResponse.count);
-    //             setAlert({type: 'success', message: "Budget deleted successfully"});
-    //         }
-    //
-    //     } catch (err) {
-    //         setAlert({type: 'error', message: "Failed to delete budget."});
-    //     } finally {
-    //         handleCloseDeleteDialog();
-    //     }
-    // };
+    /**
+     * Function to perform API call for deleting selected BudgetingPeriod.
+     */
+    const handleDeleteBudgetingPeriod = async () => {
+        try {
+            const deleteResponse = await deleteBudgetingPeriod(contextBudgetId, periodToDelete.id);
+            if (deleteResponse.errorOccurred) {
+                setAlert({
+                    type: 'error',
+                    message: `Period was not deleted because of an error: ${deleteResponse.detail}`
+                });
+            } else {
+                const rowsResponse = await getBudgetingPeriodList(contextBudgetId, paginationModel);
+                setRows(rowsResponse.results);
+                setRowCount(rowsResponse.count);
+                setAlert({type: 'success', message: "Period deleted successfully"});
+            }
+
+        } catch (err) {
+            setAlert({type: 'error', message: "Failed to delete period."});
+        } finally {
+            handleCloseDeleteDialog();
+        }
+    };
 
     return (
         <>
@@ -391,7 +403,7 @@ export default function BudgetingPeriodList() {
             </Paper>
             <Dialog
                 open={deleteDialogOpen}
-                onClose={handleCancelDelete}
+                onClose={handleCloseDeleteDialog}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
@@ -405,13 +417,13 @@ export default function BudgetingPeriodList() {
                 </DialogContent>
                 <DialogActions>
                     <Button
-                        onClick={handleCancelDelete}
+                        onClick={handleCloseDeleteDialog}
                         sx={{color: '#BD0000'}}
                     >
                         Cancel
                     </Button>
                     <Button
-                        // onClick={handleDeleteBudget}
+                        onClick={handleDeleteBudgetingPeriod}
                         sx={{color: '#BD0000'}}
                         autoFocus
                     >
