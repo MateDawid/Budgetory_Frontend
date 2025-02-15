@@ -18,10 +18,29 @@ import {BudgetContext} from "./BudgetContext";
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 import {prepareApiInput} from "../utils/ApiInputFormatters";
 import BudgetSelector from "./BudgetSelector";
-
+import {white, black, red, lightGrey} from "../utils/Colors";
 
 const pageSizeOptions = [10, 50, 100]
 
+const gridActionsCellItemStyle = {"& .MuiSvgIcon-root": {color: black}}
+const dataGridStyle = {
+    backgroundColor: white,
+    '& .MuiDataGrid-columnHeader': {backgroundColor: black, color: white},
+    '& .MuiDataGrid-columnHeaderTitle': {fontWeight: 'bold !important'},
+    '& .MuiDataGrid-footerContainer': {backgroundColor: black, color: white},
+    '& .MuiDataGrid-row': {backgroundColor: lightGrey},
+    '& .MuiDataGrid-row.Mui-selected': {backgroundColor: lightGrey},
+    '& .MuiDataGrid-row.Mui-selected:hover': {backgroundColor: lightGrey},
+    '& .MuiDataGrid-cell--editing': {backgroundColor: red},
+    '& .MuiDataGrid-cell:hover': {color: black, fontWeight: "bold"},
+    '& .MuiTablePagination-select': {color: white},
+    '& .MuiTablePagination-selectIcon': {color: white},
+    '& .MuiTablePagination-selectLabel': {color: white},
+    '& .MuiTablePagination-displayedRows': {color: white},
+    '& .MuiInputBase-root': {color: white},
+    '& .MuiInputBase-input': {color: black, display: "flex"},
+    '& .MuiSvgIcon-root': {color: black},
+}
 
 /**
  * DataTable component for displaying DataGrid with data fetched from API.
@@ -51,7 +70,6 @@ const DataTable = ({columns, apiListFunction, apiCreateFunction, apiUpdateFuncti
             field: 'actions',
             type: 'actions',
             headerName: 'Actions',
-            flex: 2,
             cellClassName: 'actions',
             getActions: (params) => {
                 const isInEditMode = rowModesModel[params.id]?.mode === GridRowModes.Edit;
@@ -61,27 +79,32 @@ const DataTable = ({columns, apiListFunction, apiCreateFunction, apiUpdateFuncti
                             key={params.id}
                             icon={<SaveIcon/>}
                             label="Save"
-                            sx={{"& .MuiSvgIcon-root": {color: "#BD0000"}}}
+                            sx={gridActionsCellItemStyle}
                             onClick={handleSaveClick(params.row)}
                         />,
                         <GridActionsCellItem
                             key={params.id}
                             icon={<CancelIcon/>}
                             label="Cancel"
-                            className="textPrimary"
+                            sx={gridActionsCellItemStyle}
                             onClick={handleCancelClick(params.row.id)}
-                            sx={{"& .MuiSvgIcon-root": {color: "#BD0000"}}}
                         />,
                     ];
                 } else {
                     return [
-                        <GridActionsCellItem key={params.id} icon={<EditIcon/>} label="Edit"
-                                             onClick={handleEditClick(params.row)}
-                                             sx={{"& .MuiSvgIcon-root": {color: "#BD0000"}}}
+                        <GridActionsCellItem
+                            key={params.id}
+                            icon={<EditIcon/>}
+                            label="Edit"
+                            sx={gridActionsCellItemStyle}
+                            onClick={handleEditClick(params.row)}
                         />,
-                        <GridActionsCellItem key={params.id} icon={<DeleteIcon/>} label="Delete"
-                                             onClick={() => handleDeleteClick(params.row)}
-                                             sx={{"& .MuiSvgIcon-root": {color: "#BD0000"}}}
+                        <GridActionsCellItem
+                            key={params.id}
+                            icon={<DeleteIcon/>}
+                            label="Delete"
+                            onClick={() => handleDeleteClick(params.row)}
+                            sx={gridActionsCellItemStyle}
                         />,
                     ]
                 }
@@ -134,12 +157,13 @@ const DataTable = ({columns, apiListFunction, apiCreateFunction, apiUpdateFuncti
      * Function to handle clicking "Add" toolbar button.
      */
     const handleAddClick = () => {
-        const id = 0
-        const emptyCells = (columns.reduce((acc, column) => {
-            acc[column.field] = '';
-            return acc;
+        let id = 0
+        const emptyCells = (columns.reduce((emptyRow, column) => {
+            emptyRow[column.field] = '';
+            return emptyRow;
         }, {}))
         setRows((oldRows) => {
+            id = oldRows.reduce((maxId, row) => row.id > maxId ? row.id : maxId, oldRows[0].id) + 1
             return [
                 {id, ...emptyCells, isNew: true},
                 ...oldRows,
@@ -147,7 +171,7 @@ const DataTable = ({columns, apiListFunction, apiCreateFunction, apiUpdateFuncti
         });
         setRowModesModel((oldModel) => ({
             ...oldModel,
-            [id]: {mode: GridRowModes.Edit, fieldToFocus: 'name'},
+            [id]: {mode: GridRowModes.Edit, fieldToFocus: columns[0].field},
         }));
     };
 
@@ -293,7 +317,7 @@ const DataTable = ({columns, apiListFunction, apiCreateFunction, apiUpdateFuncti
             <Box sx={{display: "flex", justifyContent: "space-between", alignItems: "end"}}>
                 {/*TODO: If for BudgetSelector*/}
                 <BudgetSelector/>
-                <Button startIcon={<AddIcon/>} onClick={handleAddClick} sx={{color: "#BD0000"}}>Add</Button>
+                <Button startIcon={<AddIcon/>} onClick={handleAddClick} sx={{color: red}}>Add</Button>
             </Box>
             <Box sx={{flexGrow: 1, marginTop: 2, width: '100%'}}>
                 <DataGrid
@@ -312,60 +336,23 @@ const DataTable = ({columns, apiListFunction, apiCreateFunction, apiUpdateFuncti
                     onRowEditStop={handleRowEditStop}
                     processRowUpdate={processRowUpdate}
                     onProcessRowUpdateError={handleProcessRowUpdateError}
-                    sx={{
-                        backgroundColor: "#EEEEEE",
-                        "& .MuiDataGrid-columnHeader": {
-                            backgroundColor: "#252525",
-                            color: "#F1F1F1",
-                        },
-                        '.MuiDataGrid-columnHeaderTitle': {
-                            fontWeight: 'bold !important',
-                        },
-                        "& .MuiDataGrid-footerContainer": {
-                            backgroundColor: "#252525",
-                            color: "#F1F1F1"
-                        },
-                        "& .MuiSvgIcon-root": {
-                            color: "#F1F1F1"
-                        },
-                        "& .MuiInputBase-root": {color: "#F1F1F1"},
-                        "& .MuiTablePagination-selectLabel": {color: "#F1F1F1"},
-                        "& .MuiTablePagination-displayedRows": {color: "#F1F1F1"},
-                        '& .MuiDataGrid-row': {backgroundColor: "#d0d0d0"},
-                        '& .MuiDataGrid-cell--editing': {backgroundColor: "red"},
-                        "& .MuiDataGrid-row.Mui-selected": {backgroundColor: "#d0d0d0"},
-                        "& .MuiDataGrid-row.Mui-selected:hover": {backgroundColor: "#d0d0d0"},
-                        '& .MuiDataGrid-cell:hover': {color: "#252525", fontWeight: "bold"},
-                        '& .MuiInputBase-input': {color: "#252525"},
-                    }}
+                    sx={dataGridStyle}
                 />
             </Box>
-            <Dialog
-                open={deleteDialogOpen}
-                onClose={handleCloseDeleteDialog}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-            >
-                <DialogTitle id="alert-dialog-title" sx={{color: '#BD0000'}}>
-                    {"Are you sure you want to delete this budget?"}
+            <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
+                <DialogTitle sx={{color: red}}>
+                    {"Are you sure you want to delete this object?"}
                 </DialogTitle>
                 <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        Period and all of its related objects will be removed.
+                    <DialogContentText>
+                        Object and all of its related content will be removed.
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button
-                        onClick={handleCloseDeleteDialog}
-                        sx={{color: '#BD0000'}}
-                    >
+                    <Button onClick={handleCloseDeleteDialog} sx={{color: red}}>
                         Cancel
                     </Button>
-                    <Button
-                        onClick={handleApiDelete}
-                        sx={{color: '#BD0000'}}
-                        autoFocus
-                    >
+                    <Button onClick={handleApiDelete} sx={{color: red}} autoFocus>
                         Confirm
                     </Button>
                 </DialogActions>
