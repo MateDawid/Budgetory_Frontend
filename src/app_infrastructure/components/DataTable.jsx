@@ -168,7 +168,12 @@ const DataTable = ({
     const handleAddClick = () => {
         let id = 0
         const emptyCells = (columns.reduce((emptyRow, column) => {
-            emptyRow[column.field] = '';
+            if (column.type === 'date') {
+                emptyRow[column.field] = new Date().toISOString().split('T')[0];
+            } else {
+                emptyRow[column.field] = '';
+            }
+
             return emptyRow;
         }, {}))
         setRows((oldRows) => {
