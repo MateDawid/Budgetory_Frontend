@@ -49,8 +49,16 @@ const dataGridStyle = {
  * @param {function} apiCreateFunction - function to create object in API.
  * @param {function} apiUpdateFunction - function to update object in API.
  * @param {function} apiDeleteFunction - function to delete object from API.
+ * @param {boolean} useContextBudget - indicates if contextBudget is needed to perform API calls. Displays BudgetSelector if so.
  */
-const DataTable = ({columns, apiListFunction, apiCreateFunction, apiUpdateFunction, apiDeleteFunction}) => {
+const DataTable = ({
+                       columns,
+                       apiListFunction,
+                       apiCreateFunction,
+                       apiUpdateFunction,
+                       apiDeleteFunction,
+                       useContextBudget = true
+                   }) => {
     const [rows, setRows] = useState([]);
     const [rowCount, setRowCount] = useState(0);
     const [addedObjectId, setAddedObjectId] = useState(null)
@@ -122,7 +130,8 @@ const DataTable = ({columns, apiListFunction, apiCreateFunction, apiUpdateFuncti
                 return
             }
             try {
-                const rowsResponse = await apiListFunction(contextBudgetId, paginationModel);
+                const payload = useContextBudget ? [contextBudgetId, paginationModel] : [paginationModel]
+                const rowsResponse = await apiListFunction(...payload);
                 setRows(rowsResponse.results);
                 setRowCount(rowsResponse.count);
             } catch (err) {
@@ -208,13 +217,14 @@ const DataTable = ({columns, apiListFunction, apiCreateFunction, apiUpdateFuncti
      */
     const processRowUpdate = async (row) => {
         const processedRow = prepareApiInput(row)
+        const payload = useContextBudget ? [contextBudgetId, processedRow] : [processedRow]
         if (processedRow.isNew) {
-            const createResponse = await apiCreateFunction(contextBudgetId, processedRow);
+            const createResponse = await apiCreateFunction(...payload);
             setAlert({type: 'success', message: `Object created successfully.`})
             setAddedObjectId(createResponse.id)
             return createResponse;
         } else {
-            const updateResponse = await apiUpdateFunction(contextBudgetId, processedRow);
+            const updateResponse = await apiUpdateFunction(...payload);
             setAlert({type: 'success', message: `Object updated successfully.`})
             return updateResponse;
         }
@@ -292,7 +302,8 @@ const DataTable = ({columns, apiListFunction, apiCreateFunction, apiUpdateFuncti
      */
     const handleApiDelete = async () => {
         try {
-            const deleteResponse = await apiDeleteFunction(contextBudgetId, objectToDelete.id);
+            const payload = useContextBudget ? [contextBudgetId, objectToDelete.id] : [objectToDelete.id]
+            const deleteResponse = await apiDeleteFunction(...payload);
             if (deleteResponse.errorOccurred) {
                 setAlert({
                     type: 'error',
@@ -314,9 +325,9 @@ const DataTable = ({columns, apiListFunction, apiCreateFunction, apiUpdateFuncti
 
     return (
         <>
-            <Box sx={{display: "flex", justifyContent: "space-between", alignItems: "end"}}>
-                {/*TODO: If for BudgetSelector*/}
-                <BudgetSelector/>
+            <Box
+                sx={{display: "flex", justifyContent: useContextBudget ? "space-between" : "right", alignItems: "end"}}>
+                {useContextBudget && <BudgetSelector/>}
                 <Button startIcon={<AddIcon/>} onClick={handleAddClick} sx={{color: red}}>Add</Button>
             </Box>
             <Box sx={{flexGrow: 1, marginTop: 2, width: '100%'}}>
