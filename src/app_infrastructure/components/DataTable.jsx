@@ -39,7 +39,7 @@ const dataGridStyle = {
     '& .MuiTablePagination-displayedRows': {color: white},
     '& .MuiInputBase-root': {color: white},
     '& .MuiInputBase-input': {color: black, display: "flex"},
-    '& .MuiSvgIcon-root': {color: black},
+    '& .MuiSvgIcon-root': {color: white},
 }
 
 /**
@@ -68,6 +68,7 @@ const DataTable = ({
         pageSize: pageSizeOptions[0],
         page: 0,
     });
+    const [sortModel, setSortModel] = React.useState({});
     const {setAlert} = useContext(AlertContext);
     const {contextBudgetId} = useContext(BudgetContext);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -130,7 +131,7 @@ const DataTable = ({
                 return
             }
             try {
-                const payload = useContextBudget ? [contextBudgetId, paginationModel] : [paginationModel]
+                const payload = useContextBudget ? [contextBudgetId, paginationModel, sortModel] : [paginationModel]
                 const rowsResponse = await apiListFunction(...payload);
                 setRows(rowsResponse.results);
                 setRowCount(rowsResponse.count);
@@ -141,7 +142,7 @@ const DataTable = ({
             }
         }
         loadData();
-    }, [contextBudgetId, paginationModel, addedObjectId]);
+    }, [contextBudgetId, paginationModel, sortModel, addedObjectId]);
 
     /**
      * Function to update DataGrid pagination model.
@@ -149,6 +150,20 @@ const DataTable = ({
      */
     function updatePagination(updatedPaginationModel) {
         setPaginationModel(updatedPaginationModel);
+    }
+
+    /**
+     * Function to update DataGrid sort model.
+     * @param {Array} updatedSortModel - updated sort model.
+     */
+    function updateSorting(updatedSortModel) {
+        if (updatedSortModel.length === 0) {
+            setSortModel({});
+        } else {
+            setSortModel({
+                ordering: updatedSortModel[0].sort === 'desc' ? '-' + updatedSortModel[0].field : updatedSortModel[0].field
+            });
+        }
     }
 
     /**
@@ -340,11 +355,13 @@ const DataTable = ({
                     rows={rows}
                     columns={extendedColumns}
                     loading={loading}
-                    paginationMode="server"
                     rowCount={rowCount}
+                    paginationMode="server"
                     paginationModel={paginationModel}
                     onPaginationModelChange={updatePagination}
                     pageSizeOptions={pageSizeOptions}
+                    sortingMode="server"
+                    onSortModelChange={updateSorting}
                     disableColumnResize={true}
                     editMode="row"
                     rowModesModel={rowModesModel}
