@@ -16,17 +16,17 @@ import DataTable from "../../app_infrastructure/components/DataTable";
 /**
  * BudgetingPeriodList component to display list of Budget BudgetingPeriods.
  */
-export default function BudgetingPeriodListNew() {
+export default function BudgetingPeriodList() {
     const {alert, setAlert} = useContext(AlertContext);
     const columns = [
-        {field: 'name', headerName: 'Name', flex: 3, filterable: false, sortable: false, editable: true},
+        {field: 'name', headerName: 'Name', flex: 3, filterable: false, sortable: true, editable: true},
         {
             field: 'date_start',
             type: 'date',
             headerName: 'Date start',
             flex: 2,
             filterable: false,
-            sortable: false,
+            sortable: true,
             editable: true,
             valueGetter: (value) => {
                 return new Date(value);
@@ -45,7 +45,7 @@ export default function BudgetingPeriodListNew() {
             headerName: 'Date end',
             flex: 2,
             filterable: false,
-            sortable: false,
+            sortable: true,
             editable: true,
             valueGetter: (value) => {
                 return new Date(value);
@@ -65,7 +65,7 @@ export default function BudgetingPeriodListNew() {
             flex: 1,
             filterable: false,
             sortable: false,
-            editable: true
+            editable: true,
         },
     ]
 
