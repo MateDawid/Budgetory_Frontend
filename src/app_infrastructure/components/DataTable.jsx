@@ -236,7 +236,7 @@ const DataTable = ({
      * @return {object} - Created/updated object content.
      */
     const processRowUpdate = async (row) => {
-        const processedRow = prepareApiInput(row)
+        const processedRow = prepareApiInput(row, columns)
         const payload = useContextBudget ? [contextBudgetId, processedRow] : [processedRow]
         if (processedRow.isNew) {
             const createResponse = await apiCreateFunction(...payload);
