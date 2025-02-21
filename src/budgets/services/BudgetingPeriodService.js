@@ -1,16 +1,18 @@
 import {getAccessToken} from "../../app_users/services/LoginService";
 import ApiError from "../../app_infrastructure/utils/ApiError";
+import {formatFilterModel} from "../../app_infrastructure/utils/DataTable/FilterHandlers";
 
 /**
  * Function to get list of Budget BudgetingPeriods.
  * @param {string} budgetId - id of Budget object.
  * @param {object} paginationModel - paginationModel object with page number and page size.
  * @param {object} sortModel - sortModel object.
+ * @param {object} filterModel - filterModel object.
  * @return {object} - JSON data with API response.
  */
-export const getBudgetingPeriodList = async (budgetId, paginationModel, sortModel) => {
+export const getBudgetingPeriodList = async (budgetId, paginationModel, sortModel, filterModel) => {
     const token = await getAccessToken()
-    let url_params = {...sortModel}
+    let url_params = {...sortModel, ...filterModel}
     if (Object.entries(paginationModel).length !== 0) {
         url_params = {
             page: paginationModel.page + 1,
@@ -19,6 +21,7 @@ export const getBudgetingPeriodList = async (budgetId, paginationModel, sortMode
         }
     }
     let url = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${budgetId}/periods/?` + new URLSearchParams(url_params);
+    console.log(url)
     const response = await fetch(url, {method: "GET", headers: {Authorization: `Bearer ${token}`}})
     return await response.json();
 };
