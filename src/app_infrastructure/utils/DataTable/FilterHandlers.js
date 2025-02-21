@@ -25,10 +25,9 @@ export const mappedFilterOperators = {
  * @return {object} - Formatted filterModel for DataGrid.
  */
 export function formatFilterModel(updatedFilterModel, columns) {
-    // TODO - move to service class
     if (updatedFilterModel.items.length === 0) {
         return {}
-    } else if (!updatedFilterModel.items[0].value) {
+    } else if (updatedFilterModel.items[0].value == null) {
         return {}
     }
     const filterItem = updatedFilterModel.items[0]
@@ -36,20 +35,18 @@ export function formatFilterModel(updatedFilterModel, columns) {
     console.log(column)
     switch (column.type) {
         case 'date':
-            console.log('DATE FILTER: ', formatDateFilter(filterItem))
             return formatDateFilter(filterItem)
-        // case 'boolean':
-        //     return {[filterItem.field]: !!filterItem.value}
         default:
             console.log('DEFAULT FILTER: ', {[filterItem.field]: filterItem.value})
             return {[filterItem.field]: filterItem.value}
     }
-    // if (column.type === 'boolean' && typeof filterItem.value !== 'boolean') {
-    //     filterItem.value = !!filterItem.value
-    // }
-
 }
 
+/**
+ * Function for formatting date filter for API calls purposes.
+ * @param {object} filterItem - Filter definition received from DataGrid
+ * @return {object} - Formatted filterModel with date filter for DataGrid.
+ */
 function formatDateFilter(filterItem) {
     switch (filterItem.operator) {
         case 'is':
@@ -76,6 +73,12 @@ function formatDateFilter(filterItem) {
     }
 }
 
+/**
+ * Function for formatting Date object into string in format YYYY-MM-DD
+ * @param {Date} date - Filter definition received from DataGrid
+ * @return {string} - Formatted filterModel with date filter for DataGrid.
+ */
 function formatDate(date) {
+    // TODO - use it in all places where formatting appears
     return date.toLocaleDateString('en-CA');
 }
