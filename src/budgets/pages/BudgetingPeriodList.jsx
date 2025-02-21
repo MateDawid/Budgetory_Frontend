@@ -19,13 +19,21 @@ import DataTable from "../../app_infrastructure/components/DataTable";
 export default function BudgetingPeriodList() {
     const {alert, setAlert} = useContext(AlertContext);
     const columns = [
-        {field: 'name', headerName: 'Name', flex: 3, filterable: false, sortable: true, editable: true},
+        {
+            field: 'name',
+            type: 'string',
+            headerName: 'Name',
+            flex: 3,
+            filterable: true,
+            sortable: true,
+            editable: true,
+        },
         {
             field: 'date_start',
             type: 'date',
             headerName: 'Date start',
             flex: 2,
-            filterable: false,
+            filterable: true,
             sortable: true,
             editable: true,
             valueGetter: (value) => {
@@ -44,7 +52,7 @@ export default function BudgetingPeriodList() {
             type: 'date',
             headerName: 'Date end',
             flex: 2,
-            filterable: false,
+            filterable: true,
             sortable: true,
             editable: true,
             valueGetter: (value) => {
@@ -63,7 +71,7 @@ export default function BudgetingPeriodList() {
             type: 'boolean',
             headerName: 'Active',
             flex: 1,
-            filterable: false,
+            filterable: true,
             sortable: false,
             editable: true,
         },

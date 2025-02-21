@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useMemo, useState} from 'react';
 import {
-    DataGrid,
+    DataGrid, getGridStringOperators,
     GridActionsCellItem,
     GridRowEditStopReasons,
     GridRowModes,
@@ -69,12 +69,18 @@ const DataTable = ({
         page: 0,
     });
     const [sortModel, setSortModel] = React.useState({});
+    const [filterModel, setFilterModel] = React.useState({items: []});
     const {setAlert} = useContext(AlertContext);
     const {contextBudgetId} = useContext(BudgetContext);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [objectToDelete, setObjectToDelete] = useState(null);
     const extendedColumns = useMemo(() => [
-        ...columns,
+        ...columns.map((column) => ({
+            ...column,
+            filterOperators: getGridStringOperators().filter(operator =>
+                ['equals', 'contains'].includes(operator.value)
+            ),
+        })),
         {
             field: 'actions',
             type: 'actions',
@@ -120,6 +126,7 @@ const DataTable = ({
             }
         },
     ], [rowModesModel]);
+    console.log(extendedColumns)
 
     /**
      * Fetches objects list from API.
@@ -142,7 +149,7 @@ const DataTable = ({
             }
         }
         loadData();
-    }, [contextBudgetId, paginationModel, sortModel, addedObjectId]);
+    }, [contextBudgetId, paginationModel, sortModel, filterModel, addedObjectId]);
 
     /**
      * Function to update DataGrid pagination model.
@@ -164,6 +171,19 @@ const DataTable = ({
                 ordering: updatedSortModel[0].sort === 'desc' ? '-' + updatedSortModel[0].field : updatedSortModel[0].field
             });
         }
+    }
+
+    /**
+     * Function to update DataGrid filter model.
+     * @param {object} updatedFilterModel - updated filter model.
+     */
+    function updateFiltering(updatedFilterModel) {
+        console.log(updatedFilterModel)
+        // if (updatedFilterModel.length === 0) {
+        //     setFilterModel({});
+        // } else {
+        //     setFilterModel({});
+        // }
     }
 
     /**
@@ -362,6 +382,9 @@ const DataTable = ({
                     pageSizeOptions={pageSizeOptions}
                     sortingMode="server"
                     onSortModelChange={updateSorting}
+                    filterMode="server"
+                    filterModel={filterModel}
+                    onFilterModelChange={updateFiltering}
                     disableColumnResize={true}
                     editMode="row"
                     rowModesModel={rowModesModel}
