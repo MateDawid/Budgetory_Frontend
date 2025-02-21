@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useMemo, useState} from 'react';
 import {
-    DataGrid, getGridStringOperators,
+    DataGrid,
     GridActionsCellItem,
     GridRowEditStopReasons,
     GridRowModes,
@@ -16,9 +16,10 @@ import AddIcon from "@mui/icons-material/Add";
 import {AlertContext} from "./AlertContext";
 import {BudgetContext} from "./BudgetContext";
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
-import {prepareApiInput} from "../utils/ApiInputFormatters";
+import {prepareApiInput} from "../utils/DataTable/ApiInputFormatters";
 import BudgetSelector from "./BudgetSelector";
 import {white, black, red, lightGrey} from "../utils/Colors";
+import {formatFilterModel, mappedFilterOperators} from "../utils/DataTable/FilterHandlers";
 
 const pageSizeOptions = [10, 50, 100]
 
@@ -76,11 +77,11 @@ const DataTable = ({
     const [objectToDelete, setObjectToDelete] = useState(null);
     const extendedColumns = useMemo(() => [
         ...columns.map((column) => ({
-            ...column,
-            filterOperators: getGridStringOperators().filter(operator =>
-                ['equals', 'contains'].includes(operator.value)
-            ),
-        })),
+                ...column,
+                filterOperators: column.type in mappedFilterOperators ? mappedFilterOperators[column.type] : undefined,
+            }
+
+        )),
         {
             field: 'actions',
             type: 'actions',
@@ -126,7 +127,6 @@ const DataTable = ({
             }
         },
     ], [rowModesModel]);
-    console.log(extendedColumns)
 
     /**
      * Fetches objects list from API.
@@ -138,7 +138,7 @@ const DataTable = ({
                 return
             }
             try {
-                const payload = useContextBudget ? [contextBudgetId, paginationModel, sortModel] : [paginationModel]
+                const payload = useContextBudget ? [contextBudgetId, paginationModel, sortModel, formatFilterModel(filterModel, columns)] : [paginationModel, sortModel, formatFilterModel(filterModel, columns)]
                 const rowsResponse = await apiListFunction(...payload);
                 setRows(rowsResponse.results);
                 setRowCount(rowsResponse.count);
@@ -178,12 +178,7 @@ const DataTable = ({
      * @param {object} updatedFilterModel - updated filter model.
      */
     function updateFiltering(updatedFilterModel) {
-        console.log(updatedFilterModel)
-        // if (updatedFilterModel.length === 0) {
-        //     setFilterModel({});
-        // } else {
-        //     setFilterModel({});
-        // }
+        setFilterModel(updatedFilterModel)
     }
 
     /**
@@ -350,7 +345,7 @@ const DataTable = ({
                     message: `Object was not deleted because of an error: ${deleteResponse.detail}`
                 });
             } else {
-                const rowsResponse = await apiListFunction(contextBudgetId, paginationModel);
+                const rowsResponse = await apiListFunction(contextBudgetId, paginationModel, sortModel, formatFilterModel(filterModel, columns));
                 setRows(rowsResponse.results);
                 setRowCount(rowsResponse.count);
                 setAlert({type: 'success', message: "Object deleted successfully"});
