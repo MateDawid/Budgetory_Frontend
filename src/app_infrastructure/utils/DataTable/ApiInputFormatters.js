@@ -1,5 +1,5 @@
 /**
- * Function for converting Date object to string in format YYYY-MM-DD.
+ * Function for preparing DataGrid data for POST/PATCH API requests.
  * @param {object} apiInput - DataGrid row.
  * @param {object} columns - DataGrid columns.
  * @return {object} - Formatted DataGrid row.
