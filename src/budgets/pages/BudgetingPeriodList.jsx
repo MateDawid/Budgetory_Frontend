@@ -4,19 +4,16 @@ import {Paper} from "@mui/material";
 import Divider from "@mui/material/Divider";
 import Alert from '@mui/material/Alert';
 import {AlertContext} from "../../app_infrastructure/components/AlertContext";
-import {
-    getBudgetingPeriodList,
-    createBudgetingPeriod,
-    updateBudgetingPeriod,
-    deleteBudgetingPeriod
-} from "../services/BudgetingPeriodService";
 import DataTable from "../../app_infrastructure/components/DataTable";
+import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
 
 
 /**
  * BudgetingPeriodList component to display list of Budget BudgetingPeriods.
  */
 export default function BudgetingPeriodList() {
+    const {contextBudgetId} = useContext(BudgetContext);
+    const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`
     const {alert, setAlert} = useContext(AlertContext);
     const columns = [
         {
@@ -92,10 +89,7 @@ export default function BudgetingPeriodList() {
                                  onClose={() => setAlert(null)}>{alert.message}</Alert>}
                 <DataTable
                     columns={columns}
-                    apiListFunction={getBudgetingPeriodList}
-                    apiCreateFunction={createBudgetingPeriod}
-                    apiUpdateFunction={updateBudgetingPeriod}
-                    apiDeleteFunction={deleteBudgetingPeriod}
+                    apiUrl={apiUrl}
                 />
             </Paper>
         </>
