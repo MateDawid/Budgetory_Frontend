@@ -20,6 +20,7 @@ import {prepareApiInput} from "../utils/DataTable/ApiInputFormatters";
 import BudgetSelector from "./BudgetSelector";
 import {white, black, red, lightGrey} from "../utils/Colors";
 import {formatFilterModel, mappedFilterOperators} from "../utils/DataTable/FilterHandlers";
+import {createApiObject, deleteApiObject, getApiObjectsList, updateApiObject} from "../services/APIService";
 
 const pageSizeOptions = [10, 50, 100]
 
@@ -46,20 +47,10 @@ const dataGridStyle = {
 /**
  * DataTable component for displaying DataGrid with data fetched from API.
  * @param {object} columns - Displayed columns settings.
- * @param {function} apiListFunction - function to fetch objects list from API.
- * @param {function} apiCreateFunction - function to create object in API.
- * @param {function} apiUpdateFunction - function to update object in API.
- * @param {function} apiDeleteFunction - function to delete object from API.
+ * @param {string} apiUrl - Base API url for fetching data.
  * @param {boolean} useContextBudget - indicates if contextBudget is needed to perform API calls. Displays BudgetSelector if so.
  */
-const DataTable = ({
-                       columns,
-                       apiListFunction,
-                       apiCreateFunction,
-                       apiUpdateFunction,
-                       apiDeleteFunction,
-                       useContextBudget = true
-                   }) => {
+const DataTable = ({columns, apiUrl, useContextBudget = true}) => {
     const [rows, setRows] = useState([]);
     const [rowCount, setRowCount] = useState(0);
     const [addedObjectId, setAddedObjectId] = useState(null)
@@ -138,8 +129,9 @@ const DataTable = ({
                 return
             }
             try {
-                const payload = useContextBudget ? [contextBudgetId, paginationModel, sortModel, formatFilterModel(filterModel, columns)] : [paginationModel, sortModel, formatFilterModel(filterModel, columns)]
-                const rowsResponse = await apiListFunction(...payload);
+                const rowsResponse = await getApiObjectsList(
+                    apiUrl, paginationModel, sortModel, formatFilterModel(filterModel, columns)
+                )
                 setRows(rowsResponse.results);
                 setRowCount(rowsResponse.count);
             } catch (err) {
@@ -252,14 +244,13 @@ const DataTable = ({
      */
     const processRowUpdate = async (row) => {
         const processedRow = prepareApiInput(row, columns)
-        const payload = useContextBudget ? [contextBudgetId, processedRow] : [processedRow]
         if (processedRow.isNew) {
-            const createResponse = await apiCreateFunction(...payload);
+            const createResponse = await createApiObject(apiUrl, processedRow);
             setAlert({type: 'success', message: `Object created successfully.`})
             setAddedObjectId(createResponse.id)
             return createResponse;
         } else {
-            const updateResponse = await apiUpdateFunction(...payload);
+            const updateResponse = await updateApiObject(apiUrl, processedRow);
             setAlert({type: 'success', message: `Object updated successfully.`})
             return updateResponse;
         }
@@ -337,15 +328,16 @@ const DataTable = ({
      */
     const handleApiDelete = async () => {
         try {
-            const payload = useContextBudget ? [contextBudgetId, objectToDelete.id] : [objectToDelete.id]
-            const deleteResponse = await apiDeleteFunction(...payload);
+            const deleteResponse = await deleteApiObject(apiUrl, objectToDelete.id);
             if (deleteResponse.errorOccurred) {
                 setAlert({
                     type: 'error',
                     message: `Object was not deleted because of an error: ${deleteResponse.detail}`
                 });
             } else {
-                const rowsResponse = await apiListFunction(contextBudgetId, paginationModel, sortModel, formatFilterModel(filterModel, columns));
+                const rowsResponse = await getApiObjectsList(
+                    apiUrl, paginationModel, sortModel, formatFilterModel(filterModel, columns)
+                )
                 setRows(rowsResponse.results);
                 setRowCount(rowsResponse.count);
                 setAlert({type: 'success', message: "Object deleted successfully"});
