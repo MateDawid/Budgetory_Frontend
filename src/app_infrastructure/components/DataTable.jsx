@@ -266,9 +266,15 @@ const DataTable = ({columns, apiUrl, useContextBudget = true}) => {
             Object.keys(error.data.detail).forEach(key => {
                 if (key === 'non_field_errors') {
                     message = message + `\n• ${error.data.detail[key]}`
-                } else {
+                }
+                else {
                     const column = columns.find(column => column.field === key)
-                    message = message + `\n• "${column.headerName}" field - ${error.data.detail[key]}`
+                    if (column) {
+                        message = message + `\n• "${column.headerName}" field - ${error.data.detail[key]}`
+                    }
+                    else {
+                        message = message + `\n• "${key}" API field - ${error.data.detail[key]}`
+                    }
                 }
 
             });
