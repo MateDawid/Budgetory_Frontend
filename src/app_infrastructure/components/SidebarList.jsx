@@ -2,6 +2,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ListItemText from "@mui/material/ListItemText";
 import * as React from "react";
 import List from "@mui/material/List";
@@ -26,6 +27,7 @@ const listItemTextStyling = [
 /**
  * SidebarList component for displaying list of sidebar components.
  */
+// TODO: Separate component for ListItemButton
 function SidebarList() {
     return (
         <List>
@@ -35,6 +37,12 @@ function SidebarList() {
                         <AccountBalanceIcon style={iconComponentStyling}/>
                     </ListItemIcon>
                     <ListItemText primary="Budgets" sx={listItemTextStyling}/>
+                </ListItemButton>
+                <ListItemButton component={Link} to="/periods" sx={listItemButtonStyling}>
+                    <ListItemIcon sx={listItemIconStyling}>
+                        <CalendarMonthIcon style={iconComponentStyling}/>
+                    </ListItemIcon>
+                    <ListItemText primary="Periods" sx={listItemTextStyling}/>
                 </ListItemButton>
             </ListItem>
         </List>
