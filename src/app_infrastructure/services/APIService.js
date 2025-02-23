@@ -9,7 +9,7 @@ import ApiError from "../../app_infrastructure/utils/ApiError";
  * @param {object} filterModel - filterModel object.
  * @return {object} - JSON data with API response.
  */
-export const getApiObjectsList = async (url, paginationModel, sortModel, filterModel) => {
+export const getApiObjectsList = async (url, paginationModel = {}, sortModel = {}, filterModel = {}) => {
     const token = await getAccessToken()
     let url_params = {...sortModel, ...filterModel}
     if (Object.entries(paginationModel).length !== 0) {

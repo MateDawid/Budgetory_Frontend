@@ -1,9 +1,9 @@
 import React, {useState, useEffect, useContext} from 'react';
 import {Select, MenuItem, InputLabel} from '@mui/material';
-import {getBudgetList} from "../../budgets/services/BudgetService";
 import {AlertContext} from "./AlertContext";
 import Box from "@mui/material/Box";
 import {BudgetContext} from "./BudgetContext";
+import {getApiObjectsList} from "../services/APIService";
 
 /**
  * BudgetSelector component to display Budget select field for used by DataGrid to obtain Budget data.
@@ -20,7 +20,7 @@ const BudgetSelector = () => {
     useEffect(() => {
         const loadData = async () => {
             try {
-                const apiResponse = await getBudgetList();
+                const apiResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/`, {page: 0, pageSize: 100})
                 setBudgets(apiResponse.results);
                 const contextBudget = apiResponse.results.find(budget => budget.id === contextBudgetId);
                 if (contextBudget) {
