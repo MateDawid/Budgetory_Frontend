@@ -27,21 +27,21 @@ const pageSizeOptions = [10, 50, 100]
 const gridActionsCellItemStyle = {"& .MuiSvgIcon-root": {color: black}}
 const dataGridStyle = {
     backgroundColor: white,
+    '& .MuiSvgIcon-root': {color: white},
+    '& .MuiInputBase-root': {color: white},
+    '& .MuiInputBase-input': {color: black, display: "flex"},
+    '& .MuiCheckbox-root .MuiSvgIcon-root': {color: black},
     '& .MuiDataGrid-columnHeader': {backgroundColor: black, color: white},
     '& .MuiDataGrid-columnHeaderTitle': {fontWeight: 'bold !important'},
     '& .MuiDataGrid-footerContainer': {backgroundColor: black, color: white},
     '& .MuiDataGrid-row': {backgroundColor: lightGrey},
     '& .MuiDataGrid-row.Mui-selected': {backgroundColor: lightGrey},
     '& .MuiDataGrid-row.Mui-selected:hover': {backgroundColor: lightGrey},
-    '& .MuiDataGrid-cell--editing': {backgroundColor: red},
     '& .MuiDataGrid-cell:hover': {color: black, fontWeight: "bold"},
     '& .MuiTablePagination-select': {color: white},
     '& .MuiTablePagination-selectIcon': {color: white},
     '& .MuiTablePagination-selectLabel': {color: white},
     '& .MuiTablePagination-displayedRows': {color: white},
-    '& .MuiInputBase-root': {color: white},
-    '& .MuiInputBase-input': {color: black, display: "flex"},
-    '& .MuiSvgIcon-root': {color: white},
 }
 
 /**
