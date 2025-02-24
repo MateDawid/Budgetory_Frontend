@@ -198,8 +198,14 @@ const DataTable = ({columns, apiUrl, useContextBudget = true}) => {
 
             return emptyRow;
         }, {}))
+
         setRows((oldRows) => {
-            id = oldRows.reduce((maxId, row) => row.id > maxId ? row.id : maxId, oldRows[0].id) + 1
+            if (oldRows.length !== 0) {
+                id = oldRows.reduce((maxId, row) => row.id > maxId ? row.id : maxId, oldRows[0].id) + 1
+            }
+            else {
+                id = 1
+            }
             return [
                 {id, ...emptyCells, isNew: true},
                 ...oldRows,
