@@ -32,12 +32,10 @@ export function formatFilterModel(updatedFilterModel, columns) {
     }
     const filterItem = updatedFilterModel.items[0]
     const column = columns.find(column => column.field === filterItem.field)
-    console.log(column)
     switch (column.type) {
         case 'date':
             return formatDateFilter(filterItem)
         default:
-            console.log('DEFAULT FILTER: ', {[filterItem.field]: filterItem.value})
             return {[filterItem.field]: filterItem.value}
     }
 }
