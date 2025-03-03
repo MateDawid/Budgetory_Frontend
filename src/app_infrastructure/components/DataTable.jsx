@@ -72,7 +72,6 @@ const DataTable = ({columns, apiUrl, useContextBudget = true}) => {
                 ...column,
                 filterOperators: column.type in mappedFilterOperators ? mappedFilterOperators[column.type] : undefined,
             }
-
         )),
         {
             field: 'actions',
@@ -146,6 +145,7 @@ const DataTable = ({columns, apiUrl, useContextBudget = true}) => {
 
     /**
      * Fetches singleSelect choices from API.
+     * In case of nullChoice (choice saving null value in API) extends valueOptions with such choice.
      */
     useEffect(() => {
         const loadSingleSelectChoices = async () => {
@@ -155,7 +155,7 @@ const DataTable = ({columns, apiUrl, useContextBudget = true}) => {
                 }
                 try {
                     const choicesResponse = await getApiObjectsList(column.valueOptionsApiUrl)
-                    column.valueOptionsSetter(choicesResponse.results);
+                    column.valueOptionsSetter(column.nullChoice ? [column.nullChoice, ...choicesResponse.results] : choicesResponse.results);
                 } catch (err) {
                     setAlert({type: 'error', message: "Failed to load choices for select field.\n" + err});
                 }
