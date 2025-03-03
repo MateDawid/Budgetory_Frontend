@@ -15,7 +15,7 @@ export const mappedFilterOperators = {
     'dateTime': getGridDateOperators(true).filter(operator => ['is', 'before', 'onOrBefore', 'after', 'onOrAfter'].includes(operator.value)),
     'number': getGridNumericOperators(),
     'boolean': getGridBooleanOperators(),
-    'singleSelect': getGridSingleSelectOperators()
+    'singleSelect': getGridSingleSelectOperators().filter(operator => ['is'].includes(operator.value)),
 }
 
 /**
