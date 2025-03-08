@@ -7,15 +7,14 @@ import {AlertContext} from "../../app_infrastructure/components/AlertContext";
 import DataTable from "../../app_infrastructure/components/DataTable";
 import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
 
-
 /**
  * ExpenseCategoryList component to display list of Budget ExpenseCategories.
  */
 export default function TransferCategoryList() {
     const {contextBudgetId} = useContext(BudgetContext);
-    // TODO - replace with /transfer_categories endpoint
-    const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expense_categories/`
+    const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/`
     const {alert, setAlert} = useContext(AlertContext);
+    const [typeOptions, setTypeOptions] = useState([]);
     const [priorityOptions, setPriorityOptions] = useState([]);
     const [ownerOptions, setOwnerOptions] = useState([]);
     const columns = [
@@ -29,6 +28,18 @@ export default function TransferCategoryList() {
             editable: true,
         },
         {
+            field: 'category_type',
+            type: 'singleSelect',
+            headerName: 'Type',
+            flex: 3,
+            filterable: true,
+            sortable: true,
+            editable: true,
+            valueOptions: typeOptions,
+            valueOptionsSetter: setTypeOptions,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/categories/types`
+        },
+        {
             field: 'priority',
             type: 'singleSelect',
             headerName: 'Priority',
@@ -38,8 +49,7 @@ export default function TransferCategoryList() {
             editable: true,
             valueOptions: priorityOptions,
             valueOptionsSetter: setPriorityOptions,
-            // TODO - replace with /categories/priorities endpoint
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/categories/priorities/expense`
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/categories/priorities`
         },
         {
             field: 'owner',
