@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useMemo, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
     DataGrid,
     GridActionsCellItem,
@@ -31,6 +31,7 @@ const dataGridStyle = {
     '& .MuiInputBase-root': {color: white},
     '& .MuiInputBase-input': {color: black, display: "flex"},
     '& .MuiCheckbox-root .MuiSvgIcon-root': {color: black},
+    '& .MuiInputBase-root .MuiSvgIcon-root': {color: black},
     '& .MuiDataGrid-columnHeader': {backgroundColor: black, color: white},
     '& .MuiDataGrid-columnHeaderTitle': {fontWeight: 'bold !important'},
     '& .MuiDataGrid-footerContainer': {backgroundColor: black, color: white},
@@ -66,12 +67,11 @@ const DataTable = ({columns, apiUrl, useContextBudget = true}) => {
     const {contextBudgetId} = useContext(BudgetContext);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [objectToDelete, setObjectToDelete] = useState(null);
-    const extendedColumns = useMemo(() => [
+    const extendedColumns = [
         ...columns.map((column) => ({
                 ...column,
                 filterOperators: column.type in mappedFilterOperators ? mappedFilterOperators[column.type] : undefined,
             }
-
         )),
         {
             field: 'actions',
@@ -117,7 +117,7 @@ const DataTable = ({columns, apiUrl, useContextBudget = true}) => {
                 }
             }
         },
-    ], [rowModesModel]);
+    ]
 
     /**
      * Fetches objects list from API.
@@ -142,6 +142,27 @@ const DataTable = ({columns, apiUrl, useContextBudget = true}) => {
         }
         loadData();
     }, [contextBudgetId, paginationModel, sortModel, filterModel, addedObjectId]);
+
+    /**
+     * Fetches singleSelect choices from API.
+     * In case of nullChoice (choice saving null value in API) extends valueOptions with such choice.
+     */
+    useEffect(() => {
+        const loadSingleSelectChoices = async () => {
+            for (const column of extendedColumns) {
+                if (column.type !== 'singleSelect') {
+                    continue;
+                }
+                try {
+                    const choicesResponse = await getApiObjectsList(column.valueOptionsApiUrl)
+                    column.valueOptionsSetter(column.nullChoice ? [column.nullChoice, ...choicesResponse.results] : choicesResponse.results);
+                } catch (err) {
+                    setAlert({type: 'error', message: "Failed to load choices for select field.\n" + err});
+                }
+            }
+        }
+        loadSingleSelectChoices();
+    }, [contextBudgetId])
 
     /**
      * Function to update DataGrid pagination model.
@@ -198,8 +219,14 @@ const DataTable = ({columns, apiUrl, useContextBudget = true}) => {
 
             return emptyRow;
         }, {}))
+
         setRows((oldRows) => {
-            id = oldRows.reduce((maxId, row) => row.id > maxId ? row.id : maxId, oldRows[0].id) + 1
+            if (oldRows.length !== 0) {
+                id = oldRows.reduce((maxId, row) => row.id > maxId ? row.id : maxId, oldRows[0].id) + 1
+            }
+            else {
+                id = 1
+            }
             return [
                 {id, ...emptyCells, isNew: true},
                 ...oldRows,

@@ -3,6 +3,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import SellIcon from '@mui/icons-material/Sell';
 import ListItemText from "@mui/material/ListItemText";
 import * as React from "react";
 import List from "@mui/material/List";
@@ -43,6 +44,12 @@ function SidebarList() {
                         <CalendarMonthIcon style={iconComponentStyling}/>
                     </ListItemIcon>
                     <ListItemText primary="Periods" sx={listItemTextStyling}/>
+                </ListItemButton>
+                <ListItemButton component={Link} to="/transfer_categories" sx={listItemButtonStyling}>
+                    <ListItemIcon sx={listItemIconStyling}>
+                        <SellIcon style={iconComponentStyling}/>
+                    </ListItemIcon>
+                    <ListItemText primary="Transfer categories" sx={listItemTextStyling}/>
                 </ListItemButton>
             </ListItem>
         </List>

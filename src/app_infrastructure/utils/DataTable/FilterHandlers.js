@@ -15,7 +15,7 @@ export const mappedFilterOperators = {
     'dateTime': getGridDateOperators(true).filter(operator => ['is', 'before', 'onOrBefore', 'after', 'onOrAfter'].includes(operator.value)),
     'number': getGridNumericOperators(),
     'boolean': getGridBooleanOperators(),
-    'singleSelect': getGridSingleSelectOperators()
+    'singleSelect': getGridSingleSelectOperators().filter(operator => ['is'].includes(operator.value)),
 }
 
 /**
@@ -32,12 +32,10 @@ export function formatFilterModel(updatedFilterModel, columns) {
     }
     const filterItem = updatedFilterModel.items[0]
     const column = columns.find(column => column.field === filterItem.field)
-    console.log(column)
     switch (column.type) {
         case 'date':
             return formatDateFilter(filterItem)
         default:
-            console.log('DEFAULT FILTER: ', {[filterItem.field]: filterItem.value})
             return {[filterItem.field]: filterItem.value}
     }
 }

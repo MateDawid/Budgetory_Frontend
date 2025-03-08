@@ -41,7 +41,7 @@ function RegisterForm() {
      */
     const onSubmit = async (data) => {
         try {
-            const {response, isError} = await registerUser(data.email, data.password_1, data.password_2);
+            const {response, isError} = await registerUser(data);
             if (isError) {
                 setError(response.response.data.detail.email || response.response.data.detail.password_1 || response.response.data.detail.password_2 || response.response.data.detail.non_field_errors ||'An error occurred. Please try again.');
             } else {
@@ -89,6 +89,22 @@ function RegisterForm() {
                         sx={{mb: 2}}
                     />
                     <TextField
+                        data-cy='username-field'
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        label="Username"
+                        autoComplete="username"
+                        autoFocus
+                        {...register('username', {
+                            required: 'Username is required'
+                        })}
+                        error={!!errors.email}
+                        helperText={errors.email ? errors.email.message : ''}
+                        sx={{mb: 2}}
+                    />
+                    <TextField
                         data-cy='password-1-field'
                         variant="outlined"
                         margin="normal"
@@ -98,11 +114,7 @@ function RegisterForm() {
                         type="password"
                         autoComplete="current-password"
                         {...register('password_1', {
-                            required: 'Password is required',
-                            minLength: {
-                                value: 8,
-                                message: 'Password must be at least 8 characters'
-                            }
+                            required: 'Password is required'
                         })}
                         error={!!errors.password_1}
                         helperText={errors.password_1 ? errors.password_1.message : ''}
@@ -117,11 +129,7 @@ function RegisterForm() {
                         type="password"
                         autoComplete="current-password"
                         {...register('password_2', {
-                            required: 'Password is required',
-                            minLength: {
-                                value: 8,
-                                message: 'Password must be at least 8 characters'
-                            }
+                            required: 'Password is required'
                         })}
                         error={!!errors.password_2}
                         helperText={errors.password_2 ? errors.password_2.message : ''}
