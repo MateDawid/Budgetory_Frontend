@@ -6,15 +6,10 @@ export const BudgetContext = createContext();
  * ContextBudgetProvider for storing context Budget between pages.
  */
 export const ContextBudgetProvider = ({children}) => {
-    const [contextBudgetId, setContextBudgetId] = useState(null);
-
-    /**
-     * Gets contextBudget from localStorage.
-     */
-    useEffect(() => {
-        const storedContextBudgetId = localStorage.getItem('budgetory.contextBudget') ?? null
-        if (storedContextBudgetId) setContextBudgetId(parseInt(storedContextBudgetId, 10))
-    }, [])
+    const initialContextBudgetId = localStorage.getItem('budgetory.contextBudget')
+        ? parseInt(localStorage.getItem('budgetory.contextBudget'), 10)
+        : null;
+    const [contextBudgetId, setContextBudgetId] = useState(initialContextBudgetId);
 
     /**
      * Saves contextBudgetId in localStorage on contextBudgetId change.

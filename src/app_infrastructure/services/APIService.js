@@ -9,7 +9,7 @@ import ApiError from "../../app_infrastructure/utils/ApiError";
  * @param {object} filterModel - filterModel object.
  * @return {object} - JSON data with API response.
  */
-export const getApiObjectsList = async (url, paginationModel, sortModel, filterModel) => {
+export const getApiObjectsList = async (url, paginationModel = {}, sortModel = {}, filterModel = {}) => {
     const token = await getAccessToken()
     let url_params = {...sortModel, ...filterModel}
     if (Object.entries(paginationModel).length !== 0) {
@@ -20,7 +20,6 @@ export const getApiObjectsList = async (url, paginationModel, sortModel, filterM
         }
     }
     url = url + '?' + new URLSearchParams(url_params);
-    console.log(url)
     const response = await fetch(url, {method: "GET", headers: {Authorization: `Bearer ${token}`}})
     return await response.json();
 };
@@ -80,7 +79,6 @@ export const updateApiObject = async (url, updatedObject) => {
             },
             body: JSON.stringify(updatedObject)
         }
-        console.log(url, requestOptions)
         const response = await fetch(url, requestOptions)
         if (!response.ok) {
             const data = await response.json()
