@@ -3,24 +3,30 @@ import ApiError from "../../app_infrastructure/utils/ApiError";
 
 /**
  * Function to fetch data from API list endpoint.
- * @param {string} url - API list url.
+ * @param {string} input_url - API list url.
  * @param {object} paginationModel - paginationModel object with page number and page size.
  * @param {object} sortModel - sortModel object.
  * @param {object} filterModel - filterModel object.
  * @return {object} - JSON data with API response.
  */
-export const getApiObjectsList = async (url, paginationModel = {}, sortModel = {}, filterModel = {}) => {
-    const token = await getAccessToken()
-    let url_params = {...sortModel, ...filterModel}
+export const getApiObjectsList = async (input_url, paginationModel = {}, sortModel = {}, filterModel = {}) => {
+    const token = await getAccessToken();
+    let url_params = {...sortModel, ...filterModel};
     if (Object.entries(paginationModel).length !== 0) {
         url_params = {
             page: paginationModel.page + 1,
             page_size: paginationModel.pageSize,
             ...url_params
-        }
+        };
     }
-    url = url + '?' + new URLSearchParams(url_params);
-    const response = await fetch(url, {method: "GET", headers: {Authorization: `Bearer ${token}`}})
+    const url = new URL(input_url);
+    const existingParams = new URLSearchParams(url.search);
+    const newParams = new URLSearchParams(url_params);
+    for (const [key, value] of newParams) {
+        existingParams.append(key, value);
+    }
+    const output_url = `${url.origin}${url.pathname}?${existingParams.toString()}`;
+    const response = await fetch(output_url, {method: "GET", headers: {Authorization: `Bearer ${token}`}});
     return await response.json();
 };
 
