@@ -4,6 +4,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import SellIcon from '@mui/icons-material/Sell';
+import LocalGroceryStoreRoundedIcon from '@mui/icons-material/LocalGroceryStoreRounded';
 import ListItemText from "@mui/material/ListItemText";
 import * as React from "react";
 import List from "@mui/material/List";
@@ -50,6 +51,12 @@ function SidebarList() {
                         <SellIcon style={iconComponentStyling}/>
                     </ListItemIcon>
                     <ListItemText primary="Transfer categories" sx={listItemTextStyling}/>
+                </ListItemButton>
+                <ListItemButton component={Link} to="/entities" sx={listItemButtonStyling}>
+                    <ListItemIcon sx={listItemIconStyling}>
+                        <LocalGroceryStoreRoundedIcon style={iconComponentStyling}/>
+                    </ListItemIcon>
+                    <ListItemText primary="Entities" sx={listItemTextStyling}/>
                 </ListItemButton>
             </ListItem>
         </List>

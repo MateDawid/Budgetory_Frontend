@@ -11,6 +11,7 @@ import {AlertProvider} from "./AlertContext";
 import BudgetingPeriodList from "../../budgets/pages/BudgetingPeriodList";
 import {ContextBudgetProvider} from "./BudgetContext";
 import TransferCategoryList from "../../categories/pages/TransferCategoryList";
+import EntityList from "../../entities/pages/EntityList";
 
 /**
  * App component handles routing of application.
@@ -25,6 +26,7 @@ function App() {
                     <Route path='budgets' element={<BudgetList/>}/>
                     <Route path='periods' element={<BudgetingPeriodList/>}/>
                     <Route path='transfer_categories' element={<TransferCategoryList/>}/>
+                    <Route path='entities' element={<EntityList/>}/>
                 </Route>
                 <Route path='login' element={<LoginForm/>}/>
                 <Route path='register' element={<RegisterForm/>}/>

@@ -8,7 +8,7 @@ import DataTable from "../../app_infrastructure/components/DataTable";
 import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
 
 /**
- * ExpenseCategoryList component to display list of Budget ExpenseCategories.
+ * TransferCategoryList component to display list of Budget TransferCategories.
  */
 export default function TransferCategoryList() {
     const {contextBudgetId} = useContext(BudgetContext);
