@@ -2,6 +2,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+import AccountBalanceWalletRoundedIcon from '@mui/icons-material/AccountBalanceWalletRounded';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import SellIcon from '@mui/icons-material/Sell';
 import LocalGroceryStoreRoundedIcon from '@mui/icons-material/LocalGroceryStoreRounded';
@@ -51,6 +52,12 @@ function SidebarList() {
                         <SellIcon style={iconComponentStyling}/>
                     </ListItemIcon>
                     <ListItemText primary="Transfer categories" sx={listItemTextStyling}/>
+                </ListItemButton>
+                <ListItemButton component={Link} to="/deposits" sx={listItemButtonStyling}>
+                    <ListItemIcon sx={listItemIconStyling}>
+                        <AccountBalanceWalletRoundedIcon style={iconComponentStyling}/>
+                    </ListItemIcon>
+                    <ListItemText primary="Deposits" sx={listItemTextStyling}/>
                 </ListItemButton>
                 <ListItemButton component={Link} to="/entities" sx={listItemButtonStyling}>
                     <ListItemIcon sx={listItemIconStyling}>
