@@ -3,13 +3,13 @@ import ApiError from "../../app_infrastructure/utils/ApiError";
 
 /**
  * Function to fetch data from API list endpoint.
- * @param {string} input_url - API list url.
+ * @param {string} inputUrl - API list url.
  * @param {object} paginationModel - paginationModel object with page number and page size.
  * @param {object} sortModel - sortModel object.
  * @param {object} filterModel - filterModel object.
  * @return {object} - JSON data with API response.
  */
-export const getApiObjectsList = async (input_url, paginationModel = {}, sortModel = {}, filterModel = {}) => {
+export const getApiObjectsList = async (inputUrl, paginationModel = {}, sortModel = {}, filterModel = {}) => {
     const token = await getAccessToken();
     let url_params = {...sortModel, ...filterModel};
     if (Object.entries(paginationModel).length !== 0) {
@@ -19,7 +19,7 @@ export const getApiObjectsList = async (input_url, paginationModel = {}, sortMod
             ...url_params
         };
     }
-    const url = new URL(input_url);
+    const url = new URL(inputUrl);
     const existingParams = new URLSearchParams(url.search);
     const newParams = new URLSearchParams(url_params);
     for (const [key, value] of newParams) {
@@ -68,15 +68,16 @@ export const createApiObject = async (url, newObject) => {
 
 /**
  * Function to update single object from API.
- * @param {string} url - API list url.
+ * @param {string} inputUrl - API list url.
  * @param {object} updatedObject - Payload for API call with updated object values.
  * @return {object} - JSON data with API response.
  */
-export const updateApiObject = async (url, updatedObject) => {
+export const updateApiObject = async (inputUrl, updatedObject) => {
+    const url = new URL(inputUrl);
     let dataErrorRaised = false
     try {
         const token = await getAccessToken()
-        url = url + updatedObject["id"] + '/'
+        const detailUrl = `${url.origin}${url.pathname}${updatedObject["id"]}/`
         const requestOptions = {
             method: "PATCH",
             headers: {
@@ -85,7 +86,7 @@ export const updateApiObject = async (url, updatedObject) => {
             },
             body: JSON.stringify(updatedObject)
         }
-        const response = await fetch(url, requestOptions)
+        const response = await fetch(detailUrl, requestOptions)
         if (!response.ok) {
             const data = await response.json()
             dataErrorRaised = true
@@ -106,14 +107,15 @@ export const updateApiObject = async (url, updatedObject) => {
 
 /**
  * Function to delete single object from API.
- * @param {string} url - API list url.
+ * @param {string} inputUrl - API list url.
  * @param {string} objectId - id of deleted object.
  * @return {object} - JSON data with API response.
  */
-export const deleteApiObject = async (url, objectId) => {
+export const deleteApiObject = async (inputUrl, objectId) => {
+    const url = new URL(inputUrl);
     try {
         const token = await getAccessToken()
-        url = url + objectId + '/'
+        const detailUrl = `${url.origin}${url.pathname}${objectId}/`
         const requestOptions = {
             method: "DELETE",
             headers: {
@@ -121,7 +123,7 @@ export const deleteApiObject = async (url, objectId) => {
                 "Content-Type": "application/json",
             }
         }
-        const response = await fetch(url, requestOptions)
+        const response = await fetch(detailUrl, requestOptions)
         if (!response.ok) {
             const data = await response.json()
             return {errorOccurred: true, ...data}
