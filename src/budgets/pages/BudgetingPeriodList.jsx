@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import Typography from "@mui/material/Typography";
 import {Paper} from "@mui/material";
 import Divider from "@mui/material/Divider";
@@ -15,6 +15,7 @@ export default function BudgetingPeriodList() {
     const {contextBudgetId} = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`
     const {alert, setAlert} = useContext(AlertContext);
+    const [statusOptions, setStatusOptions] = useState([]);
     const columns = [
         {
             field: 'name',
@@ -24,6 +25,18 @@ export default function BudgetingPeriodList() {
             filterable: true,
             sortable: true,
             editable: true,
+        },
+        {
+            field: 'status',
+            type: 'singleSelect',
+            headerName: 'Status',
+            flex: 1,
+            filterable: true,
+            sortable: true,
+            editable: true,
+            valueOptions: statusOptions,
+            valueOptionsSetter: setStatusOptions,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/periods/statuses`
         },
         {
             field: 'date_start',
@@ -62,15 +75,6 @@ export default function BudgetingPeriodList() {
                     return value
                 }
             },
-        },
-        {
-            field: 'is_active',
-            type: 'boolean',
-            headerName: 'Active',
-            flex: 1,
-            filterable: true,
-            sortable: false,
-            editable: true,
         },
     ]
 
