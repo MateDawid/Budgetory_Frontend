@@ -7,74 +7,66 @@ import {AlertContext} from "../../app_infrastructure/components/AlertContext";
 import DataTable from "../../app_infrastructure/components/DataTable";
 import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
 
-
 /**
- * BudgetingPeriodList component to display list of Budget BudgetingPeriods.
+ * ExpensePredictionList component to display list of Budget ExpensePredictions.
  */
-export default function BudgetingPeriodList() {
+export default function ExpensePredictionList() {
     const {contextBudgetId} = useContext(BudgetContext);
-    const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`
+    const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expense_predictions/`
     const {alert, setAlert} = useContext(AlertContext);
-    const [statusOptions, setStatusOptions] = useState([]);
+    const [periodOptions, setPeriodOptions] = useState([]);
+    const [categoryOptions, setCategoryOptions] = useState([]);
     const columns = [
         {
-            field: 'name',
-            type: 'string',
-            headerName: 'Name',
+            field: 'period',
+            type: 'singleSelect',
+            headerName: 'Period',
+            flex: 3,
+            filterable: true,
+            sortable: true,
+            editable: true,
+            valueOptions: periodOptions,
+            valueOptionsSetter: setPeriodOptions,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods`,
+        },
+        {
+            field: 'category',
+            type: 'singleSelect',
+            headerName: 'Category',
+            flex: 3,
+            filterable: true,
+            sortable: true,
+            editable: true,
+            valueOptions: categoryOptions,
+            valueOptionsSetter: setCategoryOptions,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?category_type=2`,
+        },
+        {
+            field: 'initial_value',
+            type: 'number',
+            headerName: 'Initial Value',
+            flex: 3,
+            filterable: true,
+            sortable: true,
+            editable: false,
+        },
+        {
+            field: 'current_value',
+            type: 'number',
+            headerName: 'Current Value',
             flex: 3,
             filterable: true,
             sortable: true,
             editable: true,
         },
         {
-            field: 'status',
-            type: 'singleSelect',
-            headerName: 'Status',
-            flex: 1,
+            field: 'description',
+            type: 'string',
+            headerName: 'Description',
+            flex: 3,
             filterable: true,
-            sortable: true,
+            sortable: false,
             editable: true,
-            valueOptions: statusOptions,
-            valueOptionsSetter: setStatusOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/periods/statuses`
-        },
-        {
-            field: 'date_start',
-            type: 'date',
-            headerName: 'Date start',
-            flex: 2,
-            filterable: true,
-            sortable: true,
-            editable: true,
-            valueGetter: (value) => {
-                return new Date(value);
-            },
-            valueFormatter: (value) => {
-                try {
-                    return value.toLocaleDateString('en-CA')
-                } catch (error) {
-                    return value
-                }
-            },
-        },
-        {
-            field: 'date_end',
-            type: 'date',
-            headerName: 'Date end',
-            flex: 2,
-            filterable: true,
-            sortable: true,
-            editable: true,
-            valueGetter: (value) => {
-                return new Date(value);
-            },
-            valueFormatter: (value) => {
-                try {
-                    return value.toLocaleDateString('en-CA')
-                } catch (error) {
-                    return value
-                }
-            },
         },
     ]
 
@@ -87,7 +79,7 @@ export default function BudgetingPeriodList() {
                 }
             }}>
                 <Typography variant="h4" gutterBottom
-                            sx={{display: 'block', color: '#BD0000'}}>Periods</Typography>
+                            sx={{display: 'block', color: '#BD0000'}}>Expense predictions</Typography>
                 <Divider/>
                 {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}
                                  onClose={() => setAlert(null)}>{alert.message}</Alert>}

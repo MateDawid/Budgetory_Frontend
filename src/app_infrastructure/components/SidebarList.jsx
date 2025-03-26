@@ -6,6 +6,7 @@ import AccountBalanceWalletRoundedIcon from '@mui/icons-material/AccountBalanceW
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import SellIcon from '@mui/icons-material/Sell';
 import LocalGroceryStoreRoundedIcon from '@mui/icons-material/LocalGroceryStoreRounded';
+import LightbulbCircleIcon from '@mui/icons-material/LightbulbCircle';
 import ListItemText from "@mui/material/ListItemText";
 import * as React from "react";
 import List from "@mui/material/List";
@@ -64,6 +65,12 @@ function SidebarList() {
                         <LocalGroceryStoreRoundedIcon style={iconComponentStyling}/>
                     </ListItemIcon>
                     <ListItemText primary="Entities" sx={listItemTextStyling}/>
+                </ListItemButton>
+                                <ListItemButton component={Link} to="/expense_predictions" sx={listItemButtonStyling}>
+                    <ListItemIcon sx={listItemIconStyling}>
+                        <LightbulbCircleIcon style={iconComponentStyling}/>
+                    </ListItemIcon>
+                    <ListItemText primary="Expense predictions" sx={listItemTextStyling}/>
                 </ListItemButton>
             </ListItem>
         </List>

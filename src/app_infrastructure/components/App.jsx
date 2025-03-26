@@ -13,6 +13,7 @@ import {ContextBudgetProvider} from "./BudgetContext";
 import TransferCategoryList from "../../categories/pages/TransferCategoryList";
 import EntityList from "../../entities/pages/EntityList";
 import DepositList from "../../entities/pages/DepositList";
+import ExpensePredictionList from "../../predictions/pages/ExpensePredictionList";
 
 /**
  * App component handles routing of application.
@@ -29,6 +30,7 @@ function App() {
                     <Route path='transfer_categories' element={<TransferCategoryList/>}/>
                     <Route path='deposits' element={<DepositList/>}/>
                     <Route path='entities' element={<EntityList/>}/>
+                    <Route path='expense_predictions' element={<ExpensePredictionList/>}/>
                 </Route>
                 <Route path='login' element={<LoginForm/>}/>
                 <Route path='register' element={<RegisterForm/>}/>
