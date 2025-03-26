@@ -13,7 +13,7 @@ export const mappedFilterOperators = {
     'string': getGridStringOperators().filter(operator => ['contains'].includes(operator.value)),
     'date': getGridDateOperators().filter(operator => ['is', 'before', 'onOrBefore', 'after', 'onOrAfter'].includes(operator.value)),
     'dateTime': getGridDateOperators(true).filter(operator => ['is', 'before', 'onOrBefore', 'after', 'onOrAfter'].includes(operator.value)),
-    'number': getGridNumericOperators(),
+    'number': getGridNumericOperators().filter(operator => ['=', '>=', '<='].includes(operator.value)),
     'boolean': getGridBooleanOperators(),
     'singleSelect': getGridSingleSelectOperators().filter(operator => ['is'].includes(operator.value)),
 }
@@ -35,6 +35,8 @@ export function formatFilterModel(updatedFilterModel, columns) {
     switch (column.type) {
         case 'date':
             return formatDateFilter(filterItem)
+        case 'number':
+            return formatNumberFilter(filterItem)
         default:
             return {[filterItem.field]: filterItem.value}
     }
@@ -79,4 +81,21 @@ function formatDateFilter(filterItem) {
 function formatDate(date) {
     // TODO - use it in all places where formatting appears
     return date.toLocaleDateString('en-CA');
+}
+
+/**
+ * Function for formatting number filter for API calls purposes.
+ * @param {object} filterItem - Filter definition received from DataGrid
+ * @return {object} - Formatted filterModel with number filter for DataGrid.
+ */
+function formatNumberFilter(filterItem) {
+    switch (filterItem.operator) {
+        case '>=': {
+            return {[`${filterItem.field}_min`]: filterItem.value};
+        }
+        case '<=':
+            return {[`${filterItem.field}_max`]: filterItem.value};
+        default:
+            return {[filterItem.field]: filterItem.value};
+    }
 }
