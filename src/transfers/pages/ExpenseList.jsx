@@ -8,15 +8,16 @@ import DataTable from "../../app_infrastructure/components/DataTable";
 import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
 
 /**
- * IncomeList component to display list of Budget INCOME Transfers.
+ * ExpenseList component to display list of Budget INCOME Transfers.
  */
-export default function IncomeList() {
+export default function ExpenseList() {
     const {contextBudgetId} = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/incomes/`
     const {alert, setAlert} = useContext(AlertContext);
     const [periodOptions, setPeriodOptions] = useState([]);
     const [entityOptions, setEntityOptions] = useState([]);
     const [categoryOptions, setCategoryOptions] = useState([]);
+    const [depositOptions, setDepositOptions] = useState([]);
     const columns = [
         {
             field: 'date',
@@ -51,7 +52,7 @@ export default function IncomeList() {
         },
         {
             field: 'entity',
-            type: 'singleSelect', // TODO: Search
+            type: 'singleSelect',
             headerName: 'Entity',
             flex: 3,
             filterable: true,
@@ -59,7 +60,7 @@ export default function IncomeList() {
             editable: true,
             valueOptions: entityOptions,
             valueOptionsSetter: setEntityOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities`,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities?page_size=1000`,
         },
         {
             field: 'name',
@@ -93,14 +94,14 @@ export default function IncomeList() {
         },
         {
             field: 'deposit',
-            type: 'singleSelect', // TODO: Search
+            type: 'singleSelect',
             headerName: 'Deposit',
             flex: 3,
             filterable: true,
             sortable: true,
             editable: true,
-            valueOptions: entityOptions,
-            valueOptionsSetter: setEntityOptions,
+            valueOptions: depositOptions,
+            valueOptionsSetter: setDepositOptions,
             valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits`,
         },
         {
@@ -123,7 +124,7 @@ export default function IncomeList() {
                 }
             }}>
                 <Typography variant="h4" gutterBottom
-                            sx={{display: 'block', color: '#BD0000'}}>Incomes</Typography>
+                            sx={{display: 'block', color: '#BD0000'}}>Expenses</Typography>
                 <Divider/>
                 {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}
                                  onClose={() => setAlert(null)}>{alert.message}</Alert>}

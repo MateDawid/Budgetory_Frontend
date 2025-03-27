@@ -17,6 +17,7 @@ export default function IncomeList() {
     const [periodOptions, setPeriodOptions] = useState([]);
     const [entityOptions, setEntityOptions] = useState([]);
     const [categoryOptions, setCategoryOptions] = useState([]);
+    const [depositOptions, setDepositOptions] = useState([]);
     const columns = [
         {
             field: 'date',
@@ -51,7 +52,7 @@ export default function IncomeList() {
         },
         {
             field: 'entity',
-            type: 'singleSelect', // TODO: Search
+            type: 'singleSelect',
             headerName: 'Entity',
             flex: 3,
             filterable: true,
@@ -59,7 +60,7 @@ export default function IncomeList() {
             editable: true,
             valueOptions: entityOptions,
             valueOptionsSetter: setEntityOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities`,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities?page_size=1000`,
         },
         {
             field: 'name',
@@ -93,14 +94,14 @@ export default function IncomeList() {
         },
         {
             field: 'deposit',
-            type: 'singleSelect', // TODO: Search
+            type: 'singleSelect',
             headerName: 'Deposit',
             flex: 3,
             filterable: true,
             sortable: true,
             editable: true,
-            valueOptions: entityOptions,
-            valueOptionsSetter: setEntityOptions,
+            valueOptions: depositOptions,
+            valueOptionsSetter: setDepositOptions,
             valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits`,
         },
         {
