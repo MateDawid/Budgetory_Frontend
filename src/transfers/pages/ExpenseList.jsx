@@ -12,7 +12,7 @@ import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
  */
 export default function ExpenseList() {
     const {contextBudgetId} = useContext(BudgetContext);
-    const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/incomes/`
+    const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expenses/`
     const {alert, setAlert} = useContext(AlertContext);
     const [periodOptions, setPeriodOptions] = useState([]);
     const [entityOptions, setEntityOptions] = useState([]);
@@ -48,7 +48,7 @@ export default function ExpenseList() {
             editable: true,
             valueOptions: periodOptions,
             valueOptionsSetter: setPeriodOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods`,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`,
         },
         {
             field: 'entity',
@@ -60,7 +60,7 @@ export default function ExpenseList() {
             editable: true,
             valueOptions: entityOptions,
             valueOptionsSetter: setEntityOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities?page_size=1000`,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?page_size=1000`,
         },
         {
             field: 'name',
@@ -81,7 +81,7 @@ export default function ExpenseList() {
             editable: true,
             valueOptions: categoryOptions,
             valueOptionsSetter: setCategoryOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?category_type=1`,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?category_type=2`,
         },
         {
             field: 'value',
@@ -90,7 +90,7 @@ export default function ExpenseList() {
             flex: 3,
             filterable: true,
             sortable: true,
-            editable: false,
+            editable: true,
         },
         {
             field: 'deposit',
@@ -102,7 +102,7 @@ export default function ExpenseList() {
             editable: true,
             valueOptions: depositOptions,
             valueOptionsSetter: setDepositOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits`,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`,
         },
         {
             field: 'description',

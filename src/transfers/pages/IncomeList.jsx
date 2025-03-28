@@ -48,7 +48,7 @@ export default function IncomeList() {
             editable: true,
             valueOptions: periodOptions,
             valueOptionsSetter: setPeriodOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods`,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`,
         },
         {
             field: 'entity',
@@ -60,7 +60,7 @@ export default function IncomeList() {
             editable: true,
             valueOptions: entityOptions,
             valueOptionsSetter: setEntityOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities?page_size=1000`,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?page_size=1000`,
         },
         {
             field: 'name',
@@ -90,7 +90,7 @@ export default function IncomeList() {
             flex: 3,
             filterable: true,
             sortable: true,
-            editable: false,
+            editable: true,
         },
         {
             field: 'deposit',
@@ -102,7 +102,7 @@ export default function IncomeList() {
             editable: true,
             valueOptions: depositOptions,
             valueOptionsSetter: setDepositOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits`,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`,
         },
         {
             field: 'description',
