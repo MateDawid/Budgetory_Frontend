@@ -6,7 +6,9 @@ import AccountBalanceWalletRoundedIcon from '@mui/icons-material/AccountBalanceW
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import SellIcon from '@mui/icons-material/Sell';
 import LocalGroceryStoreRoundedIcon from '@mui/icons-material/LocalGroceryStoreRounded';
-import LightbulbCircleIcon from '@mui/icons-material/LightbulbCircle';
+import CalculateOutlinedIcon from '@mui/icons-material/CalculateOutlined';
+import PaymentIcon from '@mui/icons-material/Payment';
+import ReceiptIcon from '@mui/icons-material/Receipt';
 import ListItemText from "@mui/material/ListItemText";
 import * as React from "react";
 import List from "@mui/material/List";
@@ -66,11 +68,23 @@ function SidebarList() {
                     </ListItemIcon>
                     <ListItemText primary="Entities" sx={listItemTextStyling}/>
                 </ListItemButton>
-                                <ListItemButton component={Link} to="/expense_predictions" sx={listItemButtonStyling}>
+                <ListItemButton component={Link} to="/expense_predictions" sx={listItemButtonStyling}>
                     <ListItemIcon sx={listItemIconStyling}>
-                        <LightbulbCircleIcon style={iconComponentStyling}/>
+                        <CalculateOutlinedIcon style={iconComponentStyling}/>
                     </ListItemIcon>
                     <ListItemText primary="Expense predictions" sx={listItemTextStyling}/>
+                </ListItemButton>
+                <ListItemButton component={Link} to="/incomes" sx={listItemButtonStyling}>
+                    <ListItemIcon sx={listItemIconStyling}>
+                        <PaymentIcon style={iconComponentStyling}/>
+                    </ListItemIcon>
+                    <ListItemText primary="Incomes" sx={listItemTextStyling}/>
+                </ListItemButton>
+                <ListItemButton component={Link} to="/expenses" sx={listItemButtonStyling}>
+                    <ListItemIcon sx={listItemIconStyling}>
+                        <ReceiptIcon style={iconComponentStyling}/>
+                    </ListItemIcon>
+                    <ListItemText primary="Expenses" sx={listItemTextStyling}/>
                 </ListItemButton>
             </ListItem>
         </List>

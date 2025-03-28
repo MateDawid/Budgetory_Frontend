@@ -14,6 +14,8 @@ import TransferCategoryList from "../../categories/pages/TransferCategoryList";
 import EntityList from "../../entities/pages/EntityList";
 import DepositList from "../../entities/pages/DepositList";
 import ExpensePredictionList from "../../predictions/pages/ExpensePredictionList";
+import IncomeList from "../../transfers/pages/IncomeList";
+import ExpenseList from "../../transfers/pages/ExpenseList";
 
 /**
  * App component handles routing of application.
@@ -31,6 +33,8 @@ function App() {
                     <Route path='deposits' element={<DepositList/>}/>
                     <Route path='entities' element={<EntityList/>}/>
                     <Route path='expense_predictions' element={<ExpensePredictionList/>}/>
+                    <Route path='incomes' element={<IncomeList/>}/>
+                    <Route path='expenses' element={<ExpenseList/>}/>
                 </Route>
                 <Route path='login' element={<LoginForm/>}/>
                 <Route path='register' element={<RegisterForm/>}/>
