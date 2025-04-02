@@ -30,15 +30,7 @@ export default function BudgetList() {
             filterable: false,
             sortable: false,
             editable: true,
-        },
-        {
-            field: 'currency',
-            headerName: 'Currency',
-            flex: 2,
-            filterable: false,
-            sortable: false,
-            editable: true,
-        },
+        }
     ]
 
     return (

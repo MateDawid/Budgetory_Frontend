@@ -19,7 +19,7 @@ export default function DepositList() {
             field: 'name',
             type: 'string',
             headerName: 'Name',
-            flex: 3,
+            flex: 2,
             filterable: true,
             sortable: true,
             editable: true,
@@ -41,7 +41,16 @@ export default function DepositList() {
             filterable: true,
             sortable: false,
             editable: true,
-        }
+        },
+        {
+            field: 'balance',
+            type: 'number',
+            headerName: 'Balance',
+            flex: 1,
+            filterable: true,
+            sortable: true,
+            editable: false,
+        },
     ]
 
     return (

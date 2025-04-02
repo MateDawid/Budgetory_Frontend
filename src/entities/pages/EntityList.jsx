@@ -19,7 +19,7 @@ export default function EntityList() {
             field: 'name',
             type: 'string',
             headerName: 'Name',
-            flex: 3,
+            flex: 2,
             filterable: true,
             sortable: true,
             editable: true,
