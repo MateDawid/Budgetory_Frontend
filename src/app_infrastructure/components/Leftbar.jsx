@@ -1,6 +1,15 @@
-import SidebarList from "./SidebarList";
 import * as React from "react";
 import Box from "@mui/material/Box";
+import List from "@mui/material/List";
+import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import SellIcon from "@mui/icons-material/Sell";
+import AccountBalanceWalletRoundedIcon from "@mui/icons-material/AccountBalanceWalletRounded";
+import LocalGroceryStoreRoundedIcon from "@mui/icons-material/LocalGroceryStoreRounded";
+import CalculateOutlinedIcon from "@mui/icons-material/CalculateOutlined";
+import PaymentIcon from "@mui/icons-material/Payment";
+import ReceiptIcon from "@mui/icons-material/Receipt";
+import LeftbarItem from "./LeftbarItem";
 
 /**
  * Leftbar component to display subpages navigation on left side of screen
@@ -9,7 +18,16 @@ const Leftbar = () => {
     return (
         <Box flex={1} pr={2} sx={{display: {xs: "none", sm: "block"}}}>
             <Box position="fixed" height="100%" sx={{backgroundColor: '#252525'}}>
-                <SidebarList/>
+                <List>
+                    <LeftbarItem url="/budgets" displayText="Budgets" icon={<AccountBalanceIcon />} />
+                    <LeftbarItem url="/periods" displayText="Periods" icon={<CalendarMonthIcon />} />
+                    <LeftbarItem url="/transfer_categories" displayText="Transfer categories" icon={<SellIcon />} />
+                    <LeftbarItem url="/deposits" displayText="Deposits" icon={<AccountBalanceWalletRoundedIcon />} />
+                    <LeftbarItem url="/entities" displayText="Entities" icon={<LocalGroceryStoreRoundedIcon />} />
+                    <LeftbarItem url="/expense_predictions" displayText="Expense predictions" icon={<CalculateOutlinedIcon />} />
+                    <LeftbarItem url="/incomes" displayText="Incomes" icon={<PaymentIcon />} />
+                    <LeftbarItem url="/expenses" displayText="Expenses" icon={<ReceiptIcon />} />
+                </List>
             </Box>
         </Box>
     )
