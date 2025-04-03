@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 import {getAccessToken} from "../../app_users/services/LoginService";
 import {Stack} from "@mui/material";
 import Leftbar from "../components/Leftbar";
+import Rightbar from "../components/Rightbar";
 
 /**
  * Base layout for subpages.
@@ -32,10 +33,10 @@ export default function BasePage() {
           <Navbar/>
           <Stack direction="row" justifyContent="space-between" alignItems="stretch">
               <Leftbar/>
-              <Box flex={4} p={2}>
+              <Box flex={5} p={2}>
                   <Outlet/>
               </Box>
-              {/*<Rightbar/>*/}
+              <Rightbar/>
           </Stack>
       </Box>
   )
