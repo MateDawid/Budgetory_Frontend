@@ -7,8 +7,8 @@ import RightbarItem from "./RightbarItem"
  */
 const Rightbar = () => {
     return (
-        <Box flex={1} sx={{display: {xs: "none", sm: "block"}}}>
-            <Box p={2}>
+        <Box flex={1} zIndex={999} sx={{display: {xs: "none", sm: "none", md: "block"}}}>
+            <Box position="fixed" width={250} p={2}>
                 <Card p={2}>
                     <List>
                         <RightbarItem deposit={{name: "Deposit 1", balance: "123 $"}}/>

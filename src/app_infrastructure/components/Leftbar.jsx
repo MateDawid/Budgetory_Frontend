@@ -16,7 +16,7 @@ import LeftbarItem from "./LeftbarItem";
  */
 const Leftbar = () => {
     return (
-        <Box flex={1} pr={2} sx={{display: {xs: "none", sm: "block"}}}>
+        <Box flex={1} zIndex={999} sx={{display: {xs: "none", sm: "none", md: "block"}}}>
             <Box position="fixed" height="100%" sx={{backgroundColor: '#252525'}}>
                 <List>
                     <LeftbarItem url="/budgets" displayText="Budgets" icon={<AccountBalanceIcon />} />

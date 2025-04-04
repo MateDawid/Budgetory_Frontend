@@ -8,7 +8,6 @@ import {styled} from "@mui/material/styles";
 const StyledListItemButton = styled(ListItemButton)({
     justifyContent: 'center',
     minHeight: 48,
-    px: 2.5
 })
 
 const StyledListItemIcon = styled(ListItemIcon)({
