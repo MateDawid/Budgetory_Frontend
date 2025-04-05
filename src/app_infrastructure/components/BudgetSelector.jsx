@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {Select, MenuItem, InputLabel} from '@mui/material';
+import {Select, MenuItem, InputLabel, FormControl} from '@mui/material';
 import {AlertContext} from "./AlertContext";
-import Box from "@mui/material/Box";
 import {BudgetContext} from "./BudgetContext";
 import {getApiObjectsList} from "../services/APIService";
 
@@ -20,9 +19,9 @@ const BudgetSelector = () => {
     useEffect(() => {
         const loadData = async () => {
             try {
-                const apiResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/`, {page: 0, pageSize: 100})
-                setBudgets(apiResponse.results);
-                const contextBudget = apiResponse.results.find(budget => budget.id === contextBudgetId);
+                const apiResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/`)
+                setBudgets(apiResponse);
+                const contextBudget = apiResponse.find(budget => budget.id === contextBudgetId);
                 if (contextBudget) {
                     setSelectedBudget(contextBudget);
                 }
@@ -44,19 +43,18 @@ const BudgetSelector = () => {
     };
 
     return (
-        <Box component="form" display="flex" alignItems="center" justifyContent="left"
-             sx={{width: '100%', maxWidth: '100%', marginTop: 2}}>
-            <InputLabel sx={{fontWeight: 700, marginRight: 2}}>
+        <FormControl sx={{ m: 2, width: '90%' }} >
+            <InputLabel sx={{fontWeight: 700}} >
                 Budget
             </InputLabel>
-            <Select value={selectedBudget} onChange={handleChange} sx={{minWidth: '15%', maxWidth: "35%"}}>
+            <Select value={selectedBudget} onChange={handleChange} label="Budget" sx={{ width: '100%' }}>
                 {budgets.map(budget => (
                     <MenuItem key={budget.id} value={budget}>
                         {budget.name}
                     </MenuItem>
                 ))}
             </Select>
-        </Box>
+        </FormControl>
     );
 };
 

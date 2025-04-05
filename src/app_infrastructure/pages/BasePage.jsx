@@ -31,9 +31,9 @@ export default function BasePage() {
   return (
       <Box>
           <Navbar/>
-          <Stack direction="row" justifyContent="space-between" alignItems="stretch">
+          <Stack direction="row" justifyContent="space-between" spacing={1}>
               <Leftbar/>
-              <Box flex={5} p={2}>
+              <Box flex={5} pt={2}>
                   <Outlet/>
               </Box>
               <Rightbar/>
