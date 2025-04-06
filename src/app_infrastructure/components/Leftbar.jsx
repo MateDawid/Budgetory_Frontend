@@ -16,8 +16,8 @@ import LeftbarItem from "./LeftbarItem";
  */
 const Leftbar = () => {
     return (
-        <Box flex={1} zIndex={999} sx={{display: {xs: "none", sm: "none", md: "block"}}}>
-            <Box position="fixed" height="100%" sx={{backgroundColor: '#252525'}}>
+        <Box width={240} height="100%" sx={{backgroundColor: '#252525', display: {xs: "none", sm: "none", md: "block"}}}>
+            <Box position="fixed" height="100%" sx={{backgroundColor: '#252525', overflow: 'auto'}}>
                 <List>
                     <LeftbarItem url="/budgets" displayText="Budgets" icon={<AccountBalanceIcon />} />
                     <LeftbarItem url="/periods" displayText="Periods" icon={<CalendarMonthIcon />} />

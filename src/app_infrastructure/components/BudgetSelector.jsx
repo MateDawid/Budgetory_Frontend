@@ -43,7 +43,7 @@ const BudgetSelector = () => {
     };
 
     return (
-        <FormControl sx={{ m: 2, width: '90%' }} >
+        <FormControl sx={{ width: '90%' }} >
             <InputLabel sx={{fontWeight: 700}} >
                 Budget
             </InputLabel>
