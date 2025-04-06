@@ -1,21 +1,21 @@
 import React from 'react';
 import {Route, Routes} from 'react-router-dom';
 
-import '../styles/App.css';
-import BasePage from "../pages/BasePage";
-import LandingPage from "../pages/LandingPage";
-import LoginForm from "../../app_users/pages/LoginForm";
-import RegisterForm from "../../app_users/pages/RegisterForm";
-import BudgetList from "../../budgets/pages/BudgetList";
-import {AlertProvider} from "./AlertContext";
-import BudgetingPeriodList from "../../budgets/pages/BudgetingPeriodList";
-import {ContextBudgetProvider} from "./BudgetContext";
-import TransferCategoryList from "../../categories/pages/TransferCategoryList";
-import EntityList from "../../entities/pages/EntityList";
-import DepositList from "../../entities/pages/DepositList";
-import ExpensePredictionList from "../../predictions/pages/ExpensePredictionList";
-import IncomeList from "../../transfers/pages/IncomeList";
-import ExpenseList from "../../transfers/pages/ExpenseList";
+import './App.css';
+import BasePage from "./app_infrastructure/pages/BasePage";
+import LandingPage from "./app_infrastructure/pages/LandingPage";
+import LoginForm from "./app_users/pages/LoginForm";
+import RegisterForm from "./app_users/pages/RegisterForm";
+import BudgetList from "./budgets/pages/BudgetList";
+import {AlertProvider} from "./app_infrastructure/components/AlertContext";
+import BudgetingPeriodList from "./budgets/pages/BudgetingPeriodList";
+import {ContextBudgetProvider} from "./app_infrastructure/components/BudgetContext";
+import TransferCategoryList from "./categories/pages/TransferCategoryList";
+import EntityList from "./entities/pages/EntityList";
+import DepositList from "./entities/pages/DepositList";
+import ExpensePredictionList from "./predictions/pages/ExpensePredictionList";
+import IncomeList from "./transfers/pages/IncomeList";
+import ExpenseList from "./transfers/pages/ExpenseList";
 
 /**
  * App component handles routing of application.
