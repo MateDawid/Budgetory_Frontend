@@ -1,9 +1,9 @@
-import {Box, Button, Card, CardActions, CardHeader} from "@mui/material";
+import {Box, Card, CardActions, CardHeader} from "@mui/material";
 import PageviewIcon from '@mui/icons-material/Pageview';
 import DeleteIcon from "@mui/icons-material/Delete";
 import React from "react";
-import {styled} from "@mui/material/styles";
 import {Link} from 'react-router-dom';
+import StyledButton from "../../app_infrastructure/components/StyledButton";
 
 /**
  * Truncate text if it exceeds a certain length.
@@ -14,17 +14,6 @@ const truncateText = (text, maxLength) => {
     }
     return text;
 };
-
-const StyledButton = styled(Button)({
-    backgroundColor: "#FFFFFF",
-    color: "#BD0000",
-    borderColor: "#BD0000",
-    '&:hover': {
-        backgroundColor: "#BD0000",
-        color: "#FFFFFF",
-        borderColor: "#FFFFFF"
-    },
-})
 
 /**
  * BudgetCard component to display single Budget card on Budgets list.
