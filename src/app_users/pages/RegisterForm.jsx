@@ -92,7 +92,6 @@ function RegisterForm() {
                         data-cy='username-field'
                         variant="outlined"
                         margin="normal"
-                        required
                         fullWidth
                         label="Username"
                         autoComplete="username"
