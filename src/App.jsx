@@ -16,12 +16,15 @@ import DepositList from "./entities/pages/DepositList";
 import ExpensePredictionList from "./predictions/pages/ExpensePredictionList";
 import IncomeList from "./transfers/pages/IncomeList";
 import ExpenseList from "./transfers/pages/ExpenseList";
+import {ThemeProvider} from "@mui/material";
+import {theme} from "./theme";
 
 /**
  * App component handles routing of application.
  */
 function App() {
     return (
+        <ThemeProvider theme={theme}>
         <AlertProvider>
             <ContextBudgetProvider>
             <Routes>
@@ -41,6 +44,7 @@ function App() {
             </Routes>
             </ContextBudgetProvider>
         </AlertProvider>
+        </ThemeProvider>
     );
 }
 
