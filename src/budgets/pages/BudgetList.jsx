@@ -5,11 +5,12 @@ import {AlertContext} from "../../app_infrastructure/components/AlertContext";
 import {
     Typography,
     Paper,
-    Box
+    Box, Stack
 } from "@mui/material";
 import {getApiObjectsList} from "../../app_infrastructure/services/APIService";
 import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
 import BudgetCard from "../components/BudgetCard";
+import AddBudget from "./BudgetAdd";
 
 /**
  * BudgetList component to display list of User Budgets.
@@ -18,6 +19,7 @@ export default function BudgetList() {
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/`
     const {alert, setAlert} = useContext(AlertContext);
     const {contextBudgetId} = useContext(BudgetContext);
+    const [addedBudgetId, setAddedBudgetId] = useState(null);
     const [budgets, setBudgets] = useState([]);
 
     /**
@@ -36,14 +38,17 @@ export default function BudgetList() {
             }
         }
         loadData();
-    }, [contextBudgetId]);
+    }, [contextBudgetId, addedBudgetId]);
 
     return (
         <Paper elevation={24} sx={{
             padding: 2, bgColor: "#F1F1F1"
         }}>
-            <Typography variant="h4" gutterBottom
-                        sx={{display: 'block', color: '#BD0000'}}>Budgets</Typography>
+            <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
+                <Typography variant="h4"
+                            sx={{display: 'block', color: '#BD0000'}}>Budgets</Typography>
+                <AddBudget setAddedBudgetId={setAddedBudgetId}/>
+            </Stack>
             <Divider/>
             {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}
                              onClose={() => setAlert(null)}>{alert.message}</Alert>}
