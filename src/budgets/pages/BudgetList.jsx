@@ -10,7 +10,7 @@ import {
 import {getApiObjectsList} from "../../app_infrastructure/services/APIService";
 import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
 import BudgetCard from "../components/BudgetCard";
-import AddBudget from "./BudgetAdd";
+import BudgetAddButton from "./BudgetAddButton";
 
 /**
  * BudgetList component to display list of User Budgets.
@@ -20,6 +20,7 @@ export default function BudgetList() {
     const {alert, setAlert} = useContext(AlertContext);
     const {contextBudgetId} = useContext(BudgetContext);
     const [addedBudgetId, setAddedBudgetId] = useState(null);
+    const [deletedBudgetId, setDeletedBudgetId] = useState(null);
     const [budgets, setBudgets] = useState([]);
 
     /**
@@ -47,7 +48,7 @@ export default function BudgetList() {
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                 <Typography variant="h4"
                             sx={{display: 'block', color: '#BD0000'}}>Budgets</Typography>
-                <AddBudget setAddedBudgetId={setAddedBudgetId}/>
+                <BudgetAddButton setAddedBudgetId={setAddedBudgetId}/>
             </Stack>
             <Divider/>
             {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}
@@ -56,7 +57,7 @@ export default function BudgetList() {
                  sx={{display: "flex", flexWrap: 'wrap', alignItems: 'flex-start', justifyContent: 'space-around'}}>
                 {budgets.map(budget => (
                     <Box key={budget.id} width={300}>
-                        <BudgetCard budget={budget}/>
+                        <BudgetCard budget={budget} setDeletedBudgetId={setDeletedBudgetId}/>
                     </Box>
                 ))}
             </Box>

@@ -29,9 +29,10 @@ const StyledTextField = styled(TextField)(({theme}) => ({
 
 
 /**
- * AddBudget component to display Modal with form for creating new Budget.
+ * BudgetAddButton component to display Modal with form for creating new Budget.
+ * @param {function} setAddedBudgetId - BudgetList useState setter for refreshing Budget list on new Budget adding.
  */
-const AddBudget = ({setAddedBudgetId}) => {
+const BudgetAddButton = ({setAddedBudgetId}) => {
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/`
     const [open, setOpen] = useState(false);
     const {register, handleSubmit} = useForm();
@@ -124,4 +125,4 @@ const AddBudget = ({setAddedBudgetId}) => {
     );
 };
 
-export default AddBudget;
+export default BudgetAddButton;
