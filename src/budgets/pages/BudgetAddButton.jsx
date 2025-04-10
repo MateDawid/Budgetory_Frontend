@@ -46,8 +46,7 @@ const BudgetAddButton = ({setAddedBudgetId}) => {
 
         try {
             const createResponse = await createApiObject(apiUrl, data);
-            console.log(createResponse)
-            setAddedBudgetId(1)
+            setAddedBudgetId(createResponse.id)
             setAlert({type: 'success', message: `Budget "${data.name}" created successfully.`})
             setOpen(false)
         } catch (error) {
