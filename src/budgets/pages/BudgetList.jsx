@@ -39,7 +39,7 @@ export default function BudgetList() {
             }
         }
         loadData();
-    }, [contextBudgetId, addedBudgetId]);
+    }, [contextBudgetId, addedBudgetId, deletedBudgetId]);
 
     return (
         <Paper elevation={24} sx={{
