@@ -1,9 +1,4 @@
-import {
-    Modal,
-    styled,
-    TextField,
-    Typography,
-} from "@mui/material";
+import {Typography} from "@mui/material";
 import React, {useContext, useState} from "react";
 import {
     Add as AddIcon,
@@ -15,17 +10,8 @@ import {createApiObject} from "../../app_infrastructure/services/APIService";
 import ApiError from "../../app_infrastructure/utils/ApiError";
 import {AlertContext} from "../../app_infrastructure/components/AlertContext";
 import Alert from "@mui/material/Alert";
-
-const StyledModal = styled(Modal)({
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-});
-
-const StyledTextField = styled(TextField)(({theme}) => ({
-    variant: "outlined",
-    marginBottom: theme.spacing(2),
-}));
+import StyledModal from "../../app_infrastructure/components/StyledModal";
+import StyledTextField from "../../app_infrastructure/components/StyledTextField";
 
 
 /**
