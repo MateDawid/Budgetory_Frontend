@@ -8,7 +8,6 @@ import {
     Box, Stack
 } from "@mui/material";
 import {getApiObjectsList} from "../../app_infrastructure/services/APIService";
-import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
 import BudgetCard from "../components/BudgetCard";
 import BudgetAddButton from "./BudgetAddButton";
 
@@ -18,7 +17,6 @@ import BudgetAddButton from "./BudgetAddButton";
 export default function BudgetList() {
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/`
     const {alert, setAlert} = useContext(AlertContext);
-    const {contextBudgetId} = useContext(BudgetContext);
     const [addedBudgetId, setAddedBudgetId] = useState(null);
     const [deletedBudgetId, setDeletedBudgetId] = useState(null);
     const [budgets, setBudgets] = useState([]);
@@ -28,9 +26,6 @@ export default function BudgetList() {
      */
     useEffect(() => {
         const loadData = async () => {
-            if (!contextBudgetId) {
-                return
-            }
             try {
                 const budgetsResponse = await getApiObjectsList(apiUrl)
                 setBudgets(budgetsResponse);
@@ -39,7 +34,7 @@ export default function BudgetList() {
             }
         }
         loadData();
-    }, [contextBudgetId, addedBudgetId, deletedBudgetId]);
+    }, [addedBudgetId, deletedBudgetId]);
 
     return (
         <Paper elevation={24} sx={{
