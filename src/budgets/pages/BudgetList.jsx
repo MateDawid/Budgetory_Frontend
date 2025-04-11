@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import {getApiObjectsList} from "../../app_infrastructure/services/APIService";
 import BudgetCard from "../components/BudgetCard";
-import BudgetAddButton from "./BudgetAddButton";
+import BudgetAddButton from "../components/BudgetAddButton";
 
 /**
  * BudgetList component to display list of User Budgets.

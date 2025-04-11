@@ -3,7 +3,7 @@ import PageviewIcon from '@mui/icons-material/Pageview';
 import React from "react";
 import {Link} from 'react-router-dom';
 import StyledButton from "../../app_infrastructure/components/StyledButton";
-import BudgetDeleteButton from "../pages/BudgetDeleteButton";
+import BudgetDeleteButton from "./BudgetDeleteButton";
 
 /**
  * Truncate text if it exceeds a certain length.
