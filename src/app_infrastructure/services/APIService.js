@@ -31,6 +31,31 @@ export const getApiObjectsList = async (inputUrl, paginationModel = {}, sortMode
 };
 
 /**
+ * Function to fetch data from API detail endpoint.
+ * @param {string} inputUrl - API list url.
+ * @param {string} objectId - id of fetched object.
+ * @return {object} - JSON data with API response.
+ */
+export const getApiObjectDetails = async (inputUrl, objectId) => {
+    const url = new URL(inputUrl);
+    const token = await getAccessToken()
+    const detailUrl = `${url.origin}${url.pathname}${objectId}/`
+    const requestOptions = {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+        }
+    }
+    const response = await fetch(detailUrl, requestOptions)
+    if (!response.ok) {
+        throw new ApiError();
+    }
+    return await response.json();
+}
+
+
+/**
  * Function to create object in API.
  * @param {string} url - API list url.
  * @param {object} newObject - Payload for API call with new object values.
@@ -74,34 +99,21 @@ export const createApiObject = async (url, newObject) => {
  */
 export const updateApiObject = async (inputUrl, updatedObject) => {
     const url = new URL(inputUrl);
-    let dataErrorRaised = false
-    try {
-        const token = await getAccessToken()
-        const detailUrl = `${url.origin}${url.pathname}${updatedObject["id"]}/`
-        const requestOptions = {
-            method: "PATCH",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(updatedObject)
-        }
-        const response = await fetch(detailUrl, requestOptions)
-        if (!response.ok) {
-            const data = await response.json()
-            dataErrorRaised = true
-            throw new ApiError('Invalid data', data);
-        }
-        return await response.json();
+    const token = await getAccessToken()
+    const detailUrl = `${url.origin}${url.pathname}${updatedObject["id"]}/`
+    const requestOptions = {
+        method: "PATCH",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedObject)
     }
-    catch (error) {
-        if (dataErrorRaised) {
-            throw error;
-        } else {
-            throw new Error("Unexpected error occurred.");
-        }
-
-    }
+    const response = await fetch(detailUrl, requestOptions)
+    return {
+        ok: response.ok,
+        data: await response.json()
+    };
 };
 
 
