@@ -10,8 +10,9 @@ import {
 import {getApiObjectDetails, updateApiObject} from "../../app_infrastructure/services/APIService";
 import {useParams} from "react-router-dom";
 import EditableTextField from "../../app_infrastructure/components/EditableTextField";
-import BudgetDeleteButton from "../components/BudgetDeleteButton";
+// import BudgetDeleteButton from "../components/BudgetDeleteButton";
 import ApiError from "../../app_infrastructure/utils/ApiError";
+import DataTable from "../../app_infrastructure/components/DataTable";
 
 /**
  * BudgetDetail component to display details of single Budget.
@@ -21,6 +22,44 @@ export default function BudgetDetail() {
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/`
     const {alert, setAlert} = useContext(AlertContext);
     const [budgetData, setBudgetData] = useState([]);
+    const depositsColumns = [
+        {
+            field: 'name',
+            type: 'string',
+            headerName: 'Name',
+            flex: 2,
+            filterable: true,
+            sortable: true
+        },
+        {
+            field: 'description',
+            type: 'string',
+            headerName: 'Description',
+            flex: 3,
+            filterable: true,
+            sortable: false,
+        },
+        {
+            field: 'is_active',
+            type: 'boolean',
+            headerName: 'Active',
+            flex: 1,
+            filterable: true,
+            sortable: false,
+        },
+        {
+            field: 'balance',
+            type: 'number',
+            headerName: 'Balance',
+            flex: 1,
+            filterable: true,
+            sortable: true,
+            valueFormatter: (value) => {
+                return value !== undefined ? `${value.toFixed(2)} ${budgetData.currency}` : '';
+            }
+
+        },
+    ]
 
     /**
      * Fetches Budgets list from API.
@@ -76,6 +115,8 @@ export default function BudgetDetail() {
             {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}
                              onClose={() => setAlert(null)}>{alert.message}</Alert>}
             <Box sx={{marginTop: 2}}>
+                <Typography variant="h5" sx={{display: 'block', color: '#BD0000'}}>Details</Typography>
+                <Divider sx={{marginBottom: 2}}/>
                 <EditableTextField
                     label="Name"
                     initialValue={budgetData.name}
@@ -98,6 +139,15 @@ export default function BudgetDetail() {
                     apiFieldName="currency"
                     onSave={onSave}
                     fullWidth
+                />
+            </Box>
+            <Box>
+                <Typography variant="h5" sx={{display: 'block', color: '#BD0000'}}>Deposits</Typography>
+                <Divider sx={{marginBottom: 2}}/>
+                <DataTable
+                    columns={depositsColumns}
+                    apiUrl={`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${id}/deposits/`}
+                    clientUrl='/deposits/'
                 />
             </Box>
         </Paper>
