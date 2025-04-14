@@ -10,7 +10,7 @@ import {
 import {getApiObjectDetails, updateApiObject} from "../../app_infrastructure/services/APIService";
 import {useParams} from "react-router-dom";
 import EditableTextField from "../../app_infrastructure/components/EditableTextField";
-// import BudgetDeleteButton from "../components/BudgetDeleteButton";
+import BudgetDeleteButton from "../components/BudgetDeleteButton";
 import ApiError from "../../app_infrastructure/utils/ApiError";
 import DataTable from "../../app_infrastructure/components/DataTable";
 
@@ -109,7 +109,7 @@ export default function BudgetDetail() {
         }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                 <Typography variant="h4" sx={{display: 'block', color: '#BD0000'}}>{budgetData.name}</Typography>
-                {/*<BudgetDeleteButton budgetId={id} setDeletedBudgetId={null}/>*/}
+                <BudgetDeleteButton budgetId={id} redirectOnSuccess={'/budgets'}/>
             </Stack>
             <Divider/>
             {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}

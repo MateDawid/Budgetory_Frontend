@@ -9,14 +9,17 @@ import {useForm} from "react-hook-form";
 import {deleteApiObject} from "../../app_infrastructure/services/APIService";
 import {AlertContext} from "../../app_infrastructure/components/AlertContext";
 import StyledModal from "../../app_infrastructure/components/StyledModal";
+import {useNavigate} from "react-router-dom";
 
 
 /**
  * BudgetDeleteButton component to display Modal with warning before deleting Budget.
  * @param {string} budgetId - ID of Budget to be deleted.
- * @param {function} setDeletedBudgetId - BudgetList useState setter for refreshing Budget list on Budget deleting.
+ * @param {function|null} setDeletedBudgetId - BudgetList useState setter for refreshing Budget list on Budget deleting.
+ * @param {string|null} redirectOnSuccess - url to which redirect on delete success.
  */
-const BudgetDeleteButton = ({budgetId, setDeletedBudgetId}) => {
+const BudgetDeleteButton = ({budgetId, setDeletedBudgetId = null, redirectOnSuccess = null}) => {
+    const navigate = useNavigate();
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/`
     const [open, setOpen] = useState(false);
     const {handleSubmit} = useForm();
@@ -34,11 +37,16 @@ const BudgetDeleteButton = ({budgetId, setDeletedBudgetId}) => {
                     message: `Budget was not deleted because of an error: ${deleteResponse.detail}`
                 });
             } else {
-                setAlert({type: 'success', message: "Object deleted successfully"});
-                setDeletedBudgetId(budgetId)
+                setAlert({type: 'success', message: "Budget deleted successfully"});
+                if (setDeletedBudgetId !== null) {
+                    setDeletedBudgetId(budgetId)
+                }
+                if (redirectOnSuccess !== null) {
+                    navigate(redirectOnSuccess)
+                }
             }
         } catch (err) {
-            setAlert({type: 'error', message: "Failed to delete object."});
+            setAlert({type: 'error', message: "Failed to delete Budget."});
         } finally {
             setOpen(false)
         }
