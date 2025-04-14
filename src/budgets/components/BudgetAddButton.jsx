@@ -21,7 +21,7 @@ import StyledTextField from "../../app_infrastructure/components/StyledTextField
 const BudgetAddButton = ({setAddedBudgetId}) => {
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/`
     const [open, setOpen] = useState(false);
-    const {register, handleSubmit} = useForm();
+    const {register, handleSubmit, reset} = useForm();
     const [fieldErrors, setFieldErrors] = useState({});
     const [nonFieldError, setNonFieldError] = useState(null);
     const {setAlert} = useContext(AlertContext);
@@ -35,6 +35,7 @@ const BudgetAddButton = ({setAddedBudgetId}) => {
             setAddedBudgetId(createResponse.id)
             setAlert({type: 'success', message: `Budget "${data.name}" created successfully.`})
             setOpen(false)
+            reset()
         } catch (error) {
             if (error instanceof ApiError) {
                 let errors = error.data.detail
