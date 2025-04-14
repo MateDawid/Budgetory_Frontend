@@ -31,7 +31,7 @@ const BudgetSelector = () => {
             }
         }
         loadData();
-    }, [contextBudgetId]);
+    }, []);
 
     /**
      * Function to handle selecting new Budget in Select component.
@@ -39,6 +39,7 @@ const BudgetSelector = () => {
      * @param {PointerEvent} event - event on selecting Budget from Select component.
      */
     const handleChange = (event) => {
+        setSelectedBudget(budgets.find(budget => budget.id === event.target.value.id));
         setContextBudgetId(event.target.value.id);
         setContextBudgetCurrency(event.target.value.currency);
     };
