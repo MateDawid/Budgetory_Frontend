@@ -2,7 +2,7 @@ import React from 'react';
 import '@fontsource/roboto/400.css';
 import { BrowserRouter } from 'react-router-dom';
 import './index.css';
-import App from './app_infrastructure/components/App';
+import App from './App';
 import axios from "axios";
 import { createRoot } from 'react-dom/client';
 

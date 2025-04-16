@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {TextField, InputAdornment, IconButton, InputLabel} from '@mui/material';
+import {InputAdornment, IconButton, InputLabel} from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
+import StyledTextField from "./StyledTextField";
 
 /**
  * Extended TextField component for displaying label above field and edit/save icon with value update handling.
@@ -13,6 +14,7 @@ import SaveIcon from '@mui/icons-material/Save';
  */
 const EditableTextField = ({label, initialValue, apiFieldName, onSave, ...props}) => {
     const [isDisabled, setIsDisabled] = useState(true);
+    const [currentValue, setCurrentValue] = useState(initialValue || '');
     const [value, setValue] = useState(initialValue || '');
     const [error, setError] = useState('');
 
@@ -32,10 +34,12 @@ const EditableTextField = ({label, initialValue, apiFieldName, onSave, ...props}
         } else {
             try {
                 await onSave(apiFieldName, value);
+                setCurrentValue(value);
                 setIsDisabled(true);
                 setError('');
             } catch (error) {
                 setError(error.message);
+                setValue(currentValue);
             }
         }
     };
@@ -45,7 +49,7 @@ const EditableTextField = ({label, initialValue, apiFieldName, onSave, ...props}
             <InputLabel sx={{display: "flex", fontWeight: 700,}}>
                 {label}
             </InputLabel>
-            <TextField
+            <StyledTextField
                 disabled={isDisabled}
                 error={!!error}
                 helperText={error}
