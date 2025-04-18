@@ -30,7 +30,7 @@ export default function BudgetList() {
                 const budgetsResponse = await getApiObjectsList(apiUrl)
                 setBudgets(budgetsResponse);
             } catch (err) {
-                setAlert({type: 'error', message: "Failed to Budgets."});
+                setAlert({type: 'error', message: "Failed to load Budgets."});
             }
         }
         loadData();
