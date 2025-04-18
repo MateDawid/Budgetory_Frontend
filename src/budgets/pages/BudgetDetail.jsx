@@ -55,7 +55,7 @@ export default function BudgetDetail() {
             filterable: true,
             sortable: true,
             valueFormatter: (value) => {
-                return value !== undefined ? `${value.toFixed(2)} ${budgetData.currency}` : '';
+                return value !== undefined ? `${value} ${budgetData.currency}` : '';
             }
 
         },
