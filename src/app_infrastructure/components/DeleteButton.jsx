@@ -19,8 +19,9 @@ import {useNavigate} from "react-router-dom";
  * @param {string} objectDisplayName - Name of deleted object for messages display.
  * @param {function|null} setDeletedObjectId - useState setter for refreshing objects list on object deleting.
  * @param {string|null} redirectOnSuccess - url to which redirect on delete success.
+ * @param {boolean|null} isDisabled - disables Delete button.
  */
-const DeleteButton = ({objectId, apiUrl, objectDisplayName, setDeletedObjectId = null, redirectOnSuccess = null}) => {
+const DeleteButton = ({objectId, apiUrl, objectDisplayName, setDeletedObjectId = null, redirectOnSuccess = null, isDisabled=null}) => {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const {handleSubmit} = useForm();
@@ -55,7 +56,7 @@ const DeleteButton = ({objectId, apiUrl, objectDisplayName, setDeletedObjectId =
 
     return (
         <>
-            <StyledButton onClick={() => setOpen(true)} variant="outlined" startIcon={<DeleteIcon/>}>
+            <StyledButton onClick={() => setOpen(true)} variant="outlined" startIcon={<DeleteIcon/>} disabled={isDisabled}>
                 Delete
             </StyledButton>
             <StyledModal open={open} onClose={() => setOpen(false)}>
