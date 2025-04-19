@@ -48,10 +48,9 @@ export default function BudgetList() {
             <Divider/>
             {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}
                              onClose={() => setAlert(null)}>{alert.message}</Alert>}
-            <Box spacing={1}
-                 sx={{display: "flex", flexWrap: 'wrap', alignItems: 'flex-start', justifyContent: 'space-around'}}>
+            <Box sx={{display: "flex", flexWrap: 'wrap', justifyContent: 'flex-start'}}>
                 {budgets.map(budget => (
-                    <Box key={budget.id} width={300}>
+                    <Box key={budget.id} sx={{width: 300, m: 1}}>
                         <BudgetCard budget={budget} setDeletedBudgetId={setDeletedBudgetId}/>
                     </Box>
                 ))}
