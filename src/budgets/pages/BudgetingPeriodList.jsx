@@ -7,7 +7,7 @@ import {AlertContext} from "../../app_infrastructure/components/AlertContext";
 import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
 import {getApiObjectsList} from "../../app_infrastructure/services/APIService";
 import BudgetingPeriodCard from "../components/BudgetingPeriodCard";
-import BudgetingPeriodAddButton from "../components/BudgetingPeriodAddButton";
+import CreateButton from "../../app_infrastructure/components/CreateButton";
 
 
 /**
@@ -20,6 +20,24 @@ export default function BudgetingPeriodList() {
     const [addedObjectId, setAddedObjectId] = useState(null);
     const [deletedObjectId, setDeletedObjectId] = useState(null);
     const [objects, setObjects] = useState([]);
+    const createFields = {
+        name: {
+            type: 'string',
+            label: 'Name',
+            autoFocus: true,
+            required: true
+        },
+        date_start: {
+            type: 'date',
+            label: 'Date start',
+            required: true,
+        },
+        date_end: {
+            type: 'date',
+            label: 'Date end',
+            required: true,
+        }
+    }
 
     /**
      * Fetches Budgeting Periods list from API.
@@ -43,7 +61,7 @@ export default function BudgetingPeriodList() {
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                 <Typography variant="h4"
                             sx={{display: 'block', color: '#BD0000'}}>Periods</Typography>
-                <BudgetingPeriodAddButton apiUrl={apiUrl} setAddedObjectId={setAddedObjectId}/>
+                <CreateButton objectName="Period" fields={createFields} apiUrl={apiUrl} setAddedObjectId={setAddedObjectId}/>
             </Stack>
             <Divider/>
             {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}
