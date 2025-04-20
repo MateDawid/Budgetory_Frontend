@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import {getApiObjectsList} from "../../app_infrastructure/services/APIService";
 import BudgetCard from "../components/BudgetCard";
-import BudgetAddButton from "../components/BudgetAddButton";
+import CreateButton from "../../app_infrastructure/components/CreateButton";
 
 /**
  * BudgetList component to display list of User Budgets.
@@ -20,6 +20,25 @@ export default function BudgetList() {
     const [addedBudgetId, setAddedBudgetId] = useState(null);
     const [deletedBudgetId, setDeletedBudgetId] = useState(null);
     const [budgets, setBudgets] = useState([]);
+    const createFields = {
+        name: {
+            type: 'string',
+            label: 'Name',
+            autoFocus: true,
+            required: true
+        },
+        description: {
+            type: 'string',
+            label: 'Description',
+            multiline: true,
+            rows: 4
+        },
+        currency: {
+            type: 'string',
+            label: 'Currency',
+            required: true,
+        }
+    }
 
     /**
      * Fetches Budgets list from API.
@@ -43,7 +62,7 @@ export default function BudgetList() {
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                 <Typography variant="h4"
                             sx={{display: 'block', color: '#BD0000'}}>Budgets</Typography>
-                <BudgetAddButton setAddedBudgetId={setAddedBudgetId}/>
+                <CreateButton objectName="Budget" fields={createFields} apiUrl={apiUrl} setAddedObjectId={setAddedBudgetId}/>
             </Stack>
             <Divider/>
             {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}
