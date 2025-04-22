@@ -18,6 +18,7 @@ export default function BudgetingPeriodList() {
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`
     const {alert, setAlert} = useContext(AlertContext);
     const [addedObjectId, setAddedObjectId] = useState(null);
+    const [updatedObjectId, setUpdatedObjectId] = useState(null);
     const [deletedObjectId, setDeletedObjectId] = useState(null);
     const [objects, setObjects] = useState([]);
     const createFields = {
@@ -52,7 +53,7 @@ export default function BudgetingPeriodList() {
             }
         }
         loadData();
-    }, [contextBudgetId, addedObjectId, deletedObjectId]);
+    }, [contextBudgetId, addedObjectId, updatedObjectId, deletedObjectId]);
 
     return (
         <Paper elevation={24} sx={{
@@ -69,7 +70,12 @@ export default function BudgetingPeriodList() {
             <Box sx={{display: "flex", flexWrap: 'wrap', justifyContent: 'flex-start'}}>
                 {objects.map(object => (
                     <Box key={object.id} sx={{width: 330, m: 1}}>
-                        <BudgetingPeriodCard apiUrl={apiUrl} object={object} setDeletedObjectId={setDeletedObjectId}/>
+                        <BudgetingPeriodCard
+                            apiUrl={apiUrl}
+                            object={object}
+                            setUpdatedObjectId={setUpdatedObjectId}
+                            setDeletedObjectId={setDeletedObjectId}
+                        />
                     </Box>
                 ))}
             </Box>
