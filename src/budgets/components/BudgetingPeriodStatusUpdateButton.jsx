@@ -16,7 +16,7 @@ const statusesMapping = {
         icon: <PlayArrowIcon/>,
         label: 'Open',
         modalHeader: 'Opening Period',
-        modalMessage: 'After opening Period you will not be able remove it and add more Expense Predictions in it. Do you want to continue?'
+        modalMessage: 'After opening Period you will not be able modify, remove it and add more Expense Predictions in it. Do you want to continue?'
     },
     [PeriodStatuses.CLOSED]: {
         icon: <LockIcon/>,
@@ -32,9 +32,9 @@ const statusesMapping = {
  * @param {number} newPeriodStatus - Status of BudgetingPeriod to be set.
  * @param {string} apiUrl - Base API url to be called with PATCH method.
  * @param {string} objectName - Name of object to be closed.
- * @param {function|null} setUpdatedObjectId - useState setter for refreshing objects list on object update.
+ * @param {function|null} setUpdatedObjectParam - useState setter for refreshing objects list on object update.
  */
-const BudgetingPeriodStatusUpdateButton = ({objectId, newPeriodStatus, apiUrl, objectName, setUpdatedObjectId}) => {
+const BudgetingPeriodStatusUpdateButton = ({objectId, newPeriodStatus, apiUrl, objectName, setUpdatedObjectParam}) => {
     const [open, setOpen] = useState(false);
     const {handleSubmit} = useForm();
     const {setAlert} = useContext(AlertContext);
@@ -60,7 +60,7 @@ const BudgetingPeriodStatusUpdateButton = ({objectId, newPeriodStatus, apiUrl, o
                 })
                 throw new ApiError(errorMessageParts.join('\n'));
             }
-            setUpdatedObjectId(`${objectId}_${newPeriodStatus}`)
+            setUpdatedObjectParam(`${objectId}_${newPeriodStatus}`)
             setAlert({type: 'success', message: `Period "${objectName}" updated successfully.`})
         } catch (error) {
             if (error instanceof ApiError) {
