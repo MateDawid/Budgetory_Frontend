@@ -1,4 +1,4 @@
-import {Box, Card, CardActions, CardHeader, Typography, Stack} from "@mui/material";
+import {Box, Card, CardActions, CardHeader, Stack, Chip} from "@mui/material";
 import PageviewIcon from '@mui/icons-material/Pageview';
 import React from "react";
 import {Link} from 'react-router-dom';
@@ -21,7 +21,7 @@ const BudgetingPeriodCard = ({apiUrl, object, setUpdatedObjectId, setDeletedObje
             <Box sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                     <CardHeader title={truncateText(object.name, 18)}/>
-                    <Typography>{object.status_display}</Typography>
+                    <Chip label={object.status_display} variant="outlined" />
                 </Stack>
                 <CardActions sx={{width: "100%"}}>
                     <Box sx={{width: "100%", display: "flex", justifyContent: 'space-around'}}>
