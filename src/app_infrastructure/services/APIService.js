@@ -49,7 +49,7 @@ export const getApiObjectDetails = async (inputUrl, objectId) => {
     }
     const response = await fetch(detailUrl, requestOptions)
     if (!response.ok) {
-        throw new ApiError();
+        throw new ApiError(`HTTP ${response.status}`);
     }
     return await response.json();
 }
