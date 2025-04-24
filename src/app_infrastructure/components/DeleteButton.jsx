@@ -21,7 +21,7 @@ import {useNavigate} from "react-router-dom";
  * @param {string|null} redirectOnSuccess - url to which redirect on delete success.
  * @param {boolean|null} isDisabled - disables Delete button.
  */
-const DeleteButton = ({objectId, apiUrl, objectDisplayName, setDeletedObjectId = null, redirectOnSuccess = null, isDisabled=null}) => {
+const DeleteButton = ({objectId, apiUrl, objectDisplayName, setDeletedObjectId = null, redirectOnSuccess = null, isDisabled = null}) => {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const {handleSubmit} = useForm();
