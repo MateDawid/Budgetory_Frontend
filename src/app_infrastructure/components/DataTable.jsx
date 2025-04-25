@@ -36,6 +36,21 @@ const StyledDataGrid = styled(DataGrid)({
 });
 
 /**
+ * Function to prepare mapping of API ordering fields for DataTable columns other than column names.
+ * @param {object} columns - DataTable columns definitions.
+ * @return {object} - Mapping for sorting DataTable rows.
+ */
+const getSortFieldMapping = (columns) => {
+    return columns.reduce((acc, column) => {
+        if (column.sortField) {
+            acc[column.field] = column.sortField;
+        }
+        return acc;
+    }, {});
+};
+
+
+/**
  * DataTable component for displaying DataGrid with data fetched from API.
  * @param {object} columns - Displayed columns settings.
  * @param {string} apiUrl - Base API url for fetching data.
@@ -78,6 +93,7 @@ const DataTable = ({columns, apiUrl, clientUrl}) => {
             }
         },
     ]
+    const sortFieldMapping = getSortFieldMapping(extendedColumns);
 
     /**
      * Fetches objects list from API.
@@ -111,6 +127,7 @@ const DataTable = ({columns, apiUrl, clientUrl}) => {
         setPaginationModel(updatedPaginationModel);
     }
 
+
     /**
      * Function to update DataGrid sort model.
      * @param {Array} updatedSortModel - updated sort model.
@@ -119,8 +136,9 @@ const DataTable = ({columns, apiUrl, clientUrl}) => {
         if (updatedSortModel.length === 0) {
             setSortModel({});
         } else {
+            const sortField = sortFieldMapping[updatedSortModel[0].field] || updatedSortModel[0].field;
             setSortModel({
-                ordering: updatedSortModel[0].sort === 'desc' ? '-' + updatedSortModel[0].field : updatedSortModel[0].field
+                ordering: updatedSortModel[0].sort === 'desc' ? '-' + sortField : sortField
             });
         }
     }
