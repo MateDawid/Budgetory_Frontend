@@ -46,7 +46,7 @@ export default function BudgetingPeriodList() {
     useEffect(() => {
         const loadData = async () => {
             try {
-                const listResponse = await getApiObjectsList(apiUrl)
+                const listResponse = await getApiObjectsList(apiUrl,{}, {ordering: '-date_start'})
                 setObjects(listResponse);
             } catch (err) {
                 setAlert({type: 'error', message: "Failed to load Periods."});
