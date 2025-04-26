@@ -1,4 +1,4 @@
-import {Box, Card, CardActions, CardHeader, Stack, Chip} from "@mui/material";
+import {Box, Card, CardActions, CardHeader, Stack, Chip, Typography} from "@mui/material";
 import PageviewIcon from '@mui/icons-material/Pageview';
 import React from "react";
 import {Link} from 'react-router-dom';
@@ -19,10 +19,11 @@ const BudgetingPeriodCard = ({apiUrl, object, setUpdatedObjectId, setDeletedObje
     return (
         <Card variant="outlined" sx={{marginTop: 2, borderColor: "#D0D0D0"}}>
             <Box sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
-                <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
+                <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
                     <CardHeader title={truncateText(object.name, 18)}/>
                     <Chip label={object.status_display} variant="outlined" />
                 </Stack>
+                <Typography fontSize={12} color="primary">{object.date_start} - {object.date_end}</Typography>
                 <CardActions sx={{width: "100%"}}>
                     <Box sx={{width: "100%", display: "flex", justifyContent: 'space-around'}}>
                         {object.status === PeriodStatuses.DRAFT && (
