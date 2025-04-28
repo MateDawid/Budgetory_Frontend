@@ -4,7 +4,7 @@ import Alert from '@mui/material/Alert';
 import {AlertContext} from "../../app_infrastructure/components/AlertContext";
 import {Typography, Paper, Box, Stack, Chip} from "@mui/material";
 import {getApiObjectDetails, updateApiObject} from "../../app_infrastructure/services/APIService";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import EditableTextField from "../../app_infrastructure/components/EditableTextField";
 import ApiError from "../../app_infrastructure/utils/ApiError";
 import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
@@ -17,9 +17,11 @@ import BudgetingPeriodStatusUpdateButton from "../components/BudgetingPeriodStat
  */
 export default function BudgetingPeriodDetail() {
     const {id} = useParams();
+    const navigate = useNavigate()
     const [updatedObjectParam, setUpdatedObjectParam] = useState(null);
     const {contextBudgetId} = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`
+    // const predictionsApiUlr = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expense_predictions/`
     const {alert, setAlert} = useContext(AlertContext);
     const [objectData, setObjectData] = useState([]);
     const objectFields = {
@@ -40,6 +42,69 @@ export default function BudgetingPeriodDetail() {
             required: true,
         }
     }
+    // const predictionCreateFields = {}
+    // const predictionsColumns = [
+    //     {
+    //         field: 'category_display',
+    //         sortField: 'category__name',
+    //         type: 'string',
+    //         headerName: 'Category',
+    //         flex: 2,
+    //         filterable: true,
+    //         sortable: true,
+    //     },
+    //     {
+    //         field: 'category_priority',
+    //         sortField: 'category__priority',
+    //         type: 'string',
+    //         headerName: 'Priority',
+    //         flex: 2,
+    //         filterable: true,
+    //         sortable: true,
+    //     },
+    //     {
+    //         field: 'initial_value',
+    //         type: 'number',
+    //         headerName: 'Initial prediction',
+    //         flex: 2,
+    //         filterable: true,
+    //         sortable: true,
+    //         valueFormatter: (value) => {
+    //             return value !== undefined ? `${value} ${contextBudgetCurrency}` : '';
+    //         }
+    //     },
+    //     {
+    //         field: 'current_value',
+    //         type: 'number',
+    //         headerName: 'Current prediction',
+    //         flex: 2,
+    //         filterable: true,
+    //         sortable: true,
+    //         valueFormatter: (value) => {
+    //             return value !== undefined ? `${value} ${contextBudgetCurrency}` : '';
+    //         }
+    //     },
+    //     {
+    //         field: 'category', //  'transfers_sum' TODO: API returning sum of Transfers in period and category
+    //         type: 'number',
+    //         headerName: 'Result',
+    //         flex: 2,
+    //         filterable: true,
+    //         sortable: true,
+    //         valueFormatter: (value) => {
+    //             return value !== undefined ? `${value} ${contextBudgetCurrency}` : '';
+    //         }
+    //     },
+    //     {
+    //         field: 'id', // 'progress' TODO: API returning percentage of prediction used in period
+    //         type: 'number',
+    //         headerName: 'Progress',
+    //         flex: 1,
+    //         filterable: true,
+    //         sortable: true,
+    //         renderCell: (params) => <PercentageProgressWithLabel value={params.value}/>
+    //     },
+    // ]
 
     /**
      * Fetches Budgets list from API.
@@ -50,11 +115,11 @@ export default function BudgetingPeriodDetail() {
                 const apiResponse = await getApiObjectDetails(apiUrl, id)
                 setObjectData(apiResponse);
             } catch (err) {
-                setAlert({type: 'error', message: "Failed to load Period."});
+                navigate('/periods');
             }
         }
         loadData();
-    }, [updatedObjectParam]);
+    }, [updatedObjectParam, contextBudgetId]);
 
     /**
      * Function to save updated object via API call.
@@ -145,6 +210,18 @@ export default function BudgetingPeriodDetail() {
                         {...objectFields[fieldName]}
                     />
                 ))}
+                {/*<Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>*/}
+                {/*    <Typography variant="h5" sx={{display: 'block', color: '#BD0000'}}>Expense predictions</Typography>*/}
+                {/*    /!*TODO*!/*/}
+                {/*    <CreateButton objectName="Expense prediction" fields={predictionCreateFields} apiUrl={apiUrl}*/}
+                {/*                  setAddedObjectId={setUpdatedObjectParam}/>*/}
+                {/*</Stack>*/}
+                {/*<Divider sx={{marginBottom: 2}}/>*/}
+                {/*<DataTable*/}
+                {/*    columns={predictionsColumns}*/}
+                {/*    apiUrl={`${predictionsApiUlr}?period=${id}`}*/}
+                {/*    clientUrl='/expense_predicitons/'*/}
+                {/*/>*/}
             </Box>
         </Paper>
     );
