@@ -10,11 +10,12 @@ import StyledTextField from "./StyledTextField";
  * @param {object} initialValue - Initial field value.
  * @param {string} apiFieldName - API field name for field value.
  * @param {function} onSave - Function to be performed on save icon click.
+ * @param {boolean} isEditable - Indicates if enable editing field.
  * @param {object} props - Additional props passed to TextField.
  */
-const EditableTextField = ({label, initialValue, apiFieldName, onSave, ...props}) => {
+const EditableTextField = ({label, initialValue, apiFieldName, onSave, isEditable=true, ...props}) => {
     const [isDisabled, setIsDisabled] = useState(true);
-    const [currentValue, setCurrentValue] = useState(initialValue || '');
+    const [currentValue, setCurrentValue] = useState(null);
     const [value, setValue] = useState(initialValue || '');
     const [error, setError] = useState('');
 
@@ -23,6 +24,7 @@ const EditableTextField = ({label, initialValue, apiFieldName, onSave, ...props}
      */
     useEffect(() => {
         setValue(initialValue || '');
+        setCurrentValue(initialValue || '')
     }, [initialValue]);
 
     /**
@@ -55,12 +57,12 @@ const EditableTextField = ({label, initialValue, apiFieldName, onSave, ...props}
                 helperText={error}
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
-                slotProps={{
+                slotProps={isEditable ? {
                     input: {
                         endAdornment: (
                             <InputAdornment position="end">
                                 <IconButton
-                                    aria-label={isDisabled ? "`edit" : "save"}
+                                    aria-label={isDisabled ? "edit" : "save"}
                                     onClick={handleIconClick}
                                     edge="end"
                                 >
@@ -69,7 +71,7 @@ const EditableTextField = ({label, initialValue, apiFieldName, onSave, ...props}
                             </InputAdornment>
                         ),
                     }
-                }}
+                } : {}}
                 {...props}
             />
         </>
