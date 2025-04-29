@@ -21,12 +21,12 @@ const Leftbar = () => {
                 <List>
                     <LeftbarItem url="/budgets" displayText="Budgets" icon={<AccountBalanceIcon />} />
                     <LeftbarItem url="/periods" displayText="Periods" icon={<CalendarMonthIcon />} />
-                    <LeftbarItem url="/transfer_categories" displayText="Transfer categories" icon={<SellIcon />} />
                     <LeftbarItem url="/deposits" displayText="Deposits" icon={<AccountBalanceWalletRoundedIcon />} />
                     <LeftbarItem url="/entities" displayText="Entities" icon={<LocalGroceryStoreRoundedIcon />} />
-                    <LeftbarItem url="/expense_predictions" displayText="Expense predictions" icon={<CalculateOutlinedIcon />} />
+                    <LeftbarItem url="/transfer_categories" displayText="Transfer categories" icon={<SellIcon/>}/>
                     <LeftbarItem url="/incomes" displayText="Incomes" icon={<PaymentIcon />} />
                     <LeftbarItem url="/expenses" displayText="Expenses" icon={<ReceiptIcon />} />
+                    <LeftbarItem url="/expense_predictions" displayText="Expense predictions" icon={<CalculateOutlinedIcon />} />
                 </List>
             </Box>
         </Box>
