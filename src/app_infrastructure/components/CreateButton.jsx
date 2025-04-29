@@ -1,8 +1,6 @@
-import {Typography} from "@mui/material";
+import {Typography, MenuItem} from "@mui/material";
 import React, {useContext, useState} from "react";
-import {
-    Add as AddIcon,
-} from "@mui/icons-material";
+import {Add as AddIcon} from "@mui/icons-material";
 import {Box} from "@mui/system";
 import StyledButton from "./StyledButton";
 import {useForm} from "react-hook-form";
@@ -12,7 +10,6 @@ import {AlertContext} from "./AlertContext";
 import Alert from "@mui/material/Alert";
 import StyledModal from "./StyledModal";
 import StyledTextField from "./StyledTextField";
-
 
 /**
  * CreateButton component to display Modal with form for creating new object.
@@ -29,42 +26,39 @@ const CreateButton = ({objectName, fields, apiUrl, setAddedObjectId}) => {
     const {setAlert} = useContext(AlertContext);
 
     const onSubmit = async (data) => {
-        setFieldErrors({})
-        setNonFieldErrors(null)
+        setFieldErrors({});
+        setNonFieldErrors(null);
 
         try {
             const createResponse = await createApiObject(apiUrl, data);
-            setAddedObjectId(createResponse.id)
-            setAlert({type: 'success', message: `${objectName} "${data.name}" created successfully.`})
-            setOpen(false)
-            reset()
+            setAddedObjectId(createResponse.id);
+            setAlert({type: 'success', message: `${objectName} "${data.name}" created successfully.`});
+            setOpen(false);
+            reset();
         } catch (error) {
             if (error instanceof ApiError) {
-                let apiErrors = error.data.detail
-                let nonFieldApiErrors = []
-                let fieldApiErrors = {}
+                let apiErrors = error.data.detail;
+                let nonFieldApiErrors = [];
+                let fieldApiErrors = {};
                 Object.keys(apiErrors).forEach(key => {
                     if (key in fields) {
-                        fieldApiErrors[key] = apiErrors[key].join(' | ')
+                        fieldApiErrors[key] = apiErrors[key].join(' | ');
                     } else {
                         apiErrors[key].forEach((message) => {
                             if (key === 'non_field_errors') {
-                                nonFieldApiErrors.push(`${message}\n`)
+                                nonFieldApiErrors.push(`${message}\n`);
                             } else {
-                                nonFieldApiErrors.push(`${key}: ${message}\n`)
+                                nonFieldApiErrors.push(`${key}: ${message}\n`);
                             }
                         });
-
                     }
-
-                })
+                });
                 setFieldErrors(fieldApiErrors);
-                setNonFieldErrors(nonFieldApiErrors.length ? nonFieldApiErrors : null)
+                setNonFieldErrors(nonFieldApiErrors.length ? nonFieldApiErrors : null);
             } else {
-                console.error(error)
+                console.error(error);
                 setNonFieldErrors("Unexpected error occurred.");
             }
-
         }
     };
 
@@ -88,6 +82,29 @@ const CreateButton = ({objectName, fields, apiUrl, setAddedObjectId}) => {
                                onClose={() => setNonFieldErrors(null)}>{nonFieldErrors}</Alert>}
                     <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{mt: 1}}>
                         {Object.keys(fields).map((fieldName) => (
+                            fields[fieldName]['type'] === 'select' ? (
+                                <StyledTextField
+                                    key={fieldName}
+                                    {...fields[fieldName]}
+                                    {...register(fieldName)}
+                                    slotProps={{
+                                        inputLabel: {
+                                            shrink: true,
+                                        },
+                                    }}
+                                    inputProps={fields[fieldName]['type'] === 'date' ? {max: '9999-12-31'} : {}}
+                                    fullWidth
+                                    error={!!fieldErrors[fieldName]}
+                                    helperText={fieldErrors[fieldName] ? fieldErrors[fieldName] : ''}
+                                    sx={{mb: 2}}
+                                >
+                                    {fields[fieldName]['options'].map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))}
+                                </StyledTextField>
+                            ) : (
                             <StyledTextField
                                 key={fieldName}
                                 {...fields[fieldName]}
@@ -103,6 +120,7 @@ const CreateButton = ({objectName, fields, apiUrl, setAddedObjectId}) => {
                                 helperText={fieldErrors[fieldName] ? fieldErrors[fieldName] : ''}
                                 sx={{mb: 2}}
                             />
+                            )
                         ))}
                         <StyledButton type="submit" variant="contained" fullWidth>
                             Create
