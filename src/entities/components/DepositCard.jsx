@@ -22,7 +22,7 @@ const DepositCard = ({apiUrl, object, setUpdatedObjectId, setDeletedObjectId}) =
             <Box sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
                     <CardHeader title={truncateText(object.name, 18)}/>
-                    <Chip label={object.is_active ? "Active" : "Inactive"} variant="outlined" />
+                    <Chip label={object.is_active ? "🟢 Active" : "🔴 Inactive"} variant="outlined" />
                 </Stack>
                 <Divider sx={{width: "100%", mb: 1, mt: 1}}/>
                 <Stack direction="row" alignItems="center" justifyContent="center" spacing={1} width="50%">
