@@ -11,10 +11,9 @@ import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
  * DepositCard component to display single Budget card on Budgets list.
  * @param {string} apiUrl - Base API url to be called with DELETE method.
  * @param {object} object - BudgetingPeriod object.
- * @param {function|null} setUpdatedObjectId - useState setter for refreshing objects list on object update.
  * @param {function|null} setDeletedObjectId - BudgetingPeriodList useState setter for refreshing BudgetingPeriod list on BudgetingPeriod removing.
  */
-const DepositCard = ({apiUrl, object, setUpdatedObjectId, setDeletedObjectId}) => {
+const DepositCard = ({apiUrl, object, setDeletedObjectId}) => {
     const {contextBudgetCurrency} = useContext(BudgetContext);
 
     return (
