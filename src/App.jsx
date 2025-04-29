@@ -20,6 +20,7 @@ import {ThemeProvider} from "@mui/material";
 import {theme} from "./theme";
 import BudgetDetail from "./budgets/pages/BudgetDetail";
 import BudgetingPeriodDetail from "./budgets/pages/BudgetingPeriodDetail"
+import DepositDetail from "./entities/pages/DepositDetail";
 
 /**
  * App component handles routing of application.
@@ -41,7 +42,10 @@ function App() {
                         <Route path=':id' element={<BudgetingPeriodDetail/>}/>
                     </Route>
                     <Route path='transfer_categories' element={<TransferCategoryList/>}/>
-                    <Route path='deposits' element={<DepositList/>}/>
+                    <Route path='deposits'>
+                        <Route index element={<DepositList/>}/>
+                        <Route path=':id' element={<DepositDetail/>}/>
+                    </Route>
                     <Route path='entities' element={<EntityList/>}/>
                     <Route path='expense_predictions' element={<ExpensePredictionList/>}/>
                     <Route path='incomes' element={<IncomeList/>}/>
