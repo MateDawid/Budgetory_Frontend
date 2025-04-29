@@ -31,7 +31,9 @@ export default function DepositList() {
         description: {
             type: 'string',
             label: 'Description',
-            required: false
+            required: false,
+            multiline: true,
+            rows: 4
         },
         is_active: {
             type: 'select',
