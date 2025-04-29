@@ -8,10 +8,10 @@ import DeleteButton from "../../app_infrastructure/components/DeleteButton";
 import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
 
 /**
- * DepositCard component to display single Budget card on Budgets list.
+ * DepositCard component to display single Deposit card on Budgets list.
  * @param {string} apiUrl - Base API url to be called with DELETE method.
- * @param {object} object - BudgetingPeriod object.
- * @param {function|null} setDeletedObjectId - BudgetingPeriodList useState setter for refreshing BudgetingPeriod list on BudgetingPeriod removing.
+ * @param {object} object - Deposit object.
+ * @param {function|null} setDeletedObjectId - DepositList useState setter for refreshing Deposit list on Deposit removing.
  */
 const DepositCard = ({apiUrl, object, setDeletedObjectId}) => {
     const {contextBudgetCurrency} = useContext(BudgetContext);
