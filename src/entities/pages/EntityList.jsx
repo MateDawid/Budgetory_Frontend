@@ -60,7 +60,7 @@ export default function EntityList() {
     useEffect(() => {
         const loadData = async () => {
             try {
-                const listResponse = await getApiObjectsList(apiUrl, {}, {ordering: '-date_start'})
+                const listResponse = await getApiObjectsList(apiUrl)
                 setObjects(listResponse);
             } catch (err) {
                 setAlert({type: 'error', message: "Failed to load Periods."});
