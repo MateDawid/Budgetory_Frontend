@@ -21,6 +21,7 @@ import {theme} from "./theme";
 import BudgetDetail from "./budgets/pages/BudgetDetail";
 import BudgetingPeriodDetail from "./budgets/pages/BudgetingPeriodDetail"
 import DepositDetail from "./entities/pages/DepositDetail";
+import EntityDetail from "./entities/pages/EntityDetail";
 
 /**
  * App component handles routing of application.
@@ -41,12 +42,15 @@ function App() {
                         <Route index element={<BudgetingPeriodList/>}/>
                         <Route path=':id' element={<BudgetingPeriodDetail/>}/>
                     </Route>
-                    <Route path='transfer_categories' element={<TransferCategoryList/>}/>
                     <Route path='deposits'>
                         <Route index element={<DepositList/>}/>
                         <Route path=':id' element={<DepositDetail/>}/>
                     </Route>
-                    <Route path='entities' element={<EntityList/>}/>
+                    <Route path='entities'>
+                        <Route index element={<EntityList/>}/>
+                        <Route path=':id' element={<EntityDetail/>}/>
+                    </Route>
+                    <Route path='transfer_categories' element={<TransferCategoryList/>}/>
                     <Route path='expense_predictions' element={<ExpensePredictionList/>}/>
                     <Route path='incomes' element={<IncomeList/>}/>
                     <Route path='expenses' element={<ExpenseList/>}/>
