@@ -10,7 +10,7 @@ import BudgetingPeriodStatusUpdateButton from "./BudgetingPeriodStatusUpdateButt
 import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
 
 /**
- * BudgetCard component to display single Budget card on Budgets list.
+ * BudgetingPeriodCard component to display single BudgetingPeriod card on Periods list.
  * @param {string} apiUrl - Base API url to be called with DELETE method.
  * @param {object} object - BudgetingPeriod object.
  * @param {function|null} setUpdatedObjectId - useState setter for refreshing objects list on object update.
