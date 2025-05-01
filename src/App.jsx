@@ -22,6 +22,7 @@ import BudgetDetail from "./budgets/pages/BudgetDetail";
 import BudgetingPeriodDetail from "./budgets/pages/BudgetingPeriodDetail"
 import DepositDetail from "./entities/pages/DepositDetail";
 import EntityDetail from "./entities/pages/EntityDetail";
+import TransferCategoryDetail from "./categories/pages/TransferCategoryDetail";
 
 /**
  * App component handles routing of application.
@@ -50,8 +51,11 @@ function App() {
                         <Route index element={<EntityList/>}/>
                         <Route path=':id' element={<EntityDetail/>}/>
                     </Route>
-                    <Route path='transfer_categories' element={<TransferCategoryList/>}/>
-                    <Route path='expense_predictions' element={<ExpensePredictionList/>}/>
+                    <Route path='categories'>
+                        <Route index element={<TransferCategoryList/>}/>
+                        <Route path=':id' element={<TransferCategoryDetail/>}/>
+                    </Route>
+                    <Route path='predictions' element={<ExpensePredictionList/>}/>
                     <Route path='incomes' element={<IncomeList/>}/>
                     <Route path='expenses' element={<ExpenseList/>}/>
                 </Route>
