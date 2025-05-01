@@ -8,6 +8,7 @@ import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
 import {getApiObjectsList} from "../../app_infrastructure/services/APIService";
 import TransferCategoryCard from "../components/TransferCategoryCard";
 import CreateButton from "../../app_infrastructure/components/CreateButton";
+import loadSelectOptionForCategory from "../utils/loadSelectOptionForCategory";
 
 
 /**
@@ -94,23 +95,10 @@ export default function TransferCategoryList() {
     }, [contextBudgetId, addedObjectId, updatedObjectId, deletedObjectId]);
 
     /**
-     * Fetches TransferCategories list from API.
+     * Fetches select options for TransferCategory object from API.
      */
     useEffect(() => {
-        const loadData = async () => {
-            try {
-                const typeResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/categories/types`)
-                setTypeOptions(typeResponse.results);
-                const priorityResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/categories/priorities`)
-                setPriorityOptions(priorityResponse.results);
-                const ownerResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/members/`)
-                setOwnerOptions([{value: -1, label: 'Common'}, ...ownerResponse]);
-            } catch (err) {
-                console.error(err)
-                setAlert({type: 'error', message: "Failed to load select options."});
-            }
-        }
-        loadData();
+        loadSelectOptionForCategory(contextBudgetId, setTypeOptions, setPriorityOptions, setOwnerOptions, setAlert);
     }, [contextBudgetId]);
 
     return (
@@ -126,6 +114,7 @@ export default function TransferCategoryList() {
             <Divider/>
             {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}
                              onClose={() => setAlert(null)}>{alert.message}</Alert>}
+            {/*TODO - filters*/}
             <Box sx={{display: "flex", flexWrap: 'wrap', justifyContent: 'flex-start'}}>
                 {objects.map(object => (
                     <Box key={object.id} sx={{width: 330, m: 1}}>
