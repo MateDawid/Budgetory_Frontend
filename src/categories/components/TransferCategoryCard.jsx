@@ -16,7 +16,7 @@ const TransferCategoryCard = ({apiUrl, object, setDeletedObjectId}) => {
     return (
         <Card variant="outlined" sx={{marginTop: 2, borderColor: "#D0D0D0"}}>
             <Box sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
-                <CardHeader title={truncateText(object.name, 18)}/>
+                <CardHeader title={truncateText(object.label, 18)}/>
                 <Divider sx={{width: "100%", mb: 1}}/>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
                     <Chip label={object.owner_display} variant="outlined"/>
