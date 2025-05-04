@@ -23,7 +23,7 @@ const Leftbar = () => {
                     <LeftbarItem url="/periods" displayText="Periods" icon={<CalendarMonthIcon />} />
                     <LeftbarItem url="/deposits" displayText="Deposits" icon={<AccountBalanceWalletRoundedIcon />} />
                     <LeftbarItem url="/entities" displayText="Entities" icon={<LocalGroceryStoreRoundedIcon />} />
-                    <LeftbarItem url="/transfer_categories" displayText="Transfer categories" icon={<SellIcon/>}/>
+                    <LeftbarItem url="/categories" displayText="Transfer categories" icon={<SellIcon/>}/>
                     <LeftbarItem url="/incomes" displayText="Incomes" icon={<PaymentIcon />} />
                     <LeftbarItem url="/expenses" displayText="Expenses" icon={<ReceiptIcon />} />
                     <LeftbarItem url="/expense_predictions" displayText="Expense predictions" icon={<CalculateOutlinedIcon />} />
