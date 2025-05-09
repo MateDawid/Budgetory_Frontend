@@ -55,8 +55,9 @@ const getSortFieldMapping = (columns) => {
  * @param {object} columns - Displayed columns settings.
  * @param {string} apiUrl - Base API url for fetching data.
  * @param {string} clientUrl - Base client url for redirecting.
+ * @param {string} addedObjectId - useState setter for refreshing objects list on object adding.
  */
-const DataTable = ({columns, apiUrl, clientUrl}) => {
+const DataTable = ({columns, apiUrl, clientUrl, addedObjectId}) => {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
     const [rowCount, setRowCount] = useState(0);
@@ -117,7 +118,7 @@ const DataTable = ({columns, apiUrl, clientUrl}) => {
             }
         }
         loadData();
-    }, [contextBudgetId, paginationModel, sortModel, filterModel]);
+    }, [contextBudgetId, paginationModel, sortModel, filterModel, addedObjectId]);
 
     /**
      * Function to update DataGrid pagination model.
