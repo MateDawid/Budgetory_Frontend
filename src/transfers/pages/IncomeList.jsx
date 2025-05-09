@@ -1,23 +1,83 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import Typography from "@mui/material/Typography";
-import {Paper} from "@mui/material";
+import {Paper, Stack} from "@mui/material";
 import Divider from "@mui/material/Divider";
 import Alert from '@mui/material/Alert';
 import {AlertContext} from "../../app_infrastructure/components/AlertContext";
 import DataTable from "../../app_infrastructure/components/DataTable";
 import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
+import CreateButton from "../../app_infrastructure/components/CreateButton";
+import loadSelectOptionsForTransfer from "../utils/loadSelectOptionsForTransfer";
+import CategoryTypes from "../../categories/utils/CategoryTypes";
 
 /**
- * ExpenseList component to display list of Budget INCOME Transfers.
+ * IncomeList component to display list of Budget INCOME Transfers.
  */
-export default function ExpenseList() {
+export default function IncomeList() {
     const {contextBudgetId} = useContext(BudgetContext);
-    const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expenses/`
+    const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/incomes/`
     const {alert, setAlert} = useContext(AlertContext);
     const [periodOptions, setPeriodOptions] = useState([]);
     const [entityOptions, setEntityOptions] = useState([]);
     const [categoryOptions, setCategoryOptions] = useState([]);
     const [depositOptions, setDepositOptions] = useState([]);
+    const [addedObjectId, setAddedObjectId] = useState(null);
+    const createFields = {
+        name: {
+            type: 'string',
+            label: 'Name',
+            autoFocus: true,
+            required: true
+        },
+        value: {
+            type: 'number',
+            label: 'Value',
+            autoFocus: true,
+            required: true
+        },
+        date: {
+            type: 'date',
+            label: 'Date',
+            required: true,
+        },
+        period: {
+            type: 'select',
+            select: true,
+            selectValue: 'id',
+            selectLabel: 'name',
+            label: 'Period',
+            required: true,
+            options: periodOptions
+        },
+        entity: {
+            type: 'select',
+            select: true,
+            label: 'Entity',
+            required: true,
+            options: entityOptions,
+        },
+        deposit: {
+            type: 'select',
+            select: true,
+            label: 'Deposit',
+            required: true,
+            options: depositOptions
+        },
+        category: {
+            type: 'select',
+            select: true,
+            label: 'Category',
+            required: true,
+            options: categoryOptions
+        },
+        description: {
+            type: 'string',
+            label: 'Description',
+            required: false,
+            multiline: true,
+            rows: 4
+        },
+    }
     const columns = [
         {
             field: 'date',
@@ -26,7 +86,7 @@ export default function ExpenseList() {
             flex: 2,
             filterable: true,
             sortable: true,
-            editable: true,
+            editable: false,
             valueGetter: (value) => {
                 return new Date(value);
             },
@@ -45,10 +105,8 @@ export default function ExpenseList() {
             flex: 2,
             filterable: true,
             sortable: true,
-            editable: true,
+            editable: false,
             valueOptions: periodOptions,
-            valueOptionsSetter: setPeriodOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`,
         },
         {
             field: 'entity',
@@ -57,10 +115,8 @@ export default function ExpenseList() {
             flex: 2,
             filterable: true,
             sortable: true,
-            editable: true,
+            editable: false,
             valueOptions: entityOptions,
-            valueOptionsSetter: setEntityOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?page_size=1000`,
         },
         {
             field: 'name',
@@ -69,7 +125,7 @@ export default function ExpenseList() {
             flex: 2,
             filterable: true,
             sortable: true,
-            editable: true,
+            editable: false,
         },
         {
             field: 'category',
@@ -78,10 +134,8 @@ export default function ExpenseList() {
             flex: 2,
             filterable: true,
             sortable: true,
-            editable: true,
+            editable: false,
             valueOptions: categoryOptions,
-            valueOptionsSetter: setCategoryOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?category_type=2`,
         },
         {
             field: 'value',
@@ -90,7 +144,7 @@ export default function ExpenseList() {
             flex: 2,
             filterable: true,
             sortable: true,
-            editable: true,
+            editable: false,
         },
         {
             field: 'deposit',
@@ -99,10 +153,8 @@ export default function ExpenseList() {
             flex: 2,
             filterable: true,
             sortable: true,
-            editable: true,
+            editable: false,
             valueOptions: depositOptions,
-            valueOptionsSetter: setDepositOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`,
         },
         {
             field: 'description',
@@ -111,26 +163,37 @@ export default function ExpenseList() {
             flex: 2,
             filterable: true,
             sortable: false,
-            editable: true,
+            editable: false,
         },
     ]
+    /**
+     * Fetches select options for Income object from API.
+     */
+    useEffect(() => {
+        loadSelectOptionsForTransfer(contextBudgetId, CategoryTypes.INCOME, setPeriodOptions, setEntityOptions, setDepositOptions, setCategoryOptions, setAlert);
+    }, [contextBudgetId]);
 
     return (
         <>
             <Paper elevation={24} sx={{
-                padding: 2, bgColor: "#F1F1F1", width: '100%', maxWidth: '100%',
+                padding: 2, bgColor: "#F1F1F1",
                 '& .datagrid--header': {
                     backgroundColor: '#BD0000',
                 }
             }}>
-                <Typography variant="h4" gutterBottom
-                            sx={{display: 'block', color: '#BD0000'}}>Expenses</Typography>
-                <Divider/>
-                {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}
+                <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
+                    <Typography variant="h4"
+                                sx={{display: 'block', color: '#BD0000'}}>Incomes</Typography>
+                    <CreateButton objectName="Income" fields={createFields} apiUrl={apiUrl}
+                                  setAddedObjectId={setAddedObjectId}/>
+                </Stack>
+                <Divider sx={{marginBottom: 1}}/>
+                {alert && <Alert sx={{marginBottom: 1, whiteSpace: 'pre-wrap'}} severity={alert.type}
                                  onClose={() => setAlert(null)}>{alert.message}</Alert>}
                 <DataTable
                     columns={columns}
                     apiUrl={apiUrl}
+                    addedObjectId={addedObjectId}
                 />
             </Paper>
         </>

@@ -15,7 +15,6 @@ import EntityList from "./entities/pages/EntityList";
 import DepositList from "./entities/pages/DepositList";
 import ExpensePredictionList from "./predictions/pages/ExpensePredictionList";
 import IncomeList from "./transfers/pages/IncomeList";
-import ExpenseList from "./transfers/pages/ExpenseList";
 import {ThemeProvider} from "@mui/material";
 import {theme} from "./theme";
 import BudgetDetail from "./budgets/pages/BudgetDetail";
@@ -57,7 +56,7 @@ function App() {
                     </Route>
                     <Route path='predictions' element={<ExpensePredictionList/>}/>
                     <Route path='incomes' element={<IncomeList/>}/>
-                    <Route path='expenses' element={<ExpenseList/>}/>
+                    {/*<Route path='expenses' element={<ExpenseList/>}/>*/}
                 </Route>
                 <Route path='login' element={<LoginForm/>}/>
                 <Route path='register' element={<RegisterForm/>}/>
