@@ -1,9 +1,9 @@
-import {Typography, MenuItem} from "@mui/material";
+import {Typography, Autocomplete} from "@mui/material";
 import React, {useContext, useState} from "react";
 import {Add as AddIcon} from "@mui/icons-material";
 import {Box} from "@mui/system";
 import StyledButton from "./StyledButton";
-import {useForm} from "react-hook-form";
+import {useForm, Controller} from "react-hook-form";
 import {createApiObject} from "../services/APIService";
 import ApiError from "../utils/ApiError";
 import {AlertContext} from "./AlertContext";
@@ -20,7 +20,7 @@ import StyledTextField from "./StyledTextField";
  */
 const CreateButton = ({objectName, fields, apiUrl, setAddedObjectId}) => {
     const [open, setOpen] = useState(false);
-    const {register, handleSubmit, reset} = useForm();
+    const {register, handleSubmit, reset, control} = useForm();
     const [fieldErrors, setFieldErrors] = useState({});
     const [nonFieldErrors, setNonFieldErrors] = useState(null);
     const {setAlert} = useContext(AlertContext);
@@ -82,28 +82,56 @@ const CreateButton = ({objectName, fields, apiUrl, setAddedObjectId}) => {
                                onClose={() => setNonFieldErrors(null)}>{nonFieldErrors}</Alert>}
                     <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{mt: 1}}>
                         {Object.keys(fields).map((fieldName) => (
-                            fields[fieldName]['type'] === 'select' ? (
-                                <StyledTextField
+                            fields[fieldName]['type'] === 'select' && fields[fieldName]['options'] ? (
+                                <Controller
                                     key={fieldName}
-                                    {...fields[fieldName]}
-                                    {...register(fieldName)}
-                                    slotProps={{
-                                        inputLabel: {
-                                            shrink: true,
-                                        },
-                                    }}
-                                    inputProps={fields[fieldName]['type'] === 'date' ? {max: '9999-12-31'} : {}}
-                                    fullWidth
-                                    error={!!fieldErrors[fieldName]}
-                                    helperText={fieldErrors[fieldName] ? fieldErrors[fieldName] : ''}
-                                    sx={{mb: 2}}
-                                >
-                                    {fields[fieldName]['options'].map((option) => (
-                                        <MenuItem key={option.value} value={option.value}>
-                                            {option.label}
-                                        </MenuItem>
-                                    ))}
-                                </StyledTextField>
+                                    name={fieldName}
+                                    control={control}
+                                    defaultValue=""
+                                    render={({field}) => (
+                                        <Autocomplete
+                                            {...field}
+                                            fullWidth
+                                            options={fields[fieldName]['options']}
+                                            getOptionLabel={(selectedOption) => {
+                                                if (typeof selectedOption === 'object') {
+                                                    return selectedOption[fields[fieldName]['selectLabel']] || selectedOption.label || ''
+                                                } else if (typeof selectedOption === 'number') {
+                                                    const displayOption = fields[fieldName]['options'].find(option => option[fields[fieldName]['selectValue']] === selectedOption || option.value === selectedOption)
+                                                    if (displayOption) {
+                                                        return displayOption[fields[fieldName]['selectLabel']] || displayOption.label
+                                                    } else {
+                                                        console.error(`ERROR: Wrong setup for field ${fieldName} - check "selectValue" and "selectLabel" definitions.`)
+                                                        return '?'
+                                                    }
+                                                }
+                                                return ""
+                                            }}
+                                            isOptionEqualToValue={(option, value) => {
+                                                if (option && value) {
+                                                    return option[fields[fieldName]['selectValue']] === value || option.value === value;
+                                                }
+                                                return false;
+                                            }}
+                                            onChange={(_, newValue) => field.onChange(newValue ? newValue[fields[fieldName]['selectValue']] || newValue.value : null)}
+                                            renderInput={(params) => (
+                                                <StyledTextField
+                                                    {...params}
+                                                    label={fields[fieldName].label}
+                                                    required={fields[fieldName].required}
+                                                    error={!!fieldErrors[fieldName]}
+                                                    helperText={fieldErrors[fieldName] ? fieldErrors[fieldName] : ''}
+                                                    slotProps={{
+                                                        inputLabel: {
+                                                            shrink: true,
+                                                        },
+                                                    }}
+                                                    sx={{mb: 2}}
+                                                />
+                                            )}
+                                        />
+                                    )}
+                                />
                             ) : (
                             <StyledTextField
                                 key={fieldName}
