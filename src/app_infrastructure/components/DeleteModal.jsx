@@ -8,7 +8,17 @@ import {deleteApiObject} from "../services/APIService";
 import {useNavigate} from "react-router-dom";
 import {AlertContext} from "./AlertContext";
 
-const DeleteModal = ({open, setOpen, objectId, apiUrl, objectDisplayName, setDeletedObjectId = null, redirectOnSuccess = null}) => {
+/**
+ * DeleteModal to be displayed before deleting object..
+ * @param {string} objectId - API ID of object to be deleted.
+ * @param {string} apiUrl - Base API url to be called with DELETE method.
+ * @param {string} objectDisplayName - Name of deleted object for messages display.
+ * @param {string} message - Message to be displayed on Modal.
+ * @param {function|null} setDeletedObjectId - useState setter for refreshing objects list on object deleting.
+ * @param {string|null} redirectOnSuccess - url to which redirect on delete success.
+ * @param {boolean|null} isDisabled - disables Delete button.
+ */
+const DeleteModal = ({open, setOpen, objectId, apiUrl, objectDisplayName, message, setDeletedObjectId = null, redirectOnSuccess = null}) => {
     const navigate = useNavigate();
     const {setAlert} = useContext(AlertContext);
     const {handleSubmit} = useForm();
@@ -51,9 +61,7 @@ const DeleteModal = ({open, setOpen, objectId, apiUrl, objectDisplayName, setDel
                 Delete {objectDisplayName}
             </Typography>
             <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{mt: 1}}>
-                <Typography>
-                    Deleting {objectDisplayName} will cause removing all related objects. Do you want to continue?
-                </Typography>
+                <Typography>{message}</Typography>
                 <StyledButton type="submit" variant="contained" fullWidth sx={{mt: 2}}>
                     Delete
                 </StyledButton>

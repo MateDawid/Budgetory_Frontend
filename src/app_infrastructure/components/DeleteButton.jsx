@@ -7,7 +7,7 @@ import DeleteModal from "./DeleteModal";
 
 
 /**
- * BudgetDeleteButton component to display Modal with warning before deleting Budget.
+ * DeleteButton component to display Modal with warning before deleting object.
  * @param {string} objectId - API ID of object to be deleted.
  * @param {string} apiUrl - Base API url to be called with DELETE method.
  * @param {string} objectDisplayName - Name of deleted object for messages display.
@@ -30,6 +30,7 @@ const DeleteButton = ({objectId, apiUrl, objectDisplayName, setDeletedObjectId =
                 apiUrl={apiUrl}
                 setDeletedObjectId={setDeletedObjectId}
                 objectDisplayName={objectDisplayName}
+                message={`Deleting ${objectDisplayName} will cause removing all related objects. Do you want to continue?`}
                 redirectOnSuccess={redirectOnSuccess}
             />
         </>
