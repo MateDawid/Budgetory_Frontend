@@ -11,7 +11,10 @@ import {formatFilterModel, mappedFilterOperators} from "../utils/DataTable/Filte
 import {getApiObjectsList} from "../services/APIService";
 import {useNavigate} from "react-router-dom";
 import {styled} from "@mui/material/styles";
-
+import {
+    Delete as DeleteIcon,
+} from "@mui/icons-material";
+import DeleteModal from "./DeleteModal";
 const pageSizeOptions = [10, 50, 100]
 
 
@@ -62,6 +65,9 @@ const DataTable = ({columns, apiUrl, clientUrl, addedObjectId}) => {
     const [rows, setRows] = useState([]);
     const [rowCount, setRowCount] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [objectToDelete, setObjectToDelete] = useState(null);
+    const [deletedObjectId, setDeletedObjectId] = useState(null);
     const [paginationModel, setPaginationModel] = React.useState({
         pageSize: pageSizeOptions[0],
         page: 0,
@@ -69,7 +75,7 @@ const DataTable = ({columns, apiUrl, clientUrl, addedObjectId}) => {
     const [sortModel, setSortModel] = React.useState({});
     const [filterModel, setFilterModel] = React.useState({items: []});
     const {setAlert} = useContext(AlertContext);
-    const {contextBudgetId} = useContext(BudgetContext);
+    const {contextBudgetId, contextBudgetCurrency} = useContext(BudgetContext);
     const extendedColumns = [
         ...columns.map((column) => ({
                 ...column,
@@ -89,6 +95,16 @@ const DataTable = ({columns, apiUrl, clientUrl, addedObjectId}) => {
                         label="Edit"
                         sx={{"& .MuiSvgIcon-root": {color: black}}}
                         onClick={() => navigate(`${clientUrl}${params.id}`)}
+                    />,
+                    <GridActionsCellItem
+                        key={params.id}
+                        icon={<DeleteIcon/>}
+                        label="Delete"
+                        sx={{"& .MuiSvgIcon-root": {color: black}}}
+                        onClick={() => {
+                            setObjectToDelete(params.row)
+                            setDeleteModalOpen(true)
+                        }}
                     />
                 ]
             }
@@ -118,7 +134,7 @@ const DataTable = ({columns, apiUrl, clientUrl, addedObjectId}) => {
             }
         }
         loadData();
-    }, [contextBudgetId, paginationModel, sortModel, filterModel, addedObjectId]);
+    }, [contextBudgetId, paginationModel, sortModel, filterModel, addedObjectId, deletedObjectId]);
 
     /**
      * Function to update DataGrid pagination model.
@@ -153,7 +169,8 @@ const DataTable = ({columns, apiUrl, clientUrl, addedObjectId}) => {
     }
 
     return (
-        <StyledDataGrid
+        <>
+            <StyledDataGrid
             rows={rows}
             columns={extendedColumns}
             loading={loading}
@@ -168,7 +185,17 @@ const DataTable = ({columns, apiUrl, clientUrl, addedObjectId}) => {
             filterModel={filterModel}
             onFilterModelChange={updateFiltering}
             disableColumnResize={true}
-        />
+            />
+            {objectToDelete && (<DeleteModal
+                open={deleteModalOpen}
+                setOpen={setDeleteModalOpen}
+                objectId={objectToDelete.id}
+                apiUrl={apiUrl}
+                setDeletedObjectId={setDeletedObjectId}
+                message={`Are you sure you want to delete "${objectToDelete.name}" Income with value ${objectToDelete.value} ${contextBudgetCurrency}?`}
+                objectDisplayName={`"${objectToDelete.name}" Income`}
+            />)}
+        </>
     )
 }
 export default DataTable;
