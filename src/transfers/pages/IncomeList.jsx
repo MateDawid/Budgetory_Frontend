@@ -194,6 +194,7 @@ export default function IncomeList() {
                     columns={columns}
                     apiUrl={apiUrl}
                     addedObjectId={addedObjectId}
+                    editMode
                 />
             </Paper>
         </>

@@ -59,8 +59,9 @@ const getSortFieldMapping = (columns) => {
  * @param {string} apiUrl - Base API url for fetching data.
  * @param {string} clientUrl - Base client url for redirecting.
  * @param {string} addedObjectId - useState setter for refreshing objects list on object adding.
+ * @param {boolean} editMode - Changes actions displayed on table. Displays edit and delete buttons if true.
  */
-const DataTable = ({columns, apiUrl, clientUrl, addedObjectId}) => {
+const DataTable = ({columns, apiUrl, clientUrl, addedObjectId, editMode = false}) => {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
     const [rowCount, setRowCount] = useState(0);
@@ -75,7 +76,7 @@ const DataTable = ({columns, apiUrl, clientUrl, addedObjectId}) => {
     const [sortModel, setSortModel] = React.useState({});
     const [filterModel, setFilterModel] = React.useState({items: []});
     const {setAlert} = useContext(AlertContext);
-    const {contextBudgetId, contextBudgetCurrency} = useContext(BudgetContext);
+    const {contextBudgetId} = useContext(BudgetContext);
     const extendedColumns = [
         ...columns.map((column) => ({
                 ...column,
@@ -88,14 +89,7 @@ const DataTable = ({columns, apiUrl, clientUrl, addedObjectId}) => {
             headerName: 'Actions',
             cellClassName: 'actions',
             getActions: (params) => {
-                return [
-                    <GridActionsCellItem
-                        key={params.id}
-                        icon={<PageviewIcon/>}
-                        label="Edit"
-                        sx={{"& .MuiSvgIcon-root": {color: black}}}
-                        onClick={() => navigate(`${clientUrl}${params.id}`)}
-                    />,
+                return editMode ? [
                     <GridActionsCellItem
                         key={params.id}
                         icon={<DeleteIcon/>}
@@ -105,7 +99,14 @@ const DataTable = ({columns, apiUrl, clientUrl, addedObjectId}) => {
                             setObjectToDelete(params.row)
                             setDeleteModalOpen(true)
                         }}
-                    />
+                    />] : [
+                    <GridActionsCellItem
+                        key={params.id}
+                        icon={<PageviewIcon/>}
+                        label="Edit"
+                        sx={{"& .MuiSvgIcon-root": {color: black}}}
+                        onClick={() => navigate(`${clientUrl}${params.id}`)}
+                    />,
                 ]
             }
         },
@@ -192,8 +193,8 @@ const DataTable = ({columns, apiUrl, clientUrl, addedObjectId}) => {
                 objectId={objectToDelete.id}
                 apiUrl={apiUrl}
                 setDeletedObjectId={setDeletedObjectId}
-                message={`Are you sure you want to delete "${objectToDelete.name}" Income with value ${objectToDelete.value} ${contextBudgetCurrency}?`}
-                objectDisplayName={`"${objectToDelete.name}" Income`}
+                message={`Are you sure you want to delete this object? This action is irreversible.`}
+                objectDisplayName={`"${objectToDelete.name}"`}
             />)}
         </>
     )
