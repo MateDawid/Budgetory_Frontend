@@ -14,7 +14,9 @@ import {styled} from "@mui/material/styles";
 import {
     Delete as DeleteIcon,
 } from "@mui/icons-material";
+import EditIcon from '@mui/icons-material/Edit';
 import DeleteModal from "./DeleteModal";
+import EditModal from "./EditModal";
 const pageSizeOptions = [10, 50, 100]
 
 
@@ -60,15 +62,22 @@ const getSortFieldMapping = (columns) => {
  * @param {string} clientUrl - Base client url for redirecting.
  * @param {string} addedObjectId - useState setter for refreshing objects list on object adding.
  * @param {boolean} editMode - Changes actions displayed on table. Displays edit and delete buttons if true.
+ * @param {object} editFields - Fields for EditModal.
  */
-const DataTable = ({columns, apiUrl, clientUrl, addedObjectId, editMode = false}) => {
+const DataTable = ({columns, apiUrl, clientUrl, addedObjectId, editMode = false, editFields = {}}) => {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
     const [rowCount, setRowCount] = useState(0);
     const [loading, setLoading] = useState(true);
+
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [objectToDelete, setObjectToDelete] = useState(null);
     const [deletedObjectId, setDeletedObjectId] = useState(null);
+
+    const [editModalOpen, setEditModalOpen] = useState(false);
+    const [objectToEdit, setObjectToEdit] = useState(null);
+    const [editedObjectId, setEditedObjectId] = useState(null);
+
     const [paginationModel, setPaginationModel] = React.useState({
         pageSize: pageSizeOptions[0],
         page: 0,
@@ -92,6 +101,16 @@ const DataTable = ({columns, apiUrl, clientUrl, addedObjectId, editMode = false}
                 return editMode ? [
                     <GridActionsCellItem
                         key={params.id}
+                        icon={<EditIcon/>}
+                        label="Edit"
+                        sx={{"& .MuiSvgIcon-root": {color: black}}}
+                        onClick={() => {
+                            setObjectToEdit(params.row)
+                            setEditModalOpen(true)
+                        }}
+                    />,
+                    <GridActionsCellItem
+                        key={params.id}
                         icon={<DeleteIcon/>}
                         label="Delete"
                         sx={{"& .MuiSvgIcon-root": {color: black}}}
@@ -103,7 +122,7 @@ const DataTable = ({columns, apiUrl, clientUrl, addedObjectId, editMode = false}
                     <GridActionsCellItem
                         key={params.id}
                         icon={<PageviewIcon/>}
-                        label="Edit"
+                        label="View"
                         sx={{"& .MuiSvgIcon-root": {color: black}}}
                         onClick={() => navigate(`${clientUrl}${params.id}`)}
                     />,
@@ -135,7 +154,7 @@ const DataTable = ({columns, apiUrl, clientUrl, addedObjectId, editMode = false}
             }
         }
         loadData();
-    }, [contextBudgetId, paginationModel, sortModel, filterModel, addedObjectId, deletedObjectId]);
+    }, [contextBudgetId, paginationModel, sortModel, filterModel, addedObjectId, deletedObjectId, editedObjectId]);
 
     /**
      * Function to update DataGrid pagination model.
@@ -187,6 +206,14 @@ const DataTable = ({columns, apiUrl, clientUrl, addedObjectId, editMode = false}
             onFilterModelChange={updateFiltering}
             disableColumnResize={true}
             />
+            {objectToEdit && (<EditModal
+                open={editModalOpen}
+                setOpen={setEditModalOpen}
+                fields={editFields}
+                editedObject={objectToEdit}
+                apiUrl={apiUrl}
+                setEditedObjectId={setEditedObjectId}
+            />)}
             {objectToDelete && (<DeleteModal
                 open={deleteModalOpen}
                 setOpen={setDeleteModalOpen}
