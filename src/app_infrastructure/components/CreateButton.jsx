@@ -15,7 +15,7 @@ import StyledTextField from "./StyledTextField";
  * CreateButton component to display Modal with form for creating new object.
  * @param {string} objectName - Object name to be displayed.
  * @param {object} fields - Create form fields.
- * @param {string} apiUrl - Base API url to be called with DELETE method.
+ * @param {string} apiUrl - Base API url to be called with POST method.
  * @param {function} setAddedObjectId - useState setter for refreshing objects list on object adding.
  */
 const CreateButton = ({objectName, fields, apiUrl, setAddedObjectId}) => {
