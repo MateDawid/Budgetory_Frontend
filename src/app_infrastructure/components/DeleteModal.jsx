@@ -9,7 +9,9 @@ import {useNavigate} from "react-router-dom";
 import {AlertContext} from "./AlertContext";
 
 /**
- * DeleteModal to be displayed before deleting object..
+ * DeleteModal to be displayed before deleting object.
+ * @param {boolean} open - Indicates if Modal is opened.
+ * @param {function} setOpen - Function to set Modal opened.
  * @param {string} objectId - API ID of object to be deleted.
  * @param {string} apiUrl - Base API url to be called with DELETE method.
  * @param {string} objectDisplayName - Name of deleted object for messages display.
