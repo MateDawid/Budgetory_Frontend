@@ -13,12 +13,11 @@ import StyledTextField from "./StyledTextField";
 
 /**
  * CreateButton component to display Modal with form for creating new object.
- * @param {string} objectName - Object name to be displayed.
  * @param {object} fields - Create form fields.
  * @param {string} apiUrl - Base API url to be called with POST method.
  * @param {function} setAddedObjectId - useState setter for refreshing objects list on object adding.
  */
-const CreateButton = ({objectName, fields, apiUrl, setAddedObjectId}) => {
+const CreateButton = ({fields, apiUrl, setAddedObjectId}) => {
     const [open, setOpen] = useState(false);
     const {register, handleSubmit, reset, control} = useForm();
     const [fieldErrors, setFieldErrors] = useState({});
@@ -32,7 +31,7 @@ const CreateButton = ({objectName, fields, apiUrl, setAddedObjectId}) => {
         try {
             const createResponse = await createApiObject(apiUrl, data);
             setAddedObjectId(createResponse.id);
-            setAlert({type: 'success', message: `${objectName} "${data.name}" created successfully.`});
+            setAlert({type: 'success', message: `Object "${data.name}" created successfully.`});
             setOpen(false);
             reset();
         } catch (error) {
@@ -75,7 +74,7 @@ const CreateButton = ({objectName, fields, apiUrl, setAddedObjectId}) => {
                     borderRadius={5}
                 >
                     <Typography variant="h6" textAlign="center">
-                        Create {objectName}
+                        Create
                     </Typography>
                     {nonFieldErrors &&
                         <Alert sx={{marginTop: 2, marginBottom: 2, whiteSpace: 'pre-wrap'}} severity="error"

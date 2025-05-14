@@ -140,7 +140,7 @@ export default function TransferCategoryList() {
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                 <Typography variant="h4"
                             sx={{display: 'block', color: '#BD0000'}}>Transfer Categories</Typography>
-                <CreateButton objectName="Transfer Category" fields={createFields} apiUrl={apiUrl}
+                <CreateButton fields={createFields} apiUrl={apiUrl}
                               setAddedObjectId={setAddedObjectId}/>
             </Stack>
             <Divider sx={{mb: 1}}/>

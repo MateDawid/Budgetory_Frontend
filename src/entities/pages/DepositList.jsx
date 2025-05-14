@@ -76,7 +76,7 @@ export default function DepositList() {
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                 <Typography variant="h4"
                             sx={{display: 'block', color: '#BD0000'}}>Deposits</Typography>
-                <CreateButton objectName="Deposit" fields={createFields} apiUrl={apiUrl}
+                <CreateButton fields={createFields} apiUrl={apiUrl}
                               setAddedObjectId={setAddedObjectId}/>
             </Stack>
             <Divider/>

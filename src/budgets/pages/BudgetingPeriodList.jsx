@@ -62,7 +62,7 @@ export default function BudgetingPeriodList() {
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                 <Typography variant="h4"
                             sx={{display: 'block', color: '#BD0000'}}>Periods</Typography>
-                <CreateButton objectName="Period" fields={createFields} apiUrl={apiUrl} setAddedObjectId={setAddedObjectId}/>
+                <CreateButton fields={createFields} apiUrl={apiUrl} setAddedObjectId={setAddedObjectId}/>
             </Stack>
             <Divider/>
             {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}
