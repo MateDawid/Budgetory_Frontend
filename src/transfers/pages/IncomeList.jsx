@@ -1,14 +1,11 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import Typography from "@mui/material/Typography";
 import {Paper, Stack} from "@mui/material";
 import Divider from "@mui/material/Divider";
 import Alert from '@mui/material/Alert';
 import {AlertContext} from "../../app_infrastructure/components/AlertContext";
-import DataTable from "../../app_infrastructure/components/DataTable";
 import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
-import CreateButton from "../../app_infrastructure/components/CreateButton";
-import loadSelectOptionsForTransfer from "../utils/loadSelectOptionsForTransfer";
-import CategoryTypes from "../../categories/utils/CategoryTypes";
+import DataTable from "../../app_infrastructure/components/DataTable";
 
 /**
  * IncomeList component to display list of Budget INCOME Transfers.
@@ -21,63 +18,6 @@ export default function IncomeList() {
     const [entityOptions, setEntityOptions] = useState([]);
     const [categoryOptions, setCategoryOptions] = useState([]);
     const [depositOptions, setDepositOptions] = useState([]);
-    const [addedObjectId, setAddedObjectId] = useState(null);
-    const createFields = {
-        name: {
-            type: 'string',
-            label: 'Name',
-            autoFocus: true,
-            required: true
-        },
-        value: {
-            type: 'number',
-            label: 'Value',
-            autoFocus: true,
-            required: true
-        },
-        date: {
-            type: 'date',
-            label: 'Date',
-            required: true,
-        },
-        period: {
-            type: 'select',
-            select: true,
-            selectValue: 'id',
-            selectLabel: 'name',
-            label: 'Period',
-            required: true,
-            options: periodOptions
-        },
-        entity: {
-            type: 'select',
-            select: true,
-            label: 'Entity',
-            required: true,
-            options: entityOptions,
-        },
-        deposit: {
-            type: 'select',
-            select: true,
-            label: 'Deposit',
-            required: true,
-            options: depositOptions
-        },
-        category: {
-            type: 'select',
-            select: true,
-            label: 'Category',
-            required: true,
-            options: categoryOptions
-        },
-        description: {
-            type: 'string',
-            label: 'Description',
-            required: false,
-            multiline: true,
-            rows: 4
-        },
-    }
     const columns = [
         {
             field: 'date',
@@ -86,7 +26,7 @@ export default function IncomeList() {
             flex: 2,
             filterable: true,
             sortable: true,
-            editable: false,
+            editable: true,
             valueGetter: (value) => {
                 return new Date(value);
             },
@@ -105,18 +45,10 @@ export default function IncomeList() {
             flex: 2,
             filterable: true,
             sortable: true,
-            editable: false,
+            editable: true,
             valueOptions: periodOptions,
-        },
-        {
-            field: 'entity',
-            type: 'singleSelect',
-            headerName: 'Entity',
-            flex: 2,
-            filterable: true,
-            sortable: true,
-            editable: false,
-            valueOptions: entityOptions,
+            valueOptionsSetter: setPeriodOptions,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`,
         },
         {
             field: 'name',
@@ -125,26 +57,19 @@ export default function IncomeList() {
             flex: 2,
             filterable: true,
             sortable: true,
-            editable: false,
+            editable: true,
         },
         {
-            field: 'category',
+            field: 'entity',
             type: 'singleSelect',
-            headerName: 'Category',
+            headerName: 'Entity',
             flex: 2,
             filterable: true,
             sortable: true,
-            editable: false,
-            valueOptions: categoryOptions,
-        },
-        {
-            field: 'value',
-            type: 'number',
-            headerName: 'Value',
-            flex: 2,
-            filterable: true,
-            sortable: true,
-            editable: false,
+            editable: true,
+            valueOptions: entityOptions,
+            valueOptionsSetter: setEntityOptions,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?page_size=1000`,
         },
         {
             field: 'deposit',
@@ -153,8 +78,31 @@ export default function IncomeList() {
             flex: 2,
             filterable: true,
             sortable: true,
-            editable: false,
+            editable: true,
             valueOptions: depositOptions,
+            valueOptionsSetter: setDepositOptions,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`,
+        },
+        {
+            field: 'category',
+            type: 'singleSelect',
+            headerName: 'Category',
+            flex: 2,
+            filterable: true,
+            sortable: true,
+            editable: true,
+            valueOptions: categoryOptions,
+            valueOptionsSetter: setCategoryOptions,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?category_type=1`,
+        },
+        {
+            field: 'value',
+            type: 'number',
+            headerName: 'Value',
+            flex: 2,
+            filterable: true,
+            sortable: true,
+            editable: true,
         },
         {
             field: 'description',
@@ -163,15 +111,9 @@ export default function IncomeList() {
             flex: 2,
             filterable: true,
             sortable: false,
-            editable: false,
+            editable: true,
         },
     ]
-    /**
-     * Fetches select options for Income object from API.
-     */
-    useEffect(() => {
-        loadSelectOptionsForTransfer(contextBudgetId, CategoryTypes.INCOME, setPeriodOptions, setEntityOptions, setDepositOptions, setCategoryOptions, setAlert);
-    }, [contextBudgetId]);
 
     return (
         <>
@@ -184,8 +126,6 @@ export default function IncomeList() {
                 <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                     <Typography variant="h4"
                                 sx={{display: 'block', color: '#BD0000'}}>Incomes</Typography>
-                    <CreateButton objectName="Income" fields={createFields} apiUrl={apiUrl}
-                                  setAddedObjectId={setAddedObjectId}/>
                 </Stack>
                 <Divider sx={{marginBottom: 1}}/>
                 {alert && <Alert sx={{marginBottom: 1, whiteSpace: 'pre-wrap'}} severity={alert.type}
@@ -193,8 +133,6 @@ export default function IncomeList() {
                 <DataTable
                     columns={columns}
                     apiUrl={apiUrl}
-                    addedObjectId={addedObjectId}
-                    editMode
                 />
             </Paper>
         </>

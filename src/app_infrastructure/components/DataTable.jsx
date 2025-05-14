@@ -1,43 +1,34 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {
     DataGrid,
-    GridActionsCellItem
+    GridActionsCellItem, GridPagination,
+    GridRowEditStopReasons,
+    GridRowModes,
 } from "@mui/x-data-grid";
-import PageviewIcon from '@mui/icons-material/Pageview';
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import CancelIcon from '@mui/icons-material/Close';
+import SaveIcon from "@mui/icons-material/Save";
+import ApiError from "../../app_infrastructure/utils/ApiError";
+import AddIcon from "@mui/icons-material/Add";
 import {AlertContext} from "./AlertContext";
 import {BudgetContext} from "./BudgetContext";
-import {white, black, lightGrey} from "../utils/Colors";
+import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
+import {prepareApiInput} from "../utils/DataTable/ApiInputFormatters";
+import {black, red} from "../utils/Colors";
 import {formatFilterModel, mappedFilterOperators} from "../utils/DataTable/FilterHandlers";
-import {getApiObjectsList} from "../services/APIService";
-import {useNavigate} from "react-router-dom";
+import {createApiObject, deleteApiObject, getApiObjectsList, updateApiObject} from "../services/APIService";
 import {styled} from "@mui/material/styles";
-import {
-    Delete as DeleteIcon,
-} from "@mui/icons-material";
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteModal from "./DeleteModal";
-import EditModal from "./EditModal";
+import StyledButton from "./StyledButton";
+
+
 const pageSizeOptions = [10, 50, 100]
 
-
+const gridActionsCellItemStyle = {"& .MuiSvgIcon-root": {color: black}}
 const StyledDataGrid = styled(DataGrid)({
-    backgroundColor: white,
-    '& .MuiSvgIcon-root': {color: white},
-    '& .MuiInputBase-root': {color: white},
-    '& .MuiInputBase-input': {color: black, display: "flex"},
-    '& .MuiCheckbox-root .MuiSvgIcon-root': {color: black},
-    '& .MuiInputBase-root .MuiSvgIcon-root': {color: black},
-    '& .MuiDataGrid-columnHeader': {backgroundColor: black, color: white},
-    '& .MuiDataGrid-columnHeaderTitle': {fontWeight: 'bold !important'},
-    '& .MuiDataGrid-footerContainer': {backgroundColor: black, color: white},
-    '& .MuiDataGrid-row': {backgroundColor: lightGrey},
-    '& .MuiDataGrid-row.Mui-selected': {backgroundColor: lightGrey},
-    '& .MuiDataGrid-row.Mui-selected:hover': {backgroundColor: lightGrey},
-    '& .MuiDataGrid-cell:hover': {color: black, fontWeight: "bold"},
-    '& .MuiTablePagination-select': {color: white},
-    '& .MuiTablePagination-selectIcon': {color: white},
-    '& .MuiTablePagination-selectLabel': {color: white},
-    '& .MuiTablePagination-displayedRows': {color: white},
+    // TODO
 });
 
 /**
@@ -54,30 +45,24 @@ const getSortFieldMapping = (columns) => {
     }, {});
 };
 
+function CustomPagination(props) {
+    return <>
+        <StyledButton variant="outlined" startIcon={<AddIcon/>} onClick={props.handleAddClick} sx={{marginLeft: 1}}>Add</StyledButton>
+        <GridPagination {...props} />
+    </>
+}
 
 /**
  * DataTable component for displaying DataGrid with data fetched from API.
  * @param {object} columns - Displayed columns settings.
  * @param {string} apiUrl - Base API url for fetching data.
- * @param {string} clientUrl - Base client url for redirecting.
- * @param {string} addedObjectId - useState setter for refreshing objects list on object adding.
- * @param {boolean} editMode - Changes actions displayed on table. Displays edit and delete buttons if true.
- * @param {object} editFields - Fields for EditModal.
  */
-const DataTable = ({columns, apiUrl, clientUrl, addedObjectId, editMode = false, editFields = {}}) => {
-    const navigate = useNavigate();
+const DataTable = ({columns, apiUrl}) => {
     const [rows, setRows] = useState([]);
     const [rowCount, setRowCount] = useState(0);
+    const [addedObjectId, setAddedObjectId] = useState(null)
+    const [rowModesModel, setRowModesModel] = React.useState({});
     const [loading, setLoading] = useState(true);
-
-    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-    const [objectToDelete, setObjectToDelete] = useState(null);
-    const [deletedObjectId, setDeletedObjectId] = useState(null);
-
-    const [editModalOpen, setEditModalOpen] = useState(false);
-    const [objectToEdit, setObjectToEdit] = useState(null);
-    const [editedObjectId, setEditedObjectId] = useState(null);
-
     const [paginationModel, setPaginationModel] = React.useState({
         pageSize: pageSizeOptions[0],
         page: 0,
@@ -86,6 +71,8 @@ const DataTable = ({columns, apiUrl, clientUrl, addedObjectId, editMode = false,
     const [filterModel, setFilterModel] = React.useState({items: []});
     const {setAlert} = useContext(AlertContext);
     const {contextBudgetId} = useContext(BudgetContext);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [objectToDelete, setObjectToDelete] = useState(null);
     const extendedColumns = [
         ...columns.map((column) => ({
                 ...column,
@@ -98,35 +85,42 @@ const DataTable = ({columns, apiUrl, clientUrl, addedObjectId, editMode = false,
             headerName: 'Actions',
             cellClassName: 'actions',
             getActions: (params) => {
-                return editMode ? [
-                    <GridActionsCellItem
-                        key={params.id}
-                        icon={<EditIcon/>}
-                        label="Edit"
-                        sx={{"& .MuiSvgIcon-root": {color: black}}}
-                        onClick={() => {
-                            setObjectToEdit(params.row)
-                            setEditModalOpen(true)
-                        }}
-                    />,
-                    <GridActionsCellItem
-                        key={params.id}
-                        icon={<DeleteIcon/>}
-                        label="Delete"
-                        sx={{"& .MuiSvgIcon-root": {color: black}}}
-                        onClick={() => {
-                            setObjectToDelete(params.row)
-                            setDeleteModalOpen(true)
-                        }}
-                    />] : [
-                    <GridActionsCellItem
-                        key={params.id}
-                        icon={<PageviewIcon/>}
-                        label="View"
-                        sx={{"& .MuiSvgIcon-root": {color: black}}}
-                        onClick={() => navigate(`${clientUrl}${params.id}`)}
-                    />,
-                ]
+                const isInEditMode = rowModesModel[params.id]?.mode === GridRowModes.Edit;
+                if (isInEditMode) {
+                    return [
+                        <GridActionsCellItem
+                            key={params.id}
+                            icon={<SaveIcon/>}
+                            label="Save"
+                            sx={gridActionsCellItemStyle}
+                            onClick={handleSaveClick(params.row)}
+                        />,
+                        <GridActionsCellItem
+                            key={params.id}
+                            icon={<CancelIcon/>}
+                            label="Cancel"
+                            sx={gridActionsCellItemStyle}
+                            onClick={handleCancelClick(params.row.id)}
+                        />,
+                    ];
+                } else {
+                    return [
+                        <GridActionsCellItem
+                            key={params.id}
+                            icon={<EditIcon/>}
+                            label="Edit"
+                            sx={gridActionsCellItemStyle}
+                            onClick={handleEditClick(params.row)}
+                        />,
+                        <GridActionsCellItem
+                            key={params.id}
+                            icon={<DeleteIcon/>}
+                            label="Delete"
+                            onClick={() => handleDeleteClick(params.row)}
+                            sx={gridActionsCellItemStyle}
+                        />,
+                    ]
+                }
             }
         },
     ]
@@ -154,7 +148,28 @@ const DataTable = ({columns, apiUrl, clientUrl, addedObjectId, editMode = false,
             }
         }
         loadData();
-    }, [contextBudgetId, paginationModel, sortModel, filterModel, addedObjectId, deletedObjectId, editedObjectId]);
+    }, [contextBudgetId, paginationModel, sortModel, filterModel, addedObjectId]);
+
+    /**
+     * Fetches singleSelect choices from API.
+     * In case of nullChoice (choice saving null value in API) extends valueOptions with such choice.
+     */
+    useEffect(() => {
+        const loadSingleSelectChoices = async () => {
+            for (const column of extendedColumns) {
+                if (column.type !== 'singleSelect') {
+                    continue;
+                }
+                try {
+                    const choicesResponse = await getApiObjectsList(column.valueOptionsApiUrl)
+                    column.valueOptionsSetter(column.nullChoice ? [column.nullChoice, ...choicesResponse.results] : choicesResponse.results);
+                } catch (err) {
+                    setAlert({type: 'error', message: "Failed to load choices for select field.\n" + err});
+                }
+            }
+        }
+        loadSingleSelectChoices();
+    }, [contextBudgetId])
 
     /**
      * Function to update DataGrid pagination model.
@@ -163,7 +178,6 @@ const DataTable = ({columns, apiUrl, clientUrl, addedObjectId, editMode = false,
     function updatePagination(updatedPaginationModel) {
         setPaginationModel(updatedPaginationModel);
     }
-
 
     /**
      * Function to update DataGrid sort model.
@@ -188,41 +202,248 @@ const DataTable = ({columns, apiUrl, clientUrl, addedObjectId, editMode = false,
         setFilterModel(updatedFilterModel)
     }
 
+    /**
+     * Function to handle events that interrupts editing row.
+     * @param {object} params - Edited row parameters.
+     * @param {object} event - Event preventing row editing.
+     */
+    const handleRowEditStop = (params, event) => {
+        if (params.reason === GridRowEditStopReasons.rowFocusOut) {
+            event.defaultMuiPrevented = true;
+        }
+    };
+
+    /**
+     * Function to handle clicking "Add" toolbar button.
+     */
+    const handleAddClick = () => {
+        let id = 0
+        const emptyCells = (columns.reduce((emptyRow, column) => {
+            if (column.type === 'date') {
+                emptyRow[column.field] = new Date().toISOString().split('T')[0];
+            } else {
+                emptyRow[column.field] = '';
+            }
+
+            return emptyRow;
+        }, {}))
+
+        setRows((oldRows) => {
+            if (oldRows.length !== 0) {
+                id = oldRows.reduce((maxId, row) => row.id > maxId ? row.id : maxId, oldRows[0].id) + 1
+            } else {
+                id = 1
+            }
+            return [
+                {id, ...emptyCells, isNew: true},
+                ...oldRows,
+            ]
+        });
+        setRowModesModel((oldModel) => ({
+            ...oldModel,
+            [id]: {mode: GridRowModes.Edit, fieldToFocus: columns[0].field},
+        }));
+    };
+
+    /**
+     * Function performed after clicking row Edit button.
+     * Changes particular row mode to "Edit".
+     * @param {object} row - Row data.
+     */
+    const handleEditClick = (row) => () => {
+        setRowModesModel((prevModel) => ({
+            ...prevModel,
+            [row.id]: {mode: GridRowModes.Edit},
+        }));
+    };
+
+    /**
+     * Function performed after clicking row Save button.
+     * Changes particular row mode to "View" and keeps done modifications,
+     * which leads to perform processRowUpdate function.
+     * @param {object} row - Row data.
+     */
+    const handleSaveClick = (row) => () => {
+        setRowModesModel((prevModel) => ({
+            ...prevModel,
+            [row.id]: {mode: GridRowModes.View},
+        }));
+    };
+
+    /**
+     * Function performed after saving changes in DataGrid row.
+     * Makes call to API to update particular row.
+     * @param {object} row - DataGrid row content.
+     * @return {object} - Created/updated object content.
+     */
+    const processRowUpdate = async (row) => {
+        const processedRow = prepareApiInput(row, columns)
+        if (processedRow.isNew) {
+            const createResponse = await createApiObject(apiUrl, processedRow);
+            setAlert({type: 'success', message: `Object created successfully.`})
+            setAddedObjectId(createResponse.id)
+            return createResponse;
+        } else {
+            const updateResponse = await updateApiObject(apiUrl, processedRow);
+            setAlert({type: 'success', message: `Object updated successfully.`})
+            return updateResponse;
+        }
+    };
+
+    /**
+     * Function performed in case of error during processing row update.
+     * @param {Error | ApiError} error - Error occurred during row update.
+     */
+    const handleProcessRowUpdateError = (error) => {
+        if (error instanceof ApiError) {
+            let message = 'Invalid data provided:'
+            Object.keys(error.data.detail).forEach(key => {
+                if (key === 'non_field_errors') {
+                    message = message + `\n• ${error.data.detail[key]}`
+                } else {
+                    const column = columns.find(column => column.field === key)
+                    if (column) {
+                        message = message + `\n• "${column.headerName}" field - ${error.data.detail[key]}`
+                    } else {
+                        message = message + `\n• "${key}" API field - ${error.data.detail[key]}`
+                    }
+                }
+
+            });
+            setAlert({type: 'error', message: message});
+        } else {
+            console.error(error)
+            setAlert({type: 'error', message: "Unexpected error occurred."});
+        }
+    };
+
+    /**
+     * Function performed after clicking row Cancel button.
+     * Changes particular row mode to "View" and removes done modifications.
+     * @param {number} id - Edited object id.
+     */
+    const handleCancelClick = (id) => () => {
+        setRowModesModel({
+            ...rowModesModel,
+            [id]: {mode: GridRowModes.View, ignoreModifications: true},
+        });
+
+        const editedRow = rows.find((row) => row.id === id);
+        if (editedRow.isNew) {
+            setRows(rows.filter((row) => row.id !== id));
+        }
+        setAlert(null);
+    };
+
+    /**
+     * Function performed after double-clicking row to be edited.
+     * Changes particular row mode to "Edit".
+     * @param {number} newRowModesModel - Data of updated row.
+     */
+    const handleRowModesModelChange = (newRowModesModel) => {
+        setRowModesModel(newRowModesModel);
+    };
+
+    /**
+     * Function to open delete row Dialog for selected row.
+     * @param {object} row - DataGrid row to be marked as "to delete".
+     */
+    const handleDeleteClick = (row) => {
+        setObjectToDelete(row);
+        setDeleteDialogOpen(true);
+    };
+
+    /**
+     * Function to close delete row Dialog.
+     */
+    const handleCloseDeleteDialog = () => {
+        setDeleteDialogOpen(false);
+        setObjectToDelete(null);
+    };
+
+    /**
+     * Function to perform API call to delete selected object.
+     */
+    const handleApiDelete = async () => {
+        try {
+            const deleteResponse = await deleteApiObject(apiUrl, objectToDelete.id);
+            if (deleteResponse.errorOccurred) {
+                setAlert({
+                    type: 'error',
+                    message: `Object was not deleted because of an error: ${deleteResponse.detail}`
+                });
+            } else {
+                const rowsResponse = await getApiObjectsList(
+                    apiUrl, paginationModel, sortModel, formatFilterModel(filterModel, columns)
+                )
+                setRows(rowsResponse.results);
+                setRowCount(rowsResponse.count);
+                setAlert({type: 'success', message: "Object deleted successfully"});
+            }
+
+        } catch (err) {
+            setAlert({type: 'error', message: "Failed to delete object."});
+        } finally {
+            handleCloseDeleteDialog();
+        }
+    };
+
     return (
         <>
-            <StyledDataGrid
-            rows={rows}
-            columns={extendedColumns}
-            loading={loading}
-            rowCount={rowCount}
-            paginationMode="server"
-            paginationModel={paginationModel}
-            onPaginationModelChange={updatePagination}
-            pageSizeOptions={pageSizeOptions}
-            sortingMode="server"
-            onSortModelChange={updateSorting}
-            filterMode="server"
-            filterModel={filterModel}
-            onFilterModelChange={updateFiltering}
-            disableColumnResize={true}
-            />
-            {objectToEdit && (<EditModal
-                open={editModalOpen}
-                setOpen={setEditModalOpen}
-                fields={editFields}
-                editedObject={objectToEdit}
-                apiUrl={apiUrl}
-                setEditedObjectId={setEditedObjectId}
-            />)}
-            {objectToDelete && (<DeleteModal
-                open={deleteModalOpen}
-                setOpen={setDeleteModalOpen}
-                objectId={objectToDelete.id}
-                apiUrl={apiUrl}
-                setDeletedObjectId={setDeletedObjectId}
-                message={`Are you sure you want to delete this object? This action is irreversible.`}
-                objectDisplayName={`"${objectToDelete.name}"`}
-            />)}
+            <Box sx={{flexGrow: 1, marginTop: 2, width: '100%'}}>
+                <StyledDataGrid
+                    rows={rows}
+                    columns={extendedColumns}
+                    loading={loading}
+                    rowCount={rowCount}
+                    paginationMode="server"
+                    paginationModel={paginationModel}
+                    onPaginationModelChange={updatePagination}
+                    pageSizeOptions={pageSizeOptions}
+                    sortingMode="server"
+                    onSortModelChange={updateSorting}
+                    filterMode="server"
+                    filterModel={filterModel}
+                    onFilterModelChange={updateFiltering}
+                    disableColumnResize={true}
+                    editMode="row"
+                    rowModesModel={rowModesModel}
+                    onRowModesModelChange={handleRowModesModelChange}
+                    onRowEditStop={handleRowEditStop}
+                    processRowUpdate={processRowUpdate}
+                    onProcessRowUpdateError={handleProcessRowUpdateError}
+                    checkboxSelection
+                    disableRowSelectionOnClick
+                    slots={{
+                        pagination: CustomPagination,
+                    }}
+                    slotProps={{
+                        pagination: {handleAddClick},
+                    }}
+                />
+            </Box>
+            <Box
+                sx={{display: "flex", justifyContent: "right", alignItems: "end"}}>
+                c
+            </Box>
+            <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
+                <DialogTitle sx={{color: red}}>
+                    {"Are you sure you want to delete this object?"}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Object and all of its related content will be removed.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDeleteDialog} sx={{color: red}}>
+                        Cancel
+                    </Button>
+                    <Button onClick={handleApiDelete} sx={{color: red}} autoFocus>
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </>
     )
 }
