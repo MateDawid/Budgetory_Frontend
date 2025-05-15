@@ -45,7 +45,12 @@ const getSortFieldMapping = (columns) => {
     }, {});
 };
 
-function CustomPagination(props) {
+/**
+ * Function to prepare mapping of API ordering fields for DataTable columns other than column names.
+ * @param {object} columns - DataTable columns definitions.
+ * @return {object} - Mapping for sorting DataTable rows.
+ */
+function DataTableFooter(props) {
     return <>
         <StyledButton variant="outlined" startIcon={<AddIcon/>} onClick={props.handleAddClick} sx={{marginLeft: 1}}>Add</StyledButton>
         <GridPagination {...props} />
@@ -162,7 +167,7 @@ const DataTable = ({columns, apiUrl}) => {
                 }
                 try {
                     const choicesResponse = await getApiObjectsList(column.valueOptionsApiUrl)
-                    column.valueOptionsSetter(column.nullChoice ? [column.nullChoice, ...choicesResponse.results] : choicesResponse.results);
+                    column.valueOptionsSetter(column.nullChoice ? [column.nullChoice, ...choicesResponse] : choicesResponse);
                 } catch (err) {
                     setAlert({type: 'error', message: "Failed to load choices for select field.\n" + err});
                 }
@@ -415,7 +420,7 @@ const DataTable = ({columns, apiUrl}) => {
                     checkboxSelection
                     disableRowSelectionOnClick
                     slots={{
-                        pagination: CustomPagination,
+                        pagination: DataTableFooter,
                     }}
                     slotProps={{
                         pagination: {handleAddClick},
