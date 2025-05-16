@@ -46,14 +46,15 @@ const getSortFieldMapping = (columns) => {
 };
 
 /**
- * Function to prepare mapping of API ordering fields for DataTable columns other than column names.
- * @param {object} columns - DataTable columns definitions.
- * @return {object} - Mapping for sorting DataTable rows.
+ * DataTableFooter component for DataTable custom footer.
+ * @param {object} props - Properties passed to footer.
  */
 function DataTableFooter(props) {
+    const { handleAddClick, ...otherProps } = props;
+
     return <>
-        <StyledButton variant="outlined" startIcon={<AddIcon/>} onClick={props.handleAddClick} sx={{marginLeft: 1}}>Add</StyledButton>
-        <GridPagination {...props} />
+        <StyledButton variant="outlined" startIcon={<AddIcon/>} onClick={handleAddClick} sx={{marginLeft: 1}}>Add</StyledButton>
+        <GridPagination {...otherProps} />
     </>
 }
 
