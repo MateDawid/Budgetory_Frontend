@@ -65,7 +65,6 @@ function DataTableFooter(props) {
 const DataTable = ({columns, apiUrl}) => {
     const [rows, setRows] = useState([]);
     const [rowCount, setRowCount] = useState(0);
-    const [addedObjectId, setAddedObjectId] = useState(null)
     const [rowModesModel, setRowModesModel] = React.useState({});
     const [loading, setLoading] = useState(true);
     const [paginationModel, setPaginationModel] = React.useState({
@@ -153,7 +152,7 @@ const DataTable = ({columns, apiUrl}) => {
             }
         }
         loadData();
-    }, [contextBudgetId, paginationModel, sortModel, filterModel, addedObjectId]);
+    }, [contextBudgetId, paginationModel, sortModel, filterModel]);
 
     /**
      * Fetches singleSelect choices from API.
@@ -229,19 +228,18 @@ const DataTable = ({columns, apiUrl}) => {
             } else {
                 emptyRow[column.field] = '';
             }
-
             return emptyRow;
         }, {}))
 
         setRows((oldRows) => {
             if (oldRows.length !== 0) {
-                id = oldRows.reduce((maxId, row) => row.id > maxId ? row.id : maxId, oldRows[0].id) + 1
+                id = oldRows.reduce((maxId, row) => row.id > maxId ? row.id : maxId, oldRows[0].id) + 100
             } else {
                 id = 1
             }
             return [
-                {id, ...emptyCells, isNew: true},
                 ...oldRows,
+                {id, ...emptyCells, isNew: true},
             ]
         });
         setRowModesModel((oldModel) => ({
@@ -284,9 +282,21 @@ const DataTable = ({columns, apiUrl}) => {
     const processRowUpdate = async (row) => {
         const processedRow = prepareApiInput(row, columns)
         if (processedRow.isNew) {
+            const temporaryRowId = processedRow.id;
+            delete processedRow.id;
             const createResponse = await createApiObject(apiUrl, processedRow);
             setAlert({type: 'success', message: `Object created successfully.`})
-            setAddedObjectId(createResponse.id)
+            setRows((oldRows) => {
+                return [...oldRows.filter(row => row.id !== temporaryRowId), createResponse]
+                    .sort((a, b) => {
+                        // If a doesn't have isNew and b has it, a comes first
+                        if (!('isNew' in a) && 'isNew' in b) return -1;
+                        // If b doesn't have isNew and a has it, b comes first
+                        if (!('isNew' in b) && 'isNew' in a) return 1;
+                        // Otherwise maintain original order
+                        return 0;
+                    });
+            });
             return createResponse;
         } else {
             const updateResponse = await updateApiObject(apiUrl, processedRow);
@@ -395,7 +405,7 @@ const DataTable = ({columns, apiUrl}) => {
 
     return (
         <>
-            <Box sx={{flexGrow: 1, marginTop: 2, width: '100%'}}>
+            <Box sx={{flexGrow: 1, marginTop: 2, width: '100%', height: 500}}>
                 <StyledDataGrid
                     rows={rows}
                     columns={extendedColumns}
@@ -429,7 +439,6 @@ const DataTable = ({columns, apiUrl}) => {
             </Box>
             <Box
                 sx={{display: "flex", justifyContent: "right", alignItems: "end"}}>
-                c
             </Box>
             <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
                 <DialogTitle sx={{color: red}}>
