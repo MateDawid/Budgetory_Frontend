@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {
     DataGrid,
-    GridActionsCellItem, GridPagination,
+    GridActionsCellItem,
     GridRowEditStopReasons,
     GridRowModes,
 } from "@mui/x-data-grid";
@@ -11,17 +11,16 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CancelIcon from '@mui/icons-material/Close';
 import SaveIcon from "@mui/icons-material/Save";
-import ApiError from "../../app_infrastructure/utils/ApiError";
-import AddIcon from "@mui/icons-material/Add";
-import {AlertContext} from "./AlertContext";
-import {BudgetContext} from "./BudgetContext";
+import ApiError from "../../utils/ApiError";
+import {AlertContext} from "../AlertContext";
+import {BudgetContext} from "../BudgetContext";
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
-import {prepareApiInput} from "../utils/DataTable/ApiInputFormatters";
-import {black, red} from "../utils/Colors";
-import {formatFilterModel, mappedFilterOperators} from "../utils/DataTable/FilterHandlers";
-import {createApiObject, deleteApiObject, getApiObjectsList, updateApiObject} from "../services/APIService";
+import {prepareApiInput} from "../../utils/DataTable/ApiInputFormatters";
+import {black, red} from "../../utils/Colors";
+import {formatFilterModel, mappedFilterOperators} from "../../utils/DataTable/FilterHandlers";
+import {createApiObject, deleteApiObject, getApiObjectsList, updateApiObject} from "../../services/APIService";
 import {styled} from "@mui/material/styles";
-import StyledButton from "./StyledButton";
+import DataTableFooter from "./DataTableFooter";
 
 
 const pageSizeOptions = [10, 50, 100]
@@ -45,29 +44,6 @@ const getSortFieldMapping = (columns) => {
     }, {});
 };
 
-/**
- * DataTableFooter component for DataTable custom footer.
- * @param {object} props - Properties passed to footer.
- */
-function DataTableFooter(props) {
-    const {handleAddClick, selectedRows, ...otherProps} = props;
-
-        /**
-     * Fetches objects list from API.
-     */
-    useEffect(() => {
-        console.log('UPDATE!')
-    }, [selectedRows]);
-
-    return <>
-        {selectedRows.length > 0 ?
-            <StyledButton variant="outlined" startIcon={<AddIcon/>} onClick={handleAddClick} sx={{marginLeft: 1}}>Delete
-                selected</StyledButton> :
-            <StyledButton variant="outlined" startIcon={<AddIcon/>} onClick={handleAddClick}
-                          sx={{marginLeft: 1}}>Add</StyledButton>}
-        <GridPagination {...otherProps} />
-    </>
-}
 
 /**
  * DataTable component for displaying DataGrid with data fetched from API.
@@ -442,10 +418,7 @@ const DataTable = ({columns, apiUrl}) => {
                     onProcessRowUpdateError={handleProcessRowUpdateError}
                     checkboxSelection
                     disableRowSelectionOnClick
-                    onRowSelectionModelChange={(ids) => {
-                        console.log(ids)
-                        setSelectedRows(ids);
-                    }}
+                    onRowSelectionModelChange={(selectedRowsIds) => setSelectedRows(selectedRowsIds)}
                     isRowSelectable={(params) => params.row.isNew !== true}
                     slots={{
                         pagination: DataTableFooter,

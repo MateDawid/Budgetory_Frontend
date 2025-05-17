@@ -5,7 +5,7 @@ import Divider from "@mui/material/Divider";
 import Alert from '@mui/material/Alert';
 import {AlertContext} from "../../app_infrastructure/components/AlertContext";
 import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
-import DataTable from "../../app_infrastructure/components/DataTable";
+import DataTable from "../../app_infrastructure/components/DataTable/DataTable";
 
 /**
  * IncomeList component to display list of Budget INCOME Transfers.

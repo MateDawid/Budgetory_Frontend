@@ -12,7 +12,7 @@ import {useParams} from "react-router-dom";
 import EditableTextField from "../../app_infrastructure/components/EditableTextField";
 import BudgetDeleteButton from "../components/BudgetDeleteButton";
 import ApiError from "../../app_infrastructure/utils/ApiError";
-import DataTable from "../../app_infrastructure/components/DataTable";
+import DataTable from "../../app_infrastructure/components/DataTable/DataTable";
 
 /**
  * BudgetDetail component to display details of single Budget.

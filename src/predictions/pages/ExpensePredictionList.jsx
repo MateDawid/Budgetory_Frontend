@@ -4,7 +4,7 @@ import {Paper} from "@mui/material";
 import Divider from "@mui/material/Divider";
 import Alert from '@mui/material/Alert';
 import {AlertContext} from "../../app_infrastructure/components/AlertContext";
-import DataTable from "../../app_infrastructure/components/DataTable";
+import DataTable from "../../app_infrastructure/components/DataTable/DataTable";
 import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
 
 /**
