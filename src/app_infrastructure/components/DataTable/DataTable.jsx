@@ -50,10 +50,21 @@ const getSortFieldMapping = (columns) => {
  * @param {object} props - Properties passed to footer.
  */
 function DataTableFooter(props) {
-    const { handleAddClick, ...otherProps } = props;
+    const {handleAddClick, selectedRows, ...otherProps} = props;
+
+        /**
+     * Fetches objects list from API.
+     */
+    useEffect(() => {
+        console.log('UPDATE!')
+    }, [selectedRows]);
 
     return <>
-        <StyledButton variant="outlined" startIcon={<AddIcon/>} onClick={handleAddClick} sx={{marginLeft: 1}}>Add</StyledButton>
+        {selectedRows.length > 0 ?
+            <StyledButton variant="outlined" startIcon={<AddIcon/>} onClick={handleAddClick} sx={{marginLeft: 1}}>Delete
+                selected</StyledButton> :
+            <StyledButton variant="outlined" startIcon={<AddIcon/>} onClick={handleAddClick}
+                          sx={{marginLeft: 1}}>Add</StyledButton>}
         <GridPagination {...otherProps} />
     </>
 }
@@ -65,6 +76,7 @@ function DataTableFooter(props) {
  */
 const DataTable = ({columns, apiUrl}) => {
     const [rows, setRows] = useState([]);
+    const [selectedRows, setSelectedRows] = useState([]);
     const [rowCount, setRowCount] = useState(0);
     const [rowModesModel, setRowModesModel] = React.useState({});
     const [loading, setLoading] = useState(true);
@@ -430,11 +442,16 @@ const DataTable = ({columns, apiUrl}) => {
                     onProcessRowUpdateError={handleProcessRowUpdateError}
                     checkboxSelection
                     disableRowSelectionOnClick
+                    onRowSelectionModelChange={(ids) => {
+                        console.log(ids)
+                        setSelectedRows(ids);
+                    }}
+                    isRowSelectable={(params) => params.row.isNew !== true}
                     slots={{
                         pagination: DataTableFooter,
                     }}
                     slotProps={{
-                        pagination: {handleAddClick},
+                        pagination: {handleAddClick, selectedRows},
                     }}
                 />
             </Box>
