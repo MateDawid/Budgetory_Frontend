@@ -1,15 +1,21 @@
-import React, {useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {GridPagination} from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import StyledButton from "../StyledButton";
+import {bulkDeleteApiObjects} from "../../services/APIService";
+import {AlertContext} from "../AlertContext";
 
 /**
  * DataTableFooterButtons component that displays buttons basing on selected rows.
+ * @param {string} apiUrl - Base API url for fetching data.
  * @param {function} handleAddClick - Function to handle Add button click.
  * @param {array} selectedRows - Array containing ids of selected rows.
+ * @param {function} setRemovedRows - Function to set new value of removedRows to refresh DataTable.
  */
-const DataTableFooterButtons = ({handleAddClick, selectedRows}) => {
+const DataTableFooterButtons = ({apiUrl, handleAddClick, selectedRows, setRemovedRows}) => {
+    const {setAlert} = useContext(AlertContext);
+
     /**
      * Used to rerender component on rows selection.
      */
@@ -18,13 +24,19 @@ const DataTableFooterButtons = ({handleAddClick, selectedRows}) => {
     /**
      * Function to handle clicking "Delete selected" toolbar button.
      */
-    const handleDeleteSelectedClick = () => {
-        // TODO: Bulk delete on API side
-        console.log(`DELETE ROWS: ${selectedRows}`)
+    const handleDeleteSelectedClick = async () => {
+        try {
+            await bulkDeleteApiObjects(apiUrl, selectedRows);
+            setAlert({type: 'success', message: `Selected objects deleted successfully.`})
+            setRemovedRows(selectedRows)
+        } catch (error) {
+            setAlert({type: 'error', message: 'Deleting objects failed.'})
+            console.error(error)
+        }
     };
 
     return <>
-        {selectedRows > 0 ?
+        {selectedRows.length > 0 ?
             <StyledButton variant="outlined" startIcon={<DeleteIcon/>} onClick={handleDeleteSelectedClick}
                           sx={{marginLeft: 1}}>
                 Delete selected
@@ -40,13 +52,16 @@ const DataTableFooterButtons = ({handleAddClick, selectedRows}) => {
 
 /**
  * DataTableFooter component for DataTable custom footer.
+ * @param {string} apiUrl - Base API url for fetching data.
  * @param {function} handleAddClick - Function to handle Add button click.
  * @param {array} selectedRows - Array containing ids of selected rows.
+ * @param {function} setRemovedRows - Function to set new value of removedRows to refresh DataTable.
  * @param {object} props - Other properties.
  */
-const DataTableFooter = ({handleAddClick, selectedRows, ...props}) => {
+const DataTableFooter = ({apiUrl, handleAddClick, selectedRows, setRemovedRows, ...props}) => {
     return <>
-        <DataTableFooterButtons handleAddClick={handleAddClick} selectedRows={selectedRows}/>
+        <DataTableFooterButtons apiUrl={apiUrl} handleAddClick={handleAddClick} selectedRows={selectedRows}
+                                setRemovedRows={setRemovedRows}/>
         <GridPagination {...props} />
     </>
 }

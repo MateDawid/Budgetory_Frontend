@@ -53,6 +53,7 @@ const getSortFieldMapping = (columns) => {
 const DataTable = ({columns, apiUrl}) => {
     const [rows, setRows] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
+    const [removedRows, setRemovedRows] = useState([]);
     const [rowCount, setRowCount] = useState(0);
     const [rowModesModel, setRowModesModel] = React.useState({});
     const [loading, setLoading] = useState(true);
@@ -141,7 +142,7 @@ const DataTable = ({columns, apiUrl}) => {
             }
         }
         loadData();
-    }, [contextBudgetId, paginationModel, sortModel, filterModel]);
+    }, [contextBudgetId, paginationModel, sortModel, filterModel, removedRows]);
 
     /**
      * Fetches singleSelect choices from API.
@@ -424,7 +425,7 @@ const DataTable = ({columns, apiUrl}) => {
                         pagination: DataTableFooter,
                     }}
                     slotProps={{
-                        pagination: {handleAddClick, selectedRows},
+                        pagination: {apiUrl, handleAddClick, selectedRows, setRemovedRows},
                     }}
                 />
             </Box>
