@@ -54,6 +54,7 @@ const DataTable = ({columns, apiUrl}) => {
     const [rows, setRows] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
     const [removedRows, setRemovedRows] = useState([]);
+    const [copiedRows, setCopiedRows] = useState([]);
     const [rowCount, setRowCount] = useState(0);
     const [rowModesModel, setRowModesModel] = React.useState({});
     const [loading, setLoading] = useState(true);
@@ -142,7 +143,7 @@ const DataTable = ({columns, apiUrl}) => {
             }
         }
         loadData();
-    }, [contextBudgetId, paginationModel, sortModel, filterModel, removedRows]);
+    }, [contextBudgetId, paginationModel, sortModel, filterModel, removedRows, copiedRows]);
 
     /**
      * Fetches singleSelect choices from API.
@@ -425,7 +426,7 @@ const DataTable = ({columns, apiUrl}) => {
                         pagination: DataTableFooter,
                     }}
                     slotProps={{
-                        pagination: {apiUrl, handleAddClick, selectedRows, setRemovedRows},
+                        pagination: {apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows},
                     }}
                 />
             </Box>

@@ -177,9 +177,43 @@ export const bulkDeleteApiObjects = async (inputUrl, objectIds) => {
                 "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ids: objectIds})
+            body: JSON.stringify({objects_ids: objectIds})
         }
         const response = await fetch(bulkDeleteUrl, requestOptions)
+        if (!response.ok) {
+            const data = await response.json()
+            throw new ApiError(data);
+        }
+    } catch (error) {
+        if (error instanceof ApiError) {
+            throw error;
+        } else {
+            throw new Error("Unexpected error occurred.");
+        }
+
+    }
+};
+
+/**
+ * Function to delete multiple objects from API.
+ * @param {string} inputUrl - API list url.
+ * @param {array} objectIds - Array containing object ids to be deleted.
+ * @return {object} - JSON data with API response.
+ */
+export const copyApiObjects = async (inputUrl, objectIds) => {
+    const url = new URL(inputUrl);
+    try {
+        const token = await getAccessToken()
+        const copyUrl = `${url.origin}${url.pathname}copy/`
+        const requestOptions = {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({objects_ids: objectIds})
+        }
+        const response = await fetch(copyUrl, requestOptions)
         if (!response.ok) {
             const data = await response.json()
             throw new ApiError(data);
