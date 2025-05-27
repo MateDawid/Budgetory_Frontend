@@ -5,13 +5,16 @@ import {useGridApiContext} from "@mui/x-data-grid";
 
 /**
  * AutocompleteCell component to display Autocomplete field in DataGrid cell.
- * @param {number} id - Edited object id.
- * @param {string} field - Edited field name.
- * @param {any} value - Current value of field.
- * @param {array} options - Options to be selected in field.
- * @param {string} labelField - Field containing label to be displayed for options.
+ * @param {object} params - Params for Autocomplete field. Contains:
+ *  - {number} id - Edited object id.
+ *  - {string} field - Edited field name.
+ *  - {any} value - Current value of field.
+ *  - {array} options - Options to be selected in field.
+ *  - {string} labelField - Field containing label to be displayed for options.
  */
-export default function AutocompleteCell({id, field, value, options, labelField}) {
+export default function AutocompleteCell(params) {
+    const options = params.colDef.valueOptions
+    const labelField = params.labelField || 'label'
     const apiRef = useGridApiContext();
 
     /**
@@ -21,9 +24,9 @@ export default function AutocompleteCell({id, field, value, options, labelField}
      */
     const handleValueChange = (_, newValue) => {
         apiRef.current.setEditCellValue({
-            id,
-            field,
-            value: typeof newValue === 'string' ? value : newValue?.value || '',
+            id: params.id,
+            field: params.field,
+            value: typeof newValue === 'string' ? params.value : newValue?.value || '',
         });
     };
 
@@ -38,7 +41,7 @@ export default function AutocompleteCell({id, field, value, options, labelField}
                     height: '100%',
                 }
                 }}
-            value={options.find(option => option.value === value) || null}
+            value={options.find(option => option.value === params.value) || null}
             options={options}
             fullWidth
             getOptionLabel={(selectedOption) => {
@@ -62,7 +65,7 @@ export default function AutocompleteCell({id, field, value, options, labelField}
                 return false;
             }}
             onChange={handleValueChange}
-            renderInput={(params) => <TextField {...params} sx={{height: "50%"}}/>}
+            renderInput={(renderParams) => <TextField {...renderParams}/>}
         />
     )
 }
