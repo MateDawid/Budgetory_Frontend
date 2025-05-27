@@ -56,7 +56,6 @@ export default function AutocompleteCell({id, field, value, options, labelField}
                 return ""
             }}
             isOptionEqualToValue={(option, value) => {
-                console.log(option.value,  value)
                 if (option && value) {
                     return option.value === value || option.value === value.value;
                 }
