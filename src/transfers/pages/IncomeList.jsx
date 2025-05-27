@@ -6,6 +6,7 @@ import Alert from '@mui/material/Alert';
 import {AlertContext} from "../../app_infrastructure/components/AlertContext";
 import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
 import DataTable from "../../app_infrastructure/components/DataTable/DataTable";
+import AutocompleteCell from "../../app_infrastructure/components/DataTable/AutocompleteCell";
 
 /**
  * IncomeList component to display list of Budget INCOME Transfers.
@@ -49,6 +50,7 @@ export default function IncomeList() {
             valueOptions: periodOptions,
             valueOptionsSetter: setPeriodOptions,
             valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`,
+            renderEditCell: (params) => <AutocompleteCell{...params}/>
         },
         {
             field: 'name',
@@ -70,6 +72,7 @@ export default function IncomeList() {
             valueOptions: entityOptions,
             valueOptionsSetter: setEntityOptions,
             valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/`,
+            renderEditCell: (params) => <AutocompleteCell{...params}/>
         },
         {
             field: 'deposit',
@@ -82,6 +85,7 @@ export default function IncomeList() {
             valueOptions: depositOptions,
             valueOptionsSetter: setDepositOptions,
             valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`,
+            renderEditCell: (params) => <AutocompleteCell{...params}/>
         },
         {
             field: 'category',
@@ -94,6 +98,7 @@ export default function IncomeList() {
             valueOptions: categoryOptions,
             valueOptionsSetter: setCategoryOptions,
             valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?category_type=1`,
+            renderEditCell: (params) => <AutocompleteCell{...params}/>
         },
         {
             field: 'value',
