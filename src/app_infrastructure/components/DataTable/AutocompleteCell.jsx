@@ -1,6 +1,5 @@
 import React from 'react';
-import {Autocomplete} from "@mui/material";
-import StyledTextField from "../StyledTextField";
+import {Autocomplete, TextField} from "@mui/material";
 import {useGridApiContext} from "@mui/x-data-grid";
 
 
@@ -30,6 +29,15 @@ export default function AutocompleteCell({id, field, value, options, labelField}
 
     return (
         <Autocomplete
+            sx={{
+                '& .MuiAutocomplete-inputRoot': {
+                    fontSize: "0.875rem",
+                    height: '100%',
+                },
+                '& .MuiFormControl-root': {
+                    height: '100%',
+                }
+                }}
             value={options.find(option => option.value === value) || null}
             options={options}
             fullWidth
@@ -48,13 +56,14 @@ export default function AutocompleteCell({id, field, value, options, labelField}
                 return ""
             }}
             isOptionEqualToValue={(option, value) => {
+                console.log(option.value,  value)
                 if (option && value) {
-                    return option.value === value;
+                    return option.value === value || option.value === value.value;
                 }
                 return false;
             }}
             onChange={handleValueChange}
-            renderInput={(params) => <StyledTextField {...params} />}
+            renderInput={(params) => <TextField {...params} sx={{height: "50%"}}/>}
         />
     )
 }
