@@ -26,9 +26,17 @@ import DataTableFooter from "./DataTableFooter";
 const pageSizeOptions = [10, 50, 100]
 
 const gridActionsCellItemStyle = {"& .MuiSvgIcon-root": {color: black}}
-const StyledDataGrid = styled(DataGrid)({
-    // TODO
-});
+const StyledDataGrid = styled(DataGrid)(() => ({
+    border: 0,
+    '& .MuiDataGrid-columnHeaderTitle, .MuiTablePagination-selectLabel, .MuiTablePagination-select, .MuiTablePagination-displayedRows': {fontWeight: 'bold',},
+    '& .MuiDataGrid-cell': {
+        borderRight: '1px solid #303030',
+        borderRightColor: '#f0f0f0',
+    },
+    '& .MuiDataGrid-columnsContainer, .MuiDataGrid-cell, .MuiDataGrid-footerContainer': {
+        borderBottom: '#f0f0f0'
+    },
+}));
 
 /**
  * Function to prepare mapping of API ordering fields for DataTable columns other than column names.
