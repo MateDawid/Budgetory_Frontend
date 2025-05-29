@@ -13,7 +13,6 @@ import {ContextBudgetProvider} from "./app_infrastructure/components/BudgetConte
 import TransferCategoryList from "./categories/pages/TransferCategoryList";
 import EntityList from "./entities/pages/EntityList";
 import DepositList from "./entities/pages/DepositList";
-import ExpensePredictionList from "./predictions/pages/ExpensePredictionList";
 import IncomeList from "./transfers/pages/IncomeList";
 import ExpenseList from "./transfers/pages/ExpenseList";
 import {ThemeProvider} from "@mui/material";
@@ -55,7 +54,6 @@ function App() {
                         <Route index element={<TransferCategoryList/>}/>
                         <Route path=':id' element={<TransferCategoryDetail/>}/>
                     </Route>
-                    <Route path='predictions' element={<ExpensePredictionList/>}/>
                     <Route path='incomes' element={<IncomeList/>}/>
                     <Route path='expenses' element={<ExpenseList/>}/>
                 </Route>
