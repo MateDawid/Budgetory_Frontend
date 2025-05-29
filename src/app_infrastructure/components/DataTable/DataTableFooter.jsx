@@ -73,6 +73,7 @@ const DataTableFooterButtons = ({apiUrl, handleAddClick, selectedRows, setRemove
 
 /**
  * DataTableFooter component for DataTable custom footer.
+ * @param {boolean} readOnly - Indicates if DataTable is read only or editable.
  * @param {string} apiUrl - Base API url for fetching data.
  * @param {function} handleAddClick - Function to handle Add button click.
  * @param {array} selectedRows - Array containing ids of selected rows.
@@ -80,15 +81,15 @@ const DataTableFooterButtons = ({apiUrl, handleAddClick, selectedRows, setRemove
  * @param {function} setCopiedRows - Function to set new value of copiedRows to refresh DataTable.
  * @param {object} props - Other properties.
  */
-const DataTableFooter = ({apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows, ...props}) => {
+const DataTableFooter = ({readOnly, apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows, ...props}) => {
     return <>
-        <DataTableFooterButtons
+        {!readOnly && <DataTableFooterButtons
             apiUrl={apiUrl}
             handleAddClick={handleAddClick}
             selectedRows={selectedRows}
             setRemovedRows={setRemovedRows}
             setCopiedRows={setCopiedRows}
-        />
+        />}
         <GridPagination {...props} />
     </>
 }

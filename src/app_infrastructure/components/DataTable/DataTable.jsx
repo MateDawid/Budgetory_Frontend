@@ -10,6 +10,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CancelIcon from '@mui/icons-material/Close';
 import SaveIcon from "@mui/icons-material/Save";
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import ApiError from "../../utils/ApiError";
 import {AlertContext} from "../AlertContext";
 import {BudgetContext} from "../BudgetContext";
@@ -19,12 +20,15 @@ import {formatFilterModel, mappedFilterOperators} from "./utils/FilterHandlers";
 import {createApiObject, deleteApiObject, getApiObjectsList, updateApiObject} from "../../services/APIService";
 import {styled} from "@mui/material/styles";
 import DataTableFooter from "./DataTableFooter";
+import {useNavigate} from "react-router-dom";
 
 
 const pageSizeOptions = [10, 50, 100]
 
 const gridActionsCellItemStyle = {"& .MuiSvgIcon-root": {color: black}}
 const StyledDataGrid = styled(DataGrid)(() => ({
+    minWidth: "100%",
+    maxWidth: "100%",
     border: 0,
     '& .MuiDataGrid-columnHeaderTitle, .MuiTablePagination-selectLabel, .MuiTablePagination-select, .MuiTablePagination-displayedRows': {fontWeight: 'bold',},
     '& .MuiDataGrid-cell': {
@@ -55,8 +59,12 @@ const getSortFieldMapping = (columns) => {
  * DataTable component for displaying DataGrid with data fetched from API.
  * @param {object} columns - Displayed columns settings.
  * @param {string} apiUrl - Base API url for fetching data.
+ * @param {boolean} readOnly - Indicates if DataTable is read only or editable.
+ * @param {string|null} clientUrl - Frontend base url for redirects in readOnly mode.
+ * @param {number} height - Height of DataTable.
  */
-const DataTable = ({columns, apiUrl}) => {
+const DataTable = ({columns, apiUrl, readOnly = false, clientUrl = null, height = 600}) => {
+    const navigate = useNavigate();
     const [rows, setRows] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
     const [removedRows, setRemovedRows] = useState([]);
@@ -84,25 +92,36 @@ const DataTable = ({columns, apiUrl}) => {
             headerName: 'Actions',
             cellClassName: 'actions',
             getActions: (params) => {
-                const isInEditMode = rowModesModel[params.id]?.mode === GridRowModes.Edit;
-                if (isInEditMode) {
+                if (readOnly) {
                     return [
                         <GridActionsCellItem
                             key={params.id}
-                            icon={<SaveIcon/>}
-                            label="Save"
+                            icon={<OpenInNewIcon/>}
+                            label="Open"
                             sx={gridActionsCellItemStyle}
-                            onClick={handleSaveClick(params.row)}
-                        />,
-                        <GridActionsCellItem
-                            key={params.id}
-                            icon={<CancelIcon/>}
-                            label="Cancel"
-                            sx={gridActionsCellItemStyle}
-                            onClick={handleCancelClick(params.row.id)}
+                            onClick={() => navigate(`${clientUrl}${params.id}`)}
                         />,
                     ];
                 } else {
+                    const isInEditMode = rowModesModel[params.id]?.mode === GridRowModes.Edit;
+                    if (isInEditMode) {
+                        return [
+                            <GridActionsCellItem
+                                key={params.id}
+                                icon={<SaveIcon/>}
+                                label="Save"
+                                sx={gridActionsCellItemStyle}
+                                onClick={handleSaveClick(params.row)}
+                            />,
+                            <GridActionsCellItem
+                                key={params.id}
+                                icon={<CancelIcon/>}
+                                label="Cancel"
+                                sx={gridActionsCellItemStyle}
+                                onClick={handleCancelClick(params.row.id)}
+                            />,
+                        ];
+                    } else {
                     return [
                         <GridActionsCellItem
                             key={params.id}
@@ -119,7 +138,9 @@ const DataTable = ({columns, apiUrl}) => {
                             sx={gridActionsCellItemStyle}
                         />,
                     ]
+                    }
                 }
+
             }
         },
     ]
@@ -377,7 +398,7 @@ const DataTable = ({columns, apiUrl}) => {
 
     return (
         <>
-            <Box sx={{flexGrow: 1, marginTop: 2, width: '100%', height: 600}}>
+            <Box sx={{flexGrow: 1, marginTop: 2, width: '100%', maxWidth: '100%', height: height}}>
                 <StyledDataGrid
                     rows={rows}
                     columns={extendedColumns}
@@ -399,7 +420,7 @@ const DataTable = ({columns, apiUrl}) => {
                     onRowEditStop={handleRowEditStop}
                     processRowUpdate={processRowUpdate}
                     onProcessRowUpdateError={handleProcessRowUpdateError}
-                    checkboxSelection
+                    checkboxSelection={!readOnly}
                     disableRowSelectionOnClick
                     onRowSelectionModelChange={(selectedRowsIds) => setSelectedRows(selectedRowsIds)}
                     isRowSelectable={(params) => params.row.isNew !== true}
@@ -407,7 +428,7 @@ const DataTable = ({columns, apiUrl}) => {
                         pagination: DataTableFooter,
                     }}
                     slotProps={{
-                        pagination: {apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows},
+                        pagination: {readOnly, apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows},
                     }}
                 />
             </Box>
