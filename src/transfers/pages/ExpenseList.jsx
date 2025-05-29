@@ -10,11 +10,11 @@ import AutocompleteCell from "../../app_infrastructure/components/DataTable/Auto
 import TransferValueInputCell from "../../app_infrastructure/components/DataTable/TransferValueInputCell";
 
 /**
- * IncomeList component to display list of Budget INCOME Transfers.
+ * ExpenseList component to display list of Budget EXPENSE Transfers.
  */
-export default function IncomeList() {
+export default function ExpenseList() {
     const {contextBudgetId, contextBudgetCurrency} = useContext(BudgetContext);
-    const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/incomes/`
+    const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expenses/`
     const {alert, setAlert} = useContext(AlertContext);
     const [periodOptions, setPeriodOptions] = useState([]);
     const [entityOptions, setEntityOptions] = useState([]);
@@ -71,7 +71,7 @@ export default function IncomeList() {
         {
             field: 'entity',
             type: 'singleSelect',
-            headerName: 'Sender',
+            headerName: 'Receiver',
             headerAlign: 'center',
             align: 'center',
             flex: 2,
@@ -110,7 +110,7 @@ export default function IncomeList() {
             editable: true,
             valueOptions: categoryOptions,
             valueOptionsSetter: setCategoryOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?category_type=1`,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?category_type=2`,
             renderEditCell: (params) => <AutocompleteCell {...params}/>
         },
 
@@ -146,7 +146,7 @@ export default function IncomeList() {
             <Paper elevation={24} sx={{padding: 2, paddingBottom: 0, bgColor: "#F1F1F1",}}>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                     <Typography variant="h4"
-                                sx={{display: 'block', color: '#BD0000'}}>Incomes</Typography>
+                                sx={{display: 'block', color: '#BD0000'}}>Expenses</Typography>
                 </Stack>
                 <Divider sx={{marginBottom: 1}}/>
                 {alert && <Alert sx={{marginBottom: 1, whiteSpace: 'pre-wrap'}} severity={alert.type}
