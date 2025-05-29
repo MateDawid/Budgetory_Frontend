@@ -27,6 +27,8 @@ export default function BudgetDetail() {
             field: 'name',
             type: 'string',
             headerName: 'Name',
+            headerAlign: 'center',
+            align: 'left',
             flex: 2,
             filterable: true,
             sortable: true
@@ -35,6 +37,8 @@ export default function BudgetDetail() {
             field: 'description',
             type: 'string',
             headerName: 'Description',
+            headerAlign: 'center',
+            align: 'left',
             flex: 3,
             filterable: true,
             sortable: false,
@@ -43,6 +47,8 @@ export default function BudgetDetail() {
             field: 'is_active',
             type: 'boolean',
             headerName: 'Active',
+            headerAlign: 'center',
+            align: 'center',
             flex: 1,
             filterable: true,
             sortable: false,
@@ -51,6 +57,8 @@ export default function BudgetDetail() {
             field: 'balance',
             type: 'number',
             headerName: 'Balance',
+            headerAlign: 'center',
+            align: 'center',
             flex: 1,
             filterable: true,
             sortable: true,
@@ -105,7 +113,7 @@ export default function BudgetDetail() {
 
     return (
         <Paper elevation={24} sx={{
-            padding: 2, bgColor: "#F1F1F1"
+            padding: 2, paddingBottom: 0, bgColor: "#F1F1F1"
         }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                 <Typography variant="h4" sx={{display: 'block', color: '#BD0000'}}>{budgetData.name}</Typography>
@@ -147,7 +155,9 @@ export default function BudgetDetail() {
                 <DataTable
                     columns={depositsColumns}
                     apiUrl={`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${id}/deposits/`}
+                    readOnly
                     clientUrl='/deposits/'
+                    height={300}
                 />
             </Box>
         </Paper>
