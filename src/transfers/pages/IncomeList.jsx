@@ -7,12 +7,13 @@ import {AlertContext} from "../../app_infrastructure/components/AlertContext";
 import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
 import DataTable from "../../app_infrastructure/components/DataTable/DataTable";
 import AutocompleteCell from "../../app_infrastructure/components/DataTable/AutocompleteCell";
+import TransferValueInputCell from "../../app_infrastructure/components/DataTable/TransferValueInputCell";
 
 /**
  * IncomeList component to display list of Budget INCOME Transfers.
  */
 export default function IncomeList() {
-    const {contextBudgetId} = useContext(BudgetContext);
+    const {contextBudgetId, contextBudgetCurrency} = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/incomes/`
     const {alert, setAlert} = useContext(AlertContext);
     const [periodOptions, setPeriodOptions] = useState([]);
@@ -24,6 +25,8 @@ export default function IncomeList() {
             field: 'date',
             type: 'date',
             headerName: 'Date',
+            headerAlign: 'center',
+            align: 'center',
             flex: 2,
             filterable: true,
             sortable: true,
@@ -43,6 +46,8 @@ export default function IncomeList() {
             field: 'period',
             type: 'singleSelect',
             headerName: 'Period',
+            headerAlign: 'center',
+            align: 'center',
             flex: 2,
             filterable: true,
             sortable: true,
@@ -56,6 +61,8 @@ export default function IncomeList() {
             field: 'name',
             type: 'string',
             headerName: 'Name',
+            headerAlign: 'center',
+            align: 'center',
             flex: 2,
             filterable: true,
             sortable: true,
@@ -65,6 +72,8 @@ export default function IncomeList() {
             field: 'entity',
             type: 'singleSelect',
             headerName: 'Entity',
+            headerAlign: 'center',
+            align: 'center',
             flex: 2,
             filterable: true,
             sortable: true,
@@ -78,6 +87,8 @@ export default function IncomeList() {
             field: 'deposit',
             type: 'singleSelect',
             headerName: 'Deposit',
+            headerAlign: 'center',
+            align: 'center',
             flex: 2,
             filterable: true,
             sortable: true,
@@ -91,6 +102,8 @@ export default function IncomeList() {
             field: 'category',
             type: 'singleSelect',
             headerName: 'Category',
+            headerAlign: 'center',
+            align: 'center',
             flex: 2,
             filterable: true,
             sortable: true,
@@ -98,21 +111,29 @@ export default function IncomeList() {
             valueOptions: categoryOptions,
             valueOptionsSetter: setCategoryOptions,
             valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?category_type=1`,
-            renderEditCell: (params) => <AutocompleteCell{...params}/>
+            renderEditCell: (params) => <AutocompleteCell {...params}/>
         },
+
         {
             field: 'value',
             type: 'number',
             headerName: 'Value',
+            headerAlign: 'center',
+            align: 'center',
             flex: 2,
             filterable: true,
             sortable: true,
             editable: true,
+            valueFormatter: (value) => `${value} ${contextBudgetCurrency}`,
+            renderEditCell: (params) => <TransferValueInputCell {...params}/>,
         },
+
         {
             field: 'description',
             type: 'string',
             headerName: 'Description',
+            headerAlign: 'center',
+            align: 'left',
             flex: 2,
             filterable: true,
             sortable: false,
@@ -122,12 +143,7 @@ export default function IncomeList() {
 
     return (
         <>
-            <Paper elevation={24} sx={{
-                padding: 2, bgColor: "#F1F1F1",
-                '& .datagrid--header': {
-                    backgroundColor: '#BD0000',
-                }
-            }}>
+            <Paper elevation={24} sx={{padding: 2, paddingBottom: 0, bgColor: "#F1F1F1",}}>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                     <Typography variant="h4"
                                 sx={{display: 'block', color: '#BD0000'}}>Incomes</Typography>

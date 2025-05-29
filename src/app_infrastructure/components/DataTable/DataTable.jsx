@@ -404,7 +404,7 @@ const DataTable = ({columns, apiUrl}) => {
 
     return (
         <>
-            <Box sx={{flexGrow: 1, marginTop: 2, width: '100%', height: 500}}>
+            <Box sx={{flexGrow: 1, marginTop: 2, width: '100%', height: 600}}>
                 <StyledDataGrid
                     rows={rows}
                     columns={extendedColumns}
