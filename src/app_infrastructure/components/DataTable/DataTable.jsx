@@ -6,7 +6,6 @@ import {
     GridRowModes,
 } from "@mui/x-data-grid";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CancelIcon from '@mui/icons-material/Close';
@@ -14,9 +13,8 @@ import SaveIcon from "@mui/icons-material/Save";
 import ApiError from "../../utils/ApiError";
 import {AlertContext} from "../AlertContext";
 import {BudgetContext} from "../BudgetContext";
-import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 import {prepareApiInput} from "./utils/ApiInputFormatters";
-import {black, red} from "../../utils/Colors";
+import {black} from "../../utils/Colors";
 import {formatFilterModel, mappedFilterOperators} from "./utils/FilterHandlers";
 import {createApiObject, deleteApiObject, getApiObjectsList, updateApiObject} from "../../services/APIService";
 import {styled} from "@mui/material/styles";
@@ -74,8 +72,6 @@ const DataTable = ({columns, apiUrl}) => {
     const [filterModel, setFilterModel] = React.useState({items: []});
     const {setAlert} = useContext(AlertContext);
     const {contextBudgetId} = useContext(BudgetContext);
-    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-    const [objectToDelete, setObjectToDelete] = useState(null);
     const extendedColumns = [
         ...columns.map((column) => ({
                 ...column,
@@ -119,7 +115,7 @@ const DataTable = ({columns, apiUrl}) => {
                             key={params.id}
                             icon={<DeleteIcon/>}
                             label="Delete"
-                            onClick={() => handleDeleteClick(params.row)}
+                            onClick={() => handleApiDelete(params.row)}
                             sx={gridActionsCellItemStyle}
                         />,
                     ]
@@ -359,46 +355,23 @@ const DataTable = ({columns, apiUrl}) => {
     };
 
     /**
-     * Function to open delete row Dialog for selected row.
-     * @param {object} row - DataGrid row to be marked as "to delete".
-     */
-    const handleDeleteClick = (row) => {
-        setObjectToDelete(row);
-        setDeleteDialogOpen(true);
-    };
-
-    /**
-     * Function to close delete row Dialog.
-     */
-    const handleCloseDeleteDialog = () => {
-        setDeleteDialogOpen(false);
-        setObjectToDelete(null);
-    };
-
-    /**
      * Function to perform API call to delete selected object.
+     * @param {object} row - DataGrid row.
      */
-    const handleApiDelete = async () => {
+    const handleApiDelete = async (row) => {
         try {
-            const deleteResponse = await deleteApiObject(apiUrl, objectToDelete.id);
+            const deleteResponse = await deleteApiObject(apiUrl, row.id);
             if (deleteResponse.errorOccurred) {
                 setAlert({
                     type: 'error',
                     message: `Object was not deleted because of an error: ${deleteResponse.detail}`
                 });
             } else {
-                const rowsResponse = await getApiObjectsList(
-                    apiUrl, paginationModel, sortModel, formatFilterModel(filterModel, columns)
-                )
-                setRows(rowsResponse.results);
-                setRowCount(rowsResponse.count);
+                setRemovedRows([row.id])
                 setAlert({type: 'success', message: "Object deleted successfully"});
             }
-
         } catch (err) {
             setAlert({type: 'error', message: "Failed to delete object."});
-        } finally {
-            handleCloseDeleteDialog();
         }
     };
 
@@ -438,27 +411,6 @@ const DataTable = ({columns, apiUrl}) => {
                     }}
                 />
             </Box>
-            <Box
-                sx={{display: "flex", justifyContent: "right", alignItems: "end"}}>
-            </Box>
-            <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
-                <DialogTitle sx={{color: red}}>
-                    {"Are you sure you want to delete this object?"}
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Object and all of its related content will be removed.
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseDeleteDialog} sx={{color: red}}>
-                        Cancel
-                    </Button>
-                    <Button onClick={handleApiDelete} sx={{color: red}} autoFocus>
-                        Confirm
-                    </Button>
-                </DialogActions>
-            </Dialog>
         </>
     )
 }
