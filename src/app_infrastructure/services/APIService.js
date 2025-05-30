@@ -2,6 +2,34 @@ import {getAccessToken} from "../../app_users/services/LoginService";
 import ApiError from "../../app_infrastructure/utils/ApiError";
 
 /**
+ * Function calling API.
+ * @param {string} url - API url.
+ * @param {object} requestOptions - Object containing request method and data.
+ * @return {object} - JSON data with API response.
+ */
+export const getApiResponse = async (url, requestOptions) => {
+    try {
+        const token = await getAccessToken()
+        requestOptions.headers = {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+        }
+        const response = await fetch(url, requestOptions)
+        if (!response.ok) {
+            const data = await response.json()
+            throw new ApiError(data);
+        }
+        return response
+    } catch (error) {
+        if (error instanceof ApiError) {
+            throw error;
+        } else {
+            throw new Error("Unexpected error occurred.");
+        }
+    }
+};
+
+/**
  * Function to fetch data from API list endpoint.
  * @param {string} inputUrl - API list url.
  * @param {object} paginationModel - paginationModel object with page number and page size.
@@ -168,30 +196,12 @@ export const deleteApiObject = async (inputUrl, objectId) => {
  */
 export const bulkDeleteApiObjects = async (inputUrl, objectIds) => {
     const url = new URL(inputUrl);
-    try {
-        const token = await getAccessToken()
-        const bulkDeleteUrl = `${url.origin}${url.pathname}bulk_delete/`
-        const requestOptions = {
-            method: "DELETE",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({objects_ids: objectIds})
-        }
-        const response = await fetch(bulkDeleteUrl, requestOptions)
-        if (!response.ok) {
-            const data = await response.json()
-            throw new ApiError(data);
-        }
-    } catch (error) {
-        if (error instanceof ApiError) {
-            throw error;
-        } else {
-            throw new Error("Unexpected error occurred.");
-        }
-
+    const bulkDeleteUrl = `${url.origin}${url.pathname}bulk_delete/`
+    const requestOptions = {
+        method: "DELETE",
+        body: JSON.stringify({objects_ids: objectIds})
     }
+    return await getApiResponse(bulkDeleteUrl, requestOptions)
 };
 
 /**
@@ -202,29 +212,11 @@ export const bulkDeleteApiObjects = async (inputUrl, objectIds) => {
  */
 export const copyApiObjects = async (inputUrl, objectIds) => {
     const url = new URL(inputUrl);
-    try {
-        const token = await getAccessToken()
-        const copyUrl = `${url.origin}${url.pathname}copy/`
-        const requestOptions = {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({objects_ids: objectIds})
-        }
-        const response = await fetch(copyUrl, requestOptions)
-        if (!response.ok) {
-            const data = await response.json()
-            throw new ApiError(data);
-        }
-        return await response.json();
-    } catch (error) {
-        if (error instanceof ApiError) {
-            throw error;
-        } else {
-            throw new Error("Unexpected error occurred.");
-        }
-
+    const copyUrl = `${url.origin}${url.pathname}copy/`
+    const requestOptions = {
+        method: "POST",
+        body: JSON.stringify({objects_ids: objectIds})
     }
+    const response = await getApiResponse(copyUrl, requestOptions)
+    return await response.json()
 };
