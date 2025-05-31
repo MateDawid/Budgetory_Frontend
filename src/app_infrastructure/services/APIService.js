@@ -166,25 +166,9 @@ export const updateApiObject = async (inputUrl, updatedObject) => {
  */
 export const deleteApiObject = async (inputUrl, objectId) => {
     const url = new URL(inputUrl);
-    try {
-        const token = await getAccessToken()
-        const detailUrl = `${url.origin}${url.pathname}${objectId}/`
-        const requestOptions = {
-            method: "DELETE",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json",
-            }
-        }
-        const response = await fetch(detailUrl, requestOptions)
-        if (!response.ok) {
-            const data = await response.json()
-            return {errorOccurred: true, ...data}
-        }
-        return {errorOccurred: false, detail: "Success."};
-    } catch (error) {
-        return {errorOccurred: true, detail: "Unexpected server error."}
-    }
+    const detailUrl = `${url.origin}${url.pathname}${objectId}/`
+    const requestOptions = {method: "DELETE"}
+    return await getApiResponse(detailUrl, requestOptions)
 };
 
 
