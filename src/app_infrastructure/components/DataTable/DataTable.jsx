@@ -316,6 +316,7 @@ const DataTable = ({columns, apiUrl, readOnly = false, clientUrl = null, height 
             return createResponse;
         } else {
             const updateResponse = await updateApiObject(apiUrl, processedRow);
+            console.log(updateResponse)
             setAlert({type: 'success', message: `Object updated successfully.`})
             return updateResponse;
         }
@@ -326,7 +327,7 @@ const DataTable = ({columns, apiUrl, readOnly = false, clientUrl = null, height 
      * @param {Error | ApiError} error - Error occurred during row update.
      */
     const handleProcessRowUpdateError = (error) => {
-        if (error instanceof ApiError) {
+        if (error instanceof ApiError && typeof error.data === 'object') {
             let message = 'Invalid data provided:'
             Object.keys(error.data.detail).forEach(key => {
                 if (key === 'non_field_errors') {
