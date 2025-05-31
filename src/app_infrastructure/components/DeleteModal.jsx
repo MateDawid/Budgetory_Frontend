@@ -30,23 +30,17 @@ const DeleteModal = ({open, setOpen, objectId, apiUrl, objectDisplayName, messag
      */
     const onSubmit = async () => {
         try {
-            const deleteResponse = await deleteApiObject(apiUrl, objectId);
-            if (deleteResponse.errorOccurred) {
-                setAlert({
-                    type: 'error',
-                    message: `${objectDisplayName} was not deleted because of an error: ${deleteResponse.detail}`
-                });
-            } else {
-                setAlert({type: 'success', message: `${objectDisplayName} deleted successfully`});
-                if (setDeletedObjectId !== null) {
-                    setDeletedObjectId(objectId)
-                }
-                if (redirectOnSuccess !== null) {
-                    navigate(redirectOnSuccess)
-                }
+            await deleteApiObject(apiUrl, objectId);
+            setAlert({type: 'success', message: "Object deleted successfully"});
+            if (setDeletedObjectId !== null) {
+                setDeletedObjectId(objectId)
             }
-        } catch (err) {
-            setAlert({type: 'error', message: `Failed to delete ${objectDisplayName}.`});
+            if (redirectOnSuccess !== null) {
+                navigate(redirectOnSuccess)
+            }
+        } catch (error) {
+            console.error(error)
+            setAlert({type: 'error', message: error.message});
         } finally {
             setOpen(false)
         }

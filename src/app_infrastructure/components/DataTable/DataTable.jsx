@@ -381,18 +381,11 @@ const DataTable = ({columns, apiUrl, readOnly = false, clientUrl = null, height 
      */
     const handleApiDelete = async (row) => {
         try {
-            const deleteResponse = await deleteApiObject(apiUrl, row.id);
-            if (deleteResponse.errorOccurred) {
-                setAlert({
-                    type: 'error',
-                    message: `Object was not deleted because of an error: ${deleteResponse.detail}`
-                });
-            } else {
-                setRemovedRows([row.id])
-                setAlert({type: 'success', message: "Object deleted successfully"});
-            }
-        } catch (err) {
-            setAlert({type: 'error', message: "Failed to delete object."});
+            await deleteApiObject(apiUrl, row.id);
+            setRemovedRows([row.id])
+            setAlert({type: 'success', message: "Object deleted successfully"});
+        } catch (error) {
+            setAlert({type: 'error', message: error.message});
         }
     };
 
