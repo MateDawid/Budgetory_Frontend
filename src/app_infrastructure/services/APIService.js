@@ -126,35 +126,14 @@ export const createApiObject = async (url, newObject) => {
  * @return {object} - JSON data with API response.
  */
 export const updateApiObject = async (inputUrl, updatedObject) => {
-    let dataErrorRaised = false
-    try {
-        const url = new URL(inputUrl);
-        const token = await getAccessToken()
-        const detailUrl = `${url.origin}${url.pathname}${updatedObject["id"]}/`
-        const requestOptions = {
+    const url = new URL(inputUrl);
+    const detailUrl = `${url.origin}${url.pathname}${updatedObject["id"]}/`
+    const requestOptions = {
         method: "PATCH",
-        headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-        },
         body: JSON.stringify(updatedObject)
-        }
-        const response = await fetch(detailUrl, requestOptions)
-        if (!response.ok) {
-            const data = await response.json()
-            dataErrorRaised = true
-            throw new ApiError('Invalid data', data);
-        }
-        return await response.json();
-    } catch (error) {
-        if (dataErrorRaised) {
-            throw error;
-        } else {
-            throw new Error("Unexpected error occurred.");
-        }
-
     }
-
+    const response = await getApiResponse(detailUrl, requestOptions)
+    return await response.json()
 };
 
 
