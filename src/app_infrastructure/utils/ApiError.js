@@ -13,7 +13,7 @@ class ApiError extends Error {
    */
   static getMessage(apiErrors) {
     if (typeof apiErrors === 'string') {
-      return `API Error: ${apiErrors}`
+      return apiErrors
     }
     if (apiErrors.detail) {
       switch (typeof apiErrors.detail) {
