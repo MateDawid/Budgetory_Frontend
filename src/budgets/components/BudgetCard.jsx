@@ -3,7 +3,7 @@ import PageviewIcon from '@mui/icons-material/Pageview';
 import React from "react";
 import {Link} from 'react-router-dom';
 import StyledButton from "../../app_infrastructure/components/StyledButton";
-import BudgetDeleteButton from "./BudgetDeleteButton";
+import DeleteButton from "../../app_infrastructure/components/DeleteButton";
 
 /**
  * Truncate text if it exceeds a certain length.
@@ -18,7 +18,7 @@ const truncateText = (text, maxLength) => {
 /**
  * BudgetCard component to display single Budget card on Budgets list.
  */
-const BudgetCard = ({budget, setDeletedBudgetId}) => {
+const BudgetCard = ({budget, apiUrl, setDeletedBudgetId}) => {
 
     return (
         <Card variant="outlined" sx={{marginTop: 2, borderColor: "#D0D0D0"}}>
@@ -29,7 +29,7 @@ const BudgetCard = ({budget, setDeletedBudgetId}) => {
                         <StyledButton component={Link} to={`/budgets/${budget.id}`} variant="outlined" startIcon={<PageviewIcon/>}>
                             View
                         </StyledButton>
-                        <BudgetDeleteButton budgetId={budget.id} setDeletedBudgetId={setDeletedBudgetId}/>
+                        <DeleteButton apiUrl={apiUrl} objectId={budget.id} setDeletedObjectId={setDeletedBudgetId} objectDisplayName="Budget"/>
                     </Box>
                 </CardActions>
             </Box>

@@ -70,7 +70,7 @@ export default function BudgetList() {
             <Box sx={{display: "flex", flexWrap: 'wrap', justifyContent: 'flex-start'}}>
                 {budgets.map(budget => (
                     <Box key={budget.id} sx={{width: 300, m: 1}}>
-                        <BudgetCard budget={budget} setDeletedBudgetId={setDeletedBudgetId}/>
+                        <BudgetCard budget={budget} apiUrl={apiUrl} setDeletedBudgetId={setDeletedBudgetId}/>
                     </Box>
                 ))}
             </Box>
