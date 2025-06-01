@@ -22,22 +22,27 @@ const onEditableTextFieldSave = async (
     try {
         await updateApiObject(apiUrl, payload);
         setUpdatedObjectParam(`${apiFieldName}_${value}`)
-        setAlert({type: 'success', message: 'Deposit updated successfully.'})
+        setAlert({type: 'success', message: 'Object updated successfully.'})
     } catch (error) {
         setAlert({type: 'error', message: 'Update failed.'})
         if (error instanceof ApiError) {
-            const apiErrors = error.data.detail
-            let errorMessageParts = []
-            Object.keys(apiErrors).forEach(key => {
-                apiErrors[key].forEach((message) => {
-                    if (key === 'non_field_errors') {
-                        errorMessageParts.push(message)
-                    } else {
-                        errorMessageParts.push(`${key}: ${message}`)
-                    }
-                });
-            })
-            throw new ApiError(errorMessageParts.join('\n'));
+            let errorMessage = ''
+            if (typeof error.data.detail === 'object') {
+                let errorMessageParts = []
+                Object.keys(error.data.detail).forEach(key => {
+                    error.data.detail[key].forEach((message) => {
+                        if (key === 'non_field_errors') {
+                            errorMessageParts.push(message)
+                        } else {
+                            errorMessageParts.push(`${key}: ${message}`)
+                        }
+                    });
+                 })
+                errorMessage = errorMessageParts.join('\n')
+            } else {
+                errorMessage = error.data.detail
+            }
+            throw new ApiError(errorMessage);
         }
         throw error
     }

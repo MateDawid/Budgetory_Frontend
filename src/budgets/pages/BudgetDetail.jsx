@@ -7,12 +7,12 @@ import {
     Paper,
     Box, Stack
 } from "@mui/material";
-import {getApiObjectDetails, updateApiObject} from "../../app_infrastructure/services/APIService";
+import {getApiObjectDetails} from "../../app_infrastructure/services/APIService";
 import {useParams} from "react-router-dom";
 import EditableTextField from "../../app_infrastructure/components/EditableTextField";
-import ApiError from "../../app_infrastructure/utils/ApiError";
 import DataTable from "../../app_infrastructure/components/DataTable/DataTable";
 import DeleteButton from "../../app_infrastructure/components/DeleteButton";
+import onEditableTextFieldSave from "../../app_infrastructure/utils/onEditableTextFieldSave";
 
 /**
  * BudgetDetail component to display details of single Budget.
@@ -20,6 +20,7 @@ import DeleteButton from "../../app_infrastructure/components/DeleteButton";
 export default function BudgetDetail() {
     const {id} = useParams();
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/`
+    const [updatedObjectParam, setUpdatedObjectParam] = useState(null);
     const {alert, setAlert} = useContext(AlertContext);
     const [budgetData, setBudgetData] = useState([]);
     const depositsColumns = [
@@ -82,7 +83,7 @@ export default function BudgetDetail() {
             }
         }
         loadData();
-    }, []);
+    }, [updatedObjectParam]);
 
     /**
      * Function to save updated object via API call.
@@ -91,24 +92,7 @@ export default function BudgetDetail() {
      * @return {object} - JSON data with API response.
      */
     const onSave = async (apiFieldName, value) => {
-        let payload = {id: id, [apiFieldName]: value}
-        try {
-            const response = await updateApiObject(apiUrl, payload);
-            if (!response.ok) {
-                throw new ApiError(response.data.detail[apiFieldName].join(' | '));
-            }
-        } catch (error) {
-            setAlert({type: 'error', message: 'Budget update failed.'})
-            if (error instanceof ApiError) {
-                throw error
-            }
-            else {
-                console.error(error)
-                throw Error('Unexpected error occurred.')
-            }
-        }
-
-        setAlert({type: 'success', message: 'Budget updated successfully.'})
+        await onEditableTextFieldSave(id, apiFieldName, value, apiUrl, setUpdatedObjectParam, setAlert)
     };
 
     return (

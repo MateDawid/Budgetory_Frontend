@@ -316,7 +316,6 @@ const DataTable = ({columns, apiUrl, readOnly = false, clientUrl = null, height 
             return createResponse;
         } else {
             const updateResponse = await updateApiObject(apiUrl, processedRow);
-            console.log(updateResponse)
             setAlert({type: 'success', message: `Object updated successfully.`})
             return updateResponse;
         }

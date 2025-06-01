@@ -24,6 +24,7 @@ export const getApiResponse = async (url, requestOptions) => {
         if (error instanceof ApiError) {
             throw error;
         } else {
+            console.log(error)
             throw new Error("Unexpected error occurred.");
         }
     }
