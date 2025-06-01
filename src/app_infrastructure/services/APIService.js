@@ -91,33 +91,12 @@ export const getApiObjectDetails = async (inputUrl, objectId) => {
  * @return {object} - JSON data with API response.
  */
 export const createApiObject = async (url, newObject) => {
-    let dataErrorRaised = false
-    try {
-        const token = await getAccessToken()
-        const requestOptions = {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(newObject)
-        }
-        const response = await fetch(url, requestOptions)
-        if (!response.ok) {
-            const data = await response.json()
-            dataErrorRaised = true
-            throw new ApiError('Invalid data', data);
-        }
-        return await response.json();
+    const requestOptions = {
+        method: "POST",
+        body: JSON.stringify(newObject)
     }
-    catch (error) {
-        if (dataErrorRaised) {
-            throw error;
-        } else {
-            throw new Error("Unexpected error occurred.");
-        }
-
-    }
+    const response = await getApiResponse(url, requestOptions)
+    return await response.json()
 };
 
 /**
