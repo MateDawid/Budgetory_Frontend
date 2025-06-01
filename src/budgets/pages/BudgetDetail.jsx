@@ -12,7 +12,7 @@ import {useParams} from "react-router-dom";
 import EditableTextField from "../../app_infrastructure/components/EditableTextField";
 import DataTable from "../../app_infrastructure/components/DataTable/DataTable";
 import DeleteButton from "../../app_infrastructure/components/DeleteButton";
-import onEditableTextFieldSave from "../../app_infrastructure/utils/onEditableTextFieldSave";
+import onEditableFieldSave from "../../app_infrastructure/utils/onEditableFieldSave";
 
 /**
  * BudgetDetail component to display details of single Budget.
@@ -92,7 +92,7 @@ export default function BudgetDetail() {
      * @return {object} - JSON data with API response.
      */
     const onSave = async (apiFieldName, value) => {
-        await onEditableTextFieldSave(id, apiFieldName, value, apiUrl, setUpdatedObjectParam, setAlert)
+        await onEditableFieldSave(id, apiFieldName, value, apiUrl, setUpdatedObjectParam, setAlert)
     };
 
     return (

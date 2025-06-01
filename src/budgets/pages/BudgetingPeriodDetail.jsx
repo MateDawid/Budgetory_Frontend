@@ -10,7 +10,7 @@ import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
 import DeleteButton from "../../app_infrastructure/components/DeleteButton";
 import PeriodStatuses from "../utils/PeriodStatuses";
 import BudgetingPeriodStatusUpdateButton from "../components/BudgetingPeriodStatusUpdateButton";
-import onEditableTextFieldSave from "../../app_infrastructure/utils/onEditableTextFieldSave";
+import onEditableFieldSave from "../../app_infrastructure/utils/onEditableFieldSave";
 
 /**
  * BudgetingPeriodDetail component to display details of single BudgetingPeriod.
@@ -128,7 +128,7 @@ export default function BudgetingPeriodDetail() {
      * @return {object} - JSON data with API response.
      */
     const onSave = async (apiFieldName, value) => {
-        await onEditableTextFieldSave(id, apiFieldName, value, apiUrl, setUpdatedObjectParam, setAlert)
+        await onEditableFieldSave(id, apiFieldName, value, apiUrl, setUpdatedObjectParam, setAlert)
     };
 
     return (

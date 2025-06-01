@@ -9,7 +9,7 @@ import {AlertContext} from "../../app_infrastructure/components/AlertContext";
 import StyledButton from "../../app_infrastructure/components/StyledButton";
 import StyledModal from "../../app_infrastructure/components/StyledModal";
 import PeriodStatuses from "../utils/PeriodStatuses";
-import onEditableTextFieldSave from "../../app_infrastructure/utils/onEditableTextFieldSave";
+import onEditableFieldSave from "../../app_infrastructure/utils/onEditableFieldSave";
 
 const statusesMapping = {
     [PeriodStatuses.ACTIVE]: {
@@ -44,7 +44,7 @@ const BudgetingPeriodStatusUpdateButton = ({objectId, newPeriodStatus, apiUrl, o
      */
     const onSubmit = async () => {
         try {
-            await onEditableTextFieldSave(objectId, 'status', newPeriodStatus, apiUrl, setUpdatedObjectParam, setAlert)
+            await onEditableFieldSave(objectId, 'status', newPeriodStatus, apiUrl, setUpdatedObjectParam, setAlert)
         }
         catch (error) {
             if (error instanceof ApiError) {

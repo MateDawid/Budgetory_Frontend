@@ -10,7 +10,7 @@ import ApiError from "./ApiError";
  * @param {function} setUpdatedObjectParam - Setter for refreshing page on object update.
  * @param {function} setAlert - Alert setter.
  */
-const onEditableTextFieldSave = async (
+const onEditableFieldSave = async (
     id,
     apiFieldName,
     value,
@@ -48,4 +48,4 @@ const onEditableTextFieldSave = async (
     }
 };
 
-export default onEditableTextFieldSave;
+export default onEditableFieldSave;
