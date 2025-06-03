@@ -107,7 +107,7 @@ export default function BudgetingPeriodDetail() {
     // ]
 
     /**
-     * Fetches Budgets list from API.
+     * Fetches BudgetingPeriod detail from API.
      */
     useEffect(() => {
         const loadData = async () => {
@@ -115,6 +115,7 @@ export default function BudgetingPeriodDetail() {
                 const apiResponse = await getApiObjectDetails(apiUrl, id)
                 setObjectData(apiResponse);
             } catch (err) {
+                setAlert({type: 'error', message: 'Period details loading failed.'})
                 navigate('/periods');
             }
         }

@@ -89,6 +89,7 @@ export default function TransferCategoryDetail() {
                 const apiResponse = await getApiObjectDetails(apiUrl, id)
                 setObjectData(apiResponse);
             } catch (err) {
+                setAlert({type: 'error', message: 'Category details loading failed.'})
                 navigate('/categories');
             }
         }

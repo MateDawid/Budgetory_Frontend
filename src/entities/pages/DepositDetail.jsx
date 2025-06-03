@@ -62,6 +62,7 @@ export default function DepositDetail() {
                 const apiResponse = await getApiObjectDetails(apiUrl, id)
                 setObjectData(apiResponse);
             } catch (err) {
+                setAlert({type: 'error', message: 'Deposit details loading failed.'})
                 navigate('/deposits');
             }
         }

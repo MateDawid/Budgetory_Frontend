@@ -62,6 +62,7 @@ export default function EntityDetail() {
                 const apiResponse = await getApiObjectDetails(apiUrl, id)
                 setObjectData(apiResponse);
             } catch (err) {
+                setAlert({type: 'error', message: 'Entity details loading failed.'})
                 navigate('/entities');
             }
         }

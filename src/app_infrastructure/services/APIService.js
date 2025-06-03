@@ -21,10 +21,10 @@ export const getApiResponse = async (url, requestOptions) => {
         }
         return response
     } catch (error) {
+        console.error(error)
         if (error instanceof ApiError) {
             throw error;
         } else {
-            console.log(error)
             throw new Error("Unexpected error occurred.");
         }
     }
@@ -67,20 +67,12 @@ export const getApiObjectsList = async (inputUrl, paginationModel = {}, sortMode
  */
 export const getApiObjectDetails = async (inputUrl, objectId) => {
     const url = new URL(inputUrl);
-    const token = await getAccessToken()
     const detailUrl = `${url.origin}${url.pathname}${objectId}/`
     const requestOptions = {
         method: "GET",
-        headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-        }
     }
-    const response = await fetch(detailUrl, requestOptions)
-    if (!response.ok) {
-        throw new ApiError(`HTTP ${response.status}`);
-    }
-    return await response.json();
+    const response = await getApiResponse(detailUrl, requestOptions)
+    return await response.json()
 }
 
 

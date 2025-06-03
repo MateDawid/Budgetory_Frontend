@@ -8,7 +8,7 @@ import {
     Box, Stack
 } from "@mui/material";
 import {getApiObjectDetails} from "../../app_infrastructure/services/APIService";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import EditableTextField from "../../app_infrastructure/components/EditableTextField";
 import DataTable from "../../app_infrastructure/components/DataTable/DataTable";
 import DeleteButton from "../../app_infrastructure/components/DeleteButton";
@@ -19,6 +19,7 @@ import onEditableFieldSave from "../../app_infrastructure/utils/onEditableFieldS
  */
 export default function BudgetDetail() {
     const {id} = useParams();
+    const navigate = useNavigate()
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/`
     const [updatedObjectParam, setUpdatedObjectParam] = useState(null);
     const {alert, setAlert} = useContext(AlertContext);
@@ -71,7 +72,7 @@ export default function BudgetDetail() {
     ]
 
     /**
-     * Fetches Budgets list from API.
+     * Fetches Budget details from API.
      */
     useEffect(() => {
         const loadData = async () => {
@@ -79,7 +80,8 @@ export default function BudgetDetail() {
                 const budgetResponse = await getApiObjectDetails(apiUrl, id)
                 setBudgetData(budgetResponse);
             } catch (err) {
-                setAlert({type: 'error', message: "Failed to load Budget."});
+                setAlert({type: 'error', message: 'Budget details loading failed.'})
+                navigate('/budgets');
             }
         }
         loadData();
