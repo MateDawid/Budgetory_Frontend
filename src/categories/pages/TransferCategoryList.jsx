@@ -120,7 +120,7 @@ export default function TransferCategoryList() {
                 const listResponse = await getApiObjectsList(apiUrl, {}, {}, getFilterModel())
                 setObjects(listResponse);
             } catch (err) {
-                setAlert({type: 'error', message: "Failed to load Periods."});
+                setAlert({type: 'error', message: "Failed to load Categories."});
             }
         }
         loadData();

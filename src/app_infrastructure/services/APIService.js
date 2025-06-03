@@ -39,7 +39,6 @@ export const getApiResponse = async (url, requestOptions) => {
  * @return {object} - JSON data with API response.
  */
 export const getApiObjectsList = async (inputUrl, paginationModel = {}, sortModel = {}, filterModel = {}) => {
-    const token = await getAccessToken();
     let url_params = {...sortModel, ...filterModel};
     if (Object.entries(paginationModel).length !== 0) {
         url_params = {
@@ -55,7 +54,10 @@ export const getApiObjectsList = async (inputUrl, paginationModel = {}, sortMode
         existingParams.append(key, value);
     }
     const output_url = `${url.origin}${url.pathname}?${existingParams.toString()}`;
-    const response = await fetch(output_url, {method: "GET", headers: {Authorization: `Bearer ${token}`}});
+    const requestOptions = {
+        method: "GET",
+    }
+    const response = await getApiResponse(output_url, requestOptions)
     return await response.json();
 };
 

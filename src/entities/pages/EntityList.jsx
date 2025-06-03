@@ -63,7 +63,7 @@ export default function EntityList() {
                 const listResponse = await getApiObjectsList(apiUrl)
                 setObjects(listResponse);
             } catch (err) {
-                setAlert({type: 'error', message: "Failed to load Periods."});
+                setAlert({type: 'error', message: "Failed to load Entities."});
             }
         }
         loadData();
