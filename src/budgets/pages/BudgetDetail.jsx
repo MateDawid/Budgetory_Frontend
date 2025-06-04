@@ -106,7 +106,7 @@ export default function BudgetDetail() {
         }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                 <Typography variant="h4" sx={{display: 'block', color: '#BD0000'}}>{budgetData.name}</Typography>
-                <DeleteButton apiUrl={apiUrl} objectId={id} objectDisplayName="Budget" redirectOnSuccess={'/budgets'} rightbarRefresh/>
+                <DeleteButton apiUrl={apiUrl} objectId={id} objectDisplayName="Budget" redirectOnSuccess={'/budgets'} rightbarBudgetsRefresh/>
             </Stack>
             <Divider/>
             {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}

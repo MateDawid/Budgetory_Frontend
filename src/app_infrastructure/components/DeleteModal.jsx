@@ -19,12 +19,13 @@ import {BudgetContext} from "./BudgetContext";
  * @param {string} message - Message to be displayed on Modal.
  * @param {function|null} setDeletedObjectId - useState setter for refreshing objects list on object deleting.
  * @param {string|null} redirectOnSuccess - url to which redirect on delete success.
- * @param {boolean} rightbarRefresh - Indicates if Righbar data should be refreshed after deleting an object
+ * @param {boolean} rightbarBudgetsRefresh - Indicates if Righbar Budgets should be refreshed after deleting an object
+ * @param {boolean} rightbarDepositsRefresh - Indicates if Righbar Budgets should be refreshed after deleting an object
  */
-const DeleteModal = ({open, setOpen, objectId, apiUrl, objectDisplayName, message, setDeletedObjectId = null, redirectOnSuccess = null, rightbarRefresh = false}) => {
+const DeleteModal = ({open, setOpen, objectId, apiUrl, objectDisplayName, message, setDeletedObjectId = null, redirectOnSuccess = null, rightbarBudgetsRefresh = false, rightbarDepositsRefresh = false}) => {
     const navigate = useNavigate();
     const {setAlert} = useContext(AlertContext);
-    const {setUpdatedContextBudget} = useContext(BudgetContext);
+    const {setUpdatedContextBudget, setUpdatedContextBudgetDeposit} = useContext(BudgetContext);
     const {handleSubmit} = useForm();
 
     /**
@@ -40,8 +41,11 @@ const DeleteModal = ({open, setOpen, objectId, apiUrl, objectDisplayName, messag
             if (redirectOnSuccess !== null) {
                 navigate(redirectOnSuccess)
             }
-            if (rightbarRefresh) {
+            if (rightbarBudgetsRefresh) {
                 setUpdatedContextBudget(`${objectId}_delete`)
+            }
+            if (rightbarDepositsRefresh) {
+                setUpdatedContextBudgetDeposit(`${objectId}_delete`)
             }
         } catch (error) {
             console.error(error)

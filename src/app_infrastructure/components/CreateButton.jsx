@@ -17,15 +17,16 @@ import {BudgetContext} from "./BudgetContext";
  * @param {object} fields - Create form fields.
  * @param {string} apiUrl - Base API url to be called with POST method.
  * @param {function} setAddedObjectId - useState setter for refreshing objects list on object adding.
- * @param {boolean} rightbarRefresh - Indicates if Righbar data should be refreshed after deleting an object
+ * @param {boolean} rightbarBudgetsRefresh - Indicates if Righbar Budgets should be refreshed after deleting an object
+ * @param {boolean} rightbarDepositsRefresh - Indicates if Righbar Budgets should be refreshed after deleting an object
  */
-const CreateButton = ({fields, apiUrl, setAddedObjectId, rightbarRefresh = false}) => {
+const CreateButton = ({fields, apiUrl, setAddedObjectId, rightbarBudgetsRefresh = false, rightbarDepositsRefresh = false}) => {
     const [open, setOpen] = useState(false);
     const {register, handleSubmit, reset, control} = useForm();
     const [fieldErrors, setFieldErrors] = useState({});
     const [nonFieldErrors, setNonFieldErrors] = useState(null);
     const {setAlert} = useContext(AlertContext);
-    const {setUpdatedContextBudget} = useContext(BudgetContext);
+    const {setUpdatedContextBudget, setUpdatedContextBudgetDeposit} = useContext(BudgetContext);
 
     const onSubmit = async (data) => {
         setFieldErrors({});
@@ -37,9 +38,11 @@ const CreateButton = ({fields, apiUrl, setAddedObjectId, rightbarRefresh = false
             setAlert({type: 'success', message: `Object "${data.name}" created successfully.`});
             setOpen(false);
             reset();
-            if (rightbarRefresh) {
-                console.log(createResponse.id)
+            if (rightbarBudgetsRefresh) {
                 setUpdatedContextBudget(`${createResponse.id}_create`)
+            }
+            if (rightbarDepositsRefresh) {
+                setUpdatedContextBudgetDeposit(`${createResponse.id}_create`)
             }
         } catch (error) {
             if (error instanceof ApiError) {

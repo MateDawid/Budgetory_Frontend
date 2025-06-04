@@ -29,7 +29,7 @@ const BudgetCard = ({budget, apiUrl, setDeletedBudgetId}) => {
                         <StyledButton component={Link} to={`/budgets/${budget.id}`} variant="outlined" startIcon={<PageviewIcon/>}>
                             View
                         </StyledButton>
-                        <DeleteButton apiUrl={apiUrl} objectId={budget.id} setDeletedObjectId={setDeletedBudgetId} objectDisplayName="Budget" rightbarRefresh/>
+                        <DeleteButton apiUrl={apiUrl} objectId={budget.id} setDeletedObjectId={setDeletedBudgetId} objectDisplayName="Budget" rightbarBudgetsRefresh/>
                     </Box>
                 </CardActions>
             </Box>
