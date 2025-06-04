@@ -7,6 +7,7 @@ import {useForm} from "react-hook-form";
 import {deleteApiObject} from "../services/APIService";
 import {useNavigate} from "react-router-dom";
 import {AlertContext} from "./AlertContext";
+import {BudgetContext} from "./BudgetContext";
 
 /**
  * DeleteModal to be displayed before deleting object.
@@ -18,11 +19,12 @@ import {AlertContext} from "./AlertContext";
  * @param {string} message - Message to be displayed on Modal.
  * @param {function|null} setDeletedObjectId - useState setter for refreshing objects list on object deleting.
  * @param {string|null} redirectOnSuccess - url to which redirect on delete success.
- * @param {boolean|null} isDisabled - disables Delete button.
+ * @param {boolean} rightbarRefresh - Indicates if Righbar data should be refreshed after deleting an object
  */
-const DeleteModal = ({open, setOpen, objectId, apiUrl, objectDisplayName, message, setDeletedObjectId = null, redirectOnSuccess = null}) => {
+const DeleteModal = ({open, setOpen, objectId, apiUrl, objectDisplayName, message, setDeletedObjectId = null, redirectOnSuccess = null, rightbarRefresh = false}) => {
     const navigate = useNavigate();
     const {setAlert} = useContext(AlertContext);
+    const {setUpdatedContextBudget} = useContext(BudgetContext);
     const {handleSubmit} = useForm();
 
     /**
@@ -37,6 +39,9 @@ const DeleteModal = ({open, setOpen, objectId, apiUrl, objectDisplayName, messag
             }
             if (redirectOnSuccess !== null) {
                 navigate(redirectOnSuccess)
+            }
+            if (rightbarRefresh) {
+                setUpdatedContextBudget(`${objectId}_delete`)
             }
         } catch (error) {
             console.error(error)
