@@ -62,7 +62,7 @@ export default function BudgetList() {
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                 <Typography variant="h4"
                             sx={{display: 'block', color: '#BD0000'}}>Budgets</Typography>
-                <CreateButton fields={createFields} apiUrl={apiUrl} setAddedObjectId={setAddedBudgetId}/>
+                <CreateButton fields={createFields} apiUrl={apiUrl} setAddedObjectId={setAddedBudgetId} rightbarRefresh/>
             </Stack>
             <Divider/>
             {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}
