@@ -34,7 +34,7 @@ const DepositCard = ({apiUrl, object, setDeletedObjectId}) => {
                         <StyledButton component={Link} to={`/deposits/${object.id}`} variant="outlined" startIcon={<PageviewIcon/>}>
                             View
                         </StyledButton>
-                        <DeleteButton apiUrl={apiUrl} objectId={object.id} objectDisplayName="Deposit" setDeletedObjectId={setDeletedObjectId}/>
+                        <DeleteButton apiUrl={apiUrl} objectId={object.id} objectDisplayName="Deposit" setDeletedObjectId={setDeletedObjectId} rightbarDepositsRefresh/>
                     </Box>
                 </CardActions>
             </Box>

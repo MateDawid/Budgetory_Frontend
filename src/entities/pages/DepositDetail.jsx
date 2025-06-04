@@ -17,7 +17,7 @@ export default function DepositDetail() {
     const {id} = useParams();
     const navigate = useNavigate()
     const [updatedObjectParam, setUpdatedObjectParam] = useState(null);
-    const {contextBudgetId} = useContext(BudgetContext);
+    const {contextBudgetId, setUpdatedContextBudgetDeposit} = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`
     const {alert, setAlert} = useContext(AlertContext);
     const [objectData, setObjectData] = useState([]);
@@ -77,6 +77,7 @@ export default function DepositDetail() {
      */
     const onSave = async (apiFieldName, value) => {
         await onEditableFieldSave(id, apiFieldName, value, apiUrl, setUpdatedObjectParam, setAlert)
+        setUpdatedContextBudgetDeposit(`${id}_${apiFieldName}_${value}`)
     }
 
 
@@ -90,7 +91,7 @@ export default function DepositDetail() {
                     <Chip label={objectData.is_active ? "🟢 Active" : "🔴 Inactive"} variant="outlined"/>
                 </Stack>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
-                    <DeleteButton apiUrl={apiUrl} objectId={objectData.id} objectDisplayName="Deposit" redirectOnSuccess={'/deposits'}/>
+                    <DeleteButton apiUrl={apiUrl} objectId={objectData.id} objectDisplayName="Deposit" redirectOnSuccess={'/deposits'} rightbarDepositsRefresh/>
                 </Stack>
             </Stack>
             <Divider/>

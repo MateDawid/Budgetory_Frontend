@@ -77,7 +77,7 @@ export default function DepositList() {
                 <Typography variant="h4"
                             sx={{display: 'block', color: '#BD0000'}}>Deposits</Typography>
                 <CreateButton fields={createFields} apiUrl={apiUrl}
-                              setAddedObjectId={setAddedObjectId}/>
+                              setAddedObjectId={setAddedObjectId} rightbarDepositsRefresh/>
             </Stack>
             <Divider/>
             {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}
