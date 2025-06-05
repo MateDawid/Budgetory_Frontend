@@ -103,9 +103,12 @@ const CreateButton = ({fields, apiUrl, setAddedObjectId, rightbarBudgetsRefresh 
                                             fullWidth
                                             options={fields[fieldName]['options']}
                                             getOptionLabel={(selectedOption) => {
-                                                if (typeof selectedOption === 'object') {
+                                                if (selectedOption === "") {
+                                                    return selectedOption
+                                                }
+                                                else if (typeof selectedOption === 'object') {
                                                     return selectedOption[fields[fieldName]['selectLabel']] || selectedOption.label || ''
-                                                } else if (typeof selectedOption === 'number') {
+                                                } else {
                                                     const displayOption = fields[fieldName]['options'].find(option => option[fields[fieldName]['selectValue']] === selectedOption || option.value === selectedOption)
                                                     if (displayOption) {
                                                         return displayOption[fields[fieldName]['selectLabel']] || displayOption.label
@@ -114,7 +117,6 @@ const CreateButton = ({fields, apiUrl, setAddedObjectId, rightbarBudgetsRefresh 
                                                         return '?'
                                                     }
                                                 }
-                                                return ""
                                             }}
                                             isOptionEqualToValue={(option, value) => {
                                                 if (option && value) {
