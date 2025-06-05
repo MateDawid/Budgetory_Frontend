@@ -154,6 +154,7 @@ export default function ExpenseList() {
                 <DataTable
                     columns={columns}
                     apiUrl={apiUrl}
+                    rightbarDepositsRefresh
                 />
             </Paper>
         </>

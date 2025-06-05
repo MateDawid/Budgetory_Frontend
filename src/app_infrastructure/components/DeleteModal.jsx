@@ -19,8 +19,8 @@ import {BudgetContext} from "./BudgetContext";
  * @param {string} message - Message to be displayed on Modal.
  * @param {function|null} setDeletedObjectId - useState setter for refreshing objects list on object deleting.
  * @param {string|null} redirectOnSuccess - url to which redirect on delete success.
- * @param {boolean} rightbarBudgetsRefresh - Indicates if Righbar Budgets should be refreshed after deleting an object
- * @param {boolean} rightbarDepositsRefresh - Indicates if Righbar Budgets should be refreshed after deleting an object
+ * @param {boolean} rightbarBudgetsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
+ * @param {boolean} rightbarDepositsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
  */
 const DeleteModal = ({open, setOpen, objectId, apiUrl, objectDisplayName, message, setDeletedObjectId = null, redirectOnSuccess = null, rightbarBudgetsRefresh = false, rightbarDepositsRefresh = false}) => {
     const navigate = useNavigate();

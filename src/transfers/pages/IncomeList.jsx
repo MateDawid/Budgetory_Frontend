@@ -154,6 +154,7 @@ export default function IncomeList() {
                 <DataTable
                     columns={columns}
                     apiUrl={apiUrl}
+                    rightbarDepositsRefresh
                 />
             </Paper>
         </>

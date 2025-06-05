@@ -17,8 +17,8 @@ import {BudgetContext} from "./BudgetContext";
  * @param {object} fields - Create form fields.
  * @param {string} apiUrl - Base API url to be called with POST method.
  * @param {function} setAddedObjectId - useState setter for refreshing objects list on object adding.
- * @param {boolean} rightbarBudgetsRefresh - Indicates if Righbar Budgets should be refreshed after deleting an object
- * @param {boolean} rightbarDepositsRefresh - Indicates if Righbar Budgets should be refreshed after deleting an object
+ * @param {boolean} rightbarBudgetsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
+ * @param {boolean} rightbarDepositsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
  */
 const CreateButton = ({fields, apiUrl, setAddedObjectId, rightbarBudgetsRefresh = false, rightbarDepositsRefresh = false}) => {
     const [open, setOpen] = useState(false);

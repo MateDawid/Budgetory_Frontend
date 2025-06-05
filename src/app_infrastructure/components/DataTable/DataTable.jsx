@@ -62,8 +62,16 @@ const getSortFieldMapping = (columns) => {
  * @param {boolean} readOnly - Indicates if DataTable is read only or editable.
  * @param {string|null} clientUrl - Frontend base url for redirects in readOnly mode.
  * @param {number} height - Height of DataTable.
+ * @param {boolean} rightbarDepositsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
  */
-const DataTable = ({columns, apiUrl, readOnly = false, clientUrl = null, height = 600}) => {
+const DataTable = ({
+                       columns,
+                       apiUrl,
+                       readOnly = false,
+                       clientUrl = null,
+                       height = 600,
+                       rightbarDepositsRefresh = false
+                   }) => {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
@@ -79,7 +87,7 @@ const DataTable = ({columns, apiUrl, readOnly = false, clientUrl = null, height 
     const [sortModel, setSortModel] = React.useState({});
     const [filterModel, setFilterModel] = React.useState({items: []});
     const {setAlert} = useContext(AlertContext);
-    const {contextBudgetId} = useContext(BudgetContext);
+    const {contextBudgetId, setUpdatedContextBudgetDeposit} = useContext(BudgetContext);
     const extendedColumns = [
         ...columns.map((column) => ({
                 ...column,
@@ -313,12 +321,19 @@ const DataTable = ({columns, apiUrl, readOnly = false, clientUrl = null, height 
                         return 0;
                     });
             });
+            if (rightbarDepositsRefresh) {
+                setUpdatedContextBudgetDeposit(`${createResponse.id}_create`)
+            }
             return createResponse;
         } else {
             const updateResponse = await updateApiObject(apiUrl, processedRow);
             setAlert({type: 'success', message: `Object updated successfully.`})
+            if (rightbarDepositsRefresh) {
+                setUpdatedContextBudgetDeposit(`${updateResponse.id}_update`)
+            }
             return updateResponse;
         }
+
     };
 
     /**
@@ -383,6 +398,9 @@ const DataTable = ({columns, apiUrl, readOnly = false, clientUrl = null, height 
         try {
             await deleteApiObject(apiUrl, row.id);
             setRemovedRows([row.id])
+            if (rightbarDepositsRefresh) {
+                setUpdatedContextBudgetDeposit(`${row.id}_delete`)
+            }
             setAlert({type: 'success', message: "Object deleted successfully"});
         } catch (error) {
             setAlert({type: 'error', message: error.message});
@@ -421,7 +439,7 @@ const DataTable = ({columns, apiUrl, readOnly = false, clientUrl = null, height 
                         pagination: DataTableFooter,
                     }}
                     slotProps={{
-                        pagination: {readOnly, apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows},
+                        pagination: {readOnly, apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows, rightbarDepositsRefresh, setUpdatedContextBudgetDeposit},
                     }}
                 />
             </Box>

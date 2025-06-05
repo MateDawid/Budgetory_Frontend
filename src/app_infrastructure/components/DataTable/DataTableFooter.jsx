@@ -6,6 +6,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import StyledButton from "../StyledButton";
 import {bulkDeleteApiObjects, copyApiObjects} from "../../services/APIService";
 import {AlertContext} from "../AlertContext";
+import {BudgetContext} from "../BudgetContext";
 
 /**
  * DataTableFooterButtons component that displays buttons basing on selected rows.
@@ -14,9 +15,11 @@ import {AlertContext} from "../AlertContext";
  * @param {array} selectedRows - Array containing ids of selected rows.
  * @param {function} setRemovedRows - Function to set new value of removedRows to refresh DataTable.
  * @param {function} setCopiedRows - Function to set new value of copiedRows to refresh DataTable.
+ * @param {boolean} rightbarDepositsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
  */
-const DataTableFooterButtons = ({apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows}) => {
+const DataTableFooterButtons = ({apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows, rightbarDepositsRefresh}) => {
     const {setAlert} = useContext(AlertContext);
+    const {setUpdatedContextBudgetDeposit} = useContext(BudgetContext);
 
     /**
      * Used to rerender component on rows selection.
@@ -31,6 +34,9 @@ const DataTableFooterButtons = ({apiUrl, handleAddClick, selectedRows, setRemove
             await bulkDeleteApiObjects(apiUrl, selectedRows);
             setAlert({type: 'success', message: `Selected objects deleted successfully.`})
             setRemovedRows(selectedRows)
+            if (rightbarDepositsRefresh) {
+                setUpdatedContextBudgetDeposit(`${selectedRows.join(',')}_bulk_delete_${new Date().toISOString()}`)
+            }
         } catch (error) {
             setAlert({type: 'error', message: 'Deleting objects failed.'})
             console.error(error)
@@ -45,6 +51,9 @@ const DataTableFooterButtons = ({apiUrl, handleAddClick, selectedRows, setRemove
             const copyResponse = await copyApiObjects(apiUrl, selectedRows);
             setAlert({type: 'success', message: `Selected objects copied successfully.`})
             setCopiedRows(copyResponse.ids)
+            if (rightbarDepositsRefresh) {
+                setUpdatedContextBudgetDeposit(`${selectedRows.join(',')}_copy_${new Date().toISOString()}`)
+            }
         } catch (error) {
             setAlert({type: 'error', message: 'Copying objects failed.'})
             console.error(error)
@@ -79,9 +88,10 @@ const DataTableFooterButtons = ({apiUrl, handleAddClick, selectedRows, setRemove
  * @param {array} selectedRows - Array containing ids of selected rows.
  * @param {function} setRemovedRows - Function to set new value of removedRows to refresh DataTable.
  * @param {function} setCopiedRows - Function to set new value of copiedRows to refresh DataTable.
+ * @param {boolean} rightbarDepositsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
  * @param {object} props - Other properties.
  */
-const DataTableFooter = ({readOnly, apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows, ...props}) => {
+const DataTableFooter = ({readOnly, apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows, rightbarDepositsRefresh, ...props}) => {
     return <>
         {!readOnly && <DataTableFooterButtons
             apiUrl={apiUrl}
@@ -89,6 +99,7 @@ const DataTableFooter = ({readOnly, apiUrl, handleAddClick, selectedRows, setRem
             selectedRows={selectedRows}
             setRemovedRows={setRemovedRows}
             setCopiedRows={setCopiedRows}
+            rightbarDepositsRefresh={rightbarDepositsRefresh}
         />}
         <GridPagination {...props} />
     </>
