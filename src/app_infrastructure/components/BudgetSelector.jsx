@@ -8,7 +8,7 @@ import {getApiObjectsList} from "../services/APIService";
  * BudgetSelector component to display Budget select field for used by DataGrid to obtain Budget data.
  */
 const BudgetSelector = () => {
-    const {contextBudgetId, setContextBudgetId, setContextBudgetCurrency} = useContext(BudgetContext);
+    const {contextBudgetId, updatedContextBudget, setContextBudgetId, setContextBudgetCurrency} = useContext(BudgetContext);
     const [budgets, setBudgets] = useState([]);
     const [selectedBudget, setSelectedBudget] = useState('');
     const {setAlert} = useContext(AlertContext);
@@ -31,7 +31,7 @@ const BudgetSelector = () => {
             }
         }
         loadData();
-    }, []);
+    }, [updatedContextBudget]);
 
     /**
      * Function to handle selecting new Budget in Select component.

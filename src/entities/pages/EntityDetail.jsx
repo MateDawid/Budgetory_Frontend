@@ -3,12 +3,12 @@ import Divider from "@mui/material/Divider";
 import Alert from '@mui/material/Alert';
 import {AlertContext} from "../../app_infrastructure/components/AlertContext";
 import {Typography, Paper, Box, Stack, Chip} from "@mui/material";
-import {getApiObjectDetails, updateApiObject} from "../../app_infrastructure/services/APIService";
+import {getApiObjectDetails} from "../../app_infrastructure/services/APIService";
 import {useNavigate, useParams} from "react-router-dom";
 import EditableTextField from "../../app_infrastructure/components/EditableTextField";
-import ApiError from "../../app_infrastructure/utils/ApiError";
 import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
 import DeleteButton from "../../app_infrastructure/components/DeleteButton";
+import onEditableFieldSave from "../../app_infrastructure/utils/onEditableFieldSave";
 
 /**
  * EntityDetail component to display details of single Entity.
@@ -62,6 +62,7 @@ export default function EntityDetail() {
                 const apiResponse = await getApiObjectDetails(apiUrl, id)
                 setObjectData(apiResponse);
             } catch (err) {
+                setAlert({type: 'error', message: 'Entity details loading failed.'})
                 navigate('/entities');
             }
         }
@@ -75,37 +76,8 @@ export default function EntityDetail() {
      * @return {object} - JSON data with API response.
      */
     const onSave = async (apiFieldName, value) => {
-        let payload = {id: id, [apiFieldName]: value}
-        try {
-            const response = await updateApiObject(apiUrl, payload);
-            if (!response.ok) {
-                const apiErrors = response.data.detail
-                let errorMessageParts = []
-                Object.keys(apiErrors).forEach(key => {
-                    apiErrors[key].forEach((message) => {
-                        if (key === 'non_field_errors') {
-                            errorMessageParts.push(message)
-                        } else {
-                            errorMessageParts.push(`${key}: ${message}`)
-                        }
-                    });
-                })
-                throw new ApiError(errorMessageParts.join('\n'));
-            }
-            setUpdatedObjectParam(`${apiFieldName}_${value}`)
-            setAlert({type: 'success', message: 'Entity updated successfully.'})
-        } catch (error) {
-            setAlert({type: 'error', message: 'Entity update failed.'})
-            if (error instanceof ApiError) {
-                throw error
-            } else {
-                console.error(error)
-                throw Error('Unexpected error occurred.')
-            }
-        }
-
-
-    };
+        await onEditableFieldSave(id, apiFieldName, value, apiUrl, setUpdatedObjectParam, setAlert)
+    }
 
     return (
         <Paper elevation={24} sx={{

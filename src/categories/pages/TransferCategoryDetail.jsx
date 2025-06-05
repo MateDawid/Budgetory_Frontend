@@ -3,13 +3,13 @@ import Divider from "@mui/material/Divider";
 import Alert from '@mui/material/Alert';
 import {AlertContext} from "../../app_infrastructure/components/AlertContext";
 import {Typography, Paper, Box, Stack, Chip} from "@mui/material";
-import {getApiObjectDetails, updateApiObject} from "../../app_infrastructure/services/APIService";
+import {getApiObjectDetails} from "../../app_infrastructure/services/APIService";
 import {useNavigate, useParams} from "react-router-dom";
 import EditableTextField from "../../app_infrastructure/components/EditableTextField";
-import ApiError from "../../app_infrastructure/utils/ApiError";
 import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
 import DeleteButton from "../../app_infrastructure/components/DeleteButton";
 import loadSelectOptionForCategory from "../utils/loadSelectOptionForCategory";
+import onEditableFieldSave from "../../app_infrastructure/utils/onEditableFieldSave";
 
 /**
  * TransferCategoryDetail component to display details of single Transfer Category.
@@ -89,6 +89,7 @@ export default function TransferCategoryDetail() {
                 const apiResponse = await getApiObjectDetails(apiUrl, id)
                 setObjectData(apiResponse);
             } catch (err) {
+                setAlert({type: 'error', message: 'Category details loading failed.'})
                 navigate('/categories');
             }
         }
@@ -109,36 +110,7 @@ export default function TransferCategoryDetail() {
      * @return {object} - JSON data with API response.
      */
     const onSave = async (apiFieldName, value) => {
-        let payload = {id: id, [apiFieldName]: value}
-        try {
-            const response = await updateApiObject(apiUrl, payload);
-            if (!response.ok) {
-                const apiErrors = response.data.detail
-                let errorMessageParts = []
-                Object.keys(apiErrors).forEach(key => {
-                    apiErrors[key].forEach((message) => {
-                        if (key === 'non_field_errors') {
-                            errorMessageParts.push(message)
-                        } else {
-                            errorMessageParts.push(`${key}: ${message}`)
-                        }
-                    });
-                })
-                throw new ApiError(errorMessageParts.join('\n'));
-            }
-            setUpdatedObjectParam(`${apiFieldName}_${value}`)
-            setAlert({type: 'success', message: 'Transfer Category updated successfully.'})
-        } catch (error) {
-            setAlert({type: 'error', message: 'Transfer Category update failed.'})
-            if (error instanceof ApiError) {
-                throw error
-            } else {
-                console.error(error)
-                throw Error('Unexpected error occurred.')
-            }
-        }
-
-
+        await onEditableFieldSave(id, apiFieldName, value, apiUrl, setUpdatedObjectParam, setAlert)
     };
 
     return (

@@ -7,19 +7,23 @@ import {
     Paper,
     Box, Stack
 } from "@mui/material";
-import {getApiObjectDetails, updateApiObject} from "../../app_infrastructure/services/APIService";
-import {useParams} from "react-router-dom";
+import {getApiObjectDetails} from "../../app_infrastructure/services/APIService";
+import {useNavigate, useParams} from "react-router-dom";
 import EditableTextField from "../../app_infrastructure/components/EditableTextField";
-import BudgetDeleteButton from "../components/BudgetDeleteButton";
-import ApiError from "../../app_infrastructure/utils/ApiError";
-import DataTable from "../../app_infrastructure/components/DataTable";
+import DataTable from "../../app_infrastructure/components/DataTable/DataTable";
+import DeleteButton from "../../app_infrastructure/components/DeleteButton";
+import onEditableFieldSave from "../../app_infrastructure/utils/onEditableFieldSave";
+import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
 
 /**
  * BudgetDetail component to display details of single Budget.
  */
 export default function BudgetDetail() {
     const {id} = useParams();
+    const navigate = useNavigate()
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/`
+    const [updatedObjectParam, setUpdatedObjectParam] = useState(null);
+    const {setUpdatedContextBudget} = useContext(BudgetContext);
     const {alert, setAlert} = useContext(AlertContext);
     const [budgetData, setBudgetData] = useState([]);
     const depositsColumns = [
@@ -27,6 +31,8 @@ export default function BudgetDetail() {
             field: 'name',
             type: 'string',
             headerName: 'Name',
+            headerAlign: 'center',
+            align: 'left',
             flex: 2,
             filterable: true,
             sortable: true
@@ -35,6 +41,8 @@ export default function BudgetDetail() {
             field: 'description',
             type: 'string',
             headerName: 'Description',
+            headerAlign: 'center',
+            align: 'left',
             flex: 3,
             filterable: true,
             sortable: false,
@@ -43,6 +51,8 @@ export default function BudgetDetail() {
             field: 'is_active',
             type: 'boolean',
             headerName: 'Active',
+            headerAlign: 'center',
+            align: 'center',
             flex: 1,
             filterable: true,
             sortable: false,
@@ -51,6 +61,8 @@ export default function BudgetDetail() {
             field: 'balance',
             type: 'number',
             headerName: 'Balance',
+            headerAlign: 'center',
+            align: 'center',
             flex: 1,
             filterable: true,
             sortable: true,
@@ -62,7 +74,7 @@ export default function BudgetDetail() {
     ]
 
     /**
-     * Fetches Budgets list from API.
+     * Fetches Budget details from API.
      */
     useEffect(() => {
         const loadData = async () => {
@@ -70,11 +82,12 @@ export default function BudgetDetail() {
                 const budgetResponse = await getApiObjectDetails(apiUrl, id)
                 setBudgetData(budgetResponse);
             } catch (err) {
-                setAlert({type: 'error', message: "Failed to load Budget."});
+                setAlert({type: 'error', message: 'Budget details loading failed.'})
+                navigate('/budgets');
             }
         }
         loadData();
-    }, []);
+    }, [updatedObjectParam]);
 
     /**
      * Function to save updated object via API call.
@@ -83,33 +96,17 @@ export default function BudgetDetail() {
      * @return {object} - JSON data with API response.
      */
     const onSave = async (apiFieldName, value) => {
-        let payload = {id: id, [apiFieldName]: value}
-        try {
-            const response = await updateApiObject(apiUrl, payload);
-            if (!response.ok) {
-                throw new ApiError(response.data.detail[apiFieldName].join(' | '));
-            }
-        } catch (error) {
-            setAlert({type: 'error', message: 'Budget update failed.'})
-            if (error instanceof ApiError) {
-                throw error
-            }
-            else {
-                console.error(error)
-                throw Error('Unexpected error occurred.')
-            }
-        }
-
-        setAlert({type: 'success', message: 'Budget updated successfully.'})
+        await onEditableFieldSave(id, apiFieldName, value, apiUrl, setUpdatedObjectParam, setAlert)
+        setUpdatedContextBudget(`${id}_${apiFieldName}_${value}`)
     };
 
     return (
         <Paper elevation={24} sx={{
-            padding: 2, bgColor: "#F1F1F1"
+            padding: 2, paddingBottom: 0, bgColor: "#F1F1F1"
         }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                 <Typography variant="h4" sx={{display: 'block', color: '#BD0000'}}>{budgetData.name}</Typography>
-                <BudgetDeleteButton budgetId={id} redirectOnSuccess={'/budgets'}/>
+                <DeleteButton apiUrl={apiUrl} objectId={id} objectDisplayName="Budget" redirectOnSuccess={'/budgets'} rightbarBudgetsRefresh/>
             </Stack>
             <Divider/>
             {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}
@@ -147,7 +144,9 @@ export default function BudgetDetail() {
                 <DataTable
                     columns={depositsColumns}
                     apiUrl={`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${id}/deposits/`}
+                    readOnly
                     clientUrl='/deposits/'
+                    height={300}
                 />
             </Box>
         </Paper>

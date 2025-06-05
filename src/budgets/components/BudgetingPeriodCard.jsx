@@ -49,7 +49,7 @@ const BudgetingPeriodCard = ({apiUrl, object, setUpdatedObjectId, setDeletedObje
                                 objectId={object.id}
                                 newPeriodStatus={PeriodStatuses.ACTIVE}
                                 objectName={object.name}
-                                setUpdatedObjectId={setUpdatedObjectId}
+                                setUpdatedObjectParam={setUpdatedObjectId}
                             />
                         )}
                         {object.status === PeriodStatuses.ACTIVE && (
@@ -58,7 +58,7 @@ const BudgetingPeriodCard = ({apiUrl, object, setUpdatedObjectId, setDeletedObje
                                 objectId={object.id}
                                 newPeriodStatus={PeriodStatuses.CLOSED}
                                 objectName={object.name}
-                                setUpdatedObjectId={setUpdatedObjectId}
+                                setUpdatedObjectParam={setUpdatedObjectId}
                             />
                         )}
                         <StyledButton component={Link} to={`/periods/${object.id}`} variant="outlined" startIcon={<PageviewIcon/>}>

@@ -3,12 +3,12 @@ import Divider from "@mui/material/Divider";
 import Alert from '@mui/material/Alert';
 import {AlertContext} from "../../app_infrastructure/components/AlertContext";
 import {Typography, Paper, Box, Stack, Chip} from "@mui/material";
-import {getApiObjectDetails, updateApiObject} from "../../app_infrastructure/services/APIService";
+import {getApiObjectDetails} from "../../app_infrastructure/services/APIService";
 import {useNavigate, useParams} from "react-router-dom";
 import EditableTextField from "../../app_infrastructure/components/EditableTextField";
-import ApiError from "../../app_infrastructure/utils/ApiError";
 import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
 import DeleteButton from "../../app_infrastructure/components/DeleteButton";
+import onEditableFieldSave from "../../app_infrastructure/utils/onEditableFieldSave";
 
 /**
  * DepositDetail component to display details of single Deposit.
@@ -17,7 +17,7 @@ export default function DepositDetail() {
     const {id} = useParams();
     const navigate = useNavigate()
     const [updatedObjectParam, setUpdatedObjectParam] = useState(null);
-    const {contextBudgetId} = useContext(BudgetContext);
+    const {contextBudgetId, setUpdatedContextBudgetDeposit} = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`
     const {alert, setAlert} = useContext(AlertContext);
     const [objectData, setObjectData] = useState([]);
@@ -62,6 +62,7 @@ export default function DepositDetail() {
                 const apiResponse = await getApiObjectDetails(apiUrl, id)
                 setObjectData(apiResponse);
             } catch (err) {
+                setAlert({type: 'error', message: 'Deposit details loading failed.'})
                 navigate('/deposits');
             }
         }
@@ -75,37 +76,10 @@ export default function DepositDetail() {
      * @return {object} - JSON data with API response.
      */
     const onSave = async (apiFieldName, value) => {
-        let payload = {id: id, [apiFieldName]: value}
-        try {
-            const response = await updateApiObject(apiUrl, payload);
-            if (!response.ok) {
-                const apiErrors = response.data.detail
-                let errorMessageParts = []
-                Object.keys(apiErrors).forEach(key => {
-                    apiErrors[key].forEach((message) => {
-                        if (key === 'non_field_errors') {
-                            errorMessageParts.push(message)
-                        } else {
-                            errorMessageParts.push(`${key}: ${message}`)
-                        }
-                    });
-                })
-                throw new ApiError(errorMessageParts.join('\n'));
-            }
-            setUpdatedObjectParam(`${apiFieldName}_${value}`)
-            setAlert({type: 'success', message: 'Deposit updated successfully.'})
-        } catch (error) {
-            setAlert({type: 'error', message: 'Deposit update failed.'})
-            if (error instanceof ApiError) {
-                throw error
-            } else {
-                console.error(error)
-                throw Error('Unexpected error occurred.')
-            }
-        }
+        await onEditableFieldSave(id, apiFieldName, value, apiUrl, setUpdatedObjectParam, setAlert)
+        setUpdatedContextBudgetDeposit(`${id}_${apiFieldName}_${value}`)
+    }
 
-
-    };
 
     return (
         <Paper elevation={24} sx={{
@@ -117,7 +91,7 @@ export default function DepositDetail() {
                     <Chip label={objectData.is_active ? "🟢 Active" : "🔴 Inactive"} variant="outlined"/>
                 </Stack>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
-                    <DeleteButton apiUrl={apiUrl} objectId={objectData.id} objectDisplayName="Deposit" redirectOnSuccess={'/deposits'}/>
+                    <DeleteButton apiUrl={apiUrl} objectId={objectData.id} objectDisplayName="Deposit" redirectOnSuccess={'/deposits'} rightbarDepositsRefresh/>
                 </Stack>
             </Stack>
             <Divider/>

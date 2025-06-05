@@ -62,7 +62,7 @@ export default function BudgetList() {
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                 <Typography variant="h4"
                             sx={{display: 'block', color: '#BD0000'}}>Budgets</Typography>
-                <CreateButton objectName="Budget" fields={createFields} apiUrl={apiUrl} setAddedObjectId={setAddedBudgetId}/>
+                <CreateButton fields={createFields} apiUrl={apiUrl} setAddedObjectId={setAddedBudgetId} rightbarBudgetsRefresh/>
             </Stack>
             <Divider/>
             {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}
@@ -70,7 +70,7 @@ export default function BudgetList() {
             <Box sx={{display: "flex", flexWrap: 'wrap', justifyContent: 'flex-start'}}>
                 {budgets.map(budget => (
                     <Box key={budget.id} sx={{width: 300, m: 1}}>
-                        <BudgetCard budget={budget} setDeletedBudgetId={setDeletedBudgetId}/>
+                        <BudgetCard budget={budget} apiUrl={apiUrl} setDeletedBudgetId={setDeletedBudgetId}/>
                     </Box>
                 ))}
             </Box>

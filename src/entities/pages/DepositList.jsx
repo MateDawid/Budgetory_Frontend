@@ -63,7 +63,7 @@ export default function DepositList() {
                 const listResponse = await getApiObjectsList(apiUrl)
                 setObjects(listResponse);
             } catch (err) {
-                setAlert({type: 'error', message: "Failed to load Periods."});
+                setAlert({type: 'error', message: "Failed to load Deposits."});
             }
         }
         loadData();
@@ -76,8 +76,8 @@ export default function DepositList() {
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                 <Typography variant="h4"
                             sx={{display: 'block', color: '#BD0000'}}>Deposits</Typography>
-                <CreateButton objectName="Deposit" fields={createFields} apiUrl={apiUrl}
-                              setAddedObjectId={setAddedObjectId}/>
+                <CreateButton fields={createFields} apiUrl={apiUrl}
+                              setAddedObjectId={setAddedObjectId} rightbarDepositsRefresh/>
             </Stack>
             <Divider/>
             {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}

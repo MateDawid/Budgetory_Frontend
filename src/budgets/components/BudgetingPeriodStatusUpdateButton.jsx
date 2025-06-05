@@ -4,12 +4,12 @@ import LockIcon from '@mui/icons-material/Lock';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import {Box} from "@mui/system";
 import {useForm} from "react-hook-form";
-import {updateApiObject} from "../../app_infrastructure/services/APIService";
 import ApiError from "../../app_infrastructure/utils/ApiError";
 import {AlertContext} from "../../app_infrastructure/components/AlertContext";
 import StyledButton from "../../app_infrastructure/components/StyledButton";
 import StyledModal from "../../app_infrastructure/components/StyledModal";
 import PeriodStatuses from "../utils/PeriodStatuses";
+import onEditableFieldSave from "../../app_infrastructure/utils/onEditableFieldSave";
 
 const statusesMapping = {
     [PeriodStatuses.ACTIVE]: {
@@ -43,33 +43,18 @@ const BudgetingPeriodStatusUpdateButton = ({objectId, newPeriodStatus, apiUrl, o
      * Function calling API to close BudgetingPeriod.
      */
     const onSubmit = async () => {
-        let payload = {id: objectId, status: newPeriodStatus}
         try {
-            const response = await updateApiObject(apiUrl, payload);
-            if (!response.ok) {
-                const apiErrors = response.data.detail
-                let errorMessageParts = []
-                Object.keys(apiErrors).forEach(key => {
-                    apiErrors[key].forEach((message) => {
-                        if (key === 'non_field_errors') {
-                            errorMessageParts.push(message)
-                        } else {
-                            errorMessageParts.push(`${key}: ${message}`)
-                        }
-                    });
-                })
-                throw new ApiError(errorMessageParts.join('\n'));
-            }
-            setUpdatedObjectParam(`${objectId}_${newPeriodStatus}`)
-            setAlert({type: 'success', message: `Period "${objectName}" updated successfully.`})
-        } catch (error) {
+            await onEditableFieldSave(objectId, 'status', newPeriodStatus, apiUrl, setUpdatedObjectParam, setAlert)
+        }
+        catch (error) {
             if (error instanceof ApiError) {
                 setAlert({type: 'error', message: error.message})
             } else {
                 console.error(error)
                 setAlert({type: 'error', message: `Unexpected error occurred. Period "${objectName}" was not updated.`})
             }
-        } finally {
+        }
+        finally {
             setOpen(false)
         }
     };

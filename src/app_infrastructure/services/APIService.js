@@ -2,6 +2,35 @@ import {getAccessToken} from "../../app_users/services/LoginService";
 import ApiError from "../../app_infrastructure/utils/ApiError";
 
 /**
+ * Function calling API.
+ * @param {string} url - API url.
+ * @param {object} requestOptions - Object containing request method and data.
+ * @return {object} - JSON data with API response.
+ */
+export const getApiResponse = async (url, requestOptions) => {
+    try {
+        const token = await getAccessToken()
+        requestOptions.headers = {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+        }
+        const response = await fetch(url, requestOptions)
+        if (!response.ok) {
+            const data = await response.json()
+            throw new ApiError(data);
+        }
+        return response
+    } catch (error) {
+        console.error(error)
+        if (error instanceof ApiError) {
+            throw error;
+        } else {
+            throw new Error("Unexpected error occurred.");
+        }
+    }
+};
+
+/**
  * Function to fetch data from API list endpoint.
  * @param {string} inputUrl - API list url.
  * @param {object} paginationModel - paginationModel object with page number and page size.
@@ -10,7 +39,6 @@ import ApiError from "../../app_infrastructure/utils/ApiError";
  * @return {object} - JSON data with API response.
  */
 export const getApiObjectsList = async (inputUrl, paginationModel = {}, sortModel = {}, filterModel = {}) => {
-    const token = await getAccessToken();
     let url_params = {...sortModel, ...filterModel};
     if (Object.entries(paginationModel).length !== 0) {
         url_params = {
@@ -26,7 +54,10 @@ export const getApiObjectsList = async (inputUrl, paginationModel = {}, sortMode
         existingParams.append(key, value);
     }
     const output_url = `${url.origin}${url.pathname}?${existingParams.toString()}`;
-    const response = await fetch(output_url, {method: "GET", headers: {Authorization: `Bearer ${token}`}});
+    const requestOptions = {
+        method: "GET",
+    }
+    const response = await getApiResponse(output_url, requestOptions)
     return await response.json();
 };
 
@@ -38,20 +69,12 @@ export const getApiObjectsList = async (inputUrl, paginationModel = {}, sortMode
  */
 export const getApiObjectDetails = async (inputUrl, objectId) => {
     const url = new URL(inputUrl);
-    const token = await getAccessToken()
     const detailUrl = `${url.origin}${url.pathname}${objectId}/`
     const requestOptions = {
         method: "GET",
-        headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-        }
     }
-    const response = await fetch(detailUrl, requestOptions)
-    if (!response.ok) {
-        throw new ApiError(`HTTP ${response.status}`);
-    }
-    return await response.json();
+    const response = await getApiResponse(detailUrl, requestOptions)
+    return await response.json()
 }
 
 
@@ -62,33 +85,12 @@ export const getApiObjectDetails = async (inputUrl, objectId) => {
  * @return {object} - JSON data with API response.
  */
 export const createApiObject = async (url, newObject) => {
-    let dataErrorRaised = false
-    try {
-        const token = await getAccessToken()
-        const requestOptions = {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(newObject)
-        }
-        const response = await fetch(url, requestOptions)
-        if (!response.ok) {
-            const data = await response.json()
-            dataErrorRaised = true
-            throw new ApiError('Invalid data', data);
-        }
-        return await response.json();
+    const requestOptions = {
+        method: "POST",
+        body: JSON.stringify(newObject)
     }
-    catch (error) {
-        if (dataErrorRaised) {
-            throw error;
-        } else {
-            throw new Error("Unexpected error occurred.");
-        }
-
-    }
+    const response = await getApiResponse(url, requestOptions)
+    return await response.json()
 };
 
 /**
@@ -99,21 +101,13 @@ export const createApiObject = async (url, newObject) => {
  */
 export const updateApiObject = async (inputUrl, updatedObject) => {
     const url = new URL(inputUrl);
-    const token = await getAccessToken()
     const detailUrl = `${url.origin}${url.pathname}${updatedObject["id"]}/`
     const requestOptions = {
         method: "PATCH",
-        headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-        },
         body: JSON.stringify(updatedObject)
     }
-    const response = await fetch(detailUrl, requestOptions)
-    return {
-        ok: response.ok,
-        data: await response.json()
-    };
+    const response = await getApiResponse(detailUrl, requestOptions)
+    return await response.json()
 };
 
 
@@ -125,23 +119,41 @@ export const updateApiObject = async (inputUrl, updatedObject) => {
  */
 export const deleteApiObject = async (inputUrl, objectId) => {
     const url = new URL(inputUrl);
-    try {
-        const token = await getAccessToken()
-        const detailUrl = `${url.origin}${url.pathname}${objectId}/`
-        const requestOptions = {
-            method: "DELETE",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json",
-            }
-        }
-        const response = await fetch(detailUrl, requestOptions)
-        if (!response.ok) {
-            const data = await response.json()
-            return {errorOccurred: true, ...data}
-        }
-        return {errorOccurred: false, detail: "Success."};
-    } catch (error) {
-        return {errorOccurred: true, detail: "Unexpected server error."}
+    const detailUrl = `${url.origin}${url.pathname}${objectId}/`
+    const requestOptions = {method: "DELETE"}
+    return await getApiResponse(detailUrl, requestOptions)
+};
+
+
+/**
+ * Function to delete multiple objects from API.
+ * @param {string} inputUrl - API list url.
+ * @param {array} objectIds - Array containing object ids to be deleted.
+ * @return {object} - JSON data with API response.
+ */
+export const bulkDeleteApiObjects = async (inputUrl, objectIds) => {
+    const url = new URL(inputUrl);
+    const bulkDeleteUrl = `${url.origin}${url.pathname}bulk_delete/`
+    const requestOptions = {
+        method: "DELETE",
+        body: JSON.stringify({objects_ids: objectIds})
     }
+    return await getApiResponse(bulkDeleteUrl, requestOptions)
+};
+
+/**
+ * Function to delete multiple objects from API.
+ * @param {string} inputUrl - API list url.
+ * @param {array} objectIds - Array containing object ids to be deleted.
+ * @return {object} - JSON data with API response.
+ */
+export const copyApiObjects = async (inputUrl, objectIds) => {
+    const url = new URL(inputUrl);
+    const copyUrl = `${url.origin}${url.pathname}copy/`
+    const requestOptions = {
+        method: "POST",
+        body: JSON.stringify({objects_ids: objectIds})
+    }
+    const response = await getApiResponse(copyUrl, requestOptions)
+    return await response.json()
 };
