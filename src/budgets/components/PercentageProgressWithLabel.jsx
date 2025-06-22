@@ -6,7 +6,7 @@ import React from "react";
 /**
  * PercentageProgressWithLabel component to display LinearProgress with percentage values and adjustable colours.
  */
-const PercentageProgressWithLabel = (props) => {
+export const PercentageProgressWithLabel = (props) => {
     const maxValue = 100
 
     /**
