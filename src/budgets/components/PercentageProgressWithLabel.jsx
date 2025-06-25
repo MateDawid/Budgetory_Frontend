@@ -1,68 +1,72 @@
-import {Box, LinearProgress, Stack, Typography} from "@mui/material";
+import { Box, LinearProgress, Stack, Typography } from "@mui/material";
 import React from "react";
 
-// TODO: Backend part of generating data, then adjust colors here
 
 /**
  * PercentageProgressWithLabel component to display LinearProgress with percentage values and adjustable colours.
  */
-export const PercentageProgressWithLabel = (props) => {
-    const maxValue = 100
+export const PercentageProgressWithLabel = ({ currentValue, maxValue }) => {
+    const progress = currentValue / maxValue * 100
 
     /**
      * Function calculate value for LinearProgress component. In case of overflowing maxValue it will reduce displayed
      * value to show how much inputValue overflows maxValue.
-     * @param {number} inputValue - Input value of displayed percentage for component.
      * @return {number} - Calculated value of displayed percentage for component.
      */
-    const getBarValue = (inputValue) => {
-        if (inputValue <= maxValue) {
-            return inputValue;
+    const getBarValue = () => {
+        if (progress <= 100) {
+            return progress;
         } else {
-            return inputValue - maxValue;
+            return progress - 100;
         }
     }
 
     /**
      * Function calculate background color for LinearProgress component.
-     * @param {number} inputValue - Input value of displayed percentage for component.
      * @return {string} - Calculated background colour.
      */
-    const getBackgroundColor = (inputValue) => {
-        if (inputValue <= maxValue) {
-            return 'white';
-        } else {
-            return 'yellow';
+    const getBackgroundColor = () => {
+        if (progress <= 100) {
+            return '#D0D0D0';
+        }
+        else if (progress <= 200) {
+            return 'green'
+        }
+        else {
+            return '#BD0000';
         }
     }
 
     /**
      * Function calculate bar color for LinearProgress component.
-     * @param {number} inputValue - Input value of displayed percentage for component.
      * @return {string} - Calculated background colour.
      */
-    const getBarColor = (inputValue) => {
-        if (inputValue <= maxValue) {
+    const getBarColor = () => {
+        if (progress <= 100) {
             return 'green';
-        } else {
-            return 'red';
+        }
+        else if (progress <= 200) {
+            return '#BD0000'
+        }
+        else {
+            return '#BD0000';
         }
     }
 
     return (
         <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1} height="100%" width="100%">
-            <Box sx={{width: "70%", mr: 1}}>
-                <LinearProgress variant="determinate" {...props} value={getBarValue(props.value)} sx={{
+            <Box sx={{ width: "70%", mr: 1 }}>
+                <LinearProgress variant="determinate" value={getBarValue()} sx={{
                     height: 10,
                     borderRadius: 5,
-                    backgroundColor: getBackgroundColor(props.value),
+                    backgroundColor: getBackgroundColor(),
                     '& .MuiLinearProgress-bar': {
-                        backgroundColor: getBarColor(props.value),
+                        backgroundColor: getBarColor(),
                     },
-                }}/>
+                }} />
             </Box>
-            <Box sx={{display: "flex", width: "30%"}}>
-                <Typography variant="body2">{props.value} %</Typography>
+            <Box sx={{ display: "flex", width: "30%" }}>
+                <Typography variant="body2">{progress.toFixed(2)}&nbsp;%</Typography>
             </Box>
         </Stack>
     );
