@@ -1,16 +1,16 @@
-import {Typography, Autocomplete} from "@mui/material";
-import React, {useContext, useState} from "react";
-import {Add as AddIcon} from "@mui/icons-material";
-import {Box} from "@mui/system";
+import { Typography, Autocomplete } from "@mui/material";
+import React, { useContext, useState } from "react";
+import { Add as AddIcon } from "@mui/icons-material";
+import { Box } from "@mui/system";
 import StyledButton from "./StyledButton";
-import {useForm, Controller} from "react-hook-form";
-import {createApiObject} from "../services/APIService";
+import { useForm, Controller } from "react-hook-form";
+import { createApiObject } from "../services/APIService";
 import ApiError from "../utils/ApiError";
-import {AlertContext} from "./AlertContext";
+import { AlertContext } from "./AlertContext";
 import Alert from "@mui/material/Alert";
 import StyledModal from "./StyledModal";
 import StyledTextField from "./StyledTextField";
-import {BudgetContext} from "./BudgetContext";
+import { BudgetContext } from "./BudgetContext";
 
 /**
  * CreateButton component to display Modal with form for creating new object.
@@ -20,22 +20,34 @@ import {BudgetContext} from "./BudgetContext";
  * @param {boolean} rightbarBudgetsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
  * @param {boolean} rightbarDepositsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
  */
-const CreateButton = ({fields, apiUrl, setAddedObjectId, rightbarBudgetsRefresh = false, rightbarDepositsRefresh = false}) => {
+const CreateButton = ({ fields, apiUrl, setAddedObjectId, rightbarBudgetsRefresh = false, rightbarDepositsRefresh = false }) => {
     const [open, setOpen] = useState(false);
-    const {register, handleSubmit, reset, control} = useForm();
+    const { register, handleSubmit, reset, control } = useForm();
     const [fieldErrors, setFieldErrors] = useState({});
     const [nonFieldErrors, setNonFieldErrors] = useState(null);
-    const {setAlert} = useContext(AlertContext);
-    const {setUpdatedContextBudget, setUpdatedContextBudgetDeposit} = useContext(BudgetContext);
+    const { setAlert } = useContext(AlertContext);
+    const { setUpdatedContextBudget, setUpdatedContextBudgetDeposit } = useContext(BudgetContext);
 
     const onSubmit = async (data) => {
         setFieldErrors({});
         setNonFieldErrors(null);
 
+        const prefixedValues = Object.keys(fields).reduce((reducedFields, fieldName) => {
+            if (fields[fieldName].prefixedValue) {
+                reducedFields[fieldName] = fields[fieldName].prefixedValue;
+            }
+            return reducedFields;
+        }, {});
+        if (prefixedValues) {
+            data = {
+                ...data,
+                ...prefixedValues
+            }
+        }
         try {
             const createResponse = await createApiObject(apiUrl, data);
             setAddedObjectId(createResponse.id);
-            setAlert({type: 'success', message: `Object "${data.name}" created successfully.`});
+            setAlert({ type: 'success', message: `Object "${data.name}" created successfully.` });
             setOpen(false);
             reset();
             if (rightbarBudgetsRefresh) {
@@ -73,7 +85,7 @@ const CreateButton = ({fields, apiUrl, setAddedObjectId, rightbarBudgetsRefresh 
 
     return (
         <>
-            <StyledButton onClick={() => setOpen(true)} variant="outlined" startIcon={<AddIcon/>}>
+            <StyledButton onClick={() => setOpen(true)} variant="outlined" startIcon={<AddIcon />}>
                 Add
             </StyledButton>
             <StyledModal open={open} onClose={() => setOpen(false)}>
@@ -87,17 +99,17 @@ const CreateButton = ({fields, apiUrl, setAddedObjectId, rightbarBudgetsRefresh 
                         Create
                     </Typography>
                     {nonFieldErrors &&
-                        <Alert sx={{marginTop: 2, marginBottom: 2, whiteSpace: 'pre-wrap'}} severity="error"
-                               onClose={() => setNonFieldErrors(null)}>{nonFieldErrors}</Alert>}
-                    <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{mt: 1}}>
-                        {Object.keys(fields).map((fieldName) => (
+                        <Alert sx={{ marginTop: 2, marginBottom: 2, whiteSpace: 'pre-wrap' }} severity="error"
+                            onClose={() => setNonFieldErrors(null)}>{nonFieldErrors}</Alert>}
+                    <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1 }}>
+                        {Object.keys(fields).filter((fieldName) => !fields[fieldName]['prefixedValue']).map((fieldName) => (
                             fields[fieldName]['type'] === 'select' && fields[fieldName]['options'] ? (
                                 <Controller
                                     key={fieldName}
                                     name={fieldName}
                                     control={control}
                                     defaultValue=""
-                                    render={({field}) => (
+                                    render={({ field }) => (
                                         <Autocomplete
                                             {...field}
                                             fullWidth
@@ -136,29 +148,31 @@ const CreateButton = ({fields, apiUrl, setAddedObjectId, rightbarBudgetsRefresh 
                                                         inputLabel: {
                                                             shrink: true,
                                                         },
+                                                        ...fields[fieldName].slotProps 
                                                     }}
-                                                    sx={{mb: 2}}
+                                                    sx={{ mb: 2 }}
                                                 />
                                             )}
                                         />
                                     )}
                                 />
                             ) : (
-                            <StyledTextField
-                                key={fieldName}
-                                {...fields[fieldName]}
-                                {...register(fieldName)}
-                                slotProps={{
-                                    inputLabel: {
-                                        shrink: true,
-                                    },
-                                }}
-                                inputProps={fields[fieldName]['type'] === 'date' ? {max: '9999-12-31'} : {}}
-                                fullWidth
-                                error={!!fieldErrors[fieldName]}
-                                helperText={fieldErrors[fieldName] ? fieldErrors[fieldName] : ''}
-                                sx={{mb: 2}}
-                            />
+                                <StyledTextField
+                                    key={fieldName}
+                                    {...fields[fieldName]}
+                                    {...register(fieldName)}
+                                    slotProps={{
+                                        inputLabel: {
+                                            shrink: true,
+                                        },
+                                        ...fields[fieldName].slotProps 
+                                    }}
+                                    inputProps={fields[fieldName]['type'] === 'date' ? { max: '9999-12-31' } : {}}
+                                    fullWidth
+                                    error={!!fieldErrors[fieldName]}
+                                    helperText={fieldErrors[fieldName] ? fieldErrors[fieldName] : ''}
+                                    sx={{ mb: 2 }}
+                                />
                             )
                         ))}
                         <StyledButton type="submit" variant="contained" fullWidth>
