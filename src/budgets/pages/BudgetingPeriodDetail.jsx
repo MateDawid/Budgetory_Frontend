@@ -118,7 +118,7 @@ export default function BudgetingPeriodDetail() {
                         {...objectFields[fieldName]}
                     />
                 ))}
-                <PeriodExpensePredictionsComponent periodId={id}/>
+                <PeriodExpensePredictionsComponent periodId={id} periodStatus={objectData.status}/>
             </Box>
         </Paper>
     );

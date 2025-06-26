@@ -5,7 +5,7 @@ import { BudgetContext } from '../../app_infrastructure/components/BudgetContext
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
 import { ExpensePredictionCardComponent } from './ExpensePredictionCardComponent';
 
-const PeriodExpensePredictionsComponent = ({ periodId }) => {
+const PeriodExpensePredictionsComponent = ({ periodId, periodStatus }) => {
     /*
     - Draft status - adding, deleting and edititng Expense Predictions
     - Active status - changing current value of Prediction
@@ -83,7 +83,7 @@ const PeriodExpensePredictionsComponent = ({ periodId }) => {
             </Stack>
             {/* TOTAL SPENT, TOTAL PLANNED, WHAT'S LEFT*/}
             {/* FILTERS AND SORTERS */}
-            {periodPredictions.map((prediction) => <ExpensePredictionCardComponent key={prediction.id} prediction={prediction} />)}
+            {periodPredictions.map((prediction) => <ExpensePredictionCardComponent key={prediction.id} prediction={prediction} periodStatus={periodStatus}/>)}
         </Box >
     )
 }

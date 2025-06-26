@@ -11,6 +11,7 @@ import TableRow from '@mui/material/TableRow';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from "@mui/icons-material/Delete";
 import { BudgetContext } from "../../app_infrastructure/components/BudgetContext";
+import PeriodStatuses from "../utils/PeriodStatuses";
 
 const ExpandMoreButton = styled((props) => {
     const { expand, ...other } = props; // eslint-disable-line no-unused-vars
@@ -36,7 +37,7 @@ const ExpandMoreButton = styled((props) => {
     ],
 }));
 
-export const ExpensePredictionCardComponent = ({ prediction }) => {
+export const ExpensePredictionCardComponent = ({ prediction, periodStatus }) => {
     const { contextBudgetCurrency } = useContext(BudgetContext);
     const [expanded, setExpanded] = useState(false);
 
@@ -56,7 +57,7 @@ export const ExpensePredictionCardComponent = ({ prediction }) => {
                 <Grid size={2} display="flex" justifyContent="left" alignItems="center">
                     <Typography>{prediction.category_display}</Typography>
                 </Grid>
-                <Grid size={4} display="flex" justifyContent="center" alignItems="center">
+                <Grid size={5} display="flex" justifyContent="center" alignItems="center">
                     <Table
                         size="small"
                         sx={{
@@ -68,30 +69,36 @@ export const ExpensePredictionCardComponent = ({ prediction }) => {
                     >
                         <TableHead>
                             <TableRow>
-                                {prediction.initial_value && <TableCell align="center"><b>Initial plan</b></TableCell>}
-                                <TableCell align="center" ><b>Current plan</b></TableCell>
-                                <TableCell align="center"><b>Spent</b></TableCell>
+                                {periodStatus === PeriodStatuses.DRAFT && <TableCell align="center" sx={{ width: '33.33%' }}><b>Previous result</b></TableCell>}
+                                {periodStatus !== PeriodStatuses.DRAFT && <TableCell align="center" sx={{ width: '33.33%' }}><b>Initial plan</b></TableCell>}
+                                <TableCell align="center" sx={{ width: '33.33%' }}><b>Current plan</b></TableCell>
+                                <TableCell align="center" sx={{ width: '33.33%' }}><b>Result</b></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             <TableRow>
-                                {prediction.initial_value && <TableCell align="center">{prediction.initial_value} {contextBudgetCurrency}</TableCell>}
-                                <TableCell align="center">{prediction.current_value} {contextBudgetCurrency}</TableCell>
-                                <TableCell align="center">100 {contextBudgetCurrency}</TableCell>
+                                {periodStatus === PeriodStatuses.DRAFT && <TableCell align="center">{prediction.previous_result}&nbsp;{contextBudgetCurrency}</TableCell>}
+                                {periodStatus !== PeriodStatuses.DRAFT && <TableCell align="center">{prediction.initial_plan}&nbsp;{contextBudgetCurrency}</TableCell>}
+                                <TableCell align="center">{prediction.current_plan}&nbsp;{contextBudgetCurrency}</TableCell>
+                                <TableCell align="center">{prediction.current_result}&nbsp;{contextBudgetCurrency}</TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>
                 </Grid>
-                <Grid size={3} display="flex" justifyContent="center" alignItems="center">
-                    <PercentageProgressWithLabel currentValue={3} maxValue={7} />
+                <Grid size={2} display="flex" justifyContent="center" alignItems="center">
+                    <PercentageProgressWithLabel currentValue={prediction.current_result} maxValue={prediction.current_plan} />
                 </Grid>
                 <Grid size={1} display="flex" justifyContent="right" alignItems="center">
                     {prediction.description &&
                         <ExpandMoreButton expand={expanded} onClick={handleExpandClick}>
                             <ExpandMoreIcon />
                         </ExpandMoreButton>}
-                    <IconButton><EditIcon /></IconButton> 
-                    <IconButton><DeleteIcon /></IconButton>
+                    {periodStatus !== PeriodStatuses.CLOSED &&
+                        <>
+                            <IconButton><EditIcon /></IconButton>
+                            <IconButton><DeleteIcon /></IconButton>
+                        </>
+                    }
                 </Grid>
             </Grid>
 
