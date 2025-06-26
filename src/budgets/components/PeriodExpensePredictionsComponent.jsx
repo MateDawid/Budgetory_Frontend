@@ -14,10 +14,15 @@ const PeriodExpensePredictionsComponent = ({ periodId }) => {
     - Possibility to copy all predictions from previous period
     */
     const { contextBudgetId } = useContext(BudgetContext);
-    const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expense_predictions/`
+    const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expense_predictions/?period=${periodId}`
     const [categoryOptions, setCategoryOptions] = useState([]);
+    const [periodPredictions, setPeriodPredictions] = useState([]);
+    const [updatedObject, setUpdatedObject] = useState();
 
     const createFields = {
+        period: {
+            prefixedValue: periodId
+        },
         category: {
             type: 'select',
             select: true,
@@ -27,8 +32,16 @@ const PeriodExpensePredictionsComponent = ({ periodId }) => {
         },
         current_value: {
             type: 'number',
+            step: "any",
             label: 'Value',
             required: true,
+            slotProps: {
+                htmlInput: {
+                    step: 0.01,
+                    min: 0
+                }
+            }
+
         },
         description: {
             type: 'string',
@@ -38,6 +51,17 @@ const PeriodExpensePredictionsComponent = ({ periodId }) => {
             rows: 4
         }
     }
+
+    /**
+     * Fetches select options for ExpensePrediction object from API.
+     */
+    useEffect(() => {
+        async function getPredictions() {
+            const predictionsResponse = await getApiObjectsList(apiUrl)
+            setPeriodPredictions(predictionsResponse);
+        }
+        getPredictions();
+    }, [contextBudgetId, updatedObject]);
 
     /**
      * Fetches select options for ExpensePrediction object from API.
@@ -55,10 +79,11 @@ const PeriodExpensePredictionsComponent = ({ periodId }) => {
         <Box sx={{ marginTop: 2 }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
                 <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>Expense predictions</Typography>
-                <CreateButton fields={createFields} apiUrl={apiUrl} />
+                <CreateButton fields={createFields} apiUrl={apiUrl} setAddedObjectId={setUpdatedObject} />
             </Stack>
+            {/* TOTAL SPENT, TOTAL PLANNED, WHAT'S LEFT*/}
             {/* FILTERS AND SORTERS */}
-            <ExpensePredictionCardComponent />
+            {periodPredictions.map((prediction) => <ExpensePredictionCardComponent key={prediction.id} prediction={prediction} />)}
         </Box >
     )
 }
