@@ -110,10 +110,10 @@ export const ExpensePredictionCardComponent = ({ prediction, periodStatus, setUp
                             <ExpandMoreIcon />
                         </ExpandMoreButton>}
                     {periodStatus !== PeriodStatuses.CLOSED &&
-                        <>
-                            <IconButton onClick={handleEdit}><EditIcon /></IconButton>
-                            <IconButton onClick={handleDelete}><DeleteIcon /></IconButton>
-                        </>
+                        <IconButton onClick={handleEdit}><EditIcon /></IconButton>
+                    }
+                    {periodStatus === PeriodStatuses.DRAFT &&
+                        <IconButton onClick={handleDelete}><DeleteIcon /></IconButton>
                     }
                 </Grid>
             </Grid>
