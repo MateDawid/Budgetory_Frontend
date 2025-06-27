@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Box, Stack, Typography } from "@mui/material";
+import { Alert, Box, Stack, Typography } from "@mui/material";
 import CreateButton from '../../app_infrastructure/components/CreateButton';
 import { BudgetContext } from '../../app_infrastructure/components/BudgetContext';
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
@@ -18,6 +18,7 @@ const PeriodExpensePredictionsComponent = ({ periodId, periodStatus }) => {
     const [categoryOptions, setCategoryOptions] = useState([]);
     const [periodPredictions, setPeriodPredictions] = useState([]);
     const [updatedObject, setUpdatedObject] = useState();
+    const [alert, setAlert] = useState(null);
 
     const createFields = {
         period: {
@@ -79,11 +80,19 @@ const PeriodExpensePredictionsComponent = ({ periodId, periodStatus }) => {
         <Box sx={{ marginTop: 2 }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
                 <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>Expense predictions</Typography>
-                <CreateButton fields={createFields} apiUrl={apiUrl} setAddedObjectId={setUpdatedObject} />
+                <CreateButton fields={createFields} apiUrl={apiUrl} setAddedObjectId={setUpdatedObject} customSetAlert={setAlert}/>
             </Stack>
+            {alert &&
+                <Alert
+                    sx={{ marginTop: 2, whiteSpace: 'pre-wrap' }}
+                    severity={alert.type}
+                    onClose={() => setAlert(null)}
+                >
+                    {alert.message}
+                </Alert>}
             {/* TOTAL SPENT, TOTAL PLANNED, WHAT'S LEFT*/}
             {/* FILTERS AND SORTERS */}
-            {periodPredictions.map((prediction) => <ExpensePredictionCardComponent key={prediction.id} prediction={prediction} periodStatus={periodStatus}/>)}
+            {periodPredictions.map((prediction) => <ExpensePredictionCardComponent key={prediction.id} prediction={prediction} periodStatus={periodStatus} setUpdatedObject={setUpdatedObject}/>)}
         </Box >
     )
 }
