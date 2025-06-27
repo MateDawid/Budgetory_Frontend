@@ -12,6 +12,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from "@mui/icons-material/Delete";
 import { BudgetContext } from "../../app_infrastructure/components/BudgetContext";
 import PeriodStatuses from "../utils/PeriodStatuses";
+import { deleteApiObject } from "../../app_infrastructure/services/APIService";
 
 const ExpandMoreButton = styled((props) => {
     const { expand, ...other } = props; // eslint-disable-line no-unused-vars
@@ -37,11 +38,26 @@ const ExpandMoreButton = styled((props) => {
     ],
 }));
 
-export const ExpensePredictionCardComponent = ({ prediction, periodStatus }) => {
-    const { contextBudgetCurrency } = useContext(BudgetContext);
+export const ExpensePredictionCardComponent = ({ prediction, periodStatus, setUpdatedObject, setAlert }) => {
+    const { contextBudgetId, contextBudgetCurrency } = useContext(BudgetContext);
+    const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expense_predictions/`
     const [expanded, setExpanded] = useState(false);
 
     const handleExpandClick = () => {
+        setExpanded(!expanded);
+    };
+
+    const handleDelete = async () => {
+        try {
+            await deleteApiObject(apiUrl, prediction.id);
+            setUpdatedObject(`${prediction.id}_delete`)
+        } catch (error) {
+            console.error(error)
+            setAlert({ type: 'error', message: error.message });
+        }
+    };
+
+    const handleEdit = () => {
         setExpanded(!expanded);
     };
 
@@ -95,8 +111,8 @@ export const ExpensePredictionCardComponent = ({ prediction, periodStatus }) => 
                         </ExpandMoreButton>}
                     {periodStatus !== PeriodStatuses.CLOSED &&
                         <>
-                            <IconButton><EditIcon /></IconButton>
-                            <IconButton><DeleteIcon /></IconButton>
+                            <IconButton onClick={handleEdit}><EditIcon /></IconButton>
+                            <IconButton onClick={handleDelete}><DeleteIcon /></IconButton>
                         </>
                     }
                 </Grid>

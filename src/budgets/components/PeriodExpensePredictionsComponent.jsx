@@ -80,7 +80,7 @@ const PeriodExpensePredictionsComponent = ({ periodId, periodStatus }) => {
         <Box sx={{ marginTop: 2 }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
                 <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>Expense predictions</Typography>
-                <CreateButton fields={createFields} apiUrl={apiUrl} setAddedObjectId={setUpdatedObject} customSetAlert={setAlert}/>
+                <CreateButton fields={createFields} apiUrl={apiUrl} setAddedObjectId={setUpdatedObject} customSetAlert={setAlert} />
             </Stack>
             {alert &&
                 <Alert
@@ -92,7 +92,15 @@ const PeriodExpensePredictionsComponent = ({ periodId, periodStatus }) => {
                 </Alert>}
             {/* TOTAL SPENT, TOTAL PLANNED, WHAT'S LEFT*/}
             {/* FILTERS AND SORTERS */}
-            {periodPredictions.map((prediction) => <ExpensePredictionCardComponent key={prediction.id} prediction={prediction} periodStatus={periodStatus} setUpdatedObject={setUpdatedObject}/>)}
+            {periodPredictions.map((prediction) => (
+                <ExpensePredictionCardComponent
+                    key={prediction.id}
+                    prediction={prediction}
+                    periodStatus={periodStatus}
+                    setUpdatedObject={setUpdatedObject}
+                    setAlert={setAlert}
+                />)
+            )}
         </Box >
     )
 }
