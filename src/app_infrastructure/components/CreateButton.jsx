@@ -49,7 +49,7 @@ const CreateButton = ({ fields, apiUrl, setAddedObjectId, rightbarBudgetsRefresh
         try {
             const createResponse = await createApiObject(apiUrl, data);
             setAddedObjectId(createResponse.id);
-            setAlert({ type: 'success', message: `Object "${data.name}" created successfully.` });
+            setAlert({ type: 'success', message: data.name ? `Object ${data.name} created successfully.` : 'Object created successfully.' });
             setOpen(false);
             reset();
             if (rightbarBudgetsRefresh) {
