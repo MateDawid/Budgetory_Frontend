@@ -19,13 +19,15 @@ import { BudgetContext } from "./BudgetContext";
  * @param {function} setAddedObjectId - useState setter for refreshing objects list on object adding.
  * @param {boolean} rightbarBudgetsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
  * @param {boolean} rightbarDepositsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
+ * @param {boolean} customSetAlert - Custom setAlert function.
  */
-const CreateButton = ({ fields, apiUrl, setAddedObjectId, rightbarBudgetsRefresh = false, rightbarDepositsRefresh = false }) => {
+const CreateButton = ({ fields, apiUrl, setAddedObjectId, rightbarBudgetsRefresh = false, rightbarDepositsRefresh = false, customSetAlert = undefined }) => {
     const [open, setOpen] = useState(false);
     const { register, handleSubmit, reset, control } = useForm();
     const [fieldErrors, setFieldErrors] = useState({});
     const [nonFieldErrors, setNonFieldErrors] = useState(null);
-    const { setAlert } = useContext(AlertContext);
+    const { setAlert: contextSetAlert } = useContext(AlertContext);
+    const setAlert = customSetAlert || contextSetAlert;
     const { setUpdatedContextBudget, setUpdatedContextBudgetDeposit } = useContext(BudgetContext);
 
     const onSubmit = async (data) => {
@@ -148,7 +150,7 @@ const CreateButton = ({ fields, apiUrl, setAddedObjectId, rightbarBudgetsRefresh
                                                         inputLabel: {
                                                             shrink: true,
                                                         },
-                                                        ...fields[fieldName].slotProps 
+                                                        ...fields[fieldName].slotProps
                                                     }}
                                                     sx={{ mb: 2 }}
                                                 />
@@ -165,7 +167,7 @@ const CreateButton = ({ fields, apiUrl, setAddedObjectId, rightbarBudgetsRefresh
                                         inputLabel: {
                                             shrink: true,
                                         },
-                                        ...fields[fieldName].slotProps 
+                                        ...fields[fieldName].slotProps
                                     }}
                                     inputProps={fields[fieldName]['type'] === 'date' ? { max: '9999-12-31' } : {}}
                                     fullWidth
