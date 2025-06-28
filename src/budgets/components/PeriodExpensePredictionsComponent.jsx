@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Alert, Box, Stack, Typography } from "@mui/material";
 import CreateButton from '../../app_infrastructure/components/CreateButton';
-import { BudgetContext } from '../../app_infrastructure/components/BudgetContext';
+import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
 import { ExpensePredictionCardComponent } from './ExpensePredictionCardComponent';
 

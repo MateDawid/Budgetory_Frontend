@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import Divider from "@mui/material/Divider";
 import Alert from '@mui/material/Alert';
-import {AlertContext} from "../../app_infrastructure/components/AlertContext";
+import {AlertContext} from "../../app_infrastructure/store/AlertContext";
 import {
     Typography,
     Paper,
@@ -13,7 +13,7 @@ import EditableTextField from "../../app_infrastructure/components/EditableTextF
 import DataTable from "../../app_infrastructure/components/DataTable/DataTable";
 import DeleteButton from "../../app_infrastructure/components/DeleteButton";
 import onEditableFieldSave from "../../app_infrastructure/utils/onEditableFieldSave";
-import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
+import {BudgetContext} from "../../app_infrastructure/store/BudgetContext";
 
 /**
  * BudgetDetail component to display details of single Budget.

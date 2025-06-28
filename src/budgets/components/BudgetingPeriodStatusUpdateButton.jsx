@@ -5,7 +5,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import {Box} from "@mui/system";
 import {useForm} from "react-hook-form";
 import ApiError from "../../app_infrastructure/utils/ApiError";
-import {AlertContext} from "../../app_infrastructure/components/AlertContext";
+import {AlertContext} from "../../app_infrastructure/store/AlertContext";
 import StyledButton from "../../app_infrastructure/components/StyledButton";
 import StyledModal from "../../app_infrastructure/components/StyledModal";
 import PeriodStatuses from "../utils/PeriodStatuses";

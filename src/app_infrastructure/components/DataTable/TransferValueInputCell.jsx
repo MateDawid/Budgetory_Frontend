@@ -1,6 +1,6 @@
 import {InputAdornment, TextField} from "@mui/material";
 import React, {useContext} from "react";
-import {BudgetContext} from "../BudgetContext";
+import {BudgetContext} from "../../store/BudgetContext";
 
 /**
  * TransferValueInputCell component to display Transfer value edit field in DataGrid cell.

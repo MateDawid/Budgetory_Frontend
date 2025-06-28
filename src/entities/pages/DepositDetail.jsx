@@ -1,12 +1,12 @@
 import React, {useContext, useEffect, useState} from 'react';
 import Divider from "@mui/material/Divider";
 import Alert from '@mui/material/Alert';
-import {AlertContext} from "../../app_infrastructure/components/AlertContext";
+import {AlertContext} from "../../app_infrastructure/store/AlertContext";
 import {Typography, Paper, Box, Stack, Chip} from "@mui/material";
 import {getApiObjectDetails} from "../../app_infrastructure/services/APIService";
 import {useNavigate, useParams} from "react-router-dom";
 import EditableTextField from "../../app_infrastructure/components/EditableTextField";
-import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
+import {BudgetContext} from "../../app_infrastructure/store/BudgetContext";
 import DeleteButton from "../../app_infrastructure/components/DeleteButton";
 import onEditableFieldSave from "../../app_infrastructure/utils/onEditableFieldSave";
 

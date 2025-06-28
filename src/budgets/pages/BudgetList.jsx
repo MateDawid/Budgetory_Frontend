@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import Divider from "@mui/material/Divider";
 import Alert from '@mui/material/Alert';
-import {AlertContext} from "../../app_infrastructure/components/AlertContext";
+import {AlertContext} from "../../app_infrastructure/store/AlertContext";
 import {
     Typography,
     Paper,

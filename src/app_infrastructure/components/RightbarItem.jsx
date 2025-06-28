@@ -1,7 +1,7 @@
 import {ListItem, Stack, Typography, ListItemText} from "@mui/material";
 import * as React from "react";
 import {useContext} from "react";
-import {BudgetContext} from "./BudgetContext";
+import {BudgetContext} from "../store/BudgetContext";
 
 
 /**

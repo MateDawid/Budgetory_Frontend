@@ -10,7 +10,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from "@mui/icons-material/Delete";
-import { BudgetContext } from "../../app_infrastructure/components/BudgetContext";
+import { BudgetContext } from "../../app_infrastructure/store/BudgetContext";
 import PeriodStatuses from "../utils/PeriodStatuses";
 import { deleteApiObject } from "../../app_infrastructure/services/APIService";
 

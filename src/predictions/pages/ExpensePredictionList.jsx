@@ -3,9 +3,9 @@ import Typography from "@mui/material/Typography";
 import {Paper} from "@mui/material";
 import Divider from "@mui/material/Divider";
 import Alert from '@mui/material/Alert';
-import {AlertContext} from "../../app_infrastructure/components/AlertContext";
+import {AlertContext} from "../../app_infrastructure/store/AlertContext";
 import DataTable from "../../app_infrastructure/components/DataTable/DataTable";
-import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
+import {BudgetContext} from "../../app_infrastructure/store/BudgetContext";
 
 /**
  * ExpensePredictionList component to display list of Budget ExpensePredictions.

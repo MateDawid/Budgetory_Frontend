@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from 'react';
 import {Select, MenuItem, InputLabel, FormControl} from '@mui/material';
-import {AlertContext} from "./AlertContext";
-import {BudgetContext} from "./BudgetContext";
+import {AlertContext} from "../store/AlertContext";
+import {BudgetContext} from "../store/BudgetContext";
 import {getApiObjectsList} from "../services/APIService";
 
 /**

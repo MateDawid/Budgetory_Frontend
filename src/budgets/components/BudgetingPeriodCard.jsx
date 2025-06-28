@@ -7,7 +7,7 @@ import truncateText from "../../app_infrastructure/utils/truncateText";
 import DeleteButton from "../../app_infrastructure/components/DeleteButton";
 import PeriodStatuses from "../utils/PeriodStatuses";
 import BudgetingPeriodStatusUpdateButton from "./BudgetingPeriodStatusUpdateButton";
-import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
+import {BudgetContext} from "../../app_infrastructure/store/BudgetContext";
 
 /**
  * BudgetingPeriodCard component to display single BudgetingPeriod card on Periods list.
