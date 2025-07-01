@@ -9,9 +9,10 @@ import FormModal from "./FormModal/FormModal";
  * CreateButton component to display Modal with form for creating new object.
  * @param {object} fields - Create form fields.
  * @param {string} apiUrl - Base API url to be called with POST method.
- * @param {boolean} customSetAlert - Custom setAlert function.
+ * @param {string} objectType - Type of created object.
+ * @param {function} customSetAlert - Custom setAlert function.
  */
-const CreateButton = ({ fields, apiUrl, customSetAlert = undefined }) => {
+const CreateButton = ({ fields, apiUrl, objectType, customSetAlert = undefined }) => {
     const [open, setOpen] = useState(false);
     const { setAlert: contextSetAlert } = useContext(AlertContext);
     const setAlert = customSetAlert || contextSetAlert;
@@ -33,7 +34,7 @@ const CreateButton = ({ fields, apiUrl, customSetAlert = undefined }) => {
     }
 
     const callApi = async (formData) => {
-        const apiInput = prepareApiInput(formData) 
+        const apiInput = prepareApiInput(formData)
         return await createApiObject(apiUrl, apiInput);
     };
 
@@ -44,6 +45,8 @@ const CreateButton = ({ fields, apiUrl, customSetAlert = undefined }) => {
             </StyledButton>
             <FormModal
                 fields={fields}
+                objectType={objectType}
+                operation={'create'}
                 open={open}
                 setOpen={setOpen}
                 callApi={callApi}

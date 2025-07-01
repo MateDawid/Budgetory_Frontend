@@ -6,10 +6,24 @@ import StyledModal from "../StyledModal"
 import SelectFormField from "./SelectFormField"
 import InputFormField from "./InputFormField"
 import ApiError from "../../utils/ApiError"
+import { useContext } from "react"
+import { BudgetContext } from "../../store/BudgetContext"
 
+/**
+ * FormModal component to display Modal with form.
+ * @param {object} fields - Create form fields.
+ * @param {string} objectType - Type of created object.
+ * @param {string} operation - Type of operation performed in Form - create or update.
+ * @param {boolean} open - Indicates if Form is open.
+ * @param {boolean} setOpen - Changes state of open value.
+ * @param {function} callApi - Function called on Form submit.
+ * @param {function} setAlert - Alert setter function.
+ */
 const FormModal = (
-    { 
+    {
         fields,
+        objectType,
+        operation,
         open,
         setOpen,
         callApi,
@@ -19,6 +33,7 @@ const FormModal = (
     const { register, handleSubmit, reset, control } = useForm();
     const [fieldErrors, setFieldErrors] = useState({});
     const [nonFieldErrors, setNonFieldErrors] = useState(null);
+    const { setObjectChange } = useContext(BudgetContext);
 
     const onSubmit = async (data) => {
         setFieldErrors({});
@@ -26,8 +41,8 @@ const FormModal = (
 
         try {
             const response = await callApi(data);
-            console.log(response)
             setAlert({ type: 'success', message: response.name ? `Object ${response.name} created successfully.` : 'Object created successfully.' });
+            setObjectChange({ operation: operation, objectId: response.id, objectType: objectType })
             setOpen(false);
             reset();
         } catch (error) {
@@ -66,7 +81,7 @@ const FormModal = (
                 borderRadius={5}
             >
                 <Typography variant="h6" textAlign="center">
-                    Form
+                    {objectType}
                 </Typography>
                 {nonFieldErrors &&
                     <Alert sx={{ marginTop: 2, marginBottom: 2, whiteSpace: 'pre-wrap' }} severity="error"
