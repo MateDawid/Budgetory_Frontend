@@ -19,6 +19,8 @@ export const ContextBudgetProvider = ({children}) => {
     const [contextBudgetDeposits, setContextBudgetDeposits] = useState([])
     const [updatedContextBudgetDeposit, setUpdatedContextBudgetDeposit] = useState(null)
 
+    const [objectChange, setObjectChange] = useState({operation: null, objectId: null, objectType: null});
+
     /**
      * Saves contextBudgetId in localStorage on contextBudgetId change.
      */
@@ -52,7 +54,9 @@ export const ContextBudgetProvider = ({children}) => {
         contextBudgetCurrency,
         setContextBudgetCurrency,
         contextBudgetDeposits,
-        setUpdatedContextBudgetDeposit
+        setUpdatedContextBudgetDeposit,
+        objectChange,
+        setObjectChange
     };
 
     return (
