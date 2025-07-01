@@ -38,8 +38,8 @@ const ExpandMoreButton = styled((props) => {
     ],
 }));
 
-export const ExpensePredictionCardComponent = ({ prediction, periodStatus, setUpdatedObject, setAlert }) => {
-    const { contextBudgetId, contextBudgetCurrency } = useContext(BudgetContext);
+export const ExpensePredictionCardComponent = ({ prediction, periodStatus, setAlert }) => {
+    const { contextBudgetId, contextBudgetCurrency, setObjectChange } = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expense_predictions/`
     const [expanded, setExpanded] = useState(false);
 
@@ -50,7 +50,7 @@ export const ExpensePredictionCardComponent = ({ prediction, periodStatus, setUp
     const handleDelete = async () => {
         try {
             await deleteApiObject(apiUrl, prediction.id);
-            setUpdatedObject(`${prediction.id}_delete`)
+            setObjectChange({operation: 'delete', objectId: prediction.id, objectType: 'Expense prediction'})
         } catch (error) {
             console.error(error)
             setAlert({ type: 'error', message: error.message });

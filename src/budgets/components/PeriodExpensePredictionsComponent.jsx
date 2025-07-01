@@ -13,11 +13,10 @@ const PeriodExpensePredictionsComponent = ({ periodId, periodStatus }) => {
 
     - Possibility to copy all predictions from previous period
     */
-    const { contextBudgetId } = useContext(BudgetContext);
+    const { contextBudgetId, objectChange } = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expense_predictions/?period=${periodId}`
     const [categoryOptions, setCategoryOptions] = useState([]);
     const [periodPredictions, setPeriodPredictions] = useState([]);
-    const [updatedObject, setUpdatedObject] = useState();
     const [alert, setAlert] = useState(null);
 
     const createFields = {
@@ -62,7 +61,7 @@ const PeriodExpensePredictionsComponent = ({ periodId, periodStatus }) => {
             setPeriodPredictions(predictionsResponse);
         }
         getPredictions();
-    }, [contextBudgetId, updatedObject]);
+    }, [contextBudgetId, objectChange]);
 
     /**
      * Fetches select options for ExpensePrediction object from API.
@@ -80,7 +79,7 @@ const PeriodExpensePredictionsComponent = ({ periodId, periodStatus }) => {
         <Box sx={{ marginTop: 2 }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
                 <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>Expense predictions</Typography>
-                <CreateButton fields={createFields} apiUrl={apiUrl} setAddedObjectId={setUpdatedObject} customSetAlert={setAlert} />
+                <CreateButton fields={createFields} objectType={"Expense prediction"} apiUrl={apiUrl} customSetAlert={setAlert} />
             </Stack>
             {alert &&
                 <Alert
@@ -97,7 +96,6 @@ const PeriodExpensePredictionsComponent = ({ periodId, periodStatus }) => {
                     key={prediction.id}
                     prediction={prediction}
                     periodStatus={periodStatus}
-                    setUpdatedObject={setUpdatedObject}
                     setAlert={setAlert}
                 />)
             )}
