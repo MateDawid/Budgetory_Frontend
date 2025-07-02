@@ -14,10 +14,9 @@ import CreateButton from "../../app_infrastructure/components/CreateButton";
  * DepositList component to display list of Budget Deposits.
  */
 export default function DepositList() {
-    const {contextBudgetId} = useContext(BudgetContext);
+    const {contextBudgetId, objectChange} = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`
     const {alert, setAlert} = useContext(AlertContext);
-    const [addedObjectId, setAddedObjectId] = useState(null);
     const [updatedObjectId, setUpdatedObjectId] = useState(null);
     const [deletedObjectId, setDeletedObjectId] = useState(null);
     const [objects, setObjects] = useState([]);
@@ -67,7 +66,7 @@ export default function DepositList() {
             }
         }
         loadData();
-    }, [contextBudgetId, addedObjectId, updatedObjectId, deletedObjectId]);
+    }, [contextBudgetId, objectChange, updatedObjectId, deletedObjectId]);
 
     return (
         <Paper elevation={24} sx={{
@@ -76,8 +75,7 @@ export default function DepositList() {
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                 <Typography variant="h4"
                             sx={{display: 'block', color: '#BD0000'}}>Deposits</Typography>
-                <CreateButton fields={createFields} apiUrl={apiUrl}
-                              setAddedObjectId={setAddedObjectId} rightbarDepositsRefresh/>
+                <CreateButton fields={createFields} apiUrl={apiUrl} objectType={"Deposit"}/>
             </Stack>
             <Divider/>
             {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}

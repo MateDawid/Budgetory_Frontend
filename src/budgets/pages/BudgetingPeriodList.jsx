@@ -14,10 +14,9 @@ import CreateButton from "../../app_infrastructure/components/CreateButton";
  * BudgetingPeriodList component to display list of Budget BudgetingPeriods.
  */
 export default function BudgetingPeriodList() {
-    const {contextBudgetId} = useContext(BudgetContext);
+    const {contextBudgetId, objectChange} = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`
     const {alert, setAlert} = useContext(AlertContext);
-    const [addedObjectId, setAddedObjectId] = useState(null);
     const [updatedObjectId, setUpdatedObjectId] = useState(null);
     const [deletedObjectId, setDeletedObjectId] = useState(null);
     const [objects, setObjects] = useState([]);
@@ -53,7 +52,7 @@ export default function BudgetingPeriodList() {
             }
         }
         loadData();
-    }, [contextBudgetId, addedObjectId, updatedObjectId, deletedObjectId]);
+    }, [contextBudgetId, objectChange, updatedObjectId, deletedObjectId]);
 
     return (
         <Paper elevation={24} sx={{
@@ -62,7 +61,7 @@ export default function BudgetingPeriodList() {
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                 <Typography variant="h4"
                             sx={{display: 'block', color: '#BD0000'}}>Periods</Typography>
-                <CreateButton fields={createFields} apiUrl={apiUrl} setAddedObjectId={setAddedObjectId}/>
+                <CreateButton fields={createFields} objectType={"Budgeting Period"} apiUrl={apiUrl}/>
             </Stack>
             <Divider/>
             {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}

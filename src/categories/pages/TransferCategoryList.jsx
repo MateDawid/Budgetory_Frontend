@@ -17,7 +17,7 @@ import SearchField from "../../app_infrastructure/components/SearchField";
  * TransferCategoryList component to display list of Budget TransferCategories.
  */
 export default function TransferCategoryList() {
-    const {contextBudgetId} = useContext(BudgetContext);
+    const {contextBudgetId, objectChange} = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/`
 
     const [searchQuery, setSearchQuery] = useState("");
@@ -27,7 +27,6 @@ export default function TransferCategoryList() {
     const [activeFilter, setActiveFilter] = useState(null);
 
     const {alert, setAlert} = useContext(AlertContext);
-    const [addedObjectId, setAddedObjectId] = useState(null);
     const [updatedObjectId, setUpdatedObjectId] = useState(null);
     const [deletedObjectId, setDeletedObjectId] = useState(null);
     const [objects, setObjects] = useState([]);
@@ -124,7 +123,7 @@ export default function TransferCategoryList() {
             }
         }
         loadData();
-    }, [contextBudgetId, addedObjectId, updatedObjectId, deletedObjectId, searchQuery, typeFilter, priorityFilter, ownerFilter, activeFilter]);
+    }, [contextBudgetId, objectChange, updatedObjectId, deletedObjectId, searchQuery, typeFilter, priorityFilter, ownerFilter, activeFilter]);
 
     /**
      * Fetches select options for TransferCategory object from API.
@@ -140,8 +139,7 @@ export default function TransferCategoryList() {
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                 <Typography variant="h4"
                             sx={{display: 'block', color: '#BD0000'}}>Transfer Categories</Typography>
-                <CreateButton fields={createFields} apiUrl={apiUrl}
-                              setAddedObjectId={setAddedObjectId}/>
+                <CreateButton fields={createFields} apiUrl={apiUrl} objectType={"Transfer Category"}/>
             </Stack>
             <Divider sx={{mb: 1}}/>
             {alert && <Alert sx={{mb: 1, whiteSpace: 'pre-wrap'}} severity={alert.type}
