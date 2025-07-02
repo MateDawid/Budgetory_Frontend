@@ -10,6 +10,7 @@ import StyledButton from "../../app_infrastructure/components/StyledButton";
 import StyledModal from "../../app_infrastructure/components/StyledModal";
 import PeriodStatuses from "../utils/PeriodStatuses";
 import onEditableFieldSave from "../../app_infrastructure/utils/onEditableFieldSave";
+import { BudgetContext } from "../../app_infrastructure/store/BudgetContext";
 
 const statusesMapping = {
     [PeriodStatuses.ACTIVE]: {
@@ -32,19 +33,19 @@ const statusesMapping = {
  * @param {number} newPeriodStatus - Status of BudgetingPeriod to be set.
  * @param {string} apiUrl - Base API url to be called with PATCH method.
  * @param {string} objectName - Name of object to be closed.
- * @param {function|null} setUpdatedObjectParam - useState setter for refreshing objects list on object update.
  */
-const BudgetingPeriodStatusUpdateButton = ({objectId, newPeriodStatus, apiUrl, objectName, setUpdatedObjectParam}) => {
+const BudgetingPeriodStatusUpdateButton = ({objectId, newPeriodStatus, apiUrl, objectName}) => {
     const [open, setOpen] = useState(false);
     const {handleSubmit} = useForm();
     const {setAlert} = useContext(AlertContext);
+    const {setObjectChange} = useContext(BudgetContext)
 
     /**
      * Function calling API to close BudgetingPeriod.
      */
     const onSubmit = async () => {
         try {
-            await onEditableFieldSave(objectId, 'status', newPeriodStatus, apiUrl, setUpdatedObjectParam, setAlert)
+            await onEditableFieldSave(objectId, 'status', newPeriodStatus, apiUrl, setObjectChange, setAlert)
         }
         catch (error) {
             if (error instanceof ApiError) {
