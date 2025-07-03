@@ -18,6 +18,7 @@ import { BudgetContext } from "../../store/BudgetContext"
  * @param {boolean} setOpen - Changes state of open value.
  * @param {function} callApi - Function called on Form submit.
  * @param {function} setAlert - Alert setter function.
+ * @param {object | undefined} updatedObject - Object being updated by form.
  */
 const FormModal = (
     {
@@ -27,13 +28,15 @@ const FormModal = (
         open,
         setOpen,
         callApi,
-        setAlert
+        setAlert,
+        updatedObject=undefined
     }
 ) => {
     const { register, handleSubmit, reset, control } = useForm();
     const [fieldErrors, setFieldErrors] = useState({});
     const [nonFieldErrors, setNonFieldErrors] = useState(null);
     const { setObjectChange } = useContext(BudgetContext);
+    console.log(fields)
 
     const onSubmit = async (data) => {
         setFieldErrors({});
@@ -92,17 +95,19 @@ const FormModal = (
                             <SelectFormField
                                 key={fieldName}
                                 control={control}
-                                fields={fields}
                                 fieldName={fieldName}
+                                fieldParams={fields[fieldName]}
                                 fieldErrors={fieldErrors}
+                                defaultValue={updatedObject ? updatedObject[fieldName] : undefined}
                             />
                         ) : (
                             <InputFormField
                                 key={fieldName}
                                 register={register}
-                                fields={fields}
                                 fieldName={fieldName}
+                                fieldParams={fields[fieldName]}
                                 fieldErrors={fieldErrors}
+                                defaultValue={updatedObject ? updatedObject[fieldName] : undefined}
                             />
                         )
                     ))}

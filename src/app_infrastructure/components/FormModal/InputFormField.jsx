@@ -4,23 +4,25 @@ import StyledTextField from "../StyledTextField"
 const InputFormField = (
     {
         register,
-        fields,
         fieldName,
-        fieldErrors
+        fieldParams,
+        fieldErrors,
+        defaultValue
     }
 ) => {
     return (
         <StyledTextField
-            {...fields[fieldName]}
+            {...fieldParams}
             {...register(fieldName)}
             slotProps={{
                 inputLabel: {
                     shrink: true,
                 },
-                ...fields[fieldName].slotProps
+                ...fieldParams.slotProps
             }}
-            inputProps={fields[fieldName]['type'] === 'date' ? { max: '9999-12-31' } : {}}
+            inputProps={fieldParams['type'] === 'date' ? { max: '9999-12-31' } : {}}
             fullWidth
+            defaultValue={defaultValue ? defaultValue : ""}
             error={!!fieldErrors[fieldName]}
             helperText={fieldErrors[fieldName] ? fieldErrors[fieldName] : ''}
             sx={{ mb: 2 }}
