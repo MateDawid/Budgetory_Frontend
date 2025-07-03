@@ -36,7 +36,6 @@ const FormModal = (
     const [fieldErrors, setFieldErrors] = useState({});
     const [nonFieldErrors, setNonFieldErrors] = useState(null);
     const { setObjectChange } = useContext(BudgetContext);
-    console.log(fields)
 
     const onSubmit = async (data) => {
         setFieldErrors({});
