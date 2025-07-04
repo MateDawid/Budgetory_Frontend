@@ -97,6 +97,7 @@ const PeriodExpensePredictionsComponent = ({ periodId, periodStatus }) => {
                     prediction={prediction}
                     periodStatus={periodStatus}
                     setAlert={setAlert}
+                    updateFields={createFields}
                 />)
             )}
         </Box >

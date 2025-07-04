@@ -48,7 +48,8 @@ const FormModal = (
             setOpen(false);
             reset();
         } catch (error) {
-            if (error instanceof ApiError) {
+            console.log(error)
+            if (error instanceof ApiError && typeof error.data === 'object') {
                 let apiErrors = error.data.detail;
                 let nonFieldApiErrors = [];
                 let fieldApiErrors = {};
