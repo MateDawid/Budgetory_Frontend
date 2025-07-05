@@ -42,7 +42,7 @@ export default function ExpensePredictionList() {
             valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?category_type=2`,
         },
         {
-            field: 'initial_value',
+            field: 'initial_plan',
             type: 'number',
             headerName: 'Initial Value',
             flex: 2,
@@ -51,7 +51,7 @@ export default function ExpensePredictionList() {
             editable: false,
         },
         {
-            field: 'current_value',
+            field: 'current_plan',
             type: 'number',
             headerName: 'Current Value',
             flex: 2,

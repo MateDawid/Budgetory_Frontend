@@ -30,7 +30,7 @@ const PeriodExpensePredictionsComponent = ({ periodId, periodStatus }) => {
             required: true,
             options: categoryOptions
         },
-        current_value: {
+        current_plan: {
             type: 'number',
             step: "any",
             label: 'Value',
