@@ -86,8 +86,6 @@ export const ExpensePredictionCardComponent = ({ prediction, periodStatus, setAl
         return updateResponse
     }
 
-    updateFields.category.disabled = true
-
     return (
         <>
             <Card variant="outlined" sx={{ marginTop: 2, borderColor: "#D0D0D0" }}>
@@ -161,6 +159,7 @@ export const ExpensePredictionCardComponent = ({ prediction, periodStatus, setAl
                 callApi={callApiOnEdit}
                 setAlert={setAlert}
                 updatedObject={prediction}
+                disabledFields={['category']}
             />
         </>
 

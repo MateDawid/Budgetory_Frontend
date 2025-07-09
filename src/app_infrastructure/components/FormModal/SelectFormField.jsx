@@ -9,15 +9,18 @@ const SelectFormField = (
         fieldName,
         fieldParams,
         fieldErrors,
-        defaultValue
+        defaultValue,
+        disabledFields
     }
 ) => {
+
+
     return (
         <Controller
             name={fieldName}
             control={control}
             defaultValue={defaultValue ? defaultValue : ""}
-            disabled={fieldParams.disabled}
+            disabled={disabledFields.includes(fieldName)}
             render={({ field }) => (
                 <Autocomplete
                     {...field}

@@ -19,6 +19,7 @@ import { BudgetContext } from "../../store/BudgetContext"
  * @param {function} callApi - Function called on Form submit.
  * @param {function} setAlert - Alert setter function.
  * @param {object | undefined} updatedObject - Object being updated by form.
+ * @param {array} disabledFields - Array of disabled fields.
  */
 const FormModal = (
     {
@@ -29,7 +30,8 @@ const FormModal = (
         setOpen,
         callApi,
         setAlert,
-        updatedObject=undefined
+        updatedObject=undefined,
+        disabledFields=[]
     }
 ) => {
     const { register, handleSubmit, reset, control } = useForm();
@@ -75,6 +77,8 @@ const FormModal = (
         }
     };
 
+    console.log(disabledFields)
+
     return (
         <StyledModal open={open} onClose={() => setOpen(false)}>
             <Box
@@ -99,6 +103,7 @@ const FormModal = (
                                 fieldParams={fields[fieldName]}
                                 fieldErrors={fieldErrors}
                                 defaultValue={updatedObject ? updatedObject[fieldName] : undefined}
+                                disabledFields={disabledFields}
                             />
                         ) : (
                             <InputFormField
@@ -108,6 +113,7 @@ const FormModal = (
                                 fieldParams={fields[fieldName]}
                                 fieldErrors={fieldErrors}
                                 defaultValue={updatedObject ? updatedObject[fieldName] : undefined}
+                                disabledFields={disabledFields}
                             />
                         )
                     ))}

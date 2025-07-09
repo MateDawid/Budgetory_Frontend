@@ -7,7 +7,8 @@ const InputFormField = (
         fieldName,
         fieldParams,
         fieldErrors,
-        defaultValue
+        defaultValue,
+        disabledFields
     }
 ) => {
     return (
@@ -26,6 +27,7 @@ const InputFormField = (
             error={!!fieldErrors[fieldName]}
             helperText={fieldErrors[fieldName] ? fieldErrors[fieldName] : ''}
             sx={{ mb: 2 }}
+            disabled={disabledFields.includes(fieldName)}
         />
     )
 }
