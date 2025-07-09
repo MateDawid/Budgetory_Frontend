@@ -4,6 +4,7 @@ import CreateButton from '../../app_infrastructure/components/CreateButton';
 import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
 import { ExpensePredictionCardComponent } from './ExpensePredictionCardComponent';
+import PeriodStatuses from '../utils/PeriodStatuses';
 
 const PeriodExpensePredictionsComponent = ({ periodId, periodStatus }) => {
     /*
@@ -79,7 +80,7 @@ const PeriodExpensePredictionsComponent = ({ periodId, periodStatus }) => {
         <Box sx={{ marginTop: 2 }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
                 <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>Expense predictions</Typography>
-                <CreateButton fields={createFields} objectType={"Expense prediction"} apiUrl={apiUrl} customSetAlert={setAlert} />
+                <CreateButton fields={createFields} objectType={"Expense prediction"} apiUrl={apiUrl} customSetAlert={setAlert} disabled={periodStatus !== PeriodStatuses.DRAFT}/>
             </Stack>
             {alert &&
                 <Alert
