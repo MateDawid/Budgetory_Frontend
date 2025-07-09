@@ -3,11 +3,6 @@ import React, { useContext, useState } from "react";
 import { styled } from '@mui/material/styles';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { PercentageProgressWithLabel } from "./PercentageProgressWithLabel";
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from "@mui/icons-material/Delete";
 import { BudgetContext } from "../../app_infrastructure/store/BudgetContext";
@@ -99,33 +94,27 @@ export const ExpensePredictionCardComponent = ({ prediction, periodStatus, setAl
                     <Grid size={2} display="flex" justifyContent="left" alignItems="center">
                         <Typography>{prediction.category_display}</Typography>
                     </Grid>
-                    <Grid size={5} display="flex" justifyContent="center" alignItems="center">
-                        <Table
-                            size="small"
-                            sx={{
-                                border: '1px solid #D0D0D0',
-                                '& th, & td': {
-                                    border: '1px solid #D0D0D0'
-                                }
-                            }}
-                        >
-                            <TableHead>
-                                <TableRow>
-                                    {periodStatus === PeriodStatuses.DRAFT && <TableCell align="center" sx={{ width: '33.33%' }}><b>Previous result</b></TableCell>}
-                                    {periodStatus !== PeriodStatuses.DRAFT && <TableCell align="center" sx={{ width: '33.33%' }}><b>Initial plan</b></TableCell>}
-                                    <TableCell align="center" sx={{ width: '33.33%' }}><b>Current plan</b></TableCell>
-                                    <TableCell align="center" sx={{ width: '33.33%' }}><b>Result</b></TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                <TableRow>
-                                    {periodStatus === PeriodStatuses.DRAFT && <TableCell align="center">{prediction.previous_result}&nbsp;{contextBudgetCurrency}</TableCell>}
-                                    {periodStatus !== PeriodStatuses.DRAFT && <TableCell align="center">{prediction.initial_plan}&nbsp;{contextBudgetCurrency}</TableCell>}
-                                    <TableCell align="center">{prediction.current_plan}&nbsp;{contextBudgetCurrency}</TableCell>
-                                    <TableCell align="center">{prediction.current_result}&nbsp;{contextBudgetCurrency}</TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
+                    <Grid size={1}>
+                        {periodStatus === PeriodStatuses.DRAFT &&
+                            <>
+                                <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>Previous result</Typography>
+                                <Typography>{prediction.previous_result}&nbsp;{contextBudgetCurrency}</Typography>
+                            </>
+                        }
+                        {periodStatus !== PeriodStatuses.DRAFT &&
+                            <>
+                                <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>Initial plan</Typography>
+                                <Typography>{prediction.initial_plan}&nbsp;{contextBudgetCurrency}</Typography>
+                            </>
+                        }
+                    </Grid>
+                    <Grid size={1}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>Current plan</Typography>
+                        <Typography>{prediction.previous_result}&nbsp;{contextBudgetCurrency}</Typography>
+                    </Grid>
+                    <Grid size={1}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>Result</Typography>
+                        <Typography>{prediction.previous_result}&nbsp;{contextBudgetCurrency}</Typography>
                     </Grid>
                     <Grid size={2} display="flex" justifyContent="center" alignItems="center">
                         <PercentageProgressWithLabel currentValue={prediction.current_result} maxValue={prediction.current_plan} />
