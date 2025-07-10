@@ -1,4 +1,4 @@
-import { Card, Collapse, CardContent, Typography, IconButton, Grid } from "@mui/material"
+import { Card, Collapse, CardContent, Typography, IconButton, Grid, Divider } from "@mui/material"
 import React, { useContext, useState } from "react";
 import { styled } from '@mui/material/styles';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -91,34 +91,55 @@ export const ExpensePredictionCardComponent = ({ prediction, periodStatus, setAl
                     <Grid size={1} display="flex" justifyContent="left" alignItems="center">
                         <Typography>{prediction.category_owner}</Typography>
                     </Grid>
+                    <Divider orientation="vertical" flexItem />
                     <Grid size={2} display="flex" justifyContent="left" alignItems="center">
                         <Typography>{prediction.category_display}</Typography>
                     </Grid>
+                    <Divider orientation="vertical" flexItem />
+                    {periodStatus === PeriodStatuses.DRAFT &&
+                        <>
+                        <Grid size={1}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 'bold', textAlign: 'center' }}>Previous plan</Typography>
+                            <Typography sx={{ textAlign: 'center' }}>{prediction.previous_plan}&nbsp;{contextBudgetCurrency}</Typography>
+                        </Grid>
+                        <Divider orientation="vertical" flexItem />
+                        </>
+                        
+                    }
                     <Grid size={1}>
                         {periodStatus === PeriodStatuses.DRAFT &&
                             <>
-                                <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>Previous result</Typography>
-                                <Typography>{prediction.previous_result}&nbsp;{contextBudgetCurrency}</Typography>
+                                <Typography variant="subtitle2" sx={{ fontWeight: 'bold', textAlign: 'center' }}>Previous result</Typography>
+                                <Typography sx={{ textAlign: 'center' }}>{prediction.previous_result}&nbsp;{contextBudgetCurrency}</Typography>
                             </>
                         }
                         {periodStatus !== PeriodStatuses.DRAFT &&
                             <>
-                                <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>Initial plan</Typography>
-                                <Typography>{prediction.initial_plan}&nbsp;{contextBudgetCurrency}</Typography>
+                                <Typography variant="subtitle2" sx={{ fontWeight: 'bold', textAlign: 'center' }}>Initial plan</Typography>
+                                <Typography sx={{ textAlign: 'center' }}>{prediction.initial_plan}&nbsp;{contextBudgetCurrency}</Typography>
                             </>
                         }
                     </Grid>
+                    <Divider orientation="vertical" flexItem />
                     <Grid size={1}>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>Current plan</Typography>
-                        <Typography>{prediction.previous_result}&nbsp;{contextBudgetCurrency}</Typography>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 'bold', textAlign: 'center' }}>Current plan</Typography>
+                        <Typography sx={{ textAlign: 'center' }}>{prediction.current_plan}&nbsp;{contextBudgetCurrency}</Typography>
                     </Grid>
+                    <Divider orientation="vertical" flexItem />
                     <Grid size={1}>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>Result</Typography>
-                        <Typography>{prediction.previous_result}&nbsp;{contextBudgetCurrency}</Typography>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 'bold', textAlign: 'center' }}>Current result</Typography>
+                        <Typography sx={{
+                            color: prediction.current_result <= prediction.current_plan ? '#008000' : '#BD0000',
+                            textAlign: 'center'
+                        }}>
+                            {prediction.current_result}&nbsp;{contextBudgetCurrency}
+                        </Typography>
                     </Grid>
+                    <Divider orientation="vertical" flexItem />
                     <Grid size={2} display="flex" justifyContent="center" alignItems="center">
                         <PercentageProgressWithLabel currentValue={prediction.current_result} maxValue={prediction.current_plan} />
                     </Grid>
+                    <Divider orientation="vertical" flexItem />
                     <Grid size={1} display="flex" justifyContent="right" alignItems="center">
                         {prediction.description &&
                             <ExpandMoreButton expand={expanded} onClick={handleExpandClick}>
@@ -132,8 +153,8 @@ export const ExpensePredictionCardComponent = ({ prediction, periodStatus, setAl
                         }
                     </Grid>
                 </Grid>
-
                 <Collapse in={expanded} timeout="auto" unmountOnExit sx={{ border: "#D0D0D0" }}>
+                    <Divider orientation="horizontal" flexItem />
                     <CardContent>
                         <Typography sx={{ whiteSpace: 'pre-wrap' }}>{prediction.description}</Typography>
                     </CardContent>
