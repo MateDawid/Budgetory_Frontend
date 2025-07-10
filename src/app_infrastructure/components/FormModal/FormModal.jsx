@@ -77,8 +77,6 @@ const FormModal = (
         }
     };
 
-    console.log(disabledFields)
-
     return (
         <StyledModal open={open} onClose={() => setOpen(false)}>
             <Box
