@@ -30,7 +30,7 @@ export const PercentageProgressWithLabel = ({ currentValue, maxValue }) => {
             return '#D0D0D0';
         }
         else if (progress <= 200) {
-            return 'green'
+            return '#008000'
         }
         else {
             return '#BD0000';
@@ -43,7 +43,7 @@ export const PercentageProgressWithLabel = ({ currentValue, maxValue }) => {
      */
     const getBarColor = () => {
         if (progress <= 100) {
-            return 'green';
+            return '#008000';
         }
         else if (progress <= 200) {
             return '#BD0000'
