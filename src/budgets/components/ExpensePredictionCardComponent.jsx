@@ -1,4 +1,4 @@
-import { Card, Collapse, CardContent, Typography, IconButton, Grid, Divider } from "@mui/material"
+import { Card, Collapse, CardContent, Typography, IconButton, Grid, Divider, Tooltip } from "@mui/material"
 import React, { useContext, useState } from "react";
 import { styled } from '@mui/material/styles';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -33,6 +33,24 @@ const ExpandMoreButton = styled((props) => {
         },
     ],
 }));
+
+const TypographyWithTooltip = ({value}) => {
+    return (
+        <Tooltip title={value} placement="top">
+            <Typography
+                sx={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    maxWidth: '100%',
+                    cursor: 'help'
+                }}
+            >
+                {value}
+            </Typography>
+        </Tooltip>
+    )
+}
 
 /**
  * Component to display single Expense Prediction Card.
@@ -89,22 +107,22 @@ export const ExpensePredictionCardComponent = ({ prediction, periodStatus, setAl
                     alignItems: "center",
                 }}>
                     <Grid size={1} display="flex" justifyContent="left" alignItems="center">
-                        <Typography>{prediction.category_owner}</Typography>
+                        <TypographyWithTooltip value={prediction.category_owner}/>
                     </Grid>
                     <Divider orientation="vertical" flexItem />
                     <Grid size={2} display="flex" justifyContent="left" alignItems="center">
-                        <Typography>{prediction.category_display}</Typography>
+                        <TypographyWithTooltip value={prediction.category_display} />
                     </Grid>
                     <Divider orientation="vertical" flexItem />
                     {periodStatus === PeriodStatuses.DRAFT &&
                         <>
-                        <Grid size={1}>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 'bold', textAlign: 'center' }}>Previous plan</Typography>
-                            <Typography sx={{ textAlign: 'center' }}>{prediction.previous_plan}&nbsp;{contextBudgetCurrency}</Typography>
-                        </Grid>
-                        <Divider orientation="vertical" flexItem />
+                            <Grid size={1}>
+                                <Typography variant="subtitle2" sx={{ fontWeight: 'bold', textAlign: 'center' }}>Previous plan</Typography>
+                                <Typography sx={{ textAlign: 'center' }}>{prediction.previous_plan}&nbsp;{contextBudgetCurrency}</Typography>
+                            </Grid>
+                            <Divider orientation="vertical" flexItem />
                         </>
-                        
+
                     }
                     <Grid size={1}>
                         {periodStatus === PeriodStatuses.DRAFT &&
