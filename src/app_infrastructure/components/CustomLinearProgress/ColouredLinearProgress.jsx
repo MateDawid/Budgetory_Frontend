@@ -3,7 +3,7 @@ import React from "react";
 
 
 /**
- * ColouredLinearProgress ???
+ * Component returning styled LinearProgress with color calculation depending on field values
  */
 export const ColouredLinearProgress = ({ currentValue, maxValue }) => {
     const progress = currentValue / maxValue * 100
