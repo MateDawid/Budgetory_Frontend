@@ -1,11 +1,11 @@
-import { Box, LinearProgress, Stack, Typography } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import React from "react";
 
 
 /**
- * PercentageProgressWithLabel component to display LinearProgress with percentage values and adjustable colours.
+ * ColouredLinearProgress ???
  */
-export const PercentageProgressWithLabel = ({ currentValue, maxValue }) => {
+export const ColouredLinearProgress = ({ currentValue, maxValue }) => {
     const progress = currentValue / maxValue * 100
 
     /**
@@ -54,22 +54,15 @@ export const PercentageProgressWithLabel = ({ currentValue, maxValue }) => {
     }
 
     return (
-        <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1} height="100%" width="100%">
-            <Box sx={{ width: "70%", mr: 1 }}>
-                <LinearProgress variant="determinate" value={getBarValue()} sx={{
-                    height: 10,
-                    borderRadius: 5,
-                    backgroundColor: getBackgroundColor(),
-                    '& .MuiLinearProgress-bar': {
-                        backgroundColor: getBarColor(),
-                    },
-                }} />
-            </Box>
-            <Box sx={{ display: "flex", width: "30%" }}>
-                <Typography variant="body2">{progress.toFixed(2)}&nbsp;%</Typography>
-            </Box>
-        </Stack>
+        <LinearProgress variant="determinate" value={getBarValue()} sx={{
+            height: 10,
+            borderRadius: 5,
+            backgroundColor: getBackgroundColor(),
+            '& .MuiLinearProgress-bar': {
+                backgroundColor: getBarColor(),
+            },
+        }} />
     );
 }
 
-export default PercentageProgressWithLabel
+export default ColouredLinearProgress
