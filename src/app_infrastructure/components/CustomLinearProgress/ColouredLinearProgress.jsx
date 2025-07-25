@@ -26,7 +26,7 @@ export const ColouredLinearProgress = ({ currentValue, maxValue }) => {
      * @return {string} - Calculated background colour.
      */
     const getBackgroundColor = () => {
-        if (progress <= 100) {
+        if (maxValue === 0 || progress <= 100) {
             return '#D0D0D0';
         }
         else if (progress <= 200) {
@@ -42,7 +42,10 @@ export const ColouredLinearProgress = ({ currentValue, maxValue }) => {
      * @return {string} - Calculated background colour.
      */
     const getBarColor = () => {
-        if (progress <= 100) {
+        if (maxValue === 0) {
+            return '#D0D0D0';
+        }
+        else if (progress <= 100) {
             return '#008000';
         }
         else if (progress <= 200) {
