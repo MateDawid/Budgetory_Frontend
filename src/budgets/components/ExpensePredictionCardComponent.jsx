@@ -2,13 +2,13 @@ import { Card, Collapse, CardContent, Typography, IconButton, Grid, Divider, Too
 import React, { useContext, useState } from "react";
 import { styled } from '@mui/material/styles';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { PercentageProgressWithLabel } from "./PercentageProgressWithLabel";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from "@mui/icons-material/Delete";
 import { BudgetContext } from "../../app_infrastructure/store/BudgetContext";
 import PeriodStatuses from "../utils/PeriodStatuses";
 import { deleteApiObject, updateApiObject } from "../../app_infrastructure/services/APIService";
 import FormModal from "../../app_infrastructure/components/FormModal/FormModal";
+import PercentageProgressWithLabel from "../../app_infrastructure/components/CustomLinearProgress/PercentageProgressWithLabel";
 
 const ExpandMoreButton = styled((props) => {
     const { expand, ...other } = props; // eslint-disable-line no-unused-vars
