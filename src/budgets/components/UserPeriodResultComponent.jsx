@@ -6,13 +6,7 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 /**
  * Component to display User results of predicted Expenses. 
  */
-export const UserPeriodResultComponent = () => {
-
-    const predictionsSum = 10000;
-    const expensesResult = 6000;
-    const balanceForPeriod = 10000;
-    const username = 'User'
-
+export const UserPeriodResultComponent = ({ userPeriodResult }) => {
     return (
         <Card variant="outlined" sx={{
             marginTop: 2,
@@ -23,9 +17,9 @@ export const UserPeriodResultComponent = () => {
                 padding: 1,
             }
         }}>
-            <Tooltip title={username} placement="top">
+            <Tooltip title={userPeriodResult.user_username} placement="top">
                 <CardHeader
-                    title={username}
+                    title={userPeriodResult.user_username}
                     slotProps={{
                         title: {
                             noWrap: true,
@@ -41,21 +35,21 @@ export const UserPeriodResultComponent = () => {
             </Tooltip>
             <Divider sx={{ width: "100%" }} />
             <CardContent>
-                <Stack direction="row" alignItems="center" justifyContent="flex-start" spacing={1} mb={1}>
-                    <Typography fontSize={16} color="secondary">Funds used for Expense Predictions</Typography>
+                <Stack direction="row" alignItems="center" justifyContent="center" spacing={1} mb={1}>
                     <Tooltip title="Total Expense Predictions compared to available funds for Period." placement="top">
                         <HelpOutlineIcon />
                     </Tooltip>
+                    <Typography fontSize={16} fontWeight="bold" color="secondary">Funds used for Expense Predictions</Typography>
                 </Stack>
-                <NumericProgressWithLabel currentValue={predictionsSum} maxValue={balanceForPeriod} withCurrency />
+                <NumericProgressWithLabel currentValue={userPeriodResult.predictions_sum} maxValue={userPeriodResult.period_balance} withCurrency />
                 <Divider sx={{ width: "100%", mb: 1, mt: 1 }} />
-                <Stack direction="row" alignItems="center" justifyContent="flex-start" spacing={1} mb={1}>
-                    <Typography fontSize={16} color="secondary">Period Expenses</Typography>
+                <Stack direction="row" alignItems="center" justifyContent="center" spacing={1} mb={1}>
                     <Tooltip title="Total Expenses compared to sum of Expense Predictions for Period." placement="top">
                         <HelpOutlineIcon />
                     </Tooltip>
+                    <Typography fontSize={16} fontWeight="bold" color="secondary">Period Expenses</Typography>
                 </Stack>
-                <NumericProgressWithLabel currentValue={expensesResult} maxValue={predictionsSum} withCurrency />
+                <NumericProgressWithLabel currentValue={userPeriodResult.period_expenses} maxValue={userPeriodResult.predictions_sum} withCurrency />
             </CardContent>
         </Card >
     )
