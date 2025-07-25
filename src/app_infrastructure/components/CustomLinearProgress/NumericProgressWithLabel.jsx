@@ -12,12 +12,12 @@ export const NumericProgressWithLabel = ({ currentValue, maxValue, withCurrency 
 
     return (
         <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1} height="100%" width="100%">
-            <Box sx={{ width: "70%", mr: 1 }}>
+            <Box sx={{ width: "44%" }}>
                 <ColouredLinearProgress currentValue={currentValue} maxValue={maxValue}/>
             </Box>
-            <Box sx={{ display: "flex", width: "30%" }}>
+            <Box sx={{ display: "flex", width: "56%", justifyContent: "flex-end" }}>
                 <Typography variant="body2">
-                    {currentValue}{withCurrency ? ` ${contextBudgetCurrency}` : ""} / {maxValue}{withCurrency ? ` ${contextBudgetCurrency}` : ""}
+                    {currentValue}{withCurrency ? `\u00A0${contextBudgetCurrency}` : ""} / {maxValue}{withCurrency ? `\u00A0${contextBudgetCurrency}` : ""}
                 </Typography>
             </Box>
         </Stack>
