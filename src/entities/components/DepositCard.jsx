@@ -19,8 +19,23 @@ const DepositCard = ({ apiUrl, object, setDeletedObjectId }) => {
     return (
         <Card variant="outlined" sx={{ marginTop: 2, borderColor: "#D0D0D0" }}>
             <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
-                    <CardHeader title={truncateText(object.name, 18)} />
+                <Stack direction="row" alignItems="center" justifyContent="center" spacing={1}>
+                    <Tooltip title={object.name} placement="top">
+                        <CardHeader
+                            title={object.name}
+                            slotProps={{
+                                title: {
+                                    noWrap: true,
+                                    sx: {
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                        maxWidth: 190,
+                                        textAlign: 'center',
+                                    }
+                                }
+                            }} />
+                    </Tooltip>
                     <Chip label={object.is_active ? "🟢 Active" : "🔴 Inactive"} variant="outlined" />
                 </Stack>
                 <Divider sx={{ width: "100%", mb: 1, mt: 1 }} />
