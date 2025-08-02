@@ -3,7 +3,6 @@ import PageviewIcon from '@mui/icons-material/Pageview';
 import React, { useContext } from "react";
 import { Link } from 'react-router-dom';
 import StyledButton from "../../app_infrastructure/components/StyledButton";
-import truncateText from "../../app_infrastructure/utils/truncateText";
 import DeleteButton from "../../app_infrastructure/components/DeleteButton";
 import { BudgetContext } from "../../app_infrastructure/store/BudgetContext";
 
