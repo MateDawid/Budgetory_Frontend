@@ -12,7 +12,7 @@ export const UserPeriodResultComponent = ({ userPeriodResult }) => {
             marginTop: 2,
             marginRight: 2,
             borderColor: "#D0D0D0",
-            width: 320,
+            width: 440,
             '& .MuiCardContent-root:last-child': {
                 padding: 1,
             }
@@ -27,7 +27,7 @@ export const UserPeriodResultComponent = ({ userPeriodResult }) => {
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis',
                                 whiteSpace: 'nowrap',
-                                maxWidth: 290,
+                                maxWidth: 400,
                                 textAlign: 'center',
                             }
                         }
@@ -39,7 +39,7 @@ export const UserPeriodResultComponent = ({ userPeriodResult }) => {
                     <Tooltip title="Total Expense Predictions compared to available funds for Period." placement="top">
                         <HelpOutlineIcon />
                     </Tooltip>
-                    <Typography fontSize={16} fontWeight="bold" color="secondary">Funds used for Expense Predictions</Typography>
+                    <Typography fontSize={16} fontWeight="bold" color="secondary">Planned expenses</Typography>
                 </Stack>
                 <NumericProgressWithLabel currentValue={userPeriodResult.predictions_sum} maxValue={userPeriodResult.period_balance} withCurrency />
                 <Divider sx={{ width: "100%", mb: 1, mt: 1 }} />
@@ -47,7 +47,7 @@ export const UserPeriodResultComponent = ({ userPeriodResult }) => {
                     <Tooltip title="Total Expenses compared to sum of Expense Predictions for Period." placement="top">
                         <HelpOutlineIcon />
                     </Tooltip>
-                    <Typography fontSize={16} fontWeight="bold" color="secondary">Period Expenses</Typography>
+                    <Typography fontSize={16} fontWeight="bold" color="secondary">Period expenses</Typography>
                 </Stack>
                 <NumericProgressWithLabel currentValue={userPeriodResult.period_expenses} maxValue={userPeriodResult.predictions_sum} withCurrency />
             </CardContent>

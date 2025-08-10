@@ -64,57 +64,8 @@ const PeriodExpensePredictionsComponent = ({ periodId, periodStatus }) => {
             setPeriodPredictions(predictionsResponse);
         }
         async function getUsersPeriodResults() {
-            // TODO - API call
-            setUserPeriodResults([
-                {
-                    user_id: '1',
-                    user_username: 'username1',
-                    period_id: '?',
-                    predictions_sum: 100,
-                    period_balance: 110,
-                    period_expenses: 90,
-                },
-                {
-                    user_id: '2',
-                    user_username: 'username2',
-                    period_id: '?',
-                    predictions_sum: 100,
-                    period_balance: 90,
-                    period_expenses: 110,
-                },
-                {
-                    user_id: '3',
-                    user_username: 'username2',
-                    period_id: '?',
-                    predictions_sum: 200,
-                    period_balance: 90,
-                    period_expenses: 450,
-                },
-                                {
-                    user_id: '4',
-                    user_username: 'username2',
-                    period_id: '?',
-                    predictions_sum: 0,
-                    period_balance: 0,
-                    period_expenses: 0,
-                },
-                                                {
-                    user_id: '5',
-                    user_username: 'username2',
-                    period_id: '?',
-                    predictions_sum: 1000,
-                    period_balance: 1000,
-                    period_expenses: 1000,
-                },
-                                                {
-                    user_id: '6',
-                    user_username: 'username2',
-                    period_id: '?',
-                    predictions_sum: 10000,
-                    period_balance: 10000,
-                    period_expenses: 10000,
-                },
-            ]);
+            const userPeriodResultsResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/user_results/${periodId}/`)
+            setUserPeriodResults(userPeriodResultsResponse)
         }
         getPredictions();
         getUsersPeriodResults();
