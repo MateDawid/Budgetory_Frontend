@@ -1,4 +1,4 @@
-import { Card, Collapse, CardContent, Typography, IconButton, Grid, Divider, Tooltip } from "@mui/material"
+import { Card, Collapse, Typography, IconButton, Grid, Divider, Tooltip, Stack } from "@mui/material"
 import React, { useContext, useState } from "react";
 import { styled } from '@mui/material/styles';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -8,7 +8,16 @@ import { BudgetContext } from "../../app_infrastructure/store/BudgetContext";
 import PeriodStatuses from "../utils/PeriodStatuses";
 import { deleteApiObject, updateApiObject } from "../../app_infrastructure/services/APIService";
 import FormModal from "../../app_infrastructure/components/FormModal/FormModal";
-import PercentageProgressWithLabel from "../../app_infrastructure/components/CustomLinearProgress/PercentageProgressWithLabel";
+import NumericProgressWithLabel from "../../app_infrastructure/components/CustomLinearProgress/NumericProgressWithLabel";
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+
+const MESSAGES = {
+    CURRENT_PREDICTION_RESULT: 'Expenses for current Period in Category compared to Expense Prediction for current period in Category.',
+    PREVIOUS_PREDICTION_RESULT: 'Expenses for previous Period in Category compared to Expense Prediction for previous period in Category.',
+    NO_DESCRIPTION_PROVIDED: 'No description provided.',
+    INITIAL_PLAN_UNCHANGED: 'Current prediction the same as planned initially. Current prediction: {current_plan}\u00A0{currency}.',
+    INITIAL_PLAN_CHANGED: 'Prediction changed during Period. Current prediction: {current_plan}\u00A0{currency}.',
+}
 
 const ExpandMoreButton = styled((props) => {
     const { expand, ...other } = props; // eslint-disable-line no-unused-vars
@@ -34,7 +43,7 @@ const ExpandMoreButton = styled((props) => {
     ],
 }));
 
-const TypographyWithTooltip = ({value}) => {
+const TypographyWithTooltip = ({ value }) => {
     return (
         <Tooltip title={value} placement="top">
             <Typography
@@ -43,7 +52,6 @@ const TypographyWithTooltip = ({value}) => {
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                     maxWidth: '100%',
-                    cursor: 'help'
                 }}
             >
                 {value}
@@ -106,76 +114,89 @@ export const ExpensePredictionCardComponent = ({ prediction, periodStatus, setAl
                     justifyContent: "space-between",
                     alignItems: "center",
                 }}>
-                    <Grid size={1} display="flex" justifyContent="left" alignItems="center">
-                        <TypographyWithTooltip value={prediction.category_owner}/>
+                    <Grid size={2} display="flex" justifyContent="center" alignItems="center">
+                        <Stack width="100%" alignItems="center" justifyContent="center" spacing={1} mb={1}>
+                            <Typography fontSize={14} fontWeight="bold" color="secondary">Category owner</Typography>
+                            <TypographyWithTooltip value={prediction.category_owner} />
+                        </Stack>
                     </Grid>
                     <Divider orientation="vertical" flexItem />
                     <Grid size={2} display="flex" justifyContent="left" alignItems="center">
-                        <TypographyWithTooltip value={prediction.category_display} />
+                        <Stack width="100%" alignItems="center" justifyContent="center" spacing={1} mb={1}>
+                            <Typography fontSize={14} fontWeight="bold" color="secondary">Category</Typography>
+                            <TypographyWithTooltip value={prediction.category_display} />
+                        </Stack>
                     </Grid>
                     <Divider orientation="vertical" flexItem />
-                    {periodStatus === PeriodStatuses.DRAFT &&
-                        <>
-                            <Grid size={1}>
-                                <Typography variant="subtitle2" sx={{ fontWeight: 'bold', textAlign: 'center' }}>Previous plan</Typography>
-                                <Typography sx={{ textAlign: 'center' }}>{prediction.previous_plan}&nbsp;{contextBudgetCurrency}</Typography>
-                            </Grid>
-                            <Divider orientation="vertical" flexItem />
-                        </>
-
-                    }
-                    <Grid size={1}>
-                        {periodStatus === PeriodStatuses.DRAFT &&
-                            <>
-                                <Typography variant="subtitle2" sx={{ fontWeight: 'bold', textAlign: 'center' }}>Previous result</Typography>
-                                <Typography sx={{ textAlign: 'center' }}>{prediction.previous_result}&nbsp;{contextBudgetCurrency}</Typography>
-                            </>
-                        }
-                        {periodStatus !== PeriodStatuses.DRAFT &&
-                            <>
-                                <Typography variant="subtitle2" sx={{ fontWeight: 'bold', textAlign: 'center' }}>Initial plan</Typography>
-                                <Typography sx={{ textAlign: 'center' }}>{prediction.initial_plan}&nbsp;{contextBudgetCurrency}</Typography>
-                            </>
-                        }
-                    </Grid>
-                    <Divider orientation="vertical" flexItem />
-                    <Grid size={1}>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 'bold', textAlign: 'center' }}>Current plan</Typography>
-                        <Typography sx={{ textAlign: 'center' }}>{prediction.current_plan}&nbsp;{contextBudgetCurrency}</Typography>
-                    </Grid>
-                    <Divider orientation="vertical" flexItem />
-                    <Grid size={1}>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 'bold', textAlign: 'center' }}>Current result</Typography>
-                        <Typography sx={{
-                            color: prediction.current_result <= prediction.current_plan ? '#008000' : '#BD0000',
-                            textAlign: 'center'
-                        }}>
-                            {prediction.current_result}&nbsp;{contextBudgetCurrency}
-                        </Typography>
-                    </Grid>
-                    <Divider orientation="vertical" flexItem />
-                    <Grid size={2} display="flex" justifyContent="center" alignItems="center">
-                        <PercentageProgressWithLabel currentValue={prediction.current_result} maxValue={prediction.current_plan} />
+                    <Grid size={4} display="flex" justifyContent="center" alignItems="center" alignContent="center">
+                        <Stack width="100%" alignItems="center" justifyContent="center" spacing={1} mb={1}>
+                            <Stack direction="row" alignItems="center" justifyContent="center" spacing={1} mb={1}>
+                                <Tooltip title={MESSAGES.CURRENT_PREDICTION_RESULT} placement="top">
+                                    <HelpOutlineIcon />
+                                </Tooltip>
+                                <Typography fontSize={14} fontWeight="bold" color="secondary">Current result</Typography>
+                            </Stack>
+                            <NumericProgressWithLabel currentValue={prediction.current_result} maxValue={prediction.current_plan} withCurrency />
+                        </Stack>
                     </Grid>
                     <Divider orientation="vertical" flexItem />
                     <Grid size={1} display="flex" justifyContent="right" alignItems="center">
-                        {prediction.description &&
-                            <ExpandMoreButton expand={expanded} onClick={handleExpandClick}>
-                                <ExpandMoreIcon />
-                            </ExpandMoreButton>}
                         {periodStatus !== PeriodStatuses.CLOSED &&
                             <IconButton onClick={handleEdit}><EditIcon /></IconButton>
                         }
                         {periodStatus === PeriodStatuses.DRAFT &&
                             <IconButton onClick={handleDelete}><DeleteIcon /></IconButton>
                         }
+                        <ExpandMoreButton expand={expanded} onClick={handleExpandClick}>
+                            <ExpandMoreIcon />
+                        </ExpandMoreButton>
                     </Grid>
                 </Grid>
-                <Collapse in={expanded} timeout="auto" unmountOnExit sx={{ border: "#D0D0D0" }}>
+                <Collapse in={expanded} timeout="auto" unmountOnExit sx={{ background: "#ecececff", border: "#3E3E3E" }}>
                     <Divider orientation="horizontal" flexItem />
-                    <CardContent>
-                        <Typography sx={{ whiteSpace: 'pre-wrap' }}>{prediction.description}</Typography>
-                    </CardContent>
+                    <Grid container spacing={2} mt={1} mb={1} ml={2} mr={2} sx={{
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                    }}>
+                        <Grid size={5}>
+                            <Stack width="100%" alignItems="center" justifyContent="center" spacing={1} mb={1}>
+                                <Typography fontSize={14} fontWeight="bold" color="secondary">Description</Typography>
+                                <Typography sx={{ whiteSpace: 'pre-wrap' }}>
+                                    {prediction.description ? prediction.description : MESSAGES.NO_DESCRIPTION_PROVIDED}
+                                </Typography>
+                            </Stack>
+                        </Grid>
+                        <Divider orientation="vertical" flexItem />
+                        <Grid size={4}>
+                            <Stack width="100%" alignItems="center" justifyContent="center" spacing={1} mb={1}>
+                                <Stack direction="row" alignItems="center" justifyContent="center" spacing={1} mb={1}>
+                                    <Tooltip title={MESSAGES.PREVIOUS_PREDICTION_RESULT} placement="top">
+                                        <HelpOutlineIcon />
+                                    </Tooltip>
+                                    <Typography fontSize={14} fontWeight="bold" color="secondary">Previous result</Typography>
+                                </Stack>
+                                <NumericProgressWithLabel currentValue={prediction.previous_result} maxValue={prediction.previous_plan} withCurrency />
+                            </Stack>
+                        </Grid>
+                        <Divider orientation="vertical" flexItem />
+                        <Grid size={1} display="flex">
+                            <Stack alignItems="center" justifyContent="center" spacing={1} mb={1}>
+                                <Typography fontSize={14} fontWeight="bold" color="secondary">Initial plan</Typography>
+                                <Tooltip
+                                    title={
+                                        prediction.initial_plan !== prediction.current_plan ? 
+                                        MESSAGES.INITIAL_PLAN_CHANGED.replace("{current_plan}", prediction.current_plan).replace('{currency}', contextBudgetCurrency) : 
+                                        MESSAGES.INITIAL_PLAN_UNCHANGED.replace("{current_plan}", prediction.current_plan).replace('{currency}', contextBudgetCurrency)
+                                    }
+                                    placement="top"
+                                >
+                                    <Typography sx={{ whiteSpace: 'pre-wrap' }} color={prediction.initial_plan !== prediction.current_plan ? 'primary' : 'secondary'}>
+                                        {prediction.initial_plan}&nbsp;{contextBudgetCurrency}
+                                    </Typography>
+                                </Tooltip>
+                            </Stack>
+                        </Grid>
+                    </Grid>
                 </Collapse>
             </Card >
             <FormModal
