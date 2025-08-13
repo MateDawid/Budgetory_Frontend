@@ -161,7 +161,7 @@ export const ExpensePredictionCardComponent = ({ prediction, periodStatus, setAl
                         <Grid size={5}>
                             <Stack width="100%" alignItems="center" justifyContent="center" spacing={1} mb={1}>
                                 <Typography fontSize={14} fontWeight="bold" color="secondary">Description</Typography>
-                                <Typography sx={{ whiteSpace: 'pre-wrap' }}>
+                                <Typography sx={{ whiteSpace: 'pre-wrap', width: "100%" }}>
                                     {prediction.description ? prediction.description : MESSAGES.NO_DESCRIPTION_PROVIDED}
                                 </Typography>
                             </Stack>
