@@ -12,8 +12,8 @@ import NumericProgressWithLabel from "../../app_infrastructure/components/Custom
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 const MESSAGES = {
-    CURRENT_PREDICTION_RESULT: 'Expenses for current Period in Category compared to Expense Prediction for current period in Category.',
-    PREVIOUS_PREDICTION_RESULT: 'Expenses for previous Period in Category compared to Expense Prediction for previous period in Category.',
+    CURRENT_PREDICTION_RESULT: 'Expenses for current Period in Category / Expense Prediction for current Period in Category.',
+    PREVIOUS_PREDICTION_RESULT: 'Expenses for previous Period in Category / Expense Prediction for previous Period in Category.',
     NO_DESCRIPTION_PROVIDED: 'No description provided.',
     INITIAL_PLAN_UNCHANGED: 'Current prediction the same as planned initially. Current prediction: {current_plan}\u00A0{currency}.',
     INITIAL_PLAN_CHANGED: 'Prediction changed during Period. Current prediction: {current_plan}\u00A0{currency}.',
@@ -190,7 +190,7 @@ export const ExpensePredictionCardComponent = ({ prediction, periodStatus, setAl
                                     }
                                     placement="top"
                                 >
-                                    <Typography sx={{ whiteSpace: 'pre-wrap' }} color={prediction.initial_plan !== prediction.current_plan ? 'primary' : 'secondary'}>
+                                    <Typography sx={{ whiteSpace: 'pre-wrap' }} fontWeight={prediction.initial_plan !== prediction.current_plan ? 'bold' : 'normal'}>
                                         {prediction.initial_plan}&nbsp;{contextBudgetCurrency}
                                     </Typography>
                                 </Tooltip>
