@@ -109,7 +109,7 @@ export const ExpensePredictionCardComponent = ({ prediction, periodStatus, setAl
 
     return (
         <>
-            <Card variant="outlined" sx={{ marginTop: 2, borderColor: "#D0D0D0" }}>
+            <Card variant="outlined" sx={{ marginTop: 2, background: "#F1F1F1" }}>
                 <Grid container spacing={2} mt={1} mb={1} ml={2} mr={2} sx={{
                     justifyContent: "space-between",
                     alignItems: "center",
@@ -152,7 +152,7 @@ export const ExpensePredictionCardComponent = ({ prediction, periodStatus, setAl
                         </ExpandMoreButton>
                     </Grid>
                 </Grid>
-                <Collapse in={expanded} timeout="auto" unmountOnExit sx={{ background: "#ecececff", border: "#3E3E3E" }}>
+                <Collapse in={expanded} timeout="auto" unmountOnExit sx={{ border: "#3E3E3E", background: "#fff" }}>
                     <Divider orientation="horizontal" flexItem />
                     <Grid container spacing={2} mt={1} mb={1} ml={2} mr={2} sx={{
                         justifyContent: "space-between",

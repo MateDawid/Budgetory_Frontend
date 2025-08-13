@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, Divider, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Card, CardContent, CardHeader, Divider, Stack, Tooltip, Typography } from "@mui/material";
 import React from "react";
 import NumericProgressWithLabel from "../../app_infrastructure/components/CustomLinearProgress/NumericProgressWithLabel";
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
@@ -31,7 +31,8 @@ export const UserPeriodResultComponent = ({ userPeriodResult }) => {
                                 textAlign: 'center',
                             }
                         }
-                    }} />
+                    }}
+                    sx={{background: '#F1F1F1'}} />
             </Tooltip>
             <Divider sx={{ width: "100%" }} />
             <CardContent>
@@ -41,7 +42,9 @@ export const UserPeriodResultComponent = ({ userPeriodResult }) => {
                     </Tooltip>
                     <Typography fontSize={16} fontWeight="bold" color="secondary">Planned expenses</Typography>
                 </Stack>
-                <NumericProgressWithLabel currentValue={userPeriodResult.predictions_sum} maxValue={userPeriodResult.period_balance} withCurrency />
+                <Box margin="0 auto" width="90%">
+                    <NumericProgressWithLabel currentValue={userPeriodResult.predictions_sum} maxValue={userPeriodResult.period_balance} withCurrency />
+                </Box>
                 <Divider sx={{ width: "100%", mb: 1, mt: 1 }} />
                 <Stack direction="row" alignItems="center" justifyContent="center" spacing={1} mb={1}>
                     <Tooltip title="Total Expenses compared to sum of Expense Predictions for Period." placement="top">
@@ -49,7 +52,9 @@ export const UserPeriodResultComponent = ({ userPeriodResult }) => {
                     </Tooltip>
                     <Typography fontSize={16} fontWeight="bold" color="secondary">Period expenses</Typography>
                 </Stack>
-                <NumericProgressWithLabel currentValue={userPeriodResult.period_expenses} maxValue={userPeriodResult.predictions_sum} withCurrency />
+                <Box margin="0 auto" width="90%">
+                    <NumericProgressWithLabel currentValue={userPeriodResult.period_expenses} maxValue={userPeriodResult.predictions_sum} withCurrency />
+                </Box>
             </CardContent>
         </Card >
     )
