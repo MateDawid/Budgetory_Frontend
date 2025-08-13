@@ -32,12 +32,12 @@ const BudgetingPeriodCard = ({apiUrl, object, setUpdatedObjectId, setDeletedObje
                 <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} width="90%">
                     <Stack direction="row" alignItems="center" justifyContent="center" spacing={1} width="50%">
                         <Typography fontSize={12} fontWeight="bold" color="secondary">Incomes:</Typography>
-                        <Typography fontSize={12} color="secondary">{object.incomes_sum} {contextBudgetCurrency}</Typography>
+                        <Typography fontSize={12} color="secondary">{object.incomes_sum}&nbsp;{contextBudgetCurrency}</Typography>
                     </Stack>
                     <Divider orientation="vertical" variant="middle" flexItem />
                     <Stack direction="row" alignItems="center" justifyContent="center" spacing={1} width="50%">
                         <Typography fontSize={12} fontWeight="bold" color="secondary">Expenses:</Typography>
-                        <Typography fontSize={12} color="secondary">{object.expenses_sum} {contextBudgetCurrency}</Typography>
+                        <Typography fontSize={12} color="secondary">{object.expenses_sum}&nbsp;{contextBudgetCurrency}</Typography>
                     </Stack>
                 </Stack>
                 <Divider sx={{width: "100%", mb: 1, mt: 1}}/>
