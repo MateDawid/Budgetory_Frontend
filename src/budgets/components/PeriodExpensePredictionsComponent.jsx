@@ -6,6 +6,7 @@ import { getApiObjectsList } from '../../app_infrastructure/services/APIService'
 import { ExpensePredictionCardComponent } from './ExpensePredictionCardComponent';
 import PeriodStatuses from '../utils/PeriodStatuses';
 import { UserPeriodResultComponent } from './UserPeriodResultComponent';
+import CopyPreviousPredictionsButton from './CopyPreviousPredictionsButton';
 
 const PeriodExpensePredictionsComponent = ({ periodId, periodStatus }) => {
     /*
@@ -17,6 +18,7 @@ const PeriodExpensePredictionsComponent = ({ periodId, periodStatus }) => {
     */
     const { contextBudgetId, objectChange } = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expense_predictions/?period=${periodId}`
+    const copyPredictionsUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expense_predictions/copy_from_previous_period/`
     const [categoryOptions, setCategoryOptions] = useState([]);
     const [periodPredictions, setPeriodPredictions] = useState([]);
     const [userPeriodResults, setUserPeriodResults] = useState([]);
@@ -98,7 +100,12 @@ const PeriodExpensePredictionsComponent = ({ periodId, periodStatus }) => {
             {/* Expense predictions */}
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mt={2}>
                 <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>Expense predictions</Typography>
-                <CreateButton fields={createFields} objectType={"Expense prediction"} apiUrl={apiUrl} customSetAlert={setAlert} disabled={periodStatus !== PeriodStatuses.DRAFT} />
+                {periodStatus === PeriodStatuses.DRAFT &&
+                    <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
+                        <CreateButton fields={createFields} objectType={"Expense prediction"} apiUrl={apiUrl} customSetAlert={setAlert} disabled={periodStatus !== PeriodStatuses.DRAFT} />
+                        {periodPredictions.length <= 0 && <CopyPreviousPredictionsButton periodId={periodId} apiUrl={copyPredictionsUrl} />}
+                    </Stack>
+                }
             </Stack>
             {alert &&
                 <Alert
@@ -107,9 +114,10 @@ const PeriodExpensePredictionsComponent = ({ periodId, periodStatus }) => {
                     onClose={() => setAlert(null)}
                 >
                     {alert.message}
-                </Alert>}
-            {/* Filters and sorters */}
-            {/* TODO */}
+                </Alert>
+            }
+            {periodPredictions.length <= 0 
+            && <Typography variant="body1" sx={{ marginTop: 2, color: '#3E3E3E' }}>No Predictions created yet.</Typography>}
             {periodPredictions.map((prediction) => (
                 <ExpensePredictionCardComponent
                     key={prediction.id}
