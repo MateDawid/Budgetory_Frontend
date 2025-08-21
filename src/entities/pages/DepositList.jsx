@@ -14,7 +14,7 @@ import CreateButton from "../../app_infrastructure/components/CreateButton";
  * DepositList component to display list of Budget Deposits.
  */
 export default function DepositList() {
-    const { contextBudgetId, objectChange } = useContext(BudgetContext);
+    const { contextBudgetId, refreshTimestamp } = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`
     const { alert, setAlert } = useContext(AlertContext);
     const [updatedObjectId, setUpdatedObjectId] = useState(null);
@@ -82,7 +82,7 @@ export default function DepositList() {
             }
         }
         loadData();
-    }, [contextBudgetId, objectChange, updatedObjectId, deletedObjectId]);
+    }, [contextBudgetId, refreshTimestamp, updatedObjectId, deletedObjectId]);
 
     /**
      * Fetches select options for Deposit.owner field from API.

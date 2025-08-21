@@ -38,14 +38,14 @@ const BudgetingPeriodStatusUpdateButton = ({objectId, newPeriodStatus, apiUrl, o
     const [open, setOpen] = useState(false);
     const {handleSubmit} = useForm();
     const {setAlert} = useContext(AlertContext);
-    const {setObjectChange} = useContext(BudgetContext)
+    const {updateRefreshTimestamp} = useContext(BudgetContext)
 
     /**
      * Function calling API to close BudgetingPeriod.
      */
     const onSubmit = async () => {
         try {
-            await onEditableFieldSave(objectId, 'status', newPeriodStatus, apiUrl, setObjectChange, setAlert)
+            await onEditableFieldSave(objectId, 'status', newPeriodStatus, apiUrl, updateRefreshTimestamp, setAlert)
         }
         catch (error) {
             if (error instanceof ApiError) {

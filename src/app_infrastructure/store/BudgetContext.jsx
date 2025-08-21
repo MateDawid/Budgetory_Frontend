@@ -1,14 +1,14 @@
-import React, {createContext, useContext, useEffect, useState} from 'react';
-import {getApiObjectsList} from "../services/APIService";
-import {AlertContext} from "./AlertContext";
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { getApiObjectsList } from "../services/APIService";
+import { AlertContext } from "./AlertContext";
 
 export const BudgetContext = createContext();
 
 /**
  * ContextBudgetProvider for storing context Budget between pages.
  */
-export const ContextBudgetProvider = ({children}) => {
-    const {setAlert} = useContext(AlertContext);
+export const ContextBudgetProvider = ({ children }) => {
+    const { setAlert } = useContext(AlertContext);
     const initialContextBudgetId = localStorage.getItem('budgetory.contextBudget')
         ? parseInt(localStorage.getItem('budgetory.contextBudget'), 10)
         : null;
@@ -18,7 +18,14 @@ export const ContextBudgetProvider = ({children}) => {
     const [updatedContextBudget, setUpdatedContextBudget] = useState(null)
     const [contextBudgetDeposits, setContextBudgetDeposits] = useState([])
     const [updatedContextBudgetDeposit, setUpdatedContextBudgetDeposit] = useState(null)
-    const [objectChange, setObjectChange] = useState({operation: null, objectId: null, objectType: null});
+    const [refreshTimestamp, setRefreshTimestamp] = useState(null);
+
+    /**
+     * Updates refreshTimestampt to current time.
+     */
+    const updateRefreshTimestamp = () => {
+        setRefreshTimestamp(Date.now())
+    }
 
     /**
      * Saves contextBudgetId in localStorage on contextBudgetId change.
@@ -33,7 +40,7 @@ export const ContextBudgetProvider = ({children}) => {
                 setContextBudgetDeposits(response);
             } catch (error) {
                 console.error(error)
-                setAlert({type: 'error', message: "Failed to load Budget Deposits on Rightbar."});
+                setAlert({ type: 'error', message: "Failed to load Budget Deposits on Rightbar." });
                 setContextBudgetDeposits([])
             }
         }
@@ -54,8 +61,8 @@ export const ContextBudgetProvider = ({children}) => {
         setContextBudgetCurrency,
         contextBudgetDeposits,
         setUpdatedContextBudgetDeposit,
-        objectChange,
-        setObjectChange
+        refreshTimestamp,
+        updateRefreshTimestamp
     };
 
     return (

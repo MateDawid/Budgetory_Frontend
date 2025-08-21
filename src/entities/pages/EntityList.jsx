@@ -14,7 +14,7 @@ import CreateButton from "../../app_infrastructure/components/CreateButton";
  * EntityList component to display list of Budget Entities.
  */
 export default function EntityList() {
-    const {contextBudgetId, objectChange} = useContext(BudgetContext);
+    const {contextBudgetId, refreshTimestamp} = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?is_deposit=false`
     const {alert, setAlert} = useContext(AlertContext);
     const [updatedObjectId, setUpdatedObjectId] = useState(null);
@@ -66,7 +66,7 @@ export default function EntityList() {
             }
         }
         loadData();
-    }, [contextBudgetId, objectChange, updatedObjectId, deletedObjectId]);
+    }, [contextBudgetId, refreshTimestamp, updatedObjectId, deletedObjectId]);
 
     return (
         <Paper elevation={24} sx={{

@@ -17,7 +17,7 @@ import SearchField from "../../app_infrastructure/components/SearchField";
  * TransferCategoryList component to display list of Budget TransferCategories.
  */
 export default function TransferCategoryList() {
-    const {contextBudgetId, objectChange} = useContext(BudgetContext);
+    const {contextBudgetId, refreshTimestamp} = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/`
 
     const [searchQuery, setSearchQuery] = useState("");
@@ -123,7 +123,7 @@ export default function TransferCategoryList() {
             }
         }
         loadData();
-    }, [contextBudgetId, objectChange, updatedObjectId, deletedObjectId, searchQuery, typeFilter, priorityFilter, ownerFilter, activeFilter]);
+    }, [contextBudgetId, refreshTimestamp, updatedObjectId, deletedObjectId, searchQuery, typeFilter, priorityFilter, ownerFilter, activeFilter]);
 
     /**
      * Fetches select options for TransferCategory object from API.

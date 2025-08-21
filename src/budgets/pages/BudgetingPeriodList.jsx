@@ -14,7 +14,7 @@ import CreateButton from "../../app_infrastructure/components/CreateButton";
  * BudgetingPeriodList component to display list of Budget BudgetingPeriods.
  */
 export default function BudgetingPeriodList() {
-    const {contextBudgetId, objectChange} = useContext(BudgetContext);
+    const {contextBudgetId, refreshTimestamp} = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`
     const {alert, setAlert} = useContext(AlertContext);
     const [updatedObjectId, setUpdatedObjectId] = useState(null);
@@ -52,7 +52,7 @@ export default function BudgetingPeriodList() {
             }
         }
         loadData();
-    }, [contextBudgetId, objectChange, updatedObjectId, deletedObjectId]);
+    }, [contextBudgetId, refreshTimestamp, updatedObjectId, deletedObjectId]);
 
     return (
         <Paper elevation={24} sx={{

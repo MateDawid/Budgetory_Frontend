@@ -13,7 +13,6 @@ import { BudgetContext } from "../../store/BudgetContext"
  * FormModal component to display Modal with form.
  * @param {object} fields - Create form fields.
  * @param {string} objectType - Type of created object.
- * @param {string} operation - Type of operation performed in Form - create or update.
  * @param {boolean} open - Indicates if Form is open.
  * @param {boolean} setOpen - Changes state of open value.
  * @param {function} callApi - Function called on Form submit.
@@ -25,7 +24,6 @@ const FormModal = (
     {
         fields,
         objectType,
-        operation,
         open,
         setOpen,
         callApi,
@@ -37,7 +35,7 @@ const FormModal = (
     const { register, handleSubmit, reset, control } = useForm();
     const [fieldErrors, setFieldErrors] = useState({});
     const [nonFieldErrors, setNonFieldErrors] = useState(null);
-    const { setObjectChange } = useContext(BudgetContext);
+    const { updateRefreshTimestamp } = useContext(BudgetContext);
 
     const onSubmit = async (data) => {
         setFieldErrors({});
@@ -46,7 +44,7 @@ const FormModal = (
         try {
             const response = await callApi(data);
             setAlert({ type: 'success', message: response.name ? `Object ${response.name} created successfully.` : 'Object created successfully.' });
-            setObjectChange({ operation: operation, objectId: response.id, objectType: objectType })
+            updateRefreshTimestamp()
             setOpen(false);
             reset();
         } catch (error) {

@@ -19,7 +19,7 @@ import PeriodExpensePredictionsComponent from '../components/PeriodExpensePredic
 export default function BudgetingPeriodDetail() {
     const { id } = useParams();
     const navigate = useNavigate()
-    const { contextBudgetId, objectChange, setObjectChange } = useContext(BudgetContext);
+    const { contextBudgetId, refreshTimestamp, setRefreshTimestamp } = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`
     const { alert, setAlert } = useContext(AlertContext);
     const [objectData, setObjectData] = useState([]);
@@ -56,7 +56,7 @@ export default function BudgetingPeriodDetail() {
             }
         }
         loadData();
-    }, [objectChange, contextBudgetId]);
+    }, [refreshTimestamp, contextBudgetId]);
 
     /**
      * Function to save updated object via API call.
@@ -64,7 +64,7 @@ export default function BudgetingPeriodDetail() {
      * @param {object} value - New value for updated API field.
      */
     const onSave = async (apiFieldName, value) => {
-        await onEditableFieldSave(id, apiFieldName, value, apiUrl, setObjectChange, setAlert)
+        await onEditableFieldSave(id, apiFieldName, value, apiUrl, setRefreshTimestamp, setAlert)
     };
 
     return (

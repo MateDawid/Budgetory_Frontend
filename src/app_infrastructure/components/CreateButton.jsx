@@ -47,7 +47,6 @@ const CreateButton = ({ fields, apiUrl, objectType, customSetAlert = undefined, 
             <FormModal
                 fields={fields}
                 objectType={objectType}
-                operation={'create'}
                 open={open}
                 setOpen={setOpen}
                 callApi={callApi}
