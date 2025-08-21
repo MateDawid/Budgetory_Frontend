@@ -17,7 +17,7 @@ import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
  */
 export default function BudgetList() {
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/`
-    const {objectChange} = useContext(BudgetContext)
+    const {refreshTimestamp} = useContext(BudgetContext)
     const {alert, setAlert} = useContext(AlertContext);
     const [deletedBudgetId, setDeletedBudgetId] = useState(null);
     const [budgets, setBudgets] = useState([]);
@@ -54,7 +54,7 @@ export default function BudgetList() {
             }
         }
         loadData();
-    }, [objectChange, deletedBudgetId]);
+    }, [refreshTimestamp, deletedBudgetId]);
 
     return (
         <Paper elevation={24} sx={{
