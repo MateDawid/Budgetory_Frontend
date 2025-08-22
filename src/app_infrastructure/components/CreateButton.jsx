@@ -11,9 +11,10 @@ import FormModal from "./FormModal/FormModal";
  * @param {string} apiUrl - Base API url to be called with POST method.
  * @param {string} objectType - Type of created object.
  * @param {function} customSetAlert - Custom setAlert function.
+ * @param {string} customLabel - Custom label for Button.
  * @param {boolean} disabled - Indicates if CreateButton is disabled.
  */
-const CreateButton = ({ fields, apiUrl, objectType, customSetAlert = undefined, disabled = false }) => {
+const CreateButton = ({ fields, apiUrl, objectType, customSetAlert = undefined, customLabel = undefined, disabled = false }) => {
     const [open, setOpen] = useState(false);
     const { setAlert: contextSetAlert } = useContext(AlertContext);
     const setAlert = customSetAlert || contextSetAlert;
@@ -42,7 +43,7 @@ const CreateButton = ({ fields, apiUrl, objectType, customSetAlert = undefined, 
     return (
         <>
             <StyledButton onClick={() => setOpen(true)} variant="outlined" startIcon={<AddIcon />} disabled={disabled}>
-                Add
+                {customLabel ? customLabel : 'Add'}
             </StyledButton>
             <FormModal
                 fields={fields}
