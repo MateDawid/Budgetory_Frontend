@@ -1,10 +1,12 @@
 import { Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Box } from "@mui/system";
 import { useForm } from "react-hook-form";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import StyledButton from "../../app_infrastructure/components/StyledButton";
 import StyledModal from "../../app_infrastructure/components/StyledModal";
+import { getApiResponse } from "../../app_infrastructure/services/APIService";
+import { BudgetContext } from "../../app_infrastructure/store/BudgetContext";
 // import { BudgetContext } from "../../app_infrastructure/store/BudgetContext";
 
 
@@ -12,26 +14,34 @@ import StyledModal from "../../app_infrastructure/components/StyledModal";
  * CopyPreviousPredictionsButton component to display Modal with warning before copying previous Period ExpensePredicitons.
  * @param {string} periodId - API ID of Period in which Predictions will be created.
  * @param {string} apiUrl - Base API url to be called POST method.
+ * @param {function} setAlert - Function to set Alert.
  */
-
-const CopyPreviousPredictionsButton = ({ periodId, apiUrl }) => {
+const CopyPreviousPredictionsButton = ({ periodId, apiUrl, setAlert }) => {
     const [open, setOpen] = useState(false);
+    const { updateRefreshTimestamp } = useContext(BudgetContext);
     const { handleSubmit } = useForm();
-    // const {setObjectChange} = useContext(BudgetContext)
 
     /**
      * Function calling API to copy Predictions from previous Period.
      */
     const onSubmit = async () => {
-        const url = `${apiUrl}${periodId}`
-        console.log(url)
-        // const requestOptions = {
-        //     method: "POST",
-        // }
-        // const response = await getApiResponse(url, requestOptions)
-        // const jsonResponse = response.json()
-        // console.log(jsonResponse)
-        // setObjectChange({ operation: 'update', objectId: periodId, objectType: apiUrl, value: value})
+        try {
+            const response = await getApiResponse(
+                `${apiUrl}${periodId}/`,
+                {
+                    method: "POST",
+                }
+            )
+            const jsonResponse = await response.json()
+            console.log(jsonResponse)
+            setOpen(false)
+            setAlert({ type: 'success', message: jsonResponse });
+            updateRefreshTimestamp()
+        } catch (error) {
+            console.log(error)
+            setOpen(false)
+            setAlert({ type: 'error', message: error.message });
+        }
     };
 
     return (
