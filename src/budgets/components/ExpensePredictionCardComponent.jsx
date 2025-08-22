@@ -68,7 +68,7 @@ const TypographyWithTooltip = ({ value }) => {
  * @param {object} updateFields - Form fields for Expense Prediction update form.
  */
 export const ExpensePredictionCardComponent = ({ prediction, periodStatus, setAlert, updateFields }) => {
-    const { contextBudgetId, contextBudgetCurrency, setObjectChange } = useContext(BudgetContext);
+    const { contextBudgetId, contextBudgetCurrency, updateRefreshTimestamp } = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expense_predictions/`
     const [expanded, setExpanded] = useState(false);
     const [editFormOpen, setEditFormOpen] = useState(false)
@@ -83,7 +83,7 @@ export const ExpensePredictionCardComponent = ({ prediction, periodStatus, setAl
     const handleDelete = async () => {
         try {
             await deleteApiObject(apiUrl, prediction.id);
-            setObjectChange({ operation: 'delete', objectId: prediction.id, objectType: 'Expense prediction' })
+            updateRefreshTimestamp()
         } catch (error) {
             console.error(error)
             setAlert({ type: 'error', message: error.message });
@@ -202,7 +202,6 @@ export const ExpensePredictionCardComponent = ({ prediction, periodStatus, setAl
             <FormModal
                 fields={updateFields}
                 objectType={"Expense Prediction - Edit"}
-                operation={'update'}
                 open={editFormOpen}
                 setOpen={setEditFormOpen}
                 callApi={callApiOnEdit}
