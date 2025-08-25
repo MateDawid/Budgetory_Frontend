@@ -147,13 +147,13 @@ export default function TransferCategoryList() {
             <SearchField setSearchQuery={setSearchQuery} label="Search" sx={{width: "100%", marginBottom: 1}}/>
             <Stack direction={{sm: "column", md: "row"}} alignItems={{sm: "flex-start", md: "center"}}
                    justifyContent="flex-start" spacing={1} mb={1}>
-                <FilterField setFilterValue={setTypeFilter} options={typeOptions} label="Type"
+                <FilterField filterValue={typeFilter} setFilterValue={setTypeFilter} options={typeOptions} label="Type"
                              sx={{width: {sm: "100%", md: 200}, margin: 0}}/>
-                <FilterField setFilterValue={setPriorityFilter} options={priorityOptions} label="Priority"
+                <FilterField filterValue={priorityFilter} setFilterValue={setPriorityFilter} options={priorityOptions} label="Priority"
                              sx={{width: {sm: "100%", md: 200}, margin: 0}}/>
-                <FilterField setFilterValue={setOwnerFilter} options={ownerOptions} label="Owner"
+                <FilterField filterValue={ownerFilter} setFilterValue={setOwnerFilter} options={ownerOptions} label="Owner"
                              sx={{width: {sm: "100%", md: 200}, margin: 0}}/>
-                <FilterField setFilterValue={setActiveFilter} options={activeOptions} label="Active"
+                <FilterField filterValue={activeFilter} setFilterValue={setActiveFilter} options={activeOptions} label="Active"
                              sx={{width: {sm: "100%", md: 200}, margin: 0}}/>
             </Stack>
             <Divider sx={{mt: 1}}/>
