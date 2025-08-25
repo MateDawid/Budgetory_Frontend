@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import Divider from "@mui/material/Divider";
 import Alert from '@mui/material/Alert';
-import {AlertContext} from "../../app_infrastructure/components/AlertContext";
+import {AlertContext} from "../../app_infrastructure/store/AlertContext";
 import {
     Typography,
     Paper,
@@ -10,14 +10,15 @@ import {
 import {getApiObjectsList} from "../../app_infrastructure/services/APIService";
 import BudgetCard from "../components/BudgetCard";
 import CreateButton from "../../app_infrastructure/components/CreateButton";
+import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
 
 /**
  * BudgetList component to display list of User Budgets.
  */
 export default function BudgetList() {
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/`
+    const {refreshTimestamp} = useContext(BudgetContext)
     const {alert, setAlert} = useContext(AlertContext);
-    const [addedBudgetId, setAddedBudgetId] = useState(null);
     const [deletedBudgetId, setDeletedBudgetId] = useState(null);
     const [budgets, setBudgets] = useState([]);
     const createFields = {
@@ -53,7 +54,7 @@ export default function BudgetList() {
             }
         }
         loadData();
-    }, [addedBudgetId, deletedBudgetId]);
+    }, [refreshTimestamp, deletedBudgetId]);
 
     return (
         <Paper elevation={24} sx={{
@@ -62,7 +63,7 @@ export default function BudgetList() {
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                 <Typography variant="h4"
                             sx={{display: 'block', color: '#BD0000'}}>Budgets</Typography>
-                <CreateButton fields={createFields} apiUrl={apiUrl} setAddedObjectId={setAddedBudgetId} rightbarBudgetsRefresh/>
+                <CreateButton fields={createFields} apiUrl={apiUrl} objectType={"Budget"}/>
             </Stack>
             <Divider/>
             {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}

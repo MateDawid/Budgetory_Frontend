@@ -3,8 +3,8 @@ import Typography from "@mui/material/Typography";
 import {Box, Paper, Stack} from "@mui/material";
 import Divider from "@mui/material/Divider";
 import Alert from '@mui/material/Alert';
-import {AlertContext} from "../../app_infrastructure/components/AlertContext";
-import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
+import {AlertContext} from "../../app_infrastructure/store/AlertContext";
+import {BudgetContext} from "../../app_infrastructure/store/BudgetContext";
 import {getApiObjectsList} from "../../app_infrastructure/services/APIService";
 import TransferCategoryCard from "../components/TransferCategoryCard";
 import CreateButton from "../../app_infrastructure/components/CreateButton";
@@ -17,7 +17,7 @@ import SearchField from "../../app_infrastructure/components/SearchField";
  * TransferCategoryList component to display list of Budget TransferCategories.
  */
 export default function TransferCategoryList() {
-    const {contextBudgetId} = useContext(BudgetContext);
+    const {contextBudgetId, refreshTimestamp} = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/`
 
     const [searchQuery, setSearchQuery] = useState("");
@@ -27,7 +27,6 @@ export default function TransferCategoryList() {
     const [activeFilter, setActiveFilter] = useState(null);
 
     const {alert, setAlert} = useContext(AlertContext);
-    const [addedObjectId, setAddedObjectId] = useState(null);
     const [updatedObjectId, setUpdatedObjectId] = useState(null);
     const [deletedObjectId, setDeletedObjectId] = useState(null);
     const [objects, setObjects] = useState([]);
@@ -124,7 +123,7 @@ export default function TransferCategoryList() {
             }
         }
         loadData();
-    }, [contextBudgetId, addedObjectId, updatedObjectId, deletedObjectId, searchQuery, typeFilter, priorityFilter, ownerFilter, activeFilter]);
+    }, [contextBudgetId, refreshTimestamp, updatedObjectId, deletedObjectId, searchQuery, typeFilter, priorityFilter, ownerFilter, activeFilter]);
 
     /**
      * Fetches select options for TransferCategory object from API.
@@ -140,8 +139,7 @@ export default function TransferCategoryList() {
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                 <Typography variant="h4"
                             sx={{display: 'block', color: '#BD0000'}}>Transfer Categories</Typography>
-                <CreateButton fields={createFields} apiUrl={apiUrl}
-                              setAddedObjectId={setAddedObjectId}/>
+                <CreateButton fields={createFields} apiUrl={apiUrl} objectType={"Transfer Category"}/>
             </Stack>
             <Divider sx={{mb: 1}}/>
             {alert && <Alert sx={{mb: 1, whiteSpace: 'pre-wrap'}} severity={alert.type}
@@ -149,13 +147,13 @@ export default function TransferCategoryList() {
             <SearchField setSearchQuery={setSearchQuery} label="Search" sx={{width: "100%", marginBottom: 1}}/>
             <Stack direction={{sm: "column", md: "row"}} alignItems={{sm: "flex-start", md: "center"}}
                    justifyContent="flex-start" spacing={1} mb={1}>
-                <FilterField setFilterValue={setTypeFilter} options={typeOptions} label="Type"
+                <FilterField filterValue={typeFilter} setFilterValue={setTypeFilter} options={typeOptions} label="Type"
                              sx={{width: {sm: "100%", md: 200}, margin: 0}}/>
-                <FilterField setFilterValue={setPriorityFilter} options={priorityOptions} label="Priority"
+                <FilterField filterValue={priorityFilter} setFilterValue={setPriorityFilter} options={priorityOptions} label="Priority"
                              sx={{width: {sm: "100%", md: 200}, margin: 0}}/>
-                <FilterField setFilterValue={setOwnerFilter} options={ownerOptions} label="Owner"
+                <FilterField filterValue={ownerFilter} setFilterValue={setOwnerFilter} options={ownerOptions} label="Owner"
                              sx={{width: {sm: "100%", md: 200}, margin: 0}}/>
-                <FilterField setFilterValue={setActiveFilter} options={activeOptions} label="Active"
+                <FilterField filterValue={activeFilter} setFilterValue={setActiveFilter} options={activeOptions} label="Active"
                              sx={{width: {sm: "100%", md: 200}, margin: 0}}/>
             </Stack>
             <Divider sx={{mt: 1}}/>

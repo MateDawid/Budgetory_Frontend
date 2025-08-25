@@ -7,7 +7,7 @@ import ApiError from "./ApiError";
  * @param {string} apiFieldName - Edited API field name.
  * @param {any} value - New value for object's apiFieldName.
  * @param {string} apiUrl - Base API url for object update.
- * @param {function} setUpdatedObjectParam - Setter for refreshing page on object update.
+ * @param {function} updateRefreshTimestamp - Function that updates context refreshTimestamp.
  * @param {function} setAlert - Alert setter.
  */
 const onEditableFieldSave = async (
@@ -15,13 +15,13 @@ const onEditableFieldSave = async (
     apiFieldName,
     value,
     apiUrl,
-    setUpdatedObjectParam,
+    updateRefreshTimestamp,
     setAlert
 ) => {
     let payload = {id: id, [apiFieldName]: value}
     try {
         await updateApiObject(apiUrl, payload);
-        setUpdatedObjectParam(`${apiFieldName}_${value}`)
+        updateRefreshTimestamp()
         setAlert({type: 'success', message: 'Object updated successfully.'})
     } catch (error) {
         setAlert({type: 'error', message: 'Update failed.'})

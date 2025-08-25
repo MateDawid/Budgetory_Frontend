@@ -3,8 +3,8 @@ import Typography from "@mui/material/Typography";
 import {Box, Paper, Stack} from "@mui/material";
 import Divider from "@mui/material/Divider";
 import Alert from '@mui/material/Alert';
-import {AlertContext} from "../../app_infrastructure/components/AlertContext";
-import {BudgetContext} from "../../app_infrastructure/components/BudgetContext";
+import {AlertContext} from "../../app_infrastructure/store/AlertContext";
+import {BudgetContext} from "../../app_infrastructure/store/BudgetContext";
 import {getApiObjectsList} from "../../app_infrastructure/services/APIService";
 import EntityCard from "../components/EntityCard";
 import CreateButton from "../../app_infrastructure/components/CreateButton";
@@ -14,10 +14,9 @@ import CreateButton from "../../app_infrastructure/components/CreateButton";
  * EntityList component to display list of Budget Entities.
  */
 export default function EntityList() {
-    const {contextBudgetId} = useContext(BudgetContext);
+    const {contextBudgetId, refreshTimestamp} = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?is_deposit=false`
     const {alert, setAlert} = useContext(AlertContext);
-    const [addedObjectId, setAddedObjectId] = useState(null);
     const [updatedObjectId, setUpdatedObjectId] = useState(null);
     const [deletedObjectId, setDeletedObjectId] = useState(null);
     const [objects, setObjects] = useState([]);
@@ -67,7 +66,7 @@ export default function EntityList() {
             }
         }
         loadData();
-    }, [contextBudgetId, addedObjectId, updatedObjectId, deletedObjectId]);
+    }, [contextBudgetId, refreshTimestamp, updatedObjectId, deletedObjectId]);
 
     return (
         <Paper elevation={24} sx={{
@@ -76,7 +75,7 @@ export default function EntityList() {
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                 <Typography variant="h4"
                             sx={{display: 'block', color: '#BD0000'}}>Entities</Typography>
-                <CreateButton fields={createFields} apiUrl={apiUrl} setAddedObjectId={setAddedObjectId}/>
+                <CreateButton fields={createFields} apiUrl={apiUrl} objectType={"Entity"}/>
             </Stack>
             <Divider/>
             {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}

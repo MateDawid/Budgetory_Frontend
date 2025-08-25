@@ -3,7 +3,7 @@ import {Box, Card, List, Divider} from "@mui/material";
 import RightbarItem from "./RightbarItem"
 import BudgetSelector from "./BudgetSelector";
 import {useContext} from "react";
-import {BudgetContext} from "./BudgetContext";
+import {BudgetContext} from "../store/BudgetContext";
 
 
 /**

@@ -6,8 +6,8 @@ import React, {useContext} from "react";
 import {useForm} from "react-hook-form";
 import {deleteApiObject} from "../services/APIService";
 import {useNavigate} from "react-router-dom";
-import {AlertContext} from "./AlertContext";
-import {BudgetContext} from "./BudgetContext";
+import {AlertContext} from "../store/AlertContext";
+import {BudgetContext} from "../store/BudgetContext";
 
 /**
  * DeleteModal to be displayed before deleting object.

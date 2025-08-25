@@ -5,8 +5,8 @@ import AddIcon from "@mui/icons-material/Add";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import StyledButton from "../StyledButton";
 import {bulkDeleteApiObjects, copyApiObjects} from "../../services/APIService";
-import {AlertContext} from "../AlertContext";
-import {BudgetContext} from "../BudgetContext";
+import {AlertContext} from "../../store/AlertContext";
+import {BudgetContext} from "../../store/BudgetContext";
 
 /**
  * DataTableFooterButtons component that displays buttons basing on selected rows.
