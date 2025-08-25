@@ -180,21 +180,23 @@ export const ExpensePredictionCardComponent = ({ prediction, periodStatus, setAl
                         </Grid>
                         <Divider orientation="vertical" flexItem />
                         <Grid size={1} display="flex">
-                            <Stack alignItems="center" justifyContent="center" spacing={1} mb={1}>
-                                <Typography fontSize={14} fontWeight="bold" color="secondary">Initial plan</Typography>
-                                <Tooltip
-                                    title={
-                                        prediction.initial_plan !== prediction.current_plan ? 
-                                        MESSAGES.INITIAL_PLAN_CHANGED.replace("{current_plan}", prediction.current_plan).replace('{currency}', contextBudgetCurrency) : 
-                                        MESSAGES.INITIAL_PLAN_UNCHANGED.replace("{current_plan}", prediction.current_plan).replace('{currency}', contextBudgetCurrency)
-                                    }
-                                    placement="top"
-                                >
-                                    <Typography sx={{ whiteSpace: 'pre-wrap' }} fontWeight={prediction.initial_plan !== prediction.current_plan ? 'bold' : 'normal'}>
-                                        {prediction.initial_plan}&nbsp;{contextBudgetCurrency}
-                                    </Typography>
-                                </Tooltip>
-                            </Stack>
+                            {periodStatus !== PeriodStatuses.DRAFT &&
+                                <Stack alignItems="center" justifyContent="center" spacing={1} mb={1}>
+                                    <Typography fontSize={14} fontWeight="bold" color="secondary">Initial plan</Typography>
+                                    <Tooltip
+                                        title={
+                                            prediction.initial_plan !== prediction.current_plan ?
+                                                MESSAGES.INITIAL_PLAN_CHANGED.replace("{current_plan}", prediction.current_plan).replace('{currency}', contextBudgetCurrency) :
+                                                MESSAGES.INITIAL_PLAN_UNCHANGED.replace("{current_plan}", prediction.current_plan).replace('{currency}', contextBudgetCurrency)
+                                        }
+                                        placement="top"
+                                    >
+                                        <Typography sx={{ whiteSpace: 'pre-wrap' }} fontWeight={prediction.initial_plan !== prediction.current_plan ? 'bold' : 'normal'}>
+                                            {prediction.initial_plan}&nbsp;{contextBudgetCurrency}
+                                        </Typography>
+                                    </Tooltip>
+                                </Stack>
+                            }
                         </Grid>
                     </Grid>
                 </Collapse>
