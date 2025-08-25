@@ -28,9 +28,7 @@ const CopyPreviousPredictionsButton = ({ periodId, apiUrl, setAlert }) => {
         try {
             const response = await getApiResponse(
                 `${apiUrl}${periodId}/`,
-                {
-                    method: "POST",
-                }
+                { method: "POST"}
             )
             const jsonResponse = await response.json()
             console.log(jsonResponse)
