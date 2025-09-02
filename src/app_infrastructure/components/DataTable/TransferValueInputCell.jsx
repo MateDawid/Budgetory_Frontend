@@ -30,7 +30,11 @@ export default function TransferValueInputCell(params) {
             params.api.setEditCellValue({id: params.id, field: params.field, value: newValue}, event);
         }}
         slotProps={{
-            input: {endAdornment: <InputAdornment position="end">{contextBudgetCurrency}</InputAdornment>}
+            input: {endAdornment: <InputAdornment position="end">{contextBudgetCurrency}</InputAdornment>},
+            htmlInput: {
+                    step: 0.01,
+                    min: 0
+                }
         }}
     />
 }
