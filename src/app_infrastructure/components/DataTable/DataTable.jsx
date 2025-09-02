@@ -452,7 +452,9 @@ const DataTable = ({
                     onRowEditStop={handleRowEditStop}
                     processRowUpdate={processRowUpdate}
                     onProcessRowUpdateError={handleProcessRowUpdateError}
-                    checkboxSelection={!readOnly}
+                    checkboxSelection={
+                        !readOnly && !(copySelectedDisabled && deleteSelectedDisabled)
+                    }
                     disableRowSelectionOnClick
                     onRowSelectionModelChange={(selectedRowsIds) => setSelectedRows(selectedRowsIds)}
                     isRowSelectable={(params) => params.row.isNew !== true}
