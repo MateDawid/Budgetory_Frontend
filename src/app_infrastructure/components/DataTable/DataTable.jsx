@@ -88,8 +88,11 @@ const DataTable = ({
     const [filterModel, setFilterModel] = React.useState({items: []});
     const {setAlert} = useContext(AlertContext);
     const {contextBudgetId, setUpdatedContextBudgetDeposit} = useContext(BudgetContext);
+    
+    const visibleColumns = columns.filter(column => !column.hide);
+    
     const extendedColumns = [
-        ...columns.map((column) => ({
+        ...visibleColumns.map((column) => ({
                 ...column,
                 filterOperators: column.type in mappedFilterOperators ? mappedFilterOperators[column.type] : undefined,
             }
@@ -165,7 +168,7 @@ const DataTable = ({
             }
             try {
                 const rowsResponse = await getApiObjectsList(
-                    apiUrl, paginationModel, sortModel, formatFilterModel(filterModel, columns)
+                    apiUrl, paginationModel, sortModel, formatFilterModel(filterModel, visibleColumns)
                 )
                 setRows(rowsResponse.results);
                 setRowCount(rowsResponse.count);
@@ -184,7 +187,7 @@ const DataTable = ({
      */
     useEffect(() => {
         const loadSingleSelectChoices = async () => {
-            for (const column of extendedColumns) {
+            for (const column of visibleColumns) {
                 if (column.type !== 'singleSelect') {
                     continue;
                 }
@@ -247,7 +250,10 @@ const DataTable = ({
     const handleAddClick = () => {
         let id = 0
         const emptyCells = (columns.reduce((emptyRow, column) => {
-            if (column.type === 'date') {
+            // Handle hidden columns with default values
+            if (column.hide && column.defaultValue !== undefined) {
+                emptyRow[column.field] = column.defaultValue;
+            } else if (column.type === 'date') {
                 emptyRow[column.field] = new Date().toISOString().split('T')[0];
             } else {
                 emptyRow[column.field] = '';
@@ -266,9 +272,13 @@ const DataTable = ({
                 {id, ...emptyCells, isNew: true},
             ]
         });
+        
+        // Find the first visible, editable column for focus
+        const firstEditableColumn = visibleColumns.find(col => col.editable);
+        
         setRowModesModel((oldModel) => ({
             ...oldModel,
-            [id]: {mode: GridRowModes.Edit, fieldToFocus: columns[0].field},
+            [id]: {mode: GridRowModes.Edit, fieldToFocus: firstEditableColumn?.field || visibleColumns[0]?.field},
         }));
     };
 
@@ -304,7 +314,14 @@ const DataTable = ({
      * @return {object} - Created/updated object content.
      */
     const processRowUpdate = async (row) => {
-        const processedRow = prepareApiInput(row, columns)
+        const rowWithHiddenFields = { ...row };
+        columns.forEach(column => {
+            if (column.hide && column.defaultValue !== undefined && !rowWithHiddenFields[column.field]) {
+                rowWithHiddenFields[column.field] = column.defaultValue;
+            }
+        });
+        
+        const processedRow = prepareApiInput(rowWithHiddenFields, columns)
         if (processedRow.isNew) {
             const temporaryRowId = processedRow.id;
             delete processedRow.id;
