@@ -14,7 +14,7 @@ import TransferValueInputCell from "../../app_infrastructure/components/DataTabl
  */
 export default function IncomeList() {
     const { contextBudgetId, contextBudgetCurrency } = useContext(BudgetContext);
-    const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/incomes/?is_entity_deposit=false`
+    const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/incomes/`
     const { alert, setAlert } = useContext(AlertContext);
     const [periodOptions, setPeriodOptions] = useState([]);
     const [entityOptions, setEntityOptions] = useState([]);

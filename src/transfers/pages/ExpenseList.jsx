@@ -14,7 +14,7 @@ import TransferValueInputCell from "../../app_infrastructure/components/DataTabl
  */
 export default function ExpenseList() {
     const { contextBudgetId, contextBudgetCurrency } = useContext(BudgetContext);
-    const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expenses/?is_entity_deposit=false`
+    const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expenses/`
     const { alert, setAlert } = useContext(AlertContext);
     const [periodOptions, setPeriodOptions] = useState([]);
     const [entityOptions, setEntityOptions] = useState([]);
@@ -95,7 +95,7 @@ export default function ExpenseList() {
             editable: true,
             valueOptions: entityOptions,
             valueOptionsSetter: setEntityOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?is_deposit=false`,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/`,
             renderEditCell: (params) => <AutocompleteCell{...params} />
         },
         {
