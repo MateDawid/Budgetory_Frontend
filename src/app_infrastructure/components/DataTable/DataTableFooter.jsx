@@ -1,12 +1,12 @@
-import React, {useContext, useEffect} from 'react';
-import {GridPagination} from "@mui/x-data-grid";
+import React, { useContext, useEffect } from 'react';
+import { GridPagination } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import StyledButton from "../StyledButton";
-import {bulkDeleteApiObjects, copyApiObjects} from "../../services/APIService";
-import {AlertContext} from "../../store/AlertContext";
-import {BudgetContext} from "../../store/BudgetContext";
+import { bulkDeleteApiObjects, copyApiObjects } from "../../services/APIService";
+import { AlertContext } from "../../store/AlertContext";
+import { BudgetContext } from "../../store/BudgetContext";
 
 /**
  * DataTableFooterButtons component that displays buttons basing on selected rows.
@@ -16,15 +16,17 @@ import {BudgetContext} from "../../store/BudgetContext";
  * @param {function} setRemovedRows - Function to set new value of removedRows to refresh DataTable.
  * @param {function} setCopiedRows - Function to set new value of copiedRows to refresh DataTable.
  * @param {boolean} rightbarDepositsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
+ * @param {boolean} copySelectedDisabled - Indicates if footer 'copy selected' button should be visible or not
+ * @param {boolean} deleteSelectedDisabled - Indicates if footer 'delete selected' button should be visible or not
  */
-const DataTableFooterButtons = ({apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows, rightbarDepositsRefresh}) => {
-    const {setAlert} = useContext(AlertContext);
-    const {setUpdatedContextBudgetDeposit} = useContext(BudgetContext);
+const DataTableFooterButtons = ({ apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows, rightbarDepositsRefresh, copySelectedDisabled, deleteSelectedDisabled }) => {
+    const { setAlert } = useContext(AlertContext);
+    const { setUpdatedContextBudgetDeposit } = useContext(BudgetContext);
 
     /**
      * Used to rerender component on rows selection.
      */
-    useEffect(() => {}, [selectedRows]);
+    useEffect(() => { }, [selectedRows]);
 
     /**
      * Function to handle clicking "Delete" toolbar button.
@@ -32,13 +34,13 @@ const DataTableFooterButtons = ({apiUrl, handleAddClick, selectedRows, setRemove
     const handleDeleteClick = async () => {
         try {
             await bulkDeleteApiObjects(apiUrl, selectedRows);
-            setAlert({type: 'success', message: `Selected objects deleted successfully.`})
+            setAlert({ type: 'success', message: `Selected objects deleted successfully.` })
             setRemovedRows(selectedRows)
             if (rightbarDepositsRefresh) {
                 setUpdatedContextBudgetDeposit(`${selectedRows.join(',')}_bulk_delete_${new Date().toISOString()}`)
             }
         } catch (error) {
-            setAlert({type: 'error', message: 'Deleting objects failed.'})
+            setAlert({ type: 'error', message: 'Deleting objects failed.' })
             console.error(error)
         }
     };
@@ -49,13 +51,13 @@ const DataTableFooterButtons = ({apiUrl, handleAddClick, selectedRows, setRemove
     const handleCopyClick = async () => {
         try {
             const copyResponse = await copyApiObjects(apiUrl, selectedRows);
-            setAlert({type: 'success', message: `Selected objects copied successfully.`})
+            setAlert({ type: 'success', message: `Selected objects copied successfully.` })
             setCopiedRows(copyResponse.ids)
             if (rightbarDepositsRefresh) {
                 setUpdatedContextBudgetDeposit(`${selectedRows.join(',')}_copy_${new Date().toISOString()}`)
             }
         } catch (error) {
-            setAlert({type: 'error', message: 'Copying objects failed.'})
+            setAlert({ type: 'error', message: 'Copying objects failed.' })
             console.error(error)
         }
     };
@@ -63,15 +65,19 @@ const DataTableFooterButtons = ({apiUrl, handleAddClick, selectedRows, setRemove
     return <>
         {selectedRows.length > 0 ?
             <>
-                <StyledButton variant="outlined" startIcon={<DeleteIcon/>} onClick={handleDeleteClick} sx={{marginLeft: 1}}>
-                    Delete
-                </StyledButton>
-                <StyledButton variant="outlined" startIcon={<ContentCopyIcon/>} onClick={handleCopyClick} sx={{marginLeft: 1}}>
-                    Copy
-                </StyledButton>
+                {!deleteSelectedDisabled &&
+                    <StyledButton variant="outlined" startIcon={<DeleteIcon />} onClick={handleDeleteClick} sx={{ marginLeft: 1 }}>
+                        Delete
+                    </StyledButton>
+                }
+                {!copySelectedDisabled &&
+                    <StyledButton variant="outlined" startIcon={<ContentCopyIcon />} onClick={handleCopyClick} sx={{ marginLeft: 1 }}>
+                        Copy
+                    </StyledButton>
+                }
             </>
             :
-            <StyledButton variant="outlined" startIcon={<AddIcon/>} onClick={handleAddClick} sx={{marginLeft: 1}}>
+            <StyledButton variant="outlined" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ marginLeft: 1 }}>
                 Add
             </StyledButton>
         }
@@ -89,17 +95,21 @@ const DataTableFooterButtons = ({apiUrl, handleAddClick, selectedRows, setRemove
  * @param {function} setRemovedRows - Function to set new value of removedRows to refresh DataTable.
  * @param {function} setCopiedRows - Function to set new value of copiedRows to refresh DataTable.
  * @param {boolean} rightbarDepositsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
+ * @param {boolean} copySelectedDisabled - Indicates if footer 'copy selected' button should be visible or not
+ * @param {boolean} deleteSelectedDisabled - Indicates if footer 'delete selected' button should be visible or not
  * @param {object} props - Other properties.
  */
-const DataTableFooter = ({readOnly, apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows, rightbarDepositsRefresh, ...props}) => {
+const DataTableFooter = ({ readOnly, apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows, rightbarDepositsRefresh, copySelectedDisabled, deleteSelectedDisabled, ...props }) => {
     return <>
-        {!readOnly && <DataTableFooterButtons
+        {(!readOnly) && <DataTableFooterButtons
             apiUrl={apiUrl}
             handleAddClick={handleAddClick}
             selectedRows={selectedRows}
             setRemovedRows={setRemovedRows}
             setCopiedRows={setCopiedRows}
             rightbarDepositsRefresh={rightbarDepositsRefresh}
+            copySelectedDisabled={copySelectedDisabled}
+            deleteSelectedDisabled={deleteSelectedDisabled}
         />}
         <GridPagination {...props} />
     </>

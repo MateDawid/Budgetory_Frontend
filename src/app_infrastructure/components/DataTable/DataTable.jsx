@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
     DataGrid,
     GridActionsCellItem,
@@ -12,25 +12,25 @@ import CancelIcon from '@mui/icons-material/Close';
 import SaveIcon from "@mui/icons-material/Save";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import ApiError from "../../utils/ApiError";
-import {AlertContext} from "../../store/AlertContext";
-import {BudgetContext} from "../../store/BudgetContext";
-import {prepareApiInput} from "./utils/ApiInputFormatters";
-import {black} from "../../utils/Colors";
-import {formatFilterModel, mappedFilterOperators} from "./utils/FilterHandlers";
-import {createApiObject, deleteApiObject, getApiObjectsList, updateApiObject} from "../../services/APIService";
-import {styled} from "@mui/material/styles";
+import { AlertContext } from "../../store/AlertContext";
+import { BudgetContext } from "../../store/BudgetContext";
+import { prepareApiInput } from "./utils/ApiInputFormatters";
+import { black } from "../../utils/Colors";
+import { formatFilterModel, mappedFilterOperators } from "./utils/FilterHandlers";
+import { createApiObject, deleteApiObject, getApiObjectsList, updateApiObject } from "../../services/APIService";
+import { styled } from "@mui/material/styles";
 import DataTableFooter from "./DataTableFooter";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 const pageSizeOptions = [10, 50, 100]
 
-const gridActionsCellItemStyle = {"& .MuiSvgIcon-root": {color: black}}
+const gridActionsCellItemStyle = { "& .MuiSvgIcon-root": { color: black } }
 const StyledDataGrid = styled(DataGrid)(() => ({
     minWidth: "100%",
     maxWidth: "100%",
     border: 0,
-    '& .MuiDataGrid-columnHeaderTitle, .MuiTablePagination-selectLabel, .MuiTablePagination-select, .MuiTablePagination-displayedRows': {fontWeight: 'bold',},
+    '& .MuiDataGrid-columnHeaderTitle, .MuiTablePagination-selectLabel, .MuiTablePagination-select, .MuiTablePagination-displayedRows': { fontWeight: 'bold', },
     '& .MuiDataGrid-cell': {
         borderRight: '1px solid #303030',
         borderRightColor: '#f0f0f0',
@@ -63,15 +63,19 @@ const getSortFieldMapping = (columns) => {
  * @param {string|null} clientUrl - Frontend base url for redirects in readOnly mode.
  * @param {number} height - Height of DataTable.
  * @param {boolean} rightbarDepositsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
+ * @param {boolean} copySelectedDisabled - Indicates if footer 'copy selected' button should be visible or not
+ * @param {boolean} deleteSelectedDisabled - Indicates if footer 'delete selected' button should be visible or not
  */
 const DataTable = ({
-                       columns,
-                       apiUrl,
-                       readOnly = false,
-                       clientUrl = null,
-                       height = 600,
-                       rightbarDepositsRefresh = false
-                   }) => {
+    columns,
+    apiUrl,
+    readOnly = false,
+    clientUrl = null,
+    height = 600,
+    rightbarDepositsRefresh = false,
+    copySelectedDisabled = false,
+    deleteSelectedDisabled = false,
+}) => {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
@@ -85,14 +89,17 @@ const DataTable = ({
         page: 0,
     });
     const [sortModel, setSortModel] = React.useState({});
-    const [filterModel, setFilterModel] = React.useState({items: []});
-    const {setAlert} = useContext(AlertContext);
-    const {contextBudgetId, setUpdatedContextBudgetDeposit} = useContext(BudgetContext);
+    const [filterModel, setFilterModel] = React.useState({ items: [] });
+    const { setAlert } = useContext(AlertContext);
+    const { contextBudgetId, setUpdatedContextBudgetDeposit } = useContext(BudgetContext);
+
+    const visibleColumns = columns.filter(column => !column.hide);
+
     const extendedColumns = [
-        ...columns.map((column) => ({
-                ...column,
-                filterOperators: column.type in mappedFilterOperators ? mappedFilterOperators[column.type] : undefined,
-            }
+        ...visibleColumns.map((column) => ({
+            ...column,
+            filterOperators: column.type in mappedFilterOperators ? mappedFilterOperators[column.type] : undefined,
+        }
         )),
         {
             field: 'actions',
@@ -104,7 +111,7 @@ const DataTable = ({
                     return [
                         <GridActionsCellItem
                             key={params.id}
-                            icon={<OpenInNewIcon/>}
+                            icon={<OpenInNewIcon />}
                             label="Open"
                             sx={gridActionsCellItemStyle}
                             onClick={() => navigate(`${clientUrl}${params.id}`)}
@@ -116,36 +123,36 @@ const DataTable = ({
                         return [
                             <GridActionsCellItem
                                 key={params.id}
-                                icon={<SaveIcon/>}
+                                icon={<SaveIcon />}
                                 label="Save"
                                 sx={gridActionsCellItemStyle}
                                 onClick={handleSaveClick(params.row)}
                             />,
                             <GridActionsCellItem
                                 key={params.id}
-                                icon={<CancelIcon/>}
+                                icon={<CancelIcon />}
                                 label="Cancel"
                                 sx={gridActionsCellItemStyle}
                                 onClick={handleCancelClick(params.row.id)}
                             />,
                         ];
                     } else {
-                    return [
-                        <GridActionsCellItem
-                            key={params.id}
-                            icon={<EditIcon/>}
-                            label="Edit"
-                            sx={gridActionsCellItemStyle}
-                            onClick={handleEditClick(params.row)}
-                        />,
-                        <GridActionsCellItem
-                            key={params.id}
-                            icon={<DeleteIcon/>}
-                            label="Delete"
-                            onClick={() => handleApiDelete(params.row)}
-                            sx={gridActionsCellItemStyle}
-                        />,
-                    ]
+                        return [
+                            <GridActionsCellItem
+                                key={params.id}
+                                icon={<EditIcon />}
+                                label="Edit"
+                                sx={gridActionsCellItemStyle}
+                                onClick={handleEditClick(params.row)}
+                            />,
+                            <GridActionsCellItem
+                                key={params.id}
+                                icon={<DeleteIcon />}
+                                label="Delete"
+                                onClick={() => handleApiDelete(params.row)}
+                                sx={gridActionsCellItemStyle}
+                            />,
+                        ]
                     }
                 }
 
@@ -165,12 +172,12 @@ const DataTable = ({
             }
             try {
                 const rowsResponse = await getApiObjectsList(
-                    apiUrl, paginationModel, sortModel, formatFilterModel(filterModel, columns)
+                    apiUrl, paginationModel, sortModel, formatFilterModel(filterModel, visibleColumns)
                 )
                 setRows(rowsResponse.results);
                 setRowCount(rowsResponse.count);
             } catch (err) {
-                setAlert({type: 'error', message: "Failed to load table rows."});
+                setAlert({ type: 'error', message: "Failed to load table rows." });
             } finally {
                 setLoading(false);
             }
@@ -184,7 +191,7 @@ const DataTable = ({
      */
     useEffect(() => {
         const loadSingleSelectChoices = async () => {
-            for (const column of extendedColumns) {
+            for (const column of visibleColumns) {
                 if (column.type !== 'singleSelect') {
                     continue;
                 }
@@ -192,7 +199,7 @@ const DataTable = ({
                     const choicesResponse = await getApiObjectsList(column.valueOptionsApiUrl)
                     column.valueOptionsSetter(column.nullChoice ? [column.nullChoice, ...choicesResponse] : choicesResponse);
                 } catch (err) {
-                    setAlert({type: 'error', message: "Failed to load choices for select field.\n" + err});
+                    setAlert({ type: 'error', message: "Failed to load choices for select field.\n" + err });
                 }
             }
         }
@@ -247,7 +254,10 @@ const DataTable = ({
     const handleAddClick = () => {
         let id = 0
         const emptyCells = (columns.reduce((emptyRow, column) => {
-            if (column.type === 'date') {
+            // Handle hidden columns with default values
+            if (column.hide && column.defaultValue !== undefined) {
+                emptyRow[column.field] = column.defaultValue;
+            } else if (column.type === 'date') {
                 emptyRow[column.field] = new Date().toISOString().split('T')[0];
             } else {
                 emptyRow[column.field] = '';
@@ -263,12 +273,16 @@ const DataTable = ({
             }
             return [
                 ...oldRows,
-                {id, ...emptyCells, isNew: true},
+                { id, ...emptyCells, isNew: true },
             ]
         });
+
+        // Find the first visible, editable column for focus
+        const firstEditableColumn = visibleColumns.find(col => col.editable);
+
         setRowModesModel((oldModel) => ({
             ...oldModel,
-            [id]: {mode: GridRowModes.Edit, fieldToFocus: columns[0].field},
+            [id]: { mode: GridRowModes.Edit, fieldToFocus: firstEditableColumn?.field || visibleColumns[0]?.field },
         }));
     };
 
@@ -280,7 +294,7 @@ const DataTable = ({
     const handleEditClick = (row) => () => {
         setRowModesModel((prevModel) => ({
             ...prevModel,
-            [row.id]: {mode: GridRowModes.Edit},
+            [row.id]: { mode: GridRowModes.Edit },
         }));
     };
 
@@ -293,7 +307,7 @@ const DataTable = ({
     const handleSaveClick = (row) => () => {
         setRowModesModel((prevModel) => ({
             ...prevModel,
-            [row.id]: {mode: GridRowModes.View},
+            [row.id]: { mode: GridRowModes.View },
         }));
     };
 
@@ -304,12 +318,19 @@ const DataTable = ({
      * @return {object} - Created/updated object content.
      */
     const processRowUpdate = async (row) => {
-        const processedRow = prepareApiInput(row, columns)
+        const rowWithHiddenFields = { ...row };
+        columns.forEach(column => {
+            if (column.hide && column.defaultValue !== undefined && !rowWithHiddenFields[column.field]) {
+                rowWithHiddenFields[column.field] = column.defaultValue;
+            }
+        });
+
+        const processedRow = prepareApiInput(rowWithHiddenFields, columns)
         if (processedRow.isNew) {
             const temporaryRowId = processedRow.id;
             delete processedRow.id;
             const createResponse = await createApiObject(apiUrl, processedRow);
-            setAlert({type: 'success', message: `Object created successfully.`})
+            setAlert({ type: 'success', message: `Object created successfully.` })
             setRows((oldRows) => {
                 return [...oldRows.filter(row => row.id !== temporaryRowId), createResponse]
                     .sort((a, b) => {
@@ -327,7 +348,7 @@ const DataTable = ({
             return createResponse;
         } else {
             const updateResponse = await updateApiObject(apiUrl, processedRow);
-            setAlert({type: 'success', message: `Object updated successfully.`})
+            setAlert({ type: 'success', message: `Object updated successfully.` })
             if (rightbarDepositsRefresh) {
                 setUpdatedContextBudgetDeposit(`${updateResponse.id}_update`)
             }
@@ -356,10 +377,10 @@ const DataTable = ({
                 }
 
             });
-            setAlert({type: 'error', message: message});
+            setAlert({ type: 'error', message: message });
         } else {
             console.error(error)
-            setAlert({type: 'error', message: "Unexpected error occurred."});
+            setAlert({ type: 'error', message: "Unexpected error occurred." });
         }
     };
 
@@ -371,7 +392,7 @@ const DataTable = ({
     const handleCancelClick = (id) => () => {
         setRowModesModel({
             ...rowModesModel,
-            [id]: {mode: GridRowModes.View, ignoreModifications: true},
+            [id]: { mode: GridRowModes.View, ignoreModifications: true },
         });
 
         const editedRow = rows.find((row) => row.id === id);
@@ -401,15 +422,15 @@ const DataTable = ({
             if (rightbarDepositsRefresh) {
                 setUpdatedContextBudgetDeposit(`${row.id}_delete`)
             }
-            setAlert({type: 'success', message: "Object deleted successfully"});
+            setAlert({ type: 'success', message: "Object deleted successfully" });
         } catch (error) {
-            setAlert({type: 'error', message: error.message});
+            setAlert({ type: 'error', message: error.message });
         }
     };
 
     return (
         <>
-            <Box sx={{flexGrow: 1, marginTop: 2, width: '100%', maxWidth: '100%', height: height}}>
+            <Box sx={{ flexGrow: 1, marginTop: 2, width: '100%', maxWidth: '100%', height: height }}>
                 <StyledDataGrid
                     rows={rows}
                     columns={extendedColumns}
@@ -431,7 +452,9 @@ const DataTable = ({
                     onRowEditStop={handleRowEditStop}
                     processRowUpdate={processRowUpdate}
                     onProcessRowUpdateError={handleProcessRowUpdateError}
-                    checkboxSelection={!readOnly}
+                    checkboxSelection={
+                        !readOnly && !(copySelectedDisabled && deleteSelectedDisabled)
+                    }
                     disableRowSelectionOnClick
                     onRowSelectionModelChange={(selectedRowsIds) => setSelectedRows(selectedRowsIds)}
                     isRowSelectable={(params) => params.row.isNew !== true}
@@ -439,7 +462,18 @@ const DataTable = ({
                         pagination: DataTableFooter,
                     }}
                     slotProps={{
-                        pagination: {readOnly, apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows, rightbarDepositsRefresh, setUpdatedContextBudgetDeposit},
+                        pagination: {
+                            readOnly,
+                            apiUrl,
+                            handleAddClick,
+                            selectedRows,
+                            setRemovedRows,
+                            setCopiedRows,
+                            rightbarDepositsRefresh,
+                            copySelectedDisabled,
+                            deleteSelectedDisabled,
+                            setUpdatedContextBudgetDeposit
+                        },
                     }}
                 />
             </Box>
