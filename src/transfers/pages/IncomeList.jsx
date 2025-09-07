@@ -69,21 +69,6 @@ export default function IncomeList() {
             editable: true,
         },
         {
-            field: 'entity',
-            type: 'singleSelect',
-            headerName: 'Sender',
-            headerAlign: 'center',
-            align: 'center',
-            flex: 2,
-            filterable: true,
-            sortable: true,
-            editable: true,
-            valueOptions: entityOptions,
-            valueOptionsSetter: setEntityOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/`,
-            renderEditCell: (params) => <AutocompleteCell{...params} />
-        },
-        {
             field: 'deposit',
             type: 'singleSelect',
             headerName: 'Deposit',
@@ -97,6 +82,21 @@ export default function IncomeList() {
             valueOptionsSetter: setDepositOptions,
             valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`,
             renderEditCell: (params) => <AutocompleteCell{...params} />
+        },
+        {
+            field: 'entity',
+            type: 'singleSelect',
+            headerName: 'Sender',
+            headerAlign: 'center',
+            align: 'center',
+            flex: 2,
+            filterable: true,
+            sortable: true,
+            editable: true,
+            valueOptions: entityOptions,
+            valueOptionsSetter: setEntityOptions,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?ordering=is_deposit`,
+            renderEditCell: (params) => <AutocompleteCell {...params} testXD={'asd'} groupBy={(option) => option.is_deposit ? 'Deposits' : 'Entities'} />
         },
         {
             field: 'category',

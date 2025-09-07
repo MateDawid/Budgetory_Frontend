@@ -95,8 +95,9 @@ export default function ExpenseList() {
             editable: true,
             valueOptions: entityOptions,
             valueOptionsSetter: setEntityOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/`,
-            renderEditCell: (params) => <AutocompleteCell{...params} />
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?ordering=is_deposit`,
+            renderEditCell: (params) => <AutocompleteCell {...params} testXD={'asd'} groupBy={(option) => option.is_deposit ? 'Deposits' : 'Entities'} />
+
         },
         {
             field: 'category',
