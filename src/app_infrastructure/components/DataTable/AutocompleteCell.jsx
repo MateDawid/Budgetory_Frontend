@@ -1,6 +1,6 @@
 import React from 'react';
-import {Autocomplete, TextField} from "@mui/material";
-import {useGridApiContext} from "@mui/x-data-grid";
+import { Autocomplete, autocompleteClasses, Box, TextField, Tooltip } from "@mui/material";
+import { useGridApiContext } from "@mui/x-data-grid";
 
 
 /**
@@ -40,9 +40,10 @@ export default function AutocompleteCell(params) {
                 '& .MuiFormControl-root': {
                     height: '100%',
                 }
-                }}
+            }}
             value={options.find(option => option.value === params.value) || null}
             options={options}
+            groupBy={params.groupBy}
             fullWidth
             getOptionLabel={(selectedOption) => {
                 if (typeof selectedOption === 'object') {
@@ -65,7 +66,45 @@ export default function AutocompleteCell(params) {
                 return false;
             }}
             onChange={handleValueChange}
-            renderInput={(renderParams) => <TextField {...renderParams}/>}
+            renderInput={(renderParams) => {
+                return (
+                    <Tooltip title={renderParams.inputProps.value || ""} placement="top" arrow>
+                        <TextField {...renderParams} />
+                    </Tooltip>
+                )
+
+            }}
+            renderOption={(props, option, state, ownerState) => {
+                const { key, ...optionProps } = props;
+                const label = ownerState.getOptionLabel(option)
+                return (
+                    <Tooltip title={label || ""} placement="top" arrow>
+                        <Box
+                            key={key}
+                            component="li"
+                            {...optionProps}
+                            sx={{
+                                [`&.${autocompleteClasses.option}`]: {
+                                    padding: '8px',
+                                    minWidth: 0,
+                                },
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
+                                    width: '100%',
+                                }}
+                            >
+                                {label}
+                            </Box>
+                        </Box>
+                    </Tooltip>
+
+                );
+            }}
         />
     )
 }
