@@ -95,8 +95,8 @@ export default function IncomeList() {
             editable: true,
             valueOptions: entityOptions,
             valueOptionsSetter: setEntityOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?ordering=is_deposit`,
-            renderEditCell: (params) => <AutocompleteCell {...params} testXD={'asd'} groupBy={(option) => option.is_deposit ? 'Deposits' : 'Entities'} />
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?ordering=is_deposit,name`,
+            renderEditCell: (params) => <AutocompleteCell {...params} groupBy={(option) => option.is_deposit ? 'Deposits' : 'Entities'} />
         },
         {
             field: 'category',
@@ -110,8 +110,8 @@ export default function IncomeList() {
             editable: true,
             valueOptions: categoryOptions,
             valueOptionsSetter: setCategoryOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?category_type=1`,
-            renderEditCell: (params) => <AutocompleteCell {...params} />
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?ordering=owner,name&category_type=1`,
+            renderEditCell: (params) => <AutocompleteCell {...params} groupBy={(option) => option.owner_display} />
         },
 
         {
