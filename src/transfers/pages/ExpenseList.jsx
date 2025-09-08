@@ -95,8 +95,9 @@ export default function ExpenseList() {
             editable: true,
             valueOptions: entityOptions,
             valueOptionsSetter: setEntityOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/`,
-            renderEditCell: (params) => <AutocompleteCell{...params} />
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?ordering=is_deposit,name`,
+            renderEditCell: (params) => <AutocompleteCell {...params} groupBy={(option) => option.is_deposit ? 'Deposits' : 'Entities'} />
+
         },
         {
             field: 'category',
@@ -110,8 +111,8 @@ export default function ExpenseList() {
             editable: true,
             valueOptions: categoryOptions,
             valueOptionsSetter: setCategoryOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?category_type=2`,
-            renderEditCell: (params) => <AutocompleteCell {...params} />
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?ordering=owner,name&category_type=2`,
+            renderEditCell: (params) => <AutocompleteCell {...params} groupBy={(option) => option.owner_display} />
         },
 
         {

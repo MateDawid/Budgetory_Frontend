@@ -69,21 +69,6 @@ export default function IncomeList() {
             editable: true,
         },
         {
-            field: 'entity',
-            type: 'singleSelect',
-            headerName: 'Sender',
-            headerAlign: 'center',
-            align: 'center',
-            flex: 2,
-            filterable: true,
-            sortable: true,
-            editable: true,
-            valueOptions: entityOptions,
-            valueOptionsSetter: setEntityOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/`,
-            renderEditCell: (params) => <AutocompleteCell{...params} />
-        },
-        {
             field: 'deposit',
             type: 'singleSelect',
             headerName: 'Deposit',
@@ -99,6 +84,21 @@ export default function IncomeList() {
             renderEditCell: (params) => <AutocompleteCell{...params} />
         },
         {
+            field: 'entity',
+            type: 'singleSelect',
+            headerName: 'Sender',
+            headerAlign: 'center',
+            align: 'center',
+            flex: 2,
+            filterable: true,
+            sortable: true,
+            editable: true,
+            valueOptions: entityOptions,
+            valueOptionsSetter: setEntityOptions,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?ordering=is_deposit,name`,
+            renderEditCell: (params) => <AutocompleteCell {...params} groupBy={(option) => option.is_deposit ? 'Deposits' : 'Entities'} />
+        },
+        {
             field: 'category',
             type: 'singleSelect',
             headerName: 'Category',
@@ -110,8 +110,8 @@ export default function IncomeList() {
             editable: true,
             valueOptions: categoryOptions,
             valueOptionsSetter: setCategoryOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?category_type=1`,
-            renderEditCell: (params) => <AutocompleteCell {...params} />
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?ordering=owner,name&category_type=1`,
+            renderEditCell: (params) => <AutocompleteCell {...params} groupBy={(option) => option.owner_display} />
         },
 
         {
