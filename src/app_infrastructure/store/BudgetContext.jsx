@@ -19,6 +19,9 @@ export const ContextBudgetProvider = ({ children }) => {
     const [contextBudgetDeposits, setContextBudgetDeposits] = useState([])
     const [updatedContextBudgetDeposit, setUpdatedContextBudgetDeposit] = useState(null)
     const [refreshTimestamp, setRefreshTimestamp] = useState(null);
+    const [loginTimestamp, setLoginTimestamp] = useState(null);
+    const [logoutTimestamp, setLogoutTimestamp] = useState(null);
+
 
     /**
      * Updates refreshTimestampt to current time.
@@ -28,14 +31,58 @@ export const ContextBudgetProvider = ({ children }) => {
     }
 
     /**
+     * Updates loginTimestamp to current time.
+     */
+    const updateLoginTimestamp = () => {
+        setLoginTimestamp(Date.now())
+    }
+
+    /**
+     * Updates loginTimestamp to current time.
+     */
+    const updateLogoutTimestamp = () => {
+        setLogoutTimestamp(Date.now())
+    }
+
+    /**
+     * Saves context Budget data on login.
+     */
+    useEffect(() => {
+        const loadContextBudget = async () => {
+            if (!loginTimestamp) {
+                return
+            }
+            if (!contextBudgetId) {
+                const response = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/`)
+                if (response?.length > 0) {
+                    setContextBudgetId(response[0].id)
+                    setContextBudgetCurrency(response[0].currency)
+                    localStorage.setItem('budgetory.contextBudget', response[0].id)
+                    localStorage.setItem('budgetory.contextBudgetCurrency', response[0].currency)
+                }
+                else {
+                    setContextBudgetId(null)
+                    localStorage.removeItem('budgetory.contextBudget')
+                    localStorage.removeItem('budgetory.contextBudgetCurrency')
+                    return
+                }
+            }
+        }
+        loadContextBudget();
+    }, [loginTimestamp])
+
+    /**
      * Saves contextBudgetId in localStorage on contextBudgetId change.
      */
     useEffect(() => {
-        const loadData = async () => {
-            if (!contextBudgetId) {
+        const loadBudgetDeposits = async () => {
+            if (!contextBudgetId || ['/login', '/register'].includes(window.location.pathname)) {
+                setAlert(null);
                 setContextBudgetDeposits([])
+                return
             }
             try {
+                console.log(`Load from context budget - ${contextBudgetId}`)
                 const response = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`)
                 setContextBudgetDeposits(response);
             } catch (error) {
@@ -44,13 +91,21 @@ export const ContextBudgetProvider = ({ children }) => {
                 setContextBudgetDeposits([])
             }
         }
-
-        if (contextBudgetId) {
-            localStorage.setItem('budgetory.contextBudget', contextBudgetId)
-            localStorage.setItem('budgetory.contextBudgetCurrency', contextBudgetCurrency)
-        }
-        loadData();
+        loadBudgetDeposits();
     }, [contextBudgetId, updatedContextBudgetDeposit])
+
+    /**
+     * Clears context data on logout.
+     */
+    useEffect(() => {
+        const handleLogout = async () => {
+            setContextBudgetDeposits([])
+            setContextBudgetId(null)
+            setContextBudgetCurrency(null)
+            setLoginTimestamp(null)
+        }
+        handleLogout();
+    }, [logoutTimestamp])
 
     const value = {
         contextBudgetId,
@@ -62,7 +117,9 @@ export const ContextBudgetProvider = ({ children }) => {
         contextBudgetDeposits,
         setUpdatedContextBudgetDeposit,
         refreshTimestamp,
-        updateRefreshTimestamp
+        updateRefreshTimestamp,
+        updateLoginTimestamp,
+        updateLogoutTimestamp
     };
 
     return (
