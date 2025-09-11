@@ -1,17 +1,17 @@
-import React, {useState, useEffect, useContext} from 'react';
-import {Select, MenuItem, InputLabel, FormControl} from '@mui/material';
-import {AlertContext} from "../store/AlertContext";
-import {BudgetContext} from "../store/BudgetContext";
-import {getApiObjectsList} from "../services/APIService";
+import React, { useState, useEffect, useContext } from 'react';
+import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
+import { AlertContext } from "../store/AlertContext";
+import { BudgetContext } from "../store/BudgetContext";
+import { getApiObjectsList } from "../services/APIService";
 
 /**
  * BudgetSelector component to display Budget select field for used by DataGrid to obtain Budget data.
  */
 const BudgetSelector = () => {
-    const {contextBudgetId, updatedContextBudget, setContextBudgetId, setContextBudgetCurrency} = useContext(BudgetContext);
+    const { contextBudgetId, updatedContextBudget, setContextBudgetId, setContextBudgetCurrency } = useContext(BudgetContext);
     const [budgets, setBudgets] = useState([]);
     const [selectedBudget, setSelectedBudget] = useState('');
-    const {setAlert} = useContext(AlertContext);
+    const { setAlert } = useContext(AlertContext);
 
     /**
      * Fetches Budgets to be selected in Select component from API and tries to get contextBudget from fetched Budgets.
@@ -26,12 +26,12 @@ const BudgetSelector = () => {
                     setSelectedBudget(contextBudget);
                 }
             } catch (err) {
-                setAlert({type: 'error', message: "Failed to load budgets"});
+                setAlert({ type: 'error', message: "Failed to load budgets" });
                 setBudgets([]);
             }
         }
         loadData();
-    }, [updatedContextBudget]);
+    }, [contextBudgetId, updatedContextBudget]);
 
     /**
      * Function to handle selecting new Budget in Select component.
@@ -42,11 +42,13 @@ const BudgetSelector = () => {
         setSelectedBudget(budgets.find(budget => budget.id === event.target.value.id));
         setContextBudgetId(event.target.value.id);
         setContextBudgetCurrency(event.target.value.currency);
+        localStorage.setItem('budgetory.contextBudget', event.target.value.id)
+        localStorage.setItem('budgetory.contextBudgetCurrency', event.target.value.currency)
     };
 
     return (
         <FormControl sx={{ width: '90%' }} >
-            <InputLabel sx={{fontWeight: 700}} >
+            <InputLabel sx={{ fontWeight: 700 }} >
                 Budget
             </InputLabel>
             <Select value={selectedBudget} onChange={handleChange} label="Budget" sx={{ width: '100%' }}>
