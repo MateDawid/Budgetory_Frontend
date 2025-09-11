@@ -49,7 +49,7 @@ export const ContextBudgetProvider = ({ children }) => {
      */
     useEffect(() => {
         const loadContextBudget = async () => {
-            if (!loginTimestamp) {
+            if (!loginTimestamp || ['/login', '/register'].includes(window.location.pathname)) {
                 return
             }
             if (!contextBudgetId) {
@@ -82,7 +82,6 @@ export const ContextBudgetProvider = ({ children }) => {
                 return
             }
             try {
-                console.log(`Load from context budget - ${contextBudgetId}`)
                 const response = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`)
                 setContextBudgetDeposits(response);
             } catch (error) {
