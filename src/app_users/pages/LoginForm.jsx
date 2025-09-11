@@ -1,12 +1,14 @@
-import React, {useEffect, useState} from 'react';
-import {Avatar, Container, Paper, TextField} from "@mui/material";
+import React, { useContext, useEffect, useState } from 'react';
+import { Alert, Avatar, Container, Paper, TextField } from "@mui/material";
 import Button from "@mui/material/Button";
-import {getAccessToken, logIn} from "../services/LoginService";
-import {Link as RouterLink, useNavigate} from "react-router-dom";
+import { getAccessToken, logIn } from "../services/LoginService";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import Typography from "@mui/material/Typography";
-import {useForm} from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Box from "@mui/material/Box";
+import { AlertContext } from '../../app_infrastructure/store/AlertContext';
+import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
 
 /**
  * LoginForm component handles user login.
@@ -14,9 +16,10 @@ import Box from "@mui/material/Box";
  * validates the input, and performs login process.
  */
 function LoginForm() {
-    const {register, handleSubmit, formState: {errors}} = useForm();
+    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { alert, setAlert } = useContext(AlertContext);
+    const { updateLoginTimestamp } = useContext(BudgetContext);
     const navigate = useNavigate();
-    const [error, setError] = useState('');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
@@ -40,24 +43,46 @@ function LoginForm() {
      */
     const onSubmit = async (data) => {
         try {
-            const {response, isError} = await logIn(data.email, data.password);
+            const { response, isError } = await logIn(data.email, data.password);
             if (isError) {
-                setError(
-                    response.response.data.detail.non_field_errors ||
-                    response.response.data.detail ||
-                    'An error occurred. Please try again.');
+                setAlert({
+                    type: 'error',
+                    message:
+                        response.response.data.detail?.non_field_errors ||
+                        response.response.data.detail ||
+                        'An error occurred. Please try again.'
+                });
             }
             else {
+                updateLoginTimestamp()
                 setIsLoggedIn(true)
             }
         } catch (error) {
-            setError(error.response.data.message || 'Network error. Please try again later.');
+            setAlert({
+                type: 'error',
+                message: error.response.data.message || 'Network error. Please try again later.'
+            });
         }
     }
 
     return (
         <Container component="main" maxWidth="xs">
-            <Paper elevation={10} sx={{marginTop: 8, padding: 2}}>
+            <Paper elevation={10} sx={{ marginTop: 8, padding: 2 }}>
+                <Typography
+                    variant="h6"
+                    sx={{
+                        textDecoration: 'none',
+                        fontFamily: 'monospace',
+                        fontWeight: 700,
+                        letterSpacing: '.3rem',
+                        color: 'inherit',
+                        textAlign: "center",
+                        width: '100%',
+                        marginBottom: 1
+                    }}
+                >
+                    BUDGETORY
+                </Typography>
                 <Avatar
                     sx={{
                         mx: "auto",
@@ -66,11 +91,20 @@ function LoginForm() {
                         mb: 1,
                     }}
                 >
-                    <LockOutlinedIcon/>
+                    <LockOutlinedIcon />
                 </Avatar>
-                <Typography component="h1" variant="h5" sx={{textAlign: "center"}}>Log in</Typography>
-                {error && <Typography data-cy='errors-display' color="error">{error}</Typography>}
-                <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{mt: 1}}>
+                <Typography component="h1" variant="h5" sx={{ textAlign: "center" }}>Log in</Typography>
+                {
+                    alert &&
+                    <Alert
+                        sx={{ marginTop: 2, marginBottom: 2, whiteSpace: 'pre-wrap' }}
+                        severity={alert.type}
+                        onClose={() => setAlert(null)}>
+                        {alert.message}
+                    </Alert>
+                }
+
+                <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1 }}>
                     <TextField
                         variant="outlined"
                         margin="normal"
@@ -84,7 +118,6 @@ function LoginForm() {
                         })}
                         error={!!errors.email}
                         helperText={errors.email ? errors.email.message : ''}
-                        sx={{mb: 2}}
                     />
                     <TextField
                         variant="outlined"
@@ -100,13 +133,12 @@ function LoginForm() {
                         error={!!errors.password}
                         helperText={errors.password ? errors.password.message : ''}
                     />
-                    <Button type="submit" variant="contained" fullWidth sx={{mt: 1, bgcolor: "#BD0000"}}>
+                    <Button type="submit" variant="contained" fullWidth sx={{ mt: 1, bgcolor: "#BD0000" }}>
                         Log in
                     </Button>
                 </Box>
-                <Typography component="h3" variant="h6" sx={{textAlign: "center"}}>Don&apos;t have an account?</Typography>
                 <Button component={RouterLink} to="/register" variant="contained" fullWidth
-                        sx={{mt: 1, bgcolor: "#BD0000"}}>
+                    sx={{ mt: 1, bgcolor: "#BD0000" }}>
                     Register
                 </Button>
             </Paper>
