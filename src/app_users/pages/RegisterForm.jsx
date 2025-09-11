@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Alert, Avatar, Container, Paper, TextField } from "@mui/material";
 import Button from "@mui/material/Button";
@@ -18,7 +18,8 @@ import { AlertContext } from '../../app_infrastructure/store/AlertContext';
  */
 function RegisterForm() {
     const navigate = useNavigate();
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { register, handleSubmit } = useForm();
+    const [ formErrors, setFormErrors ] = useState({})
     const { alert, setAlert } = useContext(AlertContext);
 
     useEffect(() => {
@@ -43,17 +44,22 @@ function RegisterForm() {
     const onSubmit = async (data) => {
         try {
             const { response, isError } = await registerUser(data);
-            console.log(response)
             if (isError) {
                 setAlert({
                     type: 'error',
-                    message: response.response.data.detail?.email
-                        || response.response.data.detail?.username
-                        || response.response.data.detail?.password_1
-                        || response.response.data.detail?.password_2
-                        || response.response.data.detail?.non_field_errors
+                    message: response.response.data.detail?.non_field_errors
                         || 'An error occurred. Please try again.'
                 });
+
+                if (response.response.data.detail) {
+                    const requestErrors = {};
+                    for (const key in response.response.data.detail) {
+                        requestErrors[key] = response.response.data.detail[key];
+                    }
+                    setFormErrors(requestErrors);
+                }
+
+
             } else {
                 setAlert({ type: 'success', message: 'Account created successfully.' })
                 navigate('/login');
@@ -121,8 +127,8 @@ function RegisterForm() {
                                 message: 'Invalid email address'
                             }
                         })}
-                        error={!!errors.email}
-                        helperText={errors.email ? errors.email.message : ''}
+                        error={!!formErrors.email}
+                        helperText={formErrors.email ? formErrors.email : ''}
                     />
                     <TextField
                         data-cy='username-field'
@@ -135,8 +141,8 @@ function RegisterForm() {
                         {...register('username', {
                             required: 'Username is required'
                         })}
-                        error={!!errors.username}
-                        helperText={errors.username ? errors.username.message : ''}
+                        error={!!formErrors.username}
+                        helperText={formErrors.username ? formErrors.username : ''}
                     />
                     <TextField
                         data-cy='password-1-field'
@@ -150,8 +156,8 @@ function RegisterForm() {
                         {...register('password_1', {
                             required: 'Password is required'
                         })}
-                        error={!!errors.password_1}
-                        helperText={errors.password_1 ? errors.password_1.message : ''}
+                        error={!!formErrors.password_1}
+                        helperText={formErrors.password_1 ? formErrors.password_1 : ''}
                     />
                     <TextField
                         data-cy='password-2-field'
@@ -165,8 +171,8 @@ function RegisterForm() {
                         {...register('password_2', {
                             required: 'Password is required'
                         })}
-                        error={!!errors.password_2}
-                        helperText={errors.password_2 ? errors.password_2.message : ''}
+                        error={!!formErrors.password_2}
+                        helperText={formErrors.password_2 ? formErrors.password_2 : ''}
                     />
                     <Button data-cy='register-button' type="submit" variant="contained" fullWidth sx={{ mt: 1, bgcolor: "#BD0000" }}>
                         Register

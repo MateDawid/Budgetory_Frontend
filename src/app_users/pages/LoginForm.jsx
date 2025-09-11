@@ -17,8 +17,8 @@ import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
  */
 function LoginForm() {
     const { register, handleSubmit, formState: { errors } } = useForm();
-    const {alert, setAlert} = useContext(AlertContext);
-    const {updateLoginTimestamp} = useContext(BudgetContext);
+    const { alert, setAlert } = useContext(AlertContext);
+    const { updateLoginTimestamp } = useContext(BudgetContext);
     const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -44,20 +44,24 @@ function LoginForm() {
     const onSubmit = async (data) => {
         try {
             const { response, isError } = await logIn(data.email, data.password);
-            console.log('Login')
-            updateLoginTimestamp()
             if (isError) {
-                setAlert(
-                    response.response.data.detail?.non_field_errors ||
-                    response.response.data.detail ||
-                    'An error occurred. Please try again.');
+                setAlert({
+                    type: 'error',
+                    message:
+                        response.response.data.detail?.non_field_errors ||
+                        response.response.data.detail ||
+                        'An error occurred. Please try again.'
+                });
             }
             else {
+                updateLoginTimestamp()
                 setIsLoggedIn(true)
-                setAlert(null)
             }
         } catch (error) {
-            setAlert(error.response.data.message || 'Network error. Please try again later.');
+            setAlert({
+                type: 'error',
+                message: error.response.data.message || 'Network error. Please try again later.'
+            });
         }
     }
 
