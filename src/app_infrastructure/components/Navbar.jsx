@@ -1,15 +1,18 @@
-import {AppBar} from '@mui/material'
+import { AppBar } from '@mui/material'
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import * as React from "react";
-import {removeTokens} from "../../app_users/services/LoginService";
-import {useNavigate} from "react-router-dom";
-import {styled} from "@mui/material/styles";
+import { removeTokens } from "../../app_users/services/LoginService";
+import { useNavigate } from "react-router-dom";
+import { styled } from "@mui/material/styles";
+import { useContext } from 'react';
+import { BudgetContext } from '../store/BudgetContext';
+import React from 'react';
+import { AlertContext } from '../store/AlertContext';
 
 const StyledToolbar = styled(Toolbar)({
-  display: "flex",
-  justifyContent: "space-between"
+    display: "flex",
+    justifyContent: "space-between"
 })
 
 /**
@@ -17,17 +20,21 @@ const StyledToolbar = styled(Toolbar)({
  */
 const Navbar = () => {
     const navigate = useNavigate();
-
+    const { updateLogoutTimestamp } = useContext(BudgetContext);
+    const { setAlert } = useContext(AlertContext);
+    
     /**
      * Handles User logout.
      */
     const handleLogout = () => {
         removeTokens();
+        updateLogoutTimestamp();
+        setAlert(null)
         navigate('/login');
     }
 
     return (
-        <AppBar position="sticky" sx={{backgroundColor: "#BD0000"}}>
+        <AppBar position="sticky" sx={{ backgroundColor: "#BD0000" }}>
             <StyledToolbar>
                 <Typography
                     variant="h6"
