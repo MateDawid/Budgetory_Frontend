@@ -8,7 +8,6 @@ import { useForm } from 'react-hook-form';
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Box from "@mui/material/Box";
 import { AlertContext } from '../../app_infrastructure/store/AlertContext';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
 
 /**
  * LoginForm component handles user login.
@@ -18,7 +17,6 @@ import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
 function LoginForm() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const { alert, setAlert } = useContext(AlertContext);
-    const { updateLoginTimestamp } = useContext(BudgetContext);
     const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -54,7 +52,6 @@ function LoginForm() {
                 });
             }
             else {
-                updateLoginTimestamp()
                 setIsLoggedIn(true)
             }
         } catch (error) {
