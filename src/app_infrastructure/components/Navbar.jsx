@@ -6,7 +6,6 @@ import { removeTokens } from "../../app_users/services/LoginService";
 import { useNavigate } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import { useContext } from 'react';
-import { BudgetContext } from '../store/BudgetContext';
 import React from 'react';
 import { AlertContext } from '../store/AlertContext';
 
@@ -20,7 +19,6 @@ const StyledToolbar = styled(Toolbar)({
  */
 const Navbar = () => {
     const navigate = useNavigate();
-    const { updateLogoutTimestamp } = useContext(BudgetContext);
     const { setAlert } = useContext(AlertContext);
     
     /**
@@ -28,7 +26,6 @@ const Navbar = () => {
      */
     const handleLogout = () => {
         removeTokens();
-        updateLogoutTimestamp();
         setAlert(null)
         navigate('/login');
     }
