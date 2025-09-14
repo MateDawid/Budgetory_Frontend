@@ -182,6 +182,9 @@ const DataTable = ({
                 setLoading(false);
             }
         }
+        if (!contextBudgetId) {
+            return
+        }
         loadData();
     }, [contextBudgetId, paginationModel, sortModel, filterModel, removedRows, copiedRows]);
 
@@ -202,6 +205,9 @@ const DataTable = ({
                     setAlert({ type: 'error', message: "Failed to load choices for select field.\n" + err });
                 }
             }
+        }
+        if (!contextBudgetId) {
+            return
         }
         loadSingleSelectChoices();
     }, [contextBudgetId])
