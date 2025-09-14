@@ -10,7 +10,8 @@ const BudgetSelector = () => {
     const {
         contextBudgetId,
         setContextBudgetId,
-        setContextBudgetCurrency
+        setContextBudgetCurrency,
+        refreshTimestamp
     } = useContext(BudgetContext);
     const [budgets, setBudgets] = useState([]);
     const [selectedBudget, setSelectedBudget] = useState('');
@@ -47,6 +48,7 @@ const BudgetSelector = () => {
                 const contextBudget = apiResponse.find(budget => budget.id === loadedBudgetId);
                 if (contextBudget) {
                     setSelectedBudget(contextBudget);
+                    setContextBudgetCurrency(contextBudget.currency)
                 }
                 else {
                     setSelectedBudget(apiResponse[0]);
@@ -59,7 +61,7 @@ const BudgetSelector = () => {
             }
         }
         loadBudgets();
-    }, []);
+    }, [refreshTimestamp]);
 
     /**
      * Function to handle selecting new Budget in Select component.
