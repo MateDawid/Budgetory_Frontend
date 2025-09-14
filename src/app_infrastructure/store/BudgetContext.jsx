@@ -8,8 +8,6 @@ export const BudgetContext = createContext();
 export const ContextBudgetProvider = ({ children }) => {
     const [contextBudgetId, setContextBudgetId] = useState(null);
     const [contextBudgetCurrency, setContextBudgetCurrency] = useState(null);
-    const [updatedContextBudget, setUpdatedContextBudget] = useState(null)
-    const [updatedContextBudgetDeposit, setUpdatedContextBudgetDeposit] = useState(null) // TODO: Handle by refreshTimestamp?
     const [refreshTimestamp, setRefreshTimestamp] = useState(null); // TODO: Verify usage
 
     /**
@@ -22,12 +20,8 @@ export const ContextBudgetProvider = ({ children }) => {
     const value = {
         contextBudgetId,
         setContextBudgetId,
-        updatedContextBudget,
-        setUpdatedContextBudget,
         contextBudgetCurrency,
         setContextBudgetCurrency,
-        updatedContextBudgetDeposit,
-        setUpdatedContextBudgetDeposit,
         refreshTimestamp,
         updateRefreshTimestamp,
     };
