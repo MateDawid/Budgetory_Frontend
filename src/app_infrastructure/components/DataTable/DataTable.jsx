@@ -91,7 +91,7 @@ const DataTable = ({
     const [sortModel, setSortModel] = React.useState({});
     const [filterModel, setFilterModel] = React.useState({ items: [] });
     const { setAlert } = useContext(AlertContext);
-    const { contextBudgetId, setUpdatedContextBudgetDeposit } = useContext(BudgetContext);
+    const { contextBudgetId, updateRefreshTimestamp } = useContext(BudgetContext);
 
     const visibleColumns = columns.filter(column => !column.hide);
 
@@ -182,6 +182,9 @@ const DataTable = ({
                 setLoading(false);
             }
         }
+        if (!contextBudgetId) {
+            return
+        }
         loadData();
     }, [contextBudgetId, paginationModel, sortModel, filterModel, removedRows, copiedRows]);
 
@@ -202,6 +205,9 @@ const DataTable = ({
                     setAlert({ type: 'error', message: "Failed to load choices for select field.\n" + err });
                 }
             }
+        }
+        if (!contextBudgetId) {
+            return
         }
         loadSingleSelectChoices();
     }, [contextBudgetId])
@@ -343,14 +349,14 @@ const DataTable = ({
                     });
             });
             if (rightbarDepositsRefresh) {
-                setUpdatedContextBudgetDeposit(`${createResponse.id}_create`)
+                updateRefreshTimestamp()
             }
             return createResponse;
         } else {
             const updateResponse = await updateApiObject(apiUrl, processedRow);
             setAlert({ type: 'success', message: `Object updated successfully.` })
             if (rightbarDepositsRefresh) {
-                setUpdatedContextBudgetDeposit(`${updateResponse.id}_update`)
+                updateRefreshTimestamp()
             }
             return updateResponse;
         }
@@ -420,7 +426,7 @@ const DataTable = ({
             await deleteApiObject(apiUrl, row.id);
             setRemovedRows([row.id])
             if (rightbarDepositsRefresh) {
-                setUpdatedContextBudgetDeposit(`${row.id}_delete`)
+                updateRefreshTimestamp()
             }
             setAlert({ type: 'success', message: "Object deleted successfully" });
         } catch (error) {
@@ -472,7 +478,6 @@ const DataTable = ({
                             rightbarDepositsRefresh,
                             copySelectedDisabled,
                             deleteSelectedDisabled,
-                            setUpdatedContextBudgetDeposit
                         },
                     }}
                 />

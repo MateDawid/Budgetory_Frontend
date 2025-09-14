@@ -55,6 +55,9 @@ export default function BudgetingPeriodDetail() {
                 navigate('/periods');
             }
         }
+        if (!contextBudgetId) {
+            return
+        }
         loadData();
     }, [refreshTimestamp, contextBudgetId]);
 
@@ -115,7 +118,7 @@ export default function BudgetingPeriodDetail() {
                         {...objectFields[fieldName]}
                     />
                 ))}
-                <PeriodExpensePredictionsComponent periodId={id} periodStatus={objectData.status}/>
+                <PeriodExpensePredictionsComponent periodId={id} periodStatus={objectData.status} />
             </Box>
         </Paper>
     );

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
-import { AlertContext } from "../store/AlertContext";
 import { BudgetContext } from "../store/BudgetContext";
 import { getApiObjectsList } from "../services/APIService";
 
@@ -8,30 +7,61 @@ import { getApiObjectsList } from "../services/APIService";
  * BudgetSelector component to display Budget select field for used by DataGrid to obtain Budget data.
  */
 const BudgetSelector = () => {
-    const { contextBudgetId, updatedContextBudget, setContextBudgetId, setContextBudgetCurrency } = useContext(BudgetContext);
+    const {
+        contextBudgetId,
+        setContextBudgetId,
+        setContextBudgetCurrency,
+        refreshTimestamp
+    } = useContext(BudgetContext);
     const [budgets, setBudgets] = useState([]);
     const [selectedBudget, setSelectedBudget] = useState('');
-    const { setAlert } = useContext(AlertContext);
+
+    useEffect(() => {
+
+
+    }, [])
 
     /**
      * Fetches Budgets to be selected in Select component from API and tries to get contextBudget from fetched Budgets.
      */
     useEffect(() => {
-        const loadData = async () => {
+        const loadContextBudget = () => {
+            if (contextBudgetId) {
+                return contextBudgetId
+            }
+            const storageContextBudgetId = localStorage.getItem('budgetory.contextBudget')
+                ? parseInt(localStorage.getItem('budgetory.contextBudget'), 10)
+                : null;
+            const storageContextBudgetCurrency = localStorage.getItem('budgetory.contextBudgetCurrency') || ''
+            setContextBudgetId(storageContextBudgetId)
+            setContextBudgetCurrency(storageContextBudgetCurrency)
+            return storageContextBudgetId
+        }
+        const loadBudgets = async () => {
             try {
+                const loadedBudgetId = loadContextBudget();
                 const apiResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/`)
                 setBudgets(apiResponse);
-                const contextBudget = apiResponse.find(budget => budget.id === contextBudgetId);
+                if (apiResponse.length < 1) {
+                    return
+                }
+                const contextBudget = apiResponse.find(budget => budget.id === loadedBudgetId);
                 if (contextBudget) {
                     setSelectedBudget(contextBudget);
+                    setContextBudgetCurrency(contextBudget.currency)
+                }
+                else {
+                    setSelectedBudget(apiResponse[0]);
+                    setContextBudgetId(apiResponse[0].id)
+                    localStorage.setItem('budgetory.contextBudget', apiResponse[0].id)
+                    localStorage.setItem('budgetory.contextBudgetCurrency', apiResponse[0].currency)
                 }
             } catch (err) {
-                setAlert({ type: 'error', message: "Failed to load budgets" });
                 setBudgets([]);
             }
         }
-        loadData();
-    }, [contextBudgetId, updatedContextBudget]);
+        loadBudgets();
+    }, [refreshTimestamp]);
 
     /**
      * Function to handle selecting new Budget in Select component.

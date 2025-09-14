@@ -1,11 +1,11 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Typography from "@mui/material/Typography";
-import {Box, Paper, Stack} from "@mui/material";
+import { Box, Paper, Stack } from "@mui/material";
 import Divider from "@mui/material/Divider";
 import Alert from '@mui/material/Alert';
-import {AlertContext} from "../../app_infrastructure/store/AlertContext";
-import {BudgetContext} from "../../app_infrastructure/store/BudgetContext";
-import {getApiObjectsList} from "../../app_infrastructure/services/APIService";
+import { AlertContext } from "../../app_infrastructure/store/AlertContext";
+import { BudgetContext } from "../../app_infrastructure/store/BudgetContext";
+import { getApiObjectsList } from "../../app_infrastructure/services/APIService";
 import EntityCard from "../components/EntityCard";
 import CreateButton from "../../app_infrastructure/components/CreateButton";
 
@@ -14,9 +14,9 @@ import CreateButton from "../../app_infrastructure/components/CreateButton";
  * EntityList component to display list of Budget Entities.
  */
 export default function EntityList() {
-    const {contextBudgetId, refreshTimestamp} = useContext(BudgetContext);
+    const { contextBudgetId, refreshTimestamp } = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?is_deposit=false`
-    const {alert, setAlert} = useContext(AlertContext);
+    const { alert, setAlert } = useContext(AlertContext);
     const [updatedObjectId, setUpdatedObjectId] = useState(null);
     const [deletedObjectId, setDeletedObjectId] = useState(null);
     const [objects, setObjects] = useState([]);
@@ -62,8 +62,11 @@ export default function EntityList() {
                 const listResponse = await getApiObjectsList(apiUrl)
                 setObjects(listResponse);
             } catch (err) {
-                setAlert({type: 'error', message: "Failed to load Entities."});
+                setAlert({ type: 'error', message: "Failed to load Entities." });
             }
+        }
+        if (!contextBudgetId) {
+            return
         }
         loadData();
     }, [contextBudgetId, refreshTimestamp, updatedObjectId, deletedObjectId]);
@@ -74,15 +77,15 @@ export default function EntityList() {
         }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                 <Typography variant="h4"
-                            sx={{display: 'block', color: '#BD0000'}}>Entities</Typography>
-                <CreateButton fields={createFields} apiUrl={apiUrl} objectType={"Entity"}/>
+                    sx={{ display: 'block', color: '#BD0000' }}>Entities</Typography>
+                <CreateButton fields={createFields} apiUrl={apiUrl} objectType={"Entity"} />
             </Stack>
-            <Divider/>
-            {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}
-                             onClose={() => setAlert(null)}>{alert.message}</Alert>}
-            <Box sx={{display: "flex", flexWrap: 'wrap', justifyContent: 'flex-start'}}>
+            <Divider />
+            {alert && <Alert sx={{ marginTop: 2, whiteSpace: 'pre-wrap' }} severity={alert.type}
+                onClose={() => setAlert(null)}>{alert.message}</Alert>}
+            <Box sx={{ display: "flex", flexWrap: 'wrap', justifyContent: 'flex-start' }}>
                 {objects.map(object => (
-                    <Box key={object.id} sx={{width: 330, m: 1}}>
+                    <Box key={object.id} sx={{ width: 330, m: 1 }}>
                         <EntityCard
                             apiUrl={apiUrl}
                             object={object}

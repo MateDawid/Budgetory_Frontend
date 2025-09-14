@@ -23,7 +23,7 @@ export default function BudgetDetail() {
     const navigate = useNavigate()
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/`
     const [updatedObjectParam, setUpdatedObjectParam] = useState(null);
-    const {setUpdatedContextBudget} = useContext(BudgetContext);
+    const {updateRefreshTimestamp} = useContext(BudgetContext);
     const {alert, setAlert} = useContext(AlertContext);
     const [budgetData, setBudgetData] = useState([]);
     const depositsColumns = [
@@ -97,7 +97,7 @@ export default function BudgetDetail() {
      */
     const onSave = async (apiFieldName, value) => {
         await onEditableFieldSave(id, apiFieldName, value, apiUrl, setUpdatedObjectParam, setAlert)
-        setUpdatedContextBudget(`${id}_${apiFieldName}_${value}`)
+        updateRefreshTimestamp()
     };
 
     return (

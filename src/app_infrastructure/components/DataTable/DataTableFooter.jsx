@@ -21,7 +21,7 @@ import { BudgetContext } from "../../store/BudgetContext";
  */
 const DataTableFooterButtons = ({ apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows, rightbarDepositsRefresh, copySelectedDisabled, deleteSelectedDisabled }) => {
     const { setAlert } = useContext(AlertContext);
-    const { setUpdatedContextBudgetDeposit } = useContext(BudgetContext);
+    const { updateRefreshTimestamp } = useContext(BudgetContext);
 
     /**
      * Used to rerender component on rows selection.
@@ -37,7 +37,7 @@ const DataTableFooterButtons = ({ apiUrl, handleAddClick, selectedRows, setRemov
             setAlert({ type: 'success', message: `Selected objects deleted successfully.` })
             setRemovedRows(selectedRows)
             if (rightbarDepositsRefresh) {
-                setUpdatedContextBudgetDeposit(`${selectedRows.join(',')}_bulk_delete_${new Date().toISOString()}`)
+                updateRefreshTimestamp()
             }
         } catch (error) {
             setAlert({ type: 'error', message: 'Deleting objects failed.' })
@@ -54,7 +54,7 @@ const DataTableFooterButtons = ({ apiUrl, handleAddClick, selectedRows, setRemov
             setAlert({ type: 'success', message: `Selected objects copied successfully.` })
             setCopiedRows(copyResponse.ids)
             if (rightbarDepositsRefresh) {
-                setUpdatedContextBudgetDeposit(`${selectedRows.join(',')}_copy_${new Date().toISOString()}`)
+                updateRefreshTimestamp()
             }
         } catch (error) {
             setAlert({ type: 'error', message: 'Copying objects failed.' })

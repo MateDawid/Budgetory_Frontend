@@ -80,6 +80,9 @@ const PeriodExpensePredictionsComponent = ({ periodId, periodStatus }) => {
             const userPeriodResultsResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/user_results/${periodId}/`)
             setUserPeriodResults(userPeriodResultsResponse)
         }
+        if (!contextBudgetId) {
+            return
+        }
         getPredictions();
         getUsersPeriodResults();
     }, [contextBudgetId, refreshTimestamp, ownerFilter, categoryFilter]);
@@ -91,6 +94,9 @@ const PeriodExpensePredictionsComponent = ({ periodId, periodStatus }) => {
         async function getOwners() {
             const ownerResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/members/`)
             setOwnerOptions([{ value: -1, label: '🏦 Common' }, ...ownerResponse]);
+        }
+        if (!contextBudgetId) {
+            return
         }
         getOwners();
     }, [contextBudgetId]);
@@ -107,6 +113,9 @@ const PeriodExpensePredictionsComponent = ({ periodId, periodStatus }) => {
             const categoryResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?category_type=2`, {}, {}, filterModel)
             setCategoryOptions(categoryResponse);
             setCategoryFilter(null)
+        }
+        if (!contextBudgetId) {
+            return
         }
         getCategories();
     }, [contextBudgetId, ownerFilter]);

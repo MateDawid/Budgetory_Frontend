@@ -1,12 +1,12 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Divider from "@mui/material/Divider";
 import Alert from '@mui/material/Alert';
-import {AlertContext} from "../../app_infrastructure/store/AlertContext";
-import {Typography, Paper, Box, Stack, Chip} from "@mui/material";
-import {getApiObjectDetails} from "../../app_infrastructure/services/APIService";
-import {useNavigate, useParams} from "react-router-dom";
+import { AlertContext } from "../../app_infrastructure/store/AlertContext";
+import { Typography, Paper, Box, Stack, Chip } from "@mui/material";
+import { getApiObjectDetails } from "../../app_infrastructure/services/APIService";
+import { useNavigate, useParams } from "react-router-dom";
 import EditableTextField from "../../app_infrastructure/components/EditableTextField";
-import {BudgetContext} from "../../app_infrastructure/store/BudgetContext";
+import { BudgetContext } from "../../app_infrastructure/store/BudgetContext";
 import DeleteButton from "../../app_infrastructure/components/DeleteButton";
 import onEditableFieldSave from "../../app_infrastructure/utils/onEditableFieldSave";
 
@@ -14,12 +14,12 @@ import onEditableFieldSave from "../../app_infrastructure/utils/onEditableFieldS
  * EntityDetail component to display details of single Entity.
  */
 export default function EntityDetail() {
-    const {id} = useParams();
+    const { id } = useParams();
     const navigate = useNavigate()
     const [updatedObjectParam, setUpdatedObjectParam] = useState(null);
-    const {contextBudgetId} = useContext(BudgetContext);
+    const { contextBudgetId } = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/`
-    const {alert, setAlert} = useContext(AlertContext);
+    const { alert, setAlert } = useContext(AlertContext);
     const [objectData, setObjectData] = useState([]);
     const objectFields = {
         name: {
@@ -62,9 +62,12 @@ export default function EntityDetail() {
                 const apiResponse = await getApiObjectDetails(apiUrl, id)
                 setObjectData(apiResponse);
             } catch (err) {
-                setAlert({type: 'error', message: 'Entity details loading failed.'})
+                setAlert({ type: 'error', message: 'Entity details loading failed.' })
                 navigate('/entities');
             }
+        }
+        if (!contextBudgetId) {
+            return
         }
         loadData();
     }, [updatedObjectParam, contextBudgetId]);
@@ -85,25 +88,25 @@ export default function EntityDetail() {
         }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
-                    <Typography variant="h4" sx={{display: 'block', color: '#BD0000'}}>{objectData.name}</Typography>
-                    <Chip label={objectData.is_active ? "🟢 Active" : "🔴 Inactive"} variant="outlined"/>
+                    <Typography variant="h4" sx={{ display: 'block', color: '#BD0000' }}>{objectData.name}</Typography>
+                    <Chip label={objectData.is_active ? "🟢 Active" : "🔴 Inactive"} variant="outlined" />
                 </Stack>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
-                    <DeleteButton apiUrl={apiUrl} objectId={objectData.id} objectDisplayName="Entity" redirectOnSuccess={'/entities'}/>
+                    <DeleteButton apiUrl={apiUrl} objectId={objectData.id} objectDisplayName="Entity" redirectOnSuccess={'/entities'} />
                 </Stack>
             </Stack>
-            <Divider/>
-            {alert && <Alert sx={{marginTop: 2, whiteSpace: 'pre-wrap'}} severity={alert.type}
-                             onClose={() => setAlert(null)}>{alert.message}</Alert>}
-            <Box sx={{marginTop: 2}}>
-                <Typography variant="h5" sx={{display: 'block', color: '#BD0000'}}>Details</Typography>
-                <Divider sx={{marginBottom: 2}}/>
+            <Divider />
+            {alert && <Alert sx={{ marginTop: 2, whiteSpace: 'pre-wrap' }} severity={alert.type}
+                onClose={() => setAlert(null)}>{alert.message}</Alert>}
+            <Box sx={{ marginTop: 2 }}>
+                <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>Details</Typography>
+                <Divider sx={{ marginBottom: 2 }} />
                 {Object.keys(objectFields).map((fieldName) => (
                     <EditableTextField
                         key={fieldName}
                         apiFieldName={fieldName}
                         initialValue={objectData[fieldName]}
-                        inputProps={objectFields[fieldName]['type'] === 'date' ? {max: '9999-12-31'} : {}}
+                        inputProps={objectFields[fieldName]['type'] === 'date' ? { max: '9999-12-31' } : {}}
                         fullWidth
                         onSave={onSave}
                         {...objectFields[fieldName]}

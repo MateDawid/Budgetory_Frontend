@@ -44,6 +44,9 @@ export default function BudgetingPeriodList() {
      */
     useEffect(() => {
         const loadData = async () => {
+            if (!contextBudgetId) {
+                return
+            }
             try {
                 const listResponse = await getApiObjectsList(apiUrl,{}, {ordering: '-date_start'})
                 setObjects(listResponse);
