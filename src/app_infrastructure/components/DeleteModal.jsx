@@ -25,7 +25,7 @@ import {BudgetContext} from "../store/BudgetContext";
 const DeleteModal = ({open, setOpen, objectId, apiUrl, objectDisplayName, message, setDeletedObjectId = null, redirectOnSuccess = null, rightbarBudgetsRefresh = false, rightbarDepositsRefresh = false}) => {
     const navigate = useNavigate();
     const {setAlert} = useContext(AlertContext);
-    const {setUpdatedContextBudget, setUpdatedContextBudgetDeposit} = useContext(BudgetContext);
+    const {updateRefreshTimestamp} = useContext(BudgetContext);
     const {handleSubmit} = useForm();
 
     /**
@@ -41,11 +41,8 @@ const DeleteModal = ({open, setOpen, objectId, apiUrl, objectDisplayName, messag
             if (redirectOnSuccess !== null) {
                 navigate(redirectOnSuccess)
             }
-            if (rightbarBudgetsRefresh) {
-                setUpdatedContextBudget(`${objectId}_delete`)
-            }
-            if (rightbarDepositsRefresh) {
-                setUpdatedContextBudgetDeposit(`${objectId}_delete`)
+            if (rightbarBudgetsRefresh || rightbarDepositsRefresh) {
+                updateRefreshTimestamp()
             }
         } catch (error) {
             console.error(error)
