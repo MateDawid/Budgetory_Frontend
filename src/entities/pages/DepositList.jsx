@@ -81,6 +81,9 @@ export default function DepositList() {
                 setAlert({ type: 'error', message: "Failed to load Deposits." });
             }
         }
+        if (!contextBudgetId) {
+            return
+        }
         loadData();
     }, [contextBudgetId, refreshTimestamp, updatedObjectId, deletedObjectId]);
 
@@ -97,6 +100,9 @@ export default function DepositList() {
             } catch (err) {
                 setAlert({ type: 'error', message: "Failed to load select fields data." });
             }
+        }
+        if (!contextBudgetId) {
+            return
         }
         loadOwnerOptions();
     }, [contextBudgetId]);

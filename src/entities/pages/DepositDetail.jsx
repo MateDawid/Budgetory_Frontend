@@ -82,6 +82,9 @@ export default function DepositDetail() {
                 navigate('/deposits');
             }
         }
+        if (!contextBudgetId) {
+            return
+        }
         loadData();
     }, [updatedObjectParam, contextBudgetId]);
 
@@ -98,6 +101,9 @@ export default function DepositDetail() {
             } catch (err) {
                 setAlert({ type: 'error', message: "Failed to load select fields data." });
             }
+        }
+        if (!contextBudgetId) {
+            return
         }
         loadOwnerOptions();
     }, [contextBudgetId]);
