@@ -1,11 +1,11 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Typography from "@mui/material/Typography";
-import {Box, Paper, Stack} from "@mui/material";
+import { Box, Paper, Stack } from "@mui/material";
 import Divider from "@mui/material/Divider";
 import Alert from '@mui/material/Alert';
-import {AlertContext} from "../../app_infrastructure/store/AlertContext";
-import {BudgetContext} from "../../app_infrastructure/store/BudgetContext";
-import {getApiObjectsList} from "../../app_infrastructure/services/APIService";
+import { AlertContext } from "../../app_infrastructure/store/AlertContext";
+import { BudgetContext } from "../../app_infrastructure/store/BudgetContext";
+import { getApiObjectsList } from "../../app_infrastructure/services/APIService";
 import TransferCategoryCard from "../components/TransferCategoryCard";
 import CreateButton from "../../app_infrastructure/components/CreateButton";
 import loadSelectOptionForCategory from "../utils/loadSelectOptionForCategory";
@@ -17,7 +17,7 @@ import SearchField from "../../app_infrastructure/components/SearchField";
  * TransferCategoryList component to display list of Budget TransferCategories.
  */
 export default function TransferCategoryList() {
-    const {contextBudgetId, refreshTimestamp} = useContext(BudgetContext);
+    const { contextBudgetId, refreshTimestamp } = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/`
 
     const [searchQuery, setSearchQuery] = useState("");
@@ -26,7 +26,7 @@ export default function TransferCategoryList() {
     const [ownerFilter, setOwnerFilter] = useState(null);
     const [activeFilter, setActiveFilter] = useState(null);
 
-    const {alert, setAlert} = useContext(AlertContext);
+    const { alert, setAlert } = useContext(AlertContext);
     const [updatedObjectId, setUpdatedObjectId] = useState(null);
     const [deletedObjectId, setDeletedObjectId] = useState(null);
     const [objects, setObjects] = useState([]);
@@ -101,10 +101,10 @@ export default function TransferCategoryList() {
             }
             // Select inputs
             const selectFilters = [
-                {value: typeFilter, apiField: 'category_type'},
-                {value: priorityFilter, apiField: 'priority'},
-                {value: ownerFilter, apiField: 'owner'},
-                {value: activeFilter, apiField: 'is_active'}
+                { value: typeFilter, apiField: 'category_type' },
+                { value: priorityFilter, apiField: 'priority' },
+                { value: ownerFilter, apiField: 'owner' },
+                { value: activeFilter, apiField: 'is_active' }
             ]
             selectFilters.forEach(object => {
                 if (object.value !== null) {
@@ -119,8 +119,11 @@ export default function TransferCategoryList() {
                 const listResponse = await getApiObjectsList(apiUrl, {}, {}, getFilterModel())
                 setObjects(listResponse);
             } catch (err) {
-                setAlert({type: 'error', message: "Failed to load Categories."});
+                setAlert({ type: 'error', message: "Failed to load Categories." });
             }
+        }
+        if (!contextBudgetId) {
+            return
         }
         loadData();
     }, [contextBudgetId, refreshTimestamp, updatedObjectId, deletedObjectId, searchQuery, typeFilter, priorityFilter, ownerFilter, activeFilter]);
@@ -129,6 +132,9 @@ export default function TransferCategoryList() {
      * Fetches select options for TransferCategory object from API.
      */
     useEffect(() => {
+        if (!contextBudgetId) {
+            return
+        }
         loadSelectOptionForCategory(contextBudgetId, setTypeOptions, setPriorityOptions, setOwnerOptions, setAlert);
     }, [contextBudgetId]);
 
@@ -138,32 +144,32 @@ export default function TransferCategoryList() {
         }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                 <Typography variant="h4"
-                            sx={{display: 'block', color: '#BD0000'}}>Transfer Categories</Typography>
-                <CreateButton fields={createFields} apiUrl={apiUrl} objectType={"Transfer Category"}/>
+                    sx={{ display: 'block', color: '#BD0000' }}>Transfer Categories</Typography>
+                <CreateButton fields={createFields} apiUrl={apiUrl} objectType={"Transfer Category"} />
             </Stack>
-            <Divider sx={{mb: 1}}/>
-            {alert && <Alert sx={{mb: 1, whiteSpace: 'pre-wrap'}} severity={alert.type}
-                             onClose={() => setAlert(null)}>{alert.message}</Alert>}
-            <SearchField setSearchQuery={setSearchQuery} label="Search" sx={{width: "100%", marginBottom: 1}}/>
-            <Stack direction={{sm: "column", md: "row"}} alignItems={{sm: "flex-start", md: "center"}}
-                   justifyContent="flex-start" spacing={1} mb={1}>
+            <Divider sx={{ mb: 1 }} />
+            {alert && <Alert sx={{ mb: 1, whiteSpace: 'pre-wrap' }} severity={alert.type}
+                onClose={() => setAlert(null)}>{alert.message}</Alert>}
+            <SearchField setSearchQuery={setSearchQuery} label="Search" sx={{ width: "100%", marginBottom: 1 }} />
+            <Stack direction={{ sm: "column", md: "row" }} alignItems={{ sm: "flex-start", md: "center" }}
+                justifyContent="flex-start" spacing={1} mb={1}>
                 <FilterField filterValue={typeFilter} setFilterValue={setTypeFilter} options={typeOptions} label="Type"
-                             sx={{width: {sm: "100%", md: 200}, margin: 0}}/>
+                    sx={{ width: { sm: "100%", md: 200 }, margin: 0 }} />
                 <FilterField filterValue={priorityFilter} setFilterValue={setPriorityFilter} options={priorityOptions} label="Priority"
-                             sx={{width: {sm: "100%", md: 200}, margin: 0}}/>
+                    sx={{ width: { sm: "100%", md: 200 }, margin: 0 }} />
                 <FilterField filterValue={ownerFilter} setFilterValue={setOwnerFilter} options={ownerOptions} label="Owner"
-                             sx={{width: {sm: "100%", md: 200}, margin: 0}}/>
+                    sx={{ width: { sm: "100%", md: 200 }, margin: 0 }} />
                 <FilterField filterValue={activeFilter} setFilterValue={setActiveFilter} options={activeOptions} label="Active"
-                             sx={{width: {sm: "100%", md: 200}, margin: 0}}/>
+                    sx={{ width: { sm: "100%", md: 200 }, margin: 0 }} />
             </Stack>
-            <Divider sx={{mt: 1}}/>
+            <Divider sx={{ mt: 1 }} />
 
-            <Box sx={{display: "flex", flexWrap: 'wrap', justifyContent: 'flex-start'}}>
+            <Box sx={{ display: "flex", flexWrap: 'wrap', justifyContent: 'flex-start' }}>
                 {objects.length === 0 ?
-                    <Typography variant="h5" sx={{display: 'block', color: '#BD0000', mt: 2}}>No Categories
+                    <Typography variant="h5" sx={{ display: 'block', color: '#BD0000', mt: 2 }}>No Categories
                         found.</Typography> : (
                         objects.map(object => (
-                            <Box key={object.id} sx={{width: 330, m: 1}}>
+                            <Box key={object.id} sx={{ width: 330, m: 1 }}>
                                 <TransferCategoryCard
                                     apiUrl={apiUrl}
                                     object={object}
