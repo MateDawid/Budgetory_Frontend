@@ -17,7 +17,7 @@ export default function DepositDetail() {
     const { id } = useParams();
     const navigate = useNavigate()
     const [updatedObjectParam, setUpdatedObjectParam] = useState(null);
-    const { contextBudgetId, setUpdatedContextBudgetDeposit } = useContext(BudgetContext);
+    const { contextBudgetId, updateRefreshTimestamp } = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`
     const { alert, setAlert } = useContext(AlertContext);
     const [objectData, setObjectData] = useState([]);
@@ -110,7 +110,7 @@ export default function DepositDetail() {
      */
     const onSave = async (apiFieldName, value) => {
         await onEditableFieldSave(id, apiFieldName, value, apiUrl, setUpdatedObjectParam, setAlert)
-        setUpdatedContextBudgetDeposit(`${id}_${apiFieldName}_${value}`)
+        updateRefreshTimestamp()
     }
 
 
