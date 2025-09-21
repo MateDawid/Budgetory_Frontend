@@ -58,11 +58,7 @@ const FormModal = (
                         fieldApiErrors[key] = apiErrors[key].join(' | ');
                     } else {
                         apiErrors[key].forEach((message) => {
-                            if (key === 'non_field_errors') {
-                                nonFieldApiErrors.push(`${message}\n`);
-                            } else {
-                                nonFieldApiErrors.push(`${key}: ${message}\n`);
-                            }
+                            nonFieldApiErrors.push(`${message}\n`);
                         });
                     }
                 });
