@@ -1,96 +1,143 @@
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem';
 import { LineChart } from '@mui/x-charts/LineChart';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import React from 'react';
+import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
+import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
+import FilterField from '../../app_infrastructure/components/FilterField';
 
-const periods = ['2025_01', '2025_02', '2025_03'];
-const depositTypes = ["💸 For daily expenses"
-    , "💰 For savings"
-    , "🪙 For investments"
-    , "❔ Other"
-]
-const deposits = [
-    { name: 'Deposit A', values: [0, 1000, 2000] },
-    { name: 'Deposit B', values: [400, 200, 300] },
-    { name: 'Deposit C', values: [800, 600, 900] },
-    // ... more deposits
-];
-
-const colorPalette = [
-    '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
-    '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'
-];
-
-const series = deposits.map((deposit, index) => ({
-    data: deposit.values,
-    label: deposit.name,
-    valueFormatter: (value) => `${value.toString()} zł`,
-    color: colorPalette[index % colorPalette.length]
-}));
-
-function SelectField({ choices, value, setValue, label }) {
-    return (
-        <TextField
-            select
-            label={label}
-            value={value || ''}
-            sx={{ minWidth: 130, mb: 2 }}
-            onChange={(event) => setValue(event.target.value)}
-        >
-            {choices.map((choice) => (
-                <MenuItem key={choice} value={choice}>
-                    {choice}
-                </MenuItem>
-            ))}
-        </TextField>
-    )
-
-}
 
 export default function BudgetDepositsChart() {
+    const { contextBudgetId } = useContext(BudgetContext);
+
+    // Selectors choices
+    const [periods, setPeriods] = useState([])
+    const [depositTypes, setDepositTypes] = useState([]);
+    const [deposits, setDeposits] = useState([]);
+    // Filters values
     const [periodFrom, setPeriodFrom] = useState();
     const [periodTo, setPeriodTo] = useState();
     const [depositType, setDepositType] = useState();
     const [deposit, setDeposit] = useState();
+    // Chart data
+    const [xAxis, setXAxis] = useState([]);
+    const [series, setSeries] = useState([]);
+
+    useEffect(() => {
+        const loadPeriodsChoices = async () => {
+            try {
+                const response = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`)
+                setPeriods(response);
+            } catch (err) {
+                setPeriods([])
+            }
+        }
+        const loadDepositTypesChoices = async () => {
+            try {
+                const response = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/entities/deposit_types/`)
+                setDepositTypes(response.results);
+            } catch (err) {
+                setDepositTypes([])
+            }
+        }
+        const loadDepositsChoices = async () => {
+            try {
+                const response = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`)
+                setDeposits(response);
+            } catch (err) {
+                setDeposits([])
+            }
+        }
+        if (!contextBudgetId) {
+            return
+        }
+        loadPeriodsChoices();
+        loadDepositTypesChoices();
+        loadDepositsChoices();
+    }, [contextBudgetId]);
+
+    useEffect(() => {
+        const getFilterModel = () => {
+            const filterModel = {}
+            const selectFilters = [
+                { value: periodFrom, apiField: 'period_from' },
+                { value: periodTo, apiField: 'period_to' },
+                { value: depositType, apiField: 'deposit_type' },
+                { value: deposit, apiField: 'deposit' }
+            ]
+            selectFilters.forEach(object => {
+                if (object.value) {
+                    filterModel[[object.apiField]] = object.value
+                }
+            })
+
+            return filterModel
+        }
+        const loadDepositsResults = async () => {
+            try {
+                const response = await getApiObjectsList(
+                    `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits_results/`,
+                    {},
+                    {},
+                    getFilterModel()
+                )
+                const formattedSeries = response.series.map((serie) => ({
+                    ...serie,
+                    valueFormatter: (value) => value ? `${value.toString()} zł` : '0 zł',
+                }));
+                setXAxis(response.xAxis)
+                setSeries(formattedSeries)
+            } catch (err) {
+                setXAxis([])
+                setSeries([])
+            }
+        }
+        if (!contextBudgetId) {
+            return
+        }
+        loadDepositsResults();
+    }, [contextBudgetId, periodFrom, periodTo, depositType, deposit]);
 
     return (
         <Stack sx={{ width: '100%' }}>
             <Stack direction="row" justifyContent="space-between">
                 <Stack direction="row" spacing={1}>
-                    <SelectField
-                        choices={periods}
+                    <FilterField
+                        options={periods}
                         label="Period from"
-                        value={periodFrom || ''}
-                        setValue={setPeriodFrom}
+                        filterValue={periodFrom || ''}
+                        setFilterValue={setPeriodFrom}
+                        sx={{ minWidth: 200 }}
                     />
-                    <SelectField
-                        choices={periods}
+                    <FilterField
+                        options={periods}
                         label="Period to"
-                        value={periodTo || ''}
-                        setValue={setPeriodTo}
+                        filterValue={periodTo || ''}
+                        setFilterValue={setPeriodTo}
+                        sx={{ minWidth: 200 }}
                     />
                 </Stack>
                 <Stack direction="row" spacing={1}>
-                    <SelectField
-                        choices={depositTypes}
+                    <FilterField
+                        options={depositTypes}
                         label="Deposit type"
-                        value={depositType || ''}
-                        setValue={setDepositType}
+                        filterValue={depositType || ''}
+                        setFilterValue={setDepositType}
+                        sx={{ minWidth: 250 }}
                     />
-                    <SelectField
-                        choices={deposits}
+                    <FilterField
+                        options={deposits}
                         label="Deposit"
-                        value={deposit || ''}
-                        setValue={setDeposit}
+                        filterValue={deposit || ''}
+                        setFilterValue={setDeposit}
+                        sx={{ minWidth: 250 }}
                     />
                 </Stack>
 
             </Stack>
 
             <LineChart
-                xAxis={[{ scaleType: 'band', data: periods }]}
+                xAxis={[{ scaleType: 'band', data: xAxis }]}
                 series={series}
                 height={300}
                 margin={{ bottom: 10 }}
