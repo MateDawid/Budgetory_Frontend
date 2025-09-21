@@ -1,4 +1,4 @@
-import { Autocomplete } from "@mui/material";
+import { Autocomplete, Tooltip } from "@mui/material";
 import StyledTextField from "./StyledTextField";
 import React from "react";
 
@@ -21,7 +21,11 @@ const FilterField = ({ label, setFilterValue, filterValue, options, disabled = f
                 selectedOption === null ? setFilterValue(null) : setFilterValue(selectedOption.value)
             }}
             sx={sx}
-            renderInput={(params) => <StyledTextField {...params} label={label} sx={{ marginBottom: 0 }} />}
+            renderInput={(params) => {
+                return (<Tooltip title={params.inputProps.value ? params.inputProps.value : undefined} placement="top">
+                    <StyledTextField {...params} label={label} sx={{ marginBottom: 1, minWidth: 150 }} />
+                </Tooltip>)
+            }}
             disabled={disabled}
         />
     )
