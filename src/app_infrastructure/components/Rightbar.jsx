@@ -27,7 +27,6 @@ const Rightbar = () => {
                 setDeposits(response);
             } catch (error) {
                 console.error(error)
-                setAlert({ type: 'error', message: "Failed to load Budget Deposits on Rightbar." });
                 setDeposits([])
             }
         }
