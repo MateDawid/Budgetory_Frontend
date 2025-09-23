@@ -42,13 +42,12 @@ const FormModal = (
         setNonFieldErrors(null);
 
         try {
-            const response = await callApi(data);
-            setAlert({ type: 'success', message: response.name ? `Object ${response.name} created successfully.` : 'Object created successfully.' });
+            await callApi(data);
+            setAlert({ type: 'success', message: 'Object created successfully.' });
             updateRefreshTimestamp()
             setOpen(false);
             reset();
         } catch (error) {
-            console.log(error)
             if (error instanceof ApiError && typeof error.data === 'object') {
                 let apiErrors = error.data.detail;
                 let nonFieldApiErrors = [];
