@@ -9,6 +9,13 @@ import LocalGroceryStoreRoundedIcon from "@mui/icons-material/LocalGroceryStoreR
 import PaymentIcon from "@mui/icons-material/Payment";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import LeftbarItem from "./LeftbarItem";
+import BarChartIcon from '@mui/icons-material/BarChart';
+import { ListSubheader, styled } from "@mui/material";
+
+const StyledListSubheader = styled(ListSubheader)({
+    color: '#FFFFFF', 
+    backgroundColor: '#252525'
+})
 
 /**
  * Leftbar component to display subpages navigation on left side of screen
@@ -16,13 +23,18 @@ import LeftbarItem from "./LeftbarItem";
 const Leftbar = () => {
     return (
         <Box width={240} height="100%" sx={{zIndex: 999, backgroundColor: '#252525', display: {xs: "none", sm: "none", md: "block"}}}>
-            <Box position="fixed" height="100%" sx={{backgroundColor: '#252525', overflow: 'auto'}}>
+            <Box position="fixed" height="100%" width={180} sx={{backgroundColor: '#252525', overflow: 'auto'}}>
                 <List>
+                    <StyledListSubheader>Budgets</StyledListSubheader>
                     <LeftbarItem url="/budgets" displayText="Budgets" icon={<AccountBalanceIcon />} />
                     <LeftbarItem url="/periods" displayText="Periods" icon={<CalendarMonthIcon />} />
+                    <StyledListSubheader>Entities</StyledListSubheader>
                     <LeftbarItem url="/deposits" displayText="Deposits" icon={<AccountBalanceWalletRoundedIcon />} />
                     <LeftbarItem url="/entities" displayText="Entities" icon={<LocalGroceryStoreRoundedIcon />} />
-                    <LeftbarItem url="/categories" displayText="Transfer categories" icon={<SellIcon/>}/>
+                    <StyledListSubheader>Planning</StyledListSubheader>
+                    <LeftbarItem url="/categories" displayText="Categories" icon={<SellIcon/>}/>
+                    <LeftbarItem url="/predictions" displayText="Predictions" icon={<BarChartIcon/>}/>
+                    <StyledListSubheader>Transfers</StyledListSubheader>
                     <LeftbarItem url="/incomes" displayText="Incomes" icon={<PaymentIcon />} />
                     <LeftbarItem url="/expenses" displayText="Expenses" icon={<ReceiptIcon />} />
                 </List>
