@@ -35,7 +35,6 @@ const CopyPreviousPredictionsButton = ({ periodId, apiUrl, setAlert }) => {
             setAlert({ type: 'success', message: jsonResponse });
             updateRefreshTimestamp()
         } catch (error) {
-            console.log(error)
             setOpen(false)
             setAlert({ type: 'error', message: error.message });
         }
