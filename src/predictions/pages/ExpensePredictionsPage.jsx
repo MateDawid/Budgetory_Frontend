@@ -12,9 +12,9 @@ import PeriodFilterField from '../components/PeriodFilterField';
 
 
 /**
- * ExpensePredictionsList component to display list of ExpensePredictions
+ * ExpensePredictionsPage component to display list of ExpensePredictions
  */
-export default function ExpensePredictionsList() {
+export default function ExpensePredictionsPage() {
     const { contextBudgetId, refreshTimestamp } = useContext(BudgetContext);
     const { alert, setAlert } = useContext(AlertContext);
 
