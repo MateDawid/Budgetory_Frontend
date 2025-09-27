@@ -8,25 +8,8 @@ import { ExpensePredictionCardComponent } from '../components/ExpensePredictionC
 import CreateButton from '../../app_infrastructure/components/CreateButton';
 import CopyPreviousPredictionsButton from '../components/CopyPreviousPredictionsButton';
 import PeriodStatuses from '../../budgets/utils/PeriodStatuses';
+import PeriodFilterField from '../components/PeriodFilterField';
 
-
-/**
- * Gets and returns status of Period with provided ID.
- * @param {number} periodId - Period id.
- * @param {object[]} periodsArray - Array of periods.
- * @returns {number} - Period status identifier. One of PeriodStatuses.
- */
-function getPeriodStatus(periodId, periodsArray) {
-    let periodStatus = null
-    periodsArray.forEach((period) => {
-        if (period.id === periodId) {
-            periodStatus = period.status
-            return
-        }
-    }
-    )
-    return periodStatus
-}
 
 /**
  * ExpensePredictionsList component to display list of ExpensePredictions
@@ -44,27 +27,13 @@ export default function ExpensePredictionsList() {
     const [categories, setCategories] = useState([]);
     const [owners, setOwners] = useState([]);
     // Filters values
-    const [periodFilter, setPeriodFilter] = useState(null);
+    const [periodFilter, setPeriodFilter] = useState('');
     const [ownerFilter, setOwnerFilter] = useState(null);
     const [categoryFilter, setCategoryFilter] = useState(null);
 
+    const [periodStatus, setPeriodStatus] = useState(0);
     const [periodPredictions, setPeriodPredictions] = useState([]);
     // const [userPeriodResults, setUserPeriodResults] = useState([]);
-
-    useEffect(() => {
-        const loadPeriodsChoices = async () => {
-            try {
-                const response = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`)
-                setPeriods(response);
-            } catch (err) {
-                setPeriods([])
-            }
-        }
-        if (!contextBudgetId) {
-            return
-        }
-        loadPeriodsChoices();
-    }, [contextBudgetId]);
 
     const createFields = {
         period: {
@@ -97,6 +66,22 @@ export default function ExpensePredictionsList() {
             rows: 4
         }
     }
+
+    useEffect(() => {
+        const loadPeriodsChoices = async () => {
+            try {
+                const response = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`)
+                setPeriods(response);
+            } catch (err) {
+                setPeriods([])
+            }
+        }
+
+        if (!contextBudgetId) {
+            return
+        }
+        loadPeriodsChoices();
+    }, [contextBudgetId]);
 
     /**
      * Fetches ExpensePrediction objects from API.
@@ -172,7 +157,6 @@ export default function ExpensePredictionsList() {
             <Typography color='primary' fontWeight="bold">Period not selected.</Typography>
         </Stack>
     )
-    const periodStatus = getPeriodStatus(periodFilter, periods);
 
     // @ts-ignore
     if (periodFilter && periodPredictions.length > 0) predictionSectionContent = periodPredictions.map((prediction) => (
@@ -191,7 +175,7 @@ export default function ExpensePredictionsList() {
             {periodStatus === PeriodStatuses.DRAFT &&
                 <CreateButton fields={createFields} objectType={"Expense prediction"} apiUrl={apiUrl} customSetAlert={setAlert} customLabel={'Add new prediction'} />
             }
-            {(periodStatus === PeriodStatuses.DRAFT && !categoryFilter && !ownerFilter) &&
+            {(periodStatus === PeriodStatuses.DRAFT && periods.length > 1 && !categoryFilter && !ownerFilter) &&
                 <CopyPreviousPredictionsButton periodId={periodFilter} apiUrl={copyPredictionsUrl} setAlert={setAlert} />
             }
         </Stack>)
@@ -206,12 +190,11 @@ export default function ExpensePredictionsList() {
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                 <Typography variant="h4"
                     sx={{ display: 'block', color: '#BD0000' }}>Expenses Predictions in Period</Typography>
-                <FilterField
-                    options={periods}
-                    label="Period"
-                    filterValue={periodFilter || ''}
-                    setFilterValue={setPeriodFilter}
-                    sx={{ minWidth: 200, maxWidth: 200 }}
+                <PeriodFilterField
+                    periodOptions={periods}
+                    periodFilter={periodFilter || ''}
+                    setPeriodFilter={setPeriodFilter}
+                    setPeriodStatus={setPeriodStatus}
                 />
             </Stack>
             <Divider />
@@ -227,7 +210,15 @@ export default function ExpensePredictionsList() {
             <Box sx={{ marginTop: 2 }}>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mt={2} mb={1}>
                     <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>Predictions</Typography>
-                    {periodPredictions.length > 0 && <CreateButton fields={createFields} objectType={"Expense prediction"} apiUrl={apiUrl} customSetAlert={setAlert} disabled={periodStatus !== PeriodStatuses.DRAFT} />}
+                    {periodPredictions.length > 0 &&
+                        <CreateButton
+                            fields={createFields}
+                            objectType={"Expense prediction"}
+                            apiUrl={apiUrl}
+                            customSetAlert={setAlert}
+                            disabled={periodStatus !== PeriodStatuses.DRAFT}
+                        />
+                    }
                 </Stack>
                 <Divider sx={{ mb: 1 }} />
                 {periodFilter &&
