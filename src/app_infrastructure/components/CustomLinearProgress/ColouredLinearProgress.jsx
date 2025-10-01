@@ -59,6 +59,7 @@ export const ColouredLinearProgress = ({ currentValue, maxValue }) => {
     return (
         <LinearProgress variant="determinate" value={getBarValue()} sx={{
             height: 10,
+            width: '100%',
             borderRadius: 5,
             backgroundColor: getBackgroundColor(),
             '& .MuiLinearProgress-bar': {
