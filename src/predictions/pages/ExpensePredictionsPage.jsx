@@ -4,11 +4,11 @@ import { BudgetContext } from "../../app_infrastructure/store/BudgetContext";
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
 import FilterField from '../../app_infrastructure/components/FilterField';
 import { AlertContext } from '../../app_infrastructure/store/AlertContext';
-import { ExpensePredictionCardComponent } from '../components/ExpensePredictionCardComponent';
 import CreateButton from '../../app_infrastructure/components/CreateButton';
 import CopyPreviousPredictionsButton from '../components/CopyPreviousPredictionsButton';
 import PeriodStatuses from '../../budgets/utils/PeriodStatuses';
 import PeriodFilterField from '../components/PeriodFilterField';
+import ExpensePredictionTable from '../components/ExpensePredictionTable/ExpensePredictionTable';
 
 
 /**
@@ -159,15 +159,7 @@ export default function ExpensePredictionsPage() {
     )
 
     // @ts-ignore
-    if (periodFilter && periodPredictions.length > 0) predictionSectionContent = periodPredictions.map((prediction) => (
-        <ExpensePredictionCardComponent
-            key={prediction.id}
-            prediction={prediction}
-            periodStatus={periodStatus}
-            setAlert={setAlert}
-            updateFields={createFields}
-        />)
-    )
+    if (periodFilter && periodPredictions.length > 0) predictionSectionContent = <ExpensePredictionTable predictions={periodPredictions} periodStatus={periodStatus} />
 
     else if (periodFilter && periodPredictions.length <= 0) {
         predictionSectionContent = (<Stack alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
@@ -210,6 +202,9 @@ export default function ExpensePredictionsPage() {
             <Box sx={{ marginTop: 2 }}>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mt={2} mb={1}>
                     <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>Predictions</Typography>
+                    {(periodStatus === PeriodStatuses.DRAFT && periods.length > 1 && !categoryFilter && !ownerFilter) &&
+                        <CopyPreviousPredictionsButton periodId={periodFilter} apiUrl={copyPredictionsUrl} setAlert={setAlert} />
+                    }
                     {periodPredictions.length > 0 &&
                         <CreateButton
                             fields={createFields}
@@ -221,6 +216,7 @@ export default function ExpensePredictionsPage() {
                     }
                 </Stack>
                 <Divider sx={{ mb: 1 }} />
+                {/* TODO: Move filters to Table */}
                 {periodFilter &&
                     <Stack direction={{ sm: "column", md: "row" }} alignItems={{ sm: "flex-start", md: "center" }}
                         justifyContent="flex-start" spacing={1} mb={1} mt={1}>
