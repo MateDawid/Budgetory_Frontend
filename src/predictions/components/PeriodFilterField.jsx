@@ -36,7 +36,6 @@ const PeriodFilterField = ({ periodOptions, periodFilter, setPeriodFilter, setPe
             else {
                 setPeriodFilter(null)
                 setPeriodStatus(0)
-                localStorage.removeItem('budgetory.periodFilter')
             }
         }
         if (!contextBudgetId) {
