@@ -7,11 +7,11 @@ import React from 'react';
 import DraftPeriodPredictionRow from './DraftPeriodPredictionRow';
 import PeriodStatuses from '../../../budgets/utils/PeriodStatuses';
 import DraftPeriodPredictionHeader from './DraftPeriodPredictionHeader';
-
+import ActivePeriodPredictionHeader from './ActivePeriodPredictionHeader';
+import ActivePeriodPredictionRow from './ActivePeriodPredictionRow';
 
 
 export default function ExpensePredictionTable({ predictions, periodStatus }) {
-
     let header = null
     let rows = null
 
@@ -20,8 +20,16 @@ export default function ExpensePredictionTable({ predictions, periodStatus }) {
         case PeriodStatuses.DRAFT: {
             header = <DraftPeriodPredictionHeader />
             rows = predictions.map((row) => (
-                <DraftPeriodPredictionRow key={row.id} row={row} periodStatus={periodStatus} />
+                <DraftPeriodPredictionRow key={row.id} row={row} />
             ))
+            break;
+        }
+        case PeriodStatuses.ACTIVE: {
+            header = <ActivePeriodPredictionHeader />
+            rows = predictions.map((row) => (
+                <ActivePeriodPredictionRow key={row.id} row={row} />
+            ))
+            break;
         }
     }
 
