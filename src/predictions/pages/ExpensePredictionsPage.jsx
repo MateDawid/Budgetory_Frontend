@@ -173,7 +173,6 @@ export default function ExpensePredictionsPage() {
         </Stack>)
     }
 
-
     return (
         <Paper elevation={24} sx={{
             padding: 2, bgColor: "#F1F1F1"
@@ -202,9 +201,6 @@ export default function ExpensePredictionsPage() {
             <Box sx={{ marginTop: 2 }}>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mt={2} mb={1}>
                     <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>Predictions</Typography>
-                    {(periodStatus === PeriodStatuses.DRAFT && periods.length > 1 && !categoryFilter && !ownerFilter) &&
-                        <CopyPreviousPredictionsButton periodId={periodFilter} apiUrl={copyPredictionsUrl} setAlert={setAlert} />
-                    }
                     {periodPredictions.length > 0 &&
                         <CreateButton
                             fields={createFields}
@@ -216,7 +212,6 @@ export default function ExpensePredictionsPage() {
                     }
                 </Stack>
                 <Divider sx={{ mb: 1 }} />
-                {/* TODO: Move filters to Table */}
                 {periodFilter &&
                     <Stack direction={{ sm: "column", md: "row" }} alignItems={{ sm: "flex-start", md: "center" }}
                         justifyContent="flex-start" spacing={1} mb={1} mt={1}>
