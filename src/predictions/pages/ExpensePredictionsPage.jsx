@@ -165,7 +165,12 @@ export default function ExpensePredictionsPage() {
         predictionSectionContent = (<Stack alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
             <Typography>No predictions found.</Typography>
             {periodStatus === PeriodStatuses.DRAFT &&
-                <CreateButton fields={createFields} objectType={"Expense prediction"} apiUrl={apiUrl} customSetAlert={setAlert} customLabel={'Add new prediction'} />
+                <CreateButton
+                    fields={createFields}
+                    objectType={"Expense prediction"}
+                    apiUrl={apiUrl}
+                    customLabel={'Add new Prediction'}
+                />
             }
             {(periodStatus === PeriodStatuses.DRAFT && periods.length > 1 && !categoryFilter && !ownerFilter) &&
                 <CopyPreviousPredictionsButton periodId={periodFilter} apiUrl={copyPredictionsUrl} setAlert={setAlert} />
@@ -206,7 +211,6 @@ export default function ExpensePredictionsPage() {
                             fields={createFields}
                             objectType={"Expense prediction"}
                             apiUrl={apiUrl}
-                            customSetAlert={setAlert}
                             disabled={periodStatus !== PeriodStatuses.DRAFT}
                         />
                     }
