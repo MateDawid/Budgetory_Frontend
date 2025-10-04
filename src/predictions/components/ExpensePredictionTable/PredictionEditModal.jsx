@@ -72,7 +72,6 @@ export default function PredictionEditModal({ prediction, editOpen, setEditOpen 
         open={editOpen}
         setOpen={setEditOpen}
         callApi={callApiOnEdit}
-        setAlert={setAlert}
         updatedObject={prediction}
         disabledFields={['category']}
     />

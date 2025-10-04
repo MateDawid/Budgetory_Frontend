@@ -27,7 +27,7 @@ const FormModal = (
         open,
         setOpen,
         callApi,
-        setAlert,
+        setAlert=undefined,
         updatedObject=undefined,
         disabledFields=[]
     }
@@ -43,8 +43,10 @@ const FormModal = (
 
         try {
             await callApi(data);
-            setAlert({ type: 'success', message: 'Object created successfully.' });
-            updateRefreshTimestamp()
+            if (setAlert) {
+                setAlert({ type: 'success', message: 'Object created successfully.' });
+                updateRefreshTimestamp()
+            }
             setOpen(false);
             reset();
         } catch (error) {
