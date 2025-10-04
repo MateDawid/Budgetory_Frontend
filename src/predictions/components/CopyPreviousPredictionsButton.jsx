@@ -7,14 +7,14 @@ import StyledButton from "../../app_infrastructure/components/StyledButton";
 import StyledModal from "../../app_infrastructure/components/StyledModal";
 import { getApiResponse } from "../../app_infrastructure/services/APIService";
 import { BudgetContext } from "../../app_infrastructure/store/BudgetContext";
-// import { BudgetContext } from "../../app_infrastructure/store/BudgetContext";
 
 
 /**
  * CopyPreviousPredictionsButton component to display Modal with warning before copying previous Period ExpensePredicitons.
- * @param {string} periodId - API ID of Period in which Predictions will be created.
- * @param {string} apiUrl - Base API url to be called POST method.
- * @param {function} setAlert - Function to set Alert.
+ * @param {object} props
+ * @param {string} props.periodId - API ID of Period in which Predictions will be created.
+ * @param {string} props.apiUrl - Base API url to be called POST method.
+ * @param {Function} props.setAlert - Function to set Alert.
  */
 const CopyPreviousPredictionsButton = ({ periodId, apiUrl, setAlert }) => {
     const [open, setOpen] = useState(false);
