@@ -6,10 +6,12 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from "@mui/icons-material/Delete";
 import { getFontColor } from './utils';
 import PredictionDeleteModal from "./PredictionDeleteModal";
+import PredictionEditModal from "./PredictionEditModal";
 
 export default function DraftPeriodPredictionRow(props) {
     const { row } = props;
     const [deleteOpen, setDeleteOpen] = useState(false);
+    const [editOpen, setEditOpen] = useState(false);
     const { contextBudgetCurrency } = useContext(BudgetContext);
 
     const previousResultsFontColor = getFontColor(row.previous_result, row.previous_plan);
@@ -41,9 +43,7 @@ export default function DraftPeriodPredictionRow(props) {
                     </Typography>
                 </TableCell>
                 <TableCell sx={{ display: "flex", justifyContent: "flex-end" }}>
-                    <IconButton
-                    // onClick={handleEdit}
-                    >
+                    <IconButton onClick={() => setEditOpen(!editOpen)}>
                         <EditIcon />
                     </IconButton>
                     <IconButton onClick={() => setDeleteOpen(!deleteOpen)}>
@@ -55,6 +55,11 @@ export default function DraftPeriodPredictionRow(props) {
                 predictionId={row.id}
                 deleteOpen={deleteOpen}
                 setDeleteOpen={setDeleteOpen}
+            />
+            <PredictionEditModal
+                prediction={row}
+                editOpen={editOpen}
+                setEditOpen={setEditOpen}
             />
         </>
     );
