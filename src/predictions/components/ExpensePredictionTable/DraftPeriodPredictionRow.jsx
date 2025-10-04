@@ -8,8 +8,12 @@ import { getFontColor } from './utils';
 import PredictionDeleteModal from "./PredictionDeleteModal";
 import PredictionEditModal from "./PredictionEditModal";
 
-export default function DraftPeriodPredictionRow(props) {
-    const { row } = props;
+/**
+ * DraftPeriodPredictionRow component to display ExpensePrediction data row with data suitable for DRAFT Period.
+ * @param {object} props
+ * @param {object} props.row - Table row object.
+ */
+export default function DraftPeriodPredictionRow({ row }) {
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
     const { contextBudgetCurrency } = useContext(BudgetContext);
@@ -42,7 +46,7 @@ export default function DraftPeriodPredictionRow(props) {
                         {row.description}
                     </Typography>
                 </TableCell>
-                <TableCell sx={{ display: "flex", justifyContent: "flex-end" }}>
+                <TableCell align='right'>
                     <IconButton onClick={() => setEditOpen(!editOpen)}>
                         <EditIcon />
                     </IconButton>
