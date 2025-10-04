@@ -1,7 +1,11 @@
 export const getFontColor = (currentValue, maxValue) => {
-  if (maxValue <= 0 && currentValue <= 0) {
+
+  const current = Number(currentValue)
+  const max = Number(maxValue)
+
+  if (max <= 0 && current <= 0) {
     return "rgb(0 0 0 / 87%)";
-  } else if (currentValue > maxValue) {
+  } else if (current > max) {
     return "#BD0000";
   }
   return "#008000";
