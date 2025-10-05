@@ -10,8 +10,9 @@ import { BudgetContext } from "../../app_infrastructure/store/BudgetContext";
  * @param {*} props.periodFilter - Current value of Period filter
  * @param {Function} props.setPeriodFilter - Setter for Period filter value stored in page state.
  * @param {Function} props.setPeriodStatus - Setter for Period status value stored in page state.
+ * @param {Function} props.setPeriodStatusLabel - Setter for Period status label stored in page state.
  */
-const PeriodFilterField = ({ periodOptions, periodFilter, setPeriodFilter, setPeriodStatus }) => {
+const PeriodFilterField = ({ periodOptions, periodFilter, setPeriodFilter, setPeriodStatus, setPeriodStatusLabel }) => {
     const { contextBudgetId } = useContext(BudgetContext);
 
     useEffect(() => {
@@ -29,13 +30,16 @@ const PeriodFilterField = ({ periodOptions, periodFilter, setPeriodFilter, setPe
                     return
                 }
             })
+            console.log(storagePeriodObject)
             if (storagePeriodObject) {
                 setPeriodFilter(storagePeriodObject.id)
                 setPeriodStatus(storagePeriodObject.status)
+                setPeriodStatusLabel(storagePeriodObject.status_display)
             }
             else {
                 setPeriodFilter(null)
                 setPeriodStatus(0)
+                setPeriodStatusLabel(null)
             }
         }
         if (!contextBudgetId) {
@@ -53,11 +57,13 @@ const PeriodFilterField = ({ periodOptions, periodFilter, setPeriodFilter, setPe
                 if (selectedOption === null) {
                     setPeriodFilter(null)
                     setPeriodStatus(null)
+                    setPeriodStatus(null)
                     localStorage.removeItem('budgetory.periodFilter')
                 }
                 else {
                     setPeriodFilter(selectedOption.id)
                     setPeriodStatus(selectedOption.status)
+                    setPeriodStatusLabel(selectedOption.status_display)
                     localStorage.setItem('budgetory.periodFilter', selectedOption.value)
                 }
             }}

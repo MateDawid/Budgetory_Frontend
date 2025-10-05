@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Alert, Box, Divider, Paper, Stack, Typography } from "@mui/material";
+import { Alert, Box, Chip, Divider, Paper, Stack, Typography } from "@mui/material";
 import { BudgetContext } from "../../app_infrastructure/store/BudgetContext";
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
 import FilterField from '../../app_infrastructure/components/FilterField';
@@ -32,6 +32,7 @@ export default function ExpensePredictionsPage() {
     const [categoryFilter, setCategoryFilter] = useState(null);
 
     const [periodStatus, setPeriodStatus] = useState(0);
+    const [periodStatusLabel, setPeriodStatusLabel] = useState(null);
     const [periodPredictions, setPeriodPredictions] = useState([]);
     // const [userPeriodResults, setUserPeriodResults] = useState([]);
 
@@ -186,12 +187,16 @@ export default function ExpensePredictionsPage() {
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
                 <Typography variant="h4"
                     sx={{ display: 'block', color: '#BD0000' }}>Expenses Predictions in Period</Typography>
-                <PeriodFilterField
-                    periodOptions={periods}
-                    periodFilter={periodFilter || ''}
-                    setPeriodFilter={setPeriodFilter}
-                    setPeriodStatus={setPeriodStatus}
-                />
+                <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
+                    {periodStatusLabel && <Chip label={periodStatusLabel} variant="outlined" />}
+                    <PeriodFilterField
+                        periodOptions={periods}
+                        periodFilter={periodFilter || ''}
+                        setPeriodFilter={setPeriodFilter}
+                        setPeriodStatus={setPeriodStatus}
+                        setPeriodStatusLabel={setPeriodStatusLabel}
+                    />
+                </Stack>
             </Stack>
             <Divider />
             {alert && <Alert sx={{ marginTop: 2, whiteSpace: 'pre-wrap' }} severity={alert.type}
