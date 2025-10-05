@@ -30,7 +30,6 @@ const PeriodFilterField = ({ periodOptions, periodFilter, setPeriodFilter, setPe
                     return
                 }
             })
-            console.log(storagePeriodObject)
             if (storagePeriodObject) {
                 setPeriodFilter(storagePeriodObject.id)
                 setPeriodStatus(storagePeriodObject.status)
