@@ -3,13 +3,14 @@ import StyledTextField from "./StyledTextField";
 import React from "react";
 
 /**
- * SearchField component to display search field for list pages.
- * @param {string} label - Label for field.
- * @param {function} setFilterValue - Setter for filter value stored in page state.
- * @param {any} filterValue - Current value of filter
- * @param {object} options - List of select options for field.
- * @param {boolean} disabled - Handles 'disabled' param of Autocomplete.
- * @param {object} sx - Additional styling.
+ * FilterField component.
+ * @param {object} props
+ * @param {string} props.label - Label for field.
+ * @param {function} props.setFilterValue - Setter for filter value stored in page state.
+ * @param {any} props.filterValue - Current value of filter
+ * @param {object} props.options - List of select options for field.
+ * @param {boolean} props.disabled - Handles 'disabled' param of Autocomplete.
+ * @param {object} props.sx - Additional styling.
  */
 const FilterField = ({ label, setFilterValue, filterValue, options, disabled = false, sx = {} }) => {
     return (
