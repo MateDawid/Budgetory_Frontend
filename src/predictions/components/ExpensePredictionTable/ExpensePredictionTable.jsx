@@ -9,6 +9,8 @@ import PeriodStatuses from '../../../budgets/utils/PeriodStatuses';
 import DraftPeriodPredictionHeader from './DraftPeriodPredictionHeader';
 import ActivePeriodPredictionHeader from './ActivePeriodPredictionHeader';
 import ActivePeriodPredictionRow from './ActivePeriodPredictionRow';
+import ClosedPeriodPredictionHeader from './ClosedPeriodPredictionHeader';
+import ClosedPeriodPredictionRow from './ClosedPeriodPredictionRow';
 
 
 export default function ExpensePredictionTable({ predictions, periodStatus }) {
@@ -16,7 +18,6 @@ export default function ExpensePredictionTable({ predictions, periodStatus }) {
     let rows = null
 
     switch (periodStatus) {
-        // TODO - ActivePeriodRow, ClosedPeriodRow
         case PeriodStatuses.DRAFT: {
             header = <DraftPeriodPredictionHeader />
             rows = predictions.map((row) => (
@@ -28,6 +29,13 @@ export default function ExpensePredictionTable({ predictions, periodStatus }) {
             header = <ActivePeriodPredictionHeader />
             rows = predictions.map((row) => (
                 <ActivePeriodPredictionRow key={row.id} row={row} />
+            ))
+            break;
+        }
+        case PeriodStatuses.CLOSED: {
+            header = <ClosedPeriodPredictionHeader />
+            rows = predictions.map((row) => (
+                <ClosedPeriodPredictionRow key={row.id} row={row} />
             ))
             break;
         }

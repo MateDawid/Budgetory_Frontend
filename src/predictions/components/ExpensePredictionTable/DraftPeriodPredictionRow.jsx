@@ -23,7 +23,7 @@ export default function DraftPeriodPredictionRow({ row }) {
 
     return (
         <>
-            <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+            <TableRow>
                 <TableCell align='center'>{row.category_owner}</TableCell>
                 <TableCell align='center'>{row.category_display}</TableCell>
                 <TableCell align='center' sx={{ color: previousResultsFontColor }}>{row.previous_result}{`\u00A0${contextBudgetCurrency}`} / {row.previous_plan}{`\u00A0${contextBudgetCurrency}`}</TableCell>
@@ -41,8 +41,8 @@ export default function DraftPeriodPredictionRow({ row }) {
                         <ColouredLinearProgress currentValue={row.current_result} maxValue={row.current_plan} />
                     </Stack>
                 </TableCell>
-                <TableCell>
-                    <Typography padding={1} variant="body2" sx={{ whiteSpace: 'pre-wrap', textAlign: 'justify', maxWidth: 300 }}>
+                <TableCell sx={{maxWidth: 300}}>
+                    <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', textAlign: 'justify', width: "100%"}}>
                         {row.description}
                     </Typography>
                 </TableCell>

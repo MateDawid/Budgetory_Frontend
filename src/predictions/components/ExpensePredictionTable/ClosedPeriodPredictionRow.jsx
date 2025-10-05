@@ -1,25 +1,21 @@
-import { TableRow, TableCell, Stack, Typography, IconButton, Tooltip } from "@mui/material";
-import React, { useContext, useState } from "react";
+import { TableRow, TableCell, Stack, Typography, Tooltip } from "@mui/material";
+import React, { useContext } from "react";
 import ColouredLinearProgress from "../../../app_infrastructure/components/CustomLinearProgress/ColouredLinearProgress";
 import { BudgetContext } from "../../../app_infrastructure/store/BudgetContext";
-import EditIcon from '@mui/icons-material/Edit';
 import { getFontColor } from './utils';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import PredictionEditModal from "./PredictionEditModal";
 
 /**
- * DraftPeriodPredictionRow component to display ExpensePrediction data row with data suitable for ACTIVE Period.
+ * DraftPeriodPredictionRow component to display ExpensePrediction data row with data suitable for CLOSED Period.
  * @param {object} props
  * @param {object} props.row - Table row object.
  */
-export default function ActivePeriodPredictionRow({ row }) {
-    const [editOpen, setEditOpen] = useState(false);
+export default function ClosedPeriodPredictionRow({ row }) {
     const { contextBudgetCurrency } = useContext(BudgetContext);
 
     const fontColor = getFontColor(row.current_result, row.current_plan);
 
     return (
-        <>
             <TableRow>
                 <TableCell align='center'>{row.category_owner}</TableCell>
                 <TableCell align='center'>{row.category_display}</TableCell>
@@ -53,17 +49,6 @@ export default function ActivePeriodPredictionRow({ row }) {
                         {row.description}
                     </Typography>
                 </TableCell>
-                <TableCell align='right'>
-                    <IconButton onClick={() => setEditOpen(!editOpen)}>
-                        <EditIcon />
-                    </IconButton>
-                </TableCell>
             </TableRow>
-            <PredictionEditModal
-                prediction={row}
-                editOpen={editOpen}
-                setEditOpen={setEditOpen}
-            />
-        </>
     );
 }
