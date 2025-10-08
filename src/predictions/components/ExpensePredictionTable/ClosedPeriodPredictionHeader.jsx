@@ -15,8 +15,8 @@ export default function ClosedPeriodPredictionHeader() {
                     <Tooltip
                         title={
                             <>
-                                <b>Actual category expenses</b><br/>
-                                compared to<br/>
+                                <b>Actual category expenses</b><br />
+                                compared to<br />
                                 <b>Planned category expenses</b>
                             </>
                         }

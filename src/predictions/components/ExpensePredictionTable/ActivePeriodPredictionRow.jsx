@@ -3,7 +3,7 @@ import React, { useContext, useState } from "react";
 import ColouredLinearProgress from "../../../app_infrastructure/components/CustomLinearProgress/ColouredLinearProgress";
 import { BudgetContext } from "../../../app_infrastructure/store/BudgetContext";
 import EditIcon from '@mui/icons-material/Edit';
-import { getFontColor } from './utils';
+import { getCategoryCellContent, getFontColor } from './utils';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import PredictionEditModal from "./PredictionEditModal";
 
@@ -22,7 +22,9 @@ export default function ActivePeriodPredictionRow({ row }) {
         <>
             <TableRow>
                 <TableCell align='center'>{row.category_owner}</TableCell>
-                <TableCell align='center'>{row.category_display}</TableCell>
+                <TableCell align='center'>
+                    {getCategoryCellContent(row)}
+                </TableCell>
                 <TableCell align='center'>
                     <Stack direction="row" spacing={1} display="flex" alignItems="center" justifyContent="center">
                         <Typography variant="body2" color={fontColor}>
@@ -48,8 +50,8 @@ export default function ActivePeriodPredictionRow({ row }) {
                         <ColouredLinearProgress currentValue={row.current_result} maxValue={row.current_plan} />
                     </Stack>
                 </TableCell>
-                <TableCell sx={{maxWidth: 300}}>
-                    <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', textAlign: 'justify', width: "100%"}}>
+                <TableCell sx={{ maxWidth: 300 }}>
+                    <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', textAlign: 'justify', width: "100%" }}>
                         {row.description}
                     </Typography>
                 </TableCell>

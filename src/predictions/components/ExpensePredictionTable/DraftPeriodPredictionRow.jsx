@@ -4,7 +4,7 @@ import ColouredLinearProgress from "../../../app_infrastructure/components/Custo
 import { BudgetContext } from "../../../app_infrastructure/store/BudgetContext";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from "@mui/icons-material/Delete";
-import { getFontColor } from './utils';
+import { getCategoryCellContent, getFontColor } from './utils';
 import PredictionDeleteModal from "./PredictionDeleteModal";
 import PredictionEditModal from "./PredictionEditModal";
 
@@ -25,7 +25,9 @@ export default function DraftPeriodPredictionRow({ row }) {
         <>
             <TableRow>
                 <TableCell align='center'>{row.category_owner}</TableCell>
-                <TableCell align='center'>{row.category_display}</TableCell>
+                <TableCell align='center'> 
+                    {getCategoryCellContent(row)}
+                </TableCell>
                 <TableCell align='center' sx={{ color: previousResultsFontColor }}>{row.previous_result}{`\u00A0${contextBudgetCurrency}`} / {row.previous_plan}{`\u00A0${contextBudgetCurrency}`}</TableCell>
                 <TableCell align='center' sx={{ color: currentResultsFontColor }}>{row.current_result}{`\u00A0${contextBudgetCurrency}`} / {row.current_plan}{`\u00A0${contextBudgetCurrency}`}</TableCell>
                 <TableCell align='center' sx={{ color: currentResultsFontColor }}>{row.current_funds_left}{`\u00A0${contextBudgetCurrency}`}</TableCell>
@@ -41,8 +43,8 @@ export default function DraftPeriodPredictionRow({ row }) {
                         <ColouredLinearProgress currentValue={row.current_result} maxValue={row.current_plan} />
                     </Stack>
                 </TableCell>
-                <TableCell sx={{maxWidth: 300}}>
-                    <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', textAlign: 'justify', width: "100%"}}>
+                <TableCell sx={{ maxWidth: 300 }}>
+                    <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', textAlign: 'justify', width: "100%" }}>
                         {row.description}
                     </Typography>
                 </TableCell>
