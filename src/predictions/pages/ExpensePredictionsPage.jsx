@@ -25,11 +25,13 @@ export default function ExpensePredictionsPage() {
     // Selectors choices
     const [periods, setPeriods] = useState([])
     const [categories, setCategories] = useState([]);
+    const [progressStatuses, setProgressStatuses] = useState([]);
     const [owners, setOwners] = useState([]);
     // Filters values
     const [periodFilter, setPeriodFilter] = useState('');
     const [ownerFilter, setOwnerFilter] = useState(null);
     const [categoryFilter, setCategoryFilter] = useState(null);
+    const [progressStatusFilter, setProgressStatusFilter] = useState(null);
 
     const [periodStatus, setPeriodStatus] = useState(0);
     const [periodStatusLabel, setPeriodStatusLabel] = useState(null);
@@ -68,8 +70,12 @@ export default function ExpensePredictionsPage() {
         }
     }
 
+    
+    /**
+     * Fetches select options for ExpensePrediction select fields from API.
+     */
     useEffect(() => {
-        const loadPeriodsChoices = async () => {
+        async function getPeriodsChoices() {
             try {
                 const response = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`)
                 setPeriods(response);
@@ -78,11 +84,42 @@ export default function ExpensePredictionsPage() {
             }
         }
 
+        async function getOwners() {
+            const ownerResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/members/`)
+            setOwners([{ value: -1, label: '🏦 Common' }, ...ownerResponse]);
+        }
+
+        async function getProgressStatuses() {
+            const progressStatusResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/predictions/progress_statuses/`)
+            setProgressStatuses(progressStatusResponse);
+        }
+
         if (!contextBudgetId) {
             return
         }
-        loadPeriodsChoices();
+        getPeriodsChoices();
+        getOwners();
+        getProgressStatuses();
     }, [contextBudgetId]);
+
+    /**
+     * Fetches select options for ExpensePrediction categories object from API.
+     */
+    useEffect(() => {
+        async function getCategories() {
+            const filterModel = {}
+            if (ownerFilter) {
+                filterModel['owner'] = ownerFilter
+            }
+            const categoryResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?category_type=2`, {}, {}, filterModel)
+            setCategories(categoryResponse);
+            setCategoryFilter(null)
+        }
+        if (!contextBudgetId) {
+            return
+        }
+        getCategories();
+    }, [contextBudgetId, ownerFilter]);
 
     /**
      * Fetches ExpensePrediction objects from API.
@@ -93,7 +130,8 @@ export default function ExpensePredictionsPage() {
             const selectFilters = [
                 { value: periodFilter, apiField: 'period' },
                 { value: categoryFilter, apiField: 'category' },
-                { value: ownerFilter, apiField: 'owner' }
+                { value: ownerFilter, apiField: 'owner' },
+                { value: progressStatusFilter, apiField: 'progress_status' }
             ]
             selectFilters.forEach(object => {
                 if (object.value !== null) {
@@ -117,40 +155,7 @@ export default function ExpensePredictionsPage() {
         }
         getPredictions();
         // getUsersPeriodResults();
-    }, [contextBudgetId, refreshTimestamp, ownerFilter, categoryFilter, periodFilter]);
-
-    /**
-     * Fetches select options for ExpensePrediction owners object from API.
-     */
-    useEffect(() => {
-        async function getOwners() {
-            const ownerResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/members/`)
-            setOwners([{ value: -1, label: '🏦 Common' }, ...ownerResponse]);
-        }
-        if (!contextBudgetId) {
-            return
-        }
-        getOwners();
-    }, [contextBudgetId]);
-
-    /**
-     * Fetches select options for ExpensePrediction categories object from API.
-     */
-    useEffect(() => {
-        async function getCategories() {
-            const filterModel = {}
-            if (ownerFilter) {
-                filterModel['owner'] = ownerFilter
-            }
-            const categoryResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?category_type=2`, {}, {}, filterModel)
-            setCategories(categoryResponse);
-            setCategoryFilter(null)
-        }
-        if (!contextBudgetId) {
-            return
-        }
-        getCategories();
-    }, [contextBudgetId, ownerFilter]);
+    }, [contextBudgetId, refreshTimestamp, ownerFilter, categoryFilter, periodFilter, progressStatusFilter]);
 
 
     let predictionSectionContent = (
@@ -227,17 +232,24 @@ export default function ExpensePredictionsPage() {
                         <FilterField
                             filterValue={ownerFilter}
                             setFilterValue={setOwnerFilter}
-                            options={(owners)}
+                            options={owners}
                             label="Category Owner"
                             sx={{ width: { sm: "100%", md: 200 }, margin: 0 }}
                         />
                         <FilterField
                             filterValue={categoryFilter}
                             setFilterValue={setCategoryFilter}
-                            options={(categories)}
+                            options={categories}
                             label="Category"
                             sx={{ width: { sm: "100%", md: 200 }, margin: 0 }}
                             disabled={!ownerFilter}
+                        />
+                        <FilterField
+                            filterValue={progressStatusFilter}
+                            setFilterValue={setProgressStatusFilter}
+                            options={progressStatuses}
+                            label="Progress"
+                            sx={{ width: { sm: "100%", md: 200 }, margin: 0 }}
                         />
                     </Stack>
                 }
