@@ -23,13 +23,15 @@ export default function ExpensePredictionsPage() {
     const copyPredictionsUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/copy_predictions_from_previous_period/`
 
     // Selectors choices
-    const [periods, setPeriods] = useState([])
+    const [periods, setPeriods] = useState([]);
+    const [owners, setOwners] = useState([]);
+    const [priorities, setPriorities] = useState([]);
     const [categories, setCategories] = useState([]);
     const [progressStatuses, setProgressStatuses] = useState([]);
-    const [owners, setOwners] = useState([]);
     // Filters values
     const [periodFilter, setPeriodFilter] = useState('');
     const [ownerFilter, setOwnerFilter] = useState(null);
+    const [priorityFilter, setPriorityFilter] = useState(null);
     const [categoryFilter, setCategoryFilter] = useState(null);
     const [progressStatusFilter, setProgressStatusFilter] = useState(null);
 
@@ -70,7 +72,7 @@ export default function ExpensePredictionsPage() {
         }
     }
 
-    
+
     /**
      * Fetches select options for ExpensePrediction select fields from API.
      */
@@ -89,6 +91,11 @@ export default function ExpensePredictionsPage() {
             setOwners([{ value: -1, label: '🏦 Common' }, ...ownerResponse]);
         }
 
+        async function getPriorities() {
+            const priorityResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/categories/priorities/?type=2`)
+            setPriorities(priorityResponse.results);
+        }
+
         async function getProgressStatuses() {
             const progressStatusResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/predictions/progress_statuses/`)
             setProgressStatuses(progressStatusResponse);
@@ -99,6 +106,7 @@ export default function ExpensePredictionsPage() {
         }
         getPeriodsChoices();
         getOwners();
+        getPriorities();
         getProgressStatuses();
     }, [contextBudgetId]);
 
@@ -111,6 +119,9 @@ export default function ExpensePredictionsPage() {
             if (ownerFilter) {
                 filterModel['owner'] = ownerFilter
             }
+            if (priorityFilter) {
+                filterModel['priority'] = priorityFilter
+            }
             const categoryResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?category_type=2`, {}, {}, filterModel)
             setCategories(categoryResponse);
             setCategoryFilter(null)
@@ -119,7 +130,7 @@ export default function ExpensePredictionsPage() {
             return
         }
         getCategories();
-    }, [contextBudgetId, ownerFilter]);
+    }, [contextBudgetId, ownerFilter, priorityFilter]);
 
     /**
      * Fetches ExpensePrediction objects from API.
@@ -131,7 +142,8 @@ export default function ExpensePredictionsPage() {
                 { value: periodFilter, apiField: 'period' },
                 { value: categoryFilter, apiField: 'category' },
                 { value: ownerFilter, apiField: 'owner' },
-                { value: progressStatusFilter, apiField: 'progress_status' }
+                { value: progressStatusFilter, apiField: 'progress_status' },
+                { value: priorityFilter, apiField: 'category_priority' }
             ]
             selectFilters.forEach(object => {
                 if (object.value !== null) {
@@ -155,7 +167,7 @@ export default function ExpensePredictionsPage() {
         }
         getPredictions();
         // getUsersPeriodResults();
-    }, [contextBudgetId, refreshTimestamp, ownerFilter, categoryFilter, periodFilter, progressStatusFilter]);
+    }, [contextBudgetId, refreshTimestamp, ownerFilter, priorityFilter, categoryFilter, periodFilter, progressStatusFilter]);
 
 
     let predictionSectionContent = (
@@ -165,8 +177,9 @@ export default function ExpensePredictionsPage() {
     )
 
     // @ts-ignore
-    if (periodFilter && periodPredictions.length > 0) predictionSectionContent = <ExpensePredictionTable predictions={periodPredictions} periodStatus={periodStatus} />
-
+    if (periodFilter && periodPredictions.length > 0) {
+        predictionSectionContent = <ExpensePredictionTable predictions={periodPredictions} periodStatus={periodStatus} />
+    }
     else if (periodFilter && periodPredictions.length <= 0) {
         predictionSectionContent = (<Stack alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
             <Typography color='primary' fontWeight="bold">No predictions found.</Typography>
@@ -237,12 +250,34 @@ export default function ExpensePredictionsPage() {
                             sx={{ width: { sm: "100%", md: 200 }, margin: 0 }}
                         />
                         <FilterField
+                            filterValue={priorityFilter}
+                            setFilterValue={setPriorityFilter}
+                            options={priorities}
+                            label="Category Priority"
+                            sx={{ width: { sm: "100%", md: 200 }, margin: 0 }}
+                        />
+                        <FilterField
                             filterValue={categoryFilter}
                             setFilterValue={setCategoryFilter}
                             options={categories}
                             label="Category"
                             sx={{ width: { sm: "100%", md: 200 }, margin: 0 }}
                             disabled={!ownerFilter}
+                            groupBy={(option) => option.priority_display}
+                            renderGroup={(params) => (
+                                <li key={params.key}>
+                                    <div style={{
+                                        fontWeight: "400",
+                                        fontSize: "14px",
+                                        padding: "8px 16px",
+                                        color: "rgba(0, 0, 0, 0.6)",
+                                    }}>
+                                        {params.group}
+                                    </div>
+                                    <ul style={{ padding: 0 }}>{params.children}</ul>
+                                </li>
+                            )}
+
                         />
                         <FilterField
                             filterValue={progressStatusFilter}
@@ -255,6 +290,6 @@ export default function ExpensePredictionsPage() {
                 }
                 {predictionSectionContent}
             </Box>
-        </Paper>
+        </Paper >
     );
 }
