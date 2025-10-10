@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Alert, Box, Chip, Divider, Paper, Stack, Typography } from "@mui/material";
+import { Alert, Box, Chip, CircularProgress, Divider, Paper, Stack, Typography } from "@mui/material";
 import { BudgetContext } from "../../app_infrastructure/store/BudgetContext";
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
 import FilterField from '../../app_infrastructure/components/FilterField';
@@ -37,6 +37,7 @@ export default function ExpensePredictionsPage() {
 
     const [periodStatus, setPeriodStatus] = useState(0);
     const [periodStatusLabel, setPeriodStatusLabel] = useState(null);
+    const [loading, setLoading] = useState(false);
     const [periodPredictions, setPeriodPredictions] = useState([]);
     // const [userPeriodResults, setUserPeriodResults] = useState([]);
 
@@ -156,6 +157,7 @@ export default function ExpensePredictionsPage() {
         async function getPredictions() {
             const predictionsResponse = await getApiObjectsList(apiUrl, {}, {}, getFilterModel())
             setPeriodPredictions(predictionsResponse);
+            setLoading(false);
         }
         // async function getUsersPeriodResults() {
         //     const userPeriodResultsResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/user_results/${periodId}/`)
@@ -165,6 +167,7 @@ export default function ExpensePredictionsPage() {
             setPeriodPredictions([])
             return
         }
+        setLoading(true);
         getPredictions();
         // getUsersPeriodResults();
     }, [contextBudgetId, refreshTimestamp, ownerFilter, priorityFilter, categoryFilter, periodFilter, progressStatusFilter]);
@@ -175,9 +178,11 @@ export default function ExpensePredictionsPage() {
             <Typography color='primary' fontWeight="bold">Period not selected.</Typography>
         </Stack>
     )
-
+    if (loading) {
+        predictionSectionContent = <Box display="flex" justifyContent="center"><CircularProgress size="3rem" /></Box>
+    }
     // @ts-ignore
-    if (periodFilter && periodPredictions.length > 0) {
+    else if (periodFilter && periodPredictions.length > 0) {
         predictionSectionContent = <ExpensePredictionTable predictions={periodPredictions} periodStatus={periodStatus} />
     }
     else if (periodFilter && periodPredictions.length <= 0) {
@@ -239,7 +244,7 @@ export default function ExpensePredictionsPage() {
                     }
                 </Stack>
                 <Divider sx={{ mb: 1 }} />
-                {periodFilter &&
+                {(periodFilter && !loading) &&
                     <Stack direction={{ sm: "column", md: "row" }} alignItems={{ sm: "flex-start", md: "center" }}
                         justifyContent="flex-start" spacing={1} mb={1} mt={1}>
                         <FilterField
