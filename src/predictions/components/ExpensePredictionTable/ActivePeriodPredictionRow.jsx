@@ -3,9 +3,10 @@ import React, { useContext, useState } from "react";
 import ColouredLinearProgress from "../../../app_infrastructure/components/CustomLinearProgress/ColouredLinearProgress";
 import { BudgetContext } from "../../../app_infrastructure/store/BudgetContext";
 import EditIcon from '@mui/icons-material/Edit';
-import { getCategoryCellContent, getFontColor } from './utils';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import PredictionEditModal from "./PredictionEditModal";
+import { getFontColor } from "../utils";
+import { getCategoryCellContent } from "./utils";
 
 /**
  * DraftPeriodPredictionRow component to display ExpensePrediction data row with data suitable for ACTIVE Period.

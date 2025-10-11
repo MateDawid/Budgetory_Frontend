@@ -9,6 +9,7 @@ import CopyPreviousPredictionsButton from '../components/CopyPreviousPredictions
 import PeriodStatuses from '../../budgets/utils/PeriodStatuses';
 import PeriodFilterField from '../components/PeriodFilterField';
 import ExpensePredictionTable from '../components/ExpensePredictionTable/ExpensePredictionTable';
+import PeriodResultsTable from '../components/PeriodResultsTable/PeriodResultsTable';
 
 const baseOrderingOptions = [
     { value: 'category__name', label: 'Category name ↗' },
@@ -38,7 +39,8 @@ const draftPeriodOrderingOptions = [
 export default function ExpensePredictionsPage() {
     const { contextBudgetId, refreshTimestamp } = useContext(BudgetContext);
     const { alert, setAlert } = useContext(AlertContext);
-    const [loading, setLoading] = useState(false);
+    const [periodResultsLoading, setPeriodResultsLoading] = useState(false);
+    const [predictionsLoading, setPredictionsLoading] = useState(false);
 
     // Urls
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expense_predictions/`
@@ -63,7 +65,7 @@ export default function ExpensePredictionsPage() {
     const [periodStatus, setPeriodStatus] = useState(0);
     const [periodStatusLabel, setPeriodStatusLabel] = useState(null);
     const [periodPredictions, setPeriodPredictions] = useState([]);
-    // const [userPeriodResults, setUserPeriodResults] = useState([]);
+    const [periodResults, setPeriodResults] = useState([]);
 
     const createFields = {
         period: {
@@ -157,6 +159,20 @@ export default function ExpensePredictionsPage() {
     }, [contextBudgetId, ownerFilter, priorityFilter]);
 
     /**
+     * Fetches Period results from API.
+     */
+    useEffect(() => {
+        async function getPeriodResults() {
+            const userPeriodResultsResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/user_results/${periodFilter}/`)
+            setPeriodResults(userPeriodResultsResponse)
+        }
+        if (!contextBudgetId || !periodFilter) {
+            return
+        }
+        getPeriodResults();
+    }, [contextBudgetId, periodFilter]);
+
+    /**
      * Fetches ExpensePrediction objects from API.
      */
     useEffect(() => {
@@ -181,19 +197,14 @@ export default function ExpensePredictionsPage() {
         async function getPredictions() {
             const predictionsResponse = await getApiObjectsList(apiUrl, {}, {}, getFilterModel())
             setPeriodPredictions(predictionsResponse);
-            setLoading(false);
+            setPredictionsLoading(false);
         }
-        // async function getUsersPeriodResults() {
-        //     const userPeriodResultsResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/user_results/${periodId}/`)
-        //     setUserPeriodResults(userPeriodResultsResponse)
-        // }
         if (!contextBudgetId || !periodFilter) {
             setPeriodPredictions([])
             return
         }
-        setLoading(true);
+        setPredictionsLoading(true);
         getPredictions();
-        // getUsersPeriodResults();
     }, [contextBudgetId, refreshTimestamp, ownerFilter, priorityFilter, categoryFilter, periodFilter, progressStatusFilter, orderingFilter]);
 
 
@@ -202,7 +213,7 @@ export default function ExpensePredictionsPage() {
             <Typography color='primary' fontWeight="bold">Period not selected.</Typography>
         </Stack>
     )
-    if (loading) {
+    if (predictionsLoading) {
         predictionSectionContent = <Box display="flex" justifyContent="center"><CircularProgress size="3rem" /></Box>
     }
     // @ts-ignore
@@ -252,7 +263,7 @@ export default function ExpensePredictionsPage() {
             <Box sx={{ marginTop: 2 }}>
                 <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>Users results</Typography>
                 <Divider sx={{ mb: 1 }} />
-                <Typography>TODO</Typography>
+                <PeriodResultsTable results={periodResults}/>
             </Box>
             {/* Predictions objects */}
             <Box sx={{ marginTop: 2 }}>
@@ -268,7 +279,7 @@ export default function ExpensePredictionsPage() {
                     }
                 </Stack>
                 <Divider sx={{ mb: 1 }} />
-                {(periodFilter && !loading) &&
+                {(periodFilter && !predictionsLoading) &&
                     <Stack direction={{ sm: "column", md: "row" }} alignItems={{ sm: "flex-start", md: "center" }}
                         justifyContent="flex-start" spacing={1} mb={1} mt={1}>
                         <FilterField

@@ -4,9 +4,10 @@ import ColouredLinearProgress from "../../../app_infrastructure/components/Custo
 import { BudgetContext } from "../../../app_infrastructure/store/BudgetContext";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from "@mui/icons-material/Delete";
-import { getCategoryCellContent, getFontColor } from './utils';
 import PredictionDeleteModal from "./PredictionDeleteModal";
 import PredictionEditModal from "./PredictionEditModal";
+import { getFontColor } from "../utils";
+import { getCategoryCellContent } from "./utils";
 
 /**
  * DraftPeriodPredictionRow component to display ExpensePrediction data row with data suitable for DRAFT Period.

@@ -2,8 +2,9 @@ import { TableRow, TableCell, Stack, Typography, Tooltip } from "@mui/material";
 import React, { useContext } from "react";
 import ColouredLinearProgress from "../../../app_infrastructure/components/CustomLinearProgress/ColouredLinearProgress";
 import { BudgetContext } from "../../../app_infrastructure/store/BudgetContext";
-import { getCategoryCellContent, getFontColor } from './utils';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import { getFontColor } from "../utils";
+import { getCategoryCellContent } from "./utils";
 
 /**
  * DraftPeriodPredictionRow component to display ExpensePrediction data row with data suitable for CLOSED Period.
