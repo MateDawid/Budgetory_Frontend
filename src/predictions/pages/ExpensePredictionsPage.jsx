@@ -10,6 +10,27 @@ import PeriodStatuses from '../../budgets/utils/PeriodStatuses';
 import PeriodFilterField from '../components/PeriodFilterField';
 import ExpensePredictionTable from '../components/ExpensePredictionTable/ExpensePredictionTable';
 
+const baseOrderingOptions = [
+    { value: 'category__name', label: 'Category name ↗' },
+    { value: '-category__name', label: 'Category name ↘' },
+    { value: 'category__priority', label: 'Category priority ↗' },
+    { value: '-category__priority', label: 'Category priority ↘' },
+    { value: 'current_plan', label: 'Current plan ↗' },
+    { value: '-current_plan', label: 'Current plan ↘' },
+    { value: 'current_result', label: 'Current result ↗' },
+    { value: '-current_result', label: 'Current result ↘' },
+    { value: 'current_funds_left', label: 'Funds left ↗' },
+    { value: '-current_funds_left', label: 'Funds left ↘' },
+    { value: 'current_progress', label: 'Progress ↗' },
+    { value: '-current_progress', label: 'Progress ↘' },
+]
+
+const draftPeriodOrderingOptions = [
+    { value: 'previous_result', label: 'Previous result ↗' },
+    { value: '-previous_result', label: 'Previous result ↘' },
+    { value: 'previous_funds_left', label: 'Previous funds left ↗' },
+    { value: '-previous_funds_left', label: 'Previous funds left ↘' },
+]
 
 /**
  * ExpensePredictionsPage component to display list of ExpensePredictions
@@ -17,6 +38,7 @@ import ExpensePredictionTable from '../components/ExpensePredictionTable/Expense
 export default function ExpensePredictionsPage() {
     const { contextBudgetId, refreshTimestamp } = useContext(BudgetContext);
     const { alert, setAlert } = useContext(AlertContext);
+    const [loading, setLoading] = useState(false);
 
     // Urls
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expense_predictions/`
@@ -28,16 +50,18 @@ export default function ExpensePredictionsPage() {
     const [priorities, setPriorities] = useState([]);
     const [categories, setCategories] = useState([]);
     const [progressStatuses, setProgressStatuses] = useState([]);
+
     // Filters values
     const [periodFilter, setPeriodFilter] = useState('');
     const [ownerFilter, setOwnerFilter] = useState(null);
     const [priorityFilter, setPriorityFilter] = useState(null);
     const [categoryFilter, setCategoryFilter] = useState(null);
     const [progressStatusFilter, setProgressStatusFilter] = useState(null);
+    const [orderingFilter, setOrderingFilter] = useState(null);
 
+    // Data
     const [periodStatus, setPeriodStatus] = useState(0);
     const [periodStatusLabel, setPeriodStatusLabel] = useState(null);
-    const [loading, setLoading] = useState(false);
     const [periodPredictions, setPeriodPredictions] = useState([]);
     // const [userPeriodResults, setUserPeriodResults] = useState([]);
 
@@ -72,7 +96,6 @@ export default function ExpensePredictionsPage() {
             rows: 4
         }
     }
-
 
     /**
      * Fetches select options for ExpensePrediction select fields from API.
@@ -144,7 +167,8 @@ export default function ExpensePredictionsPage() {
                 { value: categoryFilter, apiField: 'category' },
                 { value: ownerFilter, apiField: 'owner' },
                 { value: progressStatusFilter, apiField: 'progress_status' },
-                { value: priorityFilter, apiField: 'category_priority' }
+                { value: priorityFilter, apiField: 'category_priority' },
+                { value: orderingFilter, apiField: 'ordering' }
             ]
             selectFilters.forEach(object => {
                 if (object.value !== null) {
@@ -170,7 +194,7 @@ export default function ExpensePredictionsPage() {
         setLoading(true);
         getPredictions();
         // getUsersPeriodResults();
-    }, [contextBudgetId, refreshTimestamp, ownerFilter, priorityFilter, categoryFilter, periodFilter, progressStatusFilter]);
+    }, [contextBudgetId, refreshTimestamp, ownerFilter, priorityFilter, categoryFilter, periodFilter, progressStatusFilter, orderingFilter]);
 
 
     let predictionSectionContent = (
@@ -289,6 +313,13 @@ export default function ExpensePredictionsPage() {
                             setFilterValue={setProgressStatusFilter}
                             options={progressStatuses}
                             label="Progress"
+                            sx={{ width: { sm: "100%", md: 200 }, margin: 0 }}
+                        />
+                        <FilterField
+                            filterValue={orderingFilter}
+                            setFilterValue={setOrderingFilter}
+                            options={periodStatus === PeriodStatuses.DRAFT ? [...baseOrderingOptions, ...draftPeriodOrderingOptions] : baseOrderingOptions}
+                            label="Sort by"
                             sx={{ width: { sm: "100%", md: 200 }, margin: 0 }}
                         />
                     </Stack>
