@@ -46,7 +46,7 @@ export default function ClosedPeriodPredictionRow({ row }) {
                     <ColouredLinearProgress currentValue={row.current_result} maxValue={row.current_plan} />
                 </Stack>
             </TableCell>
-            <TableCell sx={{ maxWidth: 300 }}>
+            <TableCell sx={{ minWidth: 180, maxWidth: 300 }}>
                 <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', textAlign: 'justify', width: "100%" }}>
                     {row.description}
                 </Typography>
