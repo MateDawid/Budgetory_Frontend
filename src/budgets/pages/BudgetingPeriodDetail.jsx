@@ -11,7 +11,6 @@ import DeleteButton from "../../app_infrastructure/components/DeleteButton";
 import PeriodStatuses from "../utils/PeriodStatuses";
 import BudgetingPeriodStatusUpdateButton from "../components/BudgetingPeriodStatusUpdateButton";
 import onEditableFieldSave from "../../app_infrastructure/utils/onEditableFieldSave";
-import PeriodExpensePredictionsComponent from '../components/PeriodExpensePredictionsComponent';
 
 /**
  * BudgetingPeriodDetail component to display details of single BudgetingPeriod.
@@ -118,7 +117,6 @@ export default function BudgetingPeriodDetail() {
                         {...objectFields[fieldName]}
                     />
                 ))}
-                <PeriodExpensePredictionsComponent periodId={id} periodStatus={objectData.status} />
             </Box>
         </Paper>
     );
