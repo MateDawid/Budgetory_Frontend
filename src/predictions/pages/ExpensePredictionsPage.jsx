@@ -165,10 +165,12 @@ export default function ExpensePredictionsPage() {
         async function getPeriodResults() {
             const userPeriodResultsResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/user_results/${periodFilter}/`)
             setPeriodResults(userPeriodResultsResponse)
+            setPeriodResultsLoading(false)
         }
         if (!contextBudgetId || !periodFilter) {
             return
         }
+        setPeriodResultsLoading(true)
         getPeriodResults();
     }, [contextBudgetId, periodFilter]);
 
@@ -207,7 +209,32 @@ export default function ExpensePredictionsPage() {
         getPredictions();
     }, [contextBudgetId, refreshTimestamp, ownerFilter, priorityFilter, categoryFilter, periodFilter, progressStatusFilter, orderingFilter]);
 
+    // Period results section establishing 
 
+    let periodResultsSectionContent = (
+        <Stack alignItems="center" justifyContent="space-between" spacing={1} mt={2} mb={1}>
+            <Typography color='primary' fontWeight="bold">Period not selected.</Typography>
+        </Stack>
+    )
+
+    if (periodResultsLoading) {
+        periodResultsSectionContent = <Box display="flex" justifyContent="center"><CircularProgress size="3rem" /></Box>
+
+    }
+
+    else if (periodFilter && periodResults.length > 0) {
+        periodResultsSectionContent = <PeriodResultsTable results={periodResults}/>
+    }       
+
+    else if (periodFilter && periodResults.length <= 0) {
+        periodResultsSectionContent = (
+        <Stack alignItems="center" justifyContent="space-between" spacing={1} mt={2} mb={1}>
+            <Typography color='primary' fontWeight="bold">No Period results to display.</Typography>
+        </Stack>
+    )
+    } 
+
+    // Prediction section establishing 
     let predictionSectionContent = (
         <Stack alignItems="center" justifyContent="space-between" spacing={1} mt={2} mb={1}>
             <Typography color='primary' fontWeight="bold">Period not selected.</Typography>
@@ -216,6 +243,7 @@ export default function ExpensePredictionsPage() {
     if (predictionsLoading) {
         predictionSectionContent = <Box display="flex" justifyContent="center"><CircularProgress size="3rem" /></Box>
     }
+    
     // @ts-ignore
     else if (periodFilter && periodPredictions.length > 0) {
         predictionSectionContent = <ExpensePredictionTable predictions={periodPredictions} periodStatus={periodStatus} />
@@ -261,9 +289,9 @@ export default function ExpensePredictionsPage() {
                 onClose={() => setAlert(null)}>{alert.message}</Alert>}
             {/* Users summaries */}
             <Box sx={{ marginTop: 2 }}>
-                <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>Users results</Typography>
+                <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>Period results</Typography>
                 <Divider sx={{ mb: 1 }} />
-                <PeriodResultsTable results={periodResults}/>
+                {periodResultsSectionContent}
             </Box>
             {/* Predictions objects */}
             <Box sx={{ marginTop: 2 }}>
