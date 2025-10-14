@@ -18,7 +18,7 @@ export default function PeriodResultsTable({ results }) {
                 </TableHead>
                 <TableBody>
                     {results.map((row) => (
-                        <PeriodResultsRow key={row.id} row={row} />
+                        <PeriodResultsRow key={row.user_username} row={row} />
                     ))}
                 </TableBody>
             </Table>
