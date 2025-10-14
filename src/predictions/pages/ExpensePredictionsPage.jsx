@@ -172,7 +172,7 @@ export default function ExpensePredictionsPage() {
         }
         setPeriodResultsLoading(true)
         getPeriodResults();
-    }, [contextBudgetId, periodFilter]);
+    }, [periodFilter, refreshTimestamp]);
 
     /**
      * Fetches ExpensePrediction objects from API.
@@ -207,7 +207,7 @@ export default function ExpensePredictionsPage() {
         }
         setPredictionsLoading(true);
         getPredictions();
-    }, [contextBudgetId, refreshTimestamp, ownerFilter, priorityFilter, categoryFilter, periodFilter, progressStatusFilter, orderingFilter]);
+    }, [refreshTimestamp, ownerFilter, priorityFilter, categoryFilter, periodFilter, progressStatusFilter, orderingFilter]);
 
     // Period results section establishing 
 

@@ -74,6 +74,7 @@ const BudgetSelector = () => {
         setContextBudgetCurrency(event.target.value.currency);
         localStorage.setItem('budgetory.contextBudget', event.target.value.id)
         localStorage.setItem('budgetory.contextBudgetCurrency', event.target.value.currency)
+        localStorage.removeItem('budgetory.periodFilter')
     };
 
     return (
