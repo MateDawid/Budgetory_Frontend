@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Alert, Box, Chip, CircularProgress, Divider, Paper, Stack, Typography } from "@mui/material";
+import { Alert, Box, Chip, CircularProgress, Divider, InputAdornment, Paper, Stack, Typography } from "@mui/material";
 import { BudgetContext } from "../../app_infrastructure/store/BudgetContext";
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
 import FilterField from '../../app_infrastructure/components/FilterField';
@@ -37,7 +37,7 @@ const draftPeriodOrderingOptions = [
  * ExpensePredictionsPage component to display list of ExpensePredictions
  */
 export default function ExpensePredictionsPage() {
-    const { contextBudgetId, refreshTimestamp } = useContext(BudgetContext);
+    const { contextBudgetId, contextBudgetCurrency, refreshTimestamp } = useContext(BudgetContext);
     const { alert, setAlert } = useContext(AlertContext);
     const [periodResultsLoading, setPeriodResultsLoading] = useState(false);
     const [predictionsLoading, setPredictionsLoading] = useState(false);
@@ -84,6 +84,7 @@ export default function ExpensePredictionsPage() {
             label: 'Value',
             required: true,
             slotProps: {
+                input: {endAdornment: <InputAdornment position="end">{contextBudgetCurrency}</InputAdornment>},
                 htmlInput: {
                     step: 0.01,
                     min: 0
