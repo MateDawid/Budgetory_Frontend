@@ -251,7 +251,7 @@ export default function ExpensePredictionsPage() {
     }
     else if (periodFilter && periodPredictions.length <= 0) {
         predictionSectionContent = (<Stack alignItems="center" justifyContent="space-between" spacing={1} mb={1}>
-            <Typography color='primary' fontWeight="bold">No predictions found.</Typography>
+            <Typography color='primary' fontWeight="bold">No Predictions found.</Typography>
             {periodStatus === PeriodStatuses.DRAFT &&
                 <CreateButton
                     fields={createFields}
