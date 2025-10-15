@@ -4,10 +4,12 @@ import ColouredLinearProgress from "../../../app_infrastructure/components/Custo
 import { BudgetContext } from "../../../app_infrastructure/store/BudgetContext";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from "@mui/icons-material/Delete";
+import SearchIcon from '@mui/icons-material/Search';
 import PredictionDeleteModal from "./PredictionDeleteModal";
 import PredictionEditModal from "./PredictionEditModal";
 import { getFontColor } from "../utils";
 import { getCategoryCellContent } from "./utils";
+import PredictionInspectModal from "./PredictionInspectModal";
 
 /**
  * DraftPeriodPredictionRow component to display ExpensePrediction data row with data suitable for DRAFT Period.
@@ -17,6 +19,7 @@ import { getCategoryCellContent } from "./utils";
 export default function DraftPeriodPredictionRow({ row }) {
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
+    const [inspectOpen, setInspectOpen] = useState(false);
     const { contextBudgetCurrency } = useContext(BudgetContext);
 
     const previousResultsFontColor = getFontColor(row.previous_result, row.previous_plan);
@@ -50,6 +53,9 @@ export default function DraftPeriodPredictionRow({ row }) {
                     </Typography>
                 </TableCell>
                 <TableCell align='right'>
+                    <IconButton onClick={() => setInspectOpen(!inspectOpen)}>
+                        <SearchIcon />
+                    </IconButton>
                     <IconButton onClick={() => setEditOpen(!editOpen)}>
                         <EditIcon />
                     </IconButton>
@@ -58,6 +64,12 @@ export default function DraftPeriodPredictionRow({ row }) {
                     </IconButton>
                 </TableCell>
             </TableRow>
+            <PredictionInspectModal
+                periodId={row.period}
+                categoryId={row.category}
+                inspectOpen={inspectOpen}
+                setInspectOpen={setInspectOpen}
+            />
             <PredictionDeleteModal
                 predictionId={row.id}
                 deleteOpen={deleteOpen}

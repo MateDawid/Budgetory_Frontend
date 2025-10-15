@@ -3,10 +3,12 @@ import React, { useContext, useState } from "react";
 import ColouredLinearProgress from "../../../app_infrastructure/components/CustomLinearProgress/ColouredLinearProgress";
 import { BudgetContext } from "../../../app_infrastructure/store/BudgetContext";
 import EditIcon from '@mui/icons-material/Edit';
+import SearchIcon from '@mui/icons-material/Search';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import PredictionEditModal from "./PredictionEditModal";
 import { getFontColor } from "../utils";
 import { getCategoryCellContent } from "./utils";
+import PredictionInspectModal from "./PredictionInspectModal";
 
 /**
  * DraftPeriodPredictionRow component to display ExpensePrediction data row with data suitable for ACTIVE Period.
@@ -15,6 +17,7 @@ import { getCategoryCellContent } from "./utils";
  */
 export default function ActivePeriodPredictionRow({ row }) {
     const [editOpen, setEditOpen] = useState(false);
+    const [inspectOpen, setInspectOpen] = useState(false);
     const { contextBudgetCurrency } = useContext(BudgetContext);
 
     const fontColor = getFontColor(row.current_result, row.current_plan);
@@ -57,11 +60,20 @@ export default function ActivePeriodPredictionRow({ row }) {
                     </Typography>
                 </TableCell>
                 <TableCell align='right'>
+                    <IconButton onClick={() => setInspectOpen(!inspectOpen)}>
+                        <SearchIcon />
+                    </IconButton>
                     <IconButton onClick={() => setEditOpen(!editOpen)}>
                         <EditIcon />
                     </IconButton>
                 </TableCell>
             </TableRow>
+            <PredictionInspectModal
+                periodId={row.period}
+                categoryId={row.category}
+                inspectOpen={inspectOpen}
+                setInspectOpen={setInspectOpen}
+            />
             <PredictionEditModal
                 prediction={row}
                 editOpen={editOpen}

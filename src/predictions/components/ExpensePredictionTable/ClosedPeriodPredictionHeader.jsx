@@ -28,6 +28,7 @@ export default function ClosedPeriodPredictionHeader() {
             <TableCell sx={{ fontWeight: 'bold' }} align='center'>Funds&nbsp;left</TableCell>
             <TableCell sx={{ fontWeight: 'bold' }} align='center'>Progress</TableCell>
             <TableCell sx={{ fontWeight: 'bold' }} align='center'>Description</TableCell>
+            <TableCell sx={{ fontWeight: 'bold' }} align='right'>Actions</TableCell>
         </TableRow>
     );
 }
