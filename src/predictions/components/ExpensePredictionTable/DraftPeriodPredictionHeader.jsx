@@ -1,0 +1,52 @@
+import { TableRow, TableCell, Stack, Tooltip, Typography } from "@mui/material";
+import React from "react";
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+
+export default function DraftPeriodPredictionHeader() {
+    return (
+        <TableRow>
+            <TableCell sx={{ fontWeight: 'bold' }} align='center'>Category&nbsp;owner</TableCell>
+            <TableCell sx={{ fontWeight: 'bold' }} align='center'>Category</TableCell>
+            <TableCell align='center'>
+                <Stack direction="row" spacing={1} display="flex" alignItems="center" justifyContent="center">
+                    <Typography variant="body2" fontWeight="bold">
+                        Previous&nbsp;result
+                    </Typography>
+                    <Tooltip
+                        title={
+                            <>
+                                <b>Actual category expenses in previous period</b><br />
+                                compared to<br />
+                                <b>Planned category expenses in previous period</b>
+                            </>
+                        }
+                        placement="top">
+                        <HelpOutlineIcon />
+                    </Tooltip>
+                </Stack>
+            </TableCell>
+            <TableCell align='center'>
+                <Stack direction="row" spacing={1} display="flex" alignItems="center" justifyContent="center">
+                    <Typography variant="body2" fontWeight="bold">
+                        Current&nbsp;result
+                    </Typography>
+                    <Tooltip
+                        title={
+                            <>
+                                <b>Actual category expenses in current period</b><br />
+                                compared to<br />
+                                <b>Planned category expenses in current period</b>
+                            </>
+                        }
+                        placement="top">
+                        <HelpOutlineIcon />
+                    </Tooltip>
+                </Stack>
+            </TableCell>
+            <TableCell sx={{ fontWeight: 'bold' }} align='center'>Funds&nbsp;left</TableCell>
+            <TableCell sx={{ fontWeight: 'bold' }} align='center'>Progress</TableCell>
+            <TableCell sx={{ fontWeight: 'bold' }} align='center'>Description</TableCell>
+            <TableCell sx={{ fontWeight: 'bold' }} align='right'>Actions</TableCell>
+        </TableRow>
+    );
+}
