@@ -3,6 +3,7 @@ import FormModal from "../../../app_infrastructure/components/FormModal/FormModa
 import { AlertContext } from "../../../app_infrastructure/store/AlertContext";
 import { BudgetContext } from "../../../app_infrastructure/store/BudgetContext";
 import { updateApiObject } from "../../../app_infrastructure/services/APIService";
+import { InputAdornment } from "@mui/material";
 
 /**
  * PredictionEditModal component to display edit form for Expense Prediction object.
@@ -12,7 +13,7 @@ import { updateApiObject } from "../../../app_infrastructure/services/APIService
  * @param {Function} props.setEditOpen - Setter for editOpen value.
  */
 export default function PredictionEditModal({ prediction, editOpen, setEditOpen }) {
-    const { contextBudgetId, updateRefreshTimestamp } = useContext(BudgetContext);
+    const { contextBudgetId, contextBudgetCurrency, updateRefreshTimestamp } = useContext(BudgetContext);
     const { setAlert } = useContext(AlertContext);
 
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expense_predictions/`
@@ -37,6 +38,7 @@ export default function PredictionEditModal({ prediction, editOpen, setEditOpen 
             label: 'Value',
             required: true,
             slotProps: {
+                input: {endAdornment: <InputAdornment position="end">{contextBudgetCurrency}</InputAdornment>},
                 htmlInput: {
                     step: 0.01,
                     min: 0

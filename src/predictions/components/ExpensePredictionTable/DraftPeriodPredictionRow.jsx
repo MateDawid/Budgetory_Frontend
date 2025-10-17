@@ -52,7 +52,7 @@ export default function DraftPeriodPredictionRow({ row }) {
                         {row.description}
                     </Typography>
                 </TableCell>
-                <TableCell align='right'>
+                <TableCell align='right' sx={{ maxWidth: 60}}>
                     <IconButton onClick={() => setInspectOpen(!inspectOpen)}>
                         <SearchIcon />
                     </IconButton>
