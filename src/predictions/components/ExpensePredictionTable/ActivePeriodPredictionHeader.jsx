@@ -5,7 +5,7 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 export default function ActivePeriodPredictionHeader() {
     return (
         <TableRow>
-            <TableCell sx={{ fontWeight: 'bold' }} align='center'>Category&nbsp;owner</TableCell>
+            <TableCell sx={{ fontWeight: 'bold' }} align='center'>Deposit</TableCell>
             <TableCell sx={{ fontWeight: 'bold' }} align='center'>Category</TableCell>
             <TableCell align='center'>
                 <Stack direction="row" spacing={1} display="flex" alignItems="center" justifyContent="center">

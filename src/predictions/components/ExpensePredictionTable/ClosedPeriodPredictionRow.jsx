@@ -22,7 +22,7 @@ export default function ClosedPeriodPredictionRow({ row }) {
     return (
         <>
             <TableRow>
-                <TableCell align='center'>{row.category_owner}</TableCell>
+                <TableCell align='center'>{row.category_deposit}</TableCell>
                 <TableCell align='center'>
                     {getCategoryCellContent(row)}
                 </TableCell>
