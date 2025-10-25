@@ -17,7 +17,7 @@ export default function PeriodResultsRow({ row }) {
 
     return (
         <TableRow>
-            <TableCell align='center'>{row.user_username}</TableCell>
+            <TableCell align='center'>{row.deposit_name}</TableCell>
             <TableCell align='center'>
                 <Stack gap={1} sx={{
                     justifyContent: "center",
