@@ -23,7 +23,7 @@ export default function TransferCategoryList() {
     const [searchQuery, setSearchQuery] = useState("");
     const [typeFilter, setTypeFilter] = useState(null);
     const [priorityFilter, setPriorityFilter] = useState(null);
-    const [ownerFilter, setOwnerFilter] = useState(null);
+    const [depositFilter, setDepositFilter] = useState(null);
     const [activeFilter, setActiveFilter] = useState(null);
 
     const { alert, setAlert } = useContext(AlertContext);
@@ -32,7 +32,7 @@ export default function TransferCategoryList() {
     const [objects, setObjects] = useState([]);
     const [typeOptions, setTypeOptions] = useState([]);
     const [priorityOptions, setPriorityOptions] = useState([]);
-    const [ownerOptions, setOwnerOptions] = useState([]);
+    const [depositOptions, setDepositOptions] = useState([]);
     const activeOptions = [
         {
             value: true,
@@ -65,12 +65,12 @@ export default function TransferCategoryList() {
             required: true,
             options: priorityOptions
         },
-        owner: {
+        deposit: {
             type: 'select',
             select: true,
-            label: 'Owner',
+            label: 'Deposit',
             required: true,
-            options: ownerOptions
+            options: depositOptions
         },
         description: {
             type: 'string',
@@ -103,7 +103,7 @@ export default function TransferCategoryList() {
             const selectFilters = [
                 { value: typeFilter, apiField: 'category_type' },
                 { value: priorityFilter, apiField: 'priority' },
-                { value: ownerFilter, apiField: 'owner' },
+                { value: depositFilter, apiField: 'deposit' },
                 { value: activeFilter, apiField: 'is_active' }
             ]
             selectFilters.forEach(object => {
@@ -126,7 +126,7 @@ export default function TransferCategoryList() {
             return
         }
         loadData();
-    }, [contextBudgetId, refreshTimestamp, updatedObjectId, deletedObjectId, searchQuery, typeFilter, priorityFilter, ownerFilter, activeFilter]);
+    }, [contextBudgetId, refreshTimestamp, updatedObjectId, deletedObjectId, searchQuery, typeFilter, priorityFilter, depositFilter, activeFilter]);
 
     /**
      * Fetches select options for TransferCategory object from API.
@@ -135,7 +135,7 @@ export default function TransferCategoryList() {
         if (!contextBudgetId) {
             return
         }
-        loadSelectOptionForCategory(contextBudgetId, setTypeOptions, setPriorityOptions, setOwnerOptions, setAlert);
+        loadSelectOptionForCategory(contextBudgetId, setTypeOptions, setPriorityOptions, setDepositOptions, setAlert);
     }, [contextBudgetId]);
 
     return (
@@ -157,7 +157,7 @@ export default function TransferCategoryList() {
                     sx={{ width: { sm: "100%", md: 200 }, margin: 0 }} />
                 <FilterField filterValue={priorityFilter} setFilterValue={setPriorityFilter} options={priorityOptions} label="Priority"
                     sx={{ width: { sm: "100%", md: 200 }, margin: 0 }} />
-                <FilterField filterValue={ownerFilter} setFilterValue={setOwnerFilter} options={ownerOptions} label="Owner"
+                <FilterField filterValue={depositFilter} setFilterValue={setDepositFilter} options={depositOptions} label="Deposit"
                     sx={{ width: { sm: "100%", md: 200 }, margin: 0 }} />
                 <FilterField filterValue={activeFilter} setFilterValue={setActiveFilter} options={activeOptions} label="Active"
                     sx={{ width: { sm: "100%", md: 200 }, margin: 0 }} />
