@@ -5,7 +5,7 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 export default function PeriodResultsHeader() {
     return (
         <TableRow>
-            <TableCell sx={{ fontWeight: 'bold' }} align='center'>User</TableCell>
+            <TableCell sx={{ fontWeight: 'bold' }} align='center'>Deposit</TableCell>
             <TableCell align='center'>
                 <Stack direction="row" spacing={1} display="flex" alignItems="center" justifyContent="center">
                     <Typography variant="body2" fontWeight="bold">

@@ -28,7 +28,7 @@ export default function DraftPeriodPredictionRow({ row }) {
     return (
         <>
             <TableRow>
-                <TableCell align='center'>{row.category_owner}</TableCell>
+                <TableCell align='center'>{row.category_deposit}</TableCell>
                 <TableCell align='center'> 
                     {getCategoryCellContent(row)}
                 </TableCell>
@@ -52,7 +52,7 @@ export default function DraftPeriodPredictionRow({ row }) {
                         {row.description}
                     </Typography>
                 </TableCell>
-                <TableCell align='right' sx={{ maxWidth: 60}}>
+                <TableCell align='right' sx={{ maxWidth: 50}}>
                     <IconButton onClick={() => setInspectOpen(!inspectOpen)}>
                         <SearchIcon />
                     </IconButton>

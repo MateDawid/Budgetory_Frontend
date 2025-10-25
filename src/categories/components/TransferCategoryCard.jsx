@@ -19,7 +19,7 @@ const TransferCategoryCard = ({apiUrl, object, setDeletedObjectId}) => {
                 <CardHeader title={truncateText(object.label, 18)}/>
                 <Divider sx={{width: "100%", mb: 1}}/>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
-                    <Chip label={object.owner_display} variant="outlined"/>
+                    <Chip label={object.deposit_display} variant="outlined"/>
                     <Chip label={object.is_active ? "🟢 Active" : "🔴 Inactive"} variant="outlined"/>
                 </Stack>
                 <Divider sx={{width: "100%", mb: 1, mt: 1}}/>

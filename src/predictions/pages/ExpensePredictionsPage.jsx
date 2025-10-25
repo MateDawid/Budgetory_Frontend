@@ -48,14 +48,14 @@ export default function ExpensePredictionsPage() {
 
     // Selectors choices
     const [periods, setPeriods] = useState([]);
-    const [owners, setOwners] = useState([]);
+    const [deposits, setDeposits] = useState([]);
     const [priorities, setPriorities] = useState([]);
     const [categories, setCategories] = useState([]);
     const [progressStatuses, setProgressStatuses] = useState([]);
 
     // Filters values
     const [periodFilter, setPeriodFilter] = useState('');
-    const [ownerFilter, setOwnerFilter] = useState(null);
+    const [depositFilter, setDepositFilter] = useState(null);
     const [priorityFilter, setPriorityFilter] = useState(null);
     const [categoryFilter, setCategoryFilter] = useState(null);
     const [progressStatusFilter, setProgressStatusFilter] = useState(null);
@@ -113,9 +113,9 @@ export default function ExpensePredictionsPage() {
             }
         }
 
-        async function getOwners() {
-            const ownerResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/members/`)
-            setOwners([{ value: -1, label: '🏦 Common' }, ...ownerResponse]);
+        async function getDeposits() {
+            const depositsResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/?deposit_type=1`)
+            setDeposits(depositsResponse);
         }
 
         async function getPriorities() {
@@ -132,7 +132,7 @@ export default function ExpensePredictionsPage() {
             return
         }
         getPeriodsChoices();
-        getOwners();
+        getDeposits();
         getPriorities();
         getProgressStatuses();
     }, [contextBudgetId]);
@@ -143,8 +143,8 @@ export default function ExpensePredictionsPage() {
     useEffect(() => {
         async function getCategories() {
             const filterModel = {}
-            if (ownerFilter) {
-                filterModel['owner'] = ownerFilter
+            if (depositFilter) {
+                filterModel['deposit'] = depositFilter
             }
             if (priorityFilter) {
                 filterModel['priority'] = priorityFilter
@@ -157,15 +157,15 @@ export default function ExpensePredictionsPage() {
             return
         }
         getCategories();
-    }, [contextBudgetId, ownerFilter, priorityFilter]);
+    }, [contextBudgetId, depositFilter, priorityFilter]);
 
     /**
      * Fetches Period results from API.
      */
     useEffect(() => {
         async function getPeriodResults() {
-            const userPeriodResultsResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/user_results/${periodFilter}/`)
-            setPeriodResults(userPeriodResultsResponse)
+            const depositsPeriodResultsResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits_predictions_results/${periodFilter}/`)
+            setPeriodResults(depositsPeriodResultsResponse)
             setPeriodResultsLoading(false)
         }
         if (!contextBudgetId || !periodFilter) {
@@ -184,7 +184,7 @@ export default function ExpensePredictionsPage() {
             const selectFilters = [
                 { value: periodFilter, apiField: 'period' },
                 { value: categoryFilter, apiField: 'category' },
-                { value: ownerFilter, apiField: 'owner' },
+                { value: depositFilter, apiField: 'deposit' },
                 { value: progressStatusFilter, apiField: 'progress_status' },
                 { value: priorityFilter, apiField: 'category_priority' },
                 { value: orderingFilter, apiField: 'ordering' }
@@ -208,7 +208,7 @@ export default function ExpensePredictionsPage() {
         }
         setPredictionsLoading(true);
         getPredictions();
-    }, [refreshTimestamp, ownerFilter, priorityFilter, categoryFilter, periodFilter, progressStatusFilter, orderingFilter]);
+    }, [refreshTimestamp, depositFilter, priorityFilter, categoryFilter, periodFilter, progressStatusFilter, orderingFilter]);
 
     // Period results section establishing 
 
@@ -260,7 +260,7 @@ export default function ExpensePredictionsPage() {
                     customLabel={'Add new Prediction'}
                 />
             }
-            {(periodStatus === PeriodStatuses.DRAFT && periods.length > 1 && !categoryFilter && !ownerFilter) &&
+            {(periodStatus === PeriodStatuses.DRAFT && periods.length > 1 && !categoryFilter && !depositFilter) &&
                 <CopyPreviousPredictionsButton periodId={periodFilter} apiUrl={copyPredictionsUrl} setAlert={setAlert} />
             }
         </Stack>)
@@ -312,10 +312,10 @@ export default function ExpensePredictionsPage() {
                     <Stack direction={{ sm: "column", md: "row" }} alignItems={{ sm: "flex-start", md: "center" }}
                         justifyContent="flex-start" spacing={1} mb={1} mt={1}>
                         <FilterField
-                            filterValue={ownerFilter}
-                            setFilterValue={setOwnerFilter}
-                            options={owners}
-                            label="Category Owner"
+                            filterValue={depositFilter}
+                            setFilterValue={setDepositFilter}
+                            options={deposits}
+                            label="Deposit"
                             sx={{ width: { sm: "100%", md: 200 }, margin: 0 }}
                         />
                         <FilterField
@@ -331,7 +331,7 @@ export default function ExpensePredictionsPage() {
                             options={categories}
                             label="Category"
                             sx={{ width: { sm: "100%", md: 200 }, margin: 0 }}
-                            disabled={!ownerFilter}
+                            disabled={!depositFilter}
                             groupBy={(option) => option.priority_display}
                             renderGroup={(params) => (
                                 <li key={params.key}>
