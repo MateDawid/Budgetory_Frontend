@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
 import {
-    GridActionsCellItem,
     GridRowEditStopReasons,
     GridRowModes,
 } from "@mui/x-data-grid";
@@ -18,14 +17,12 @@ import { getApiObjectsList, createApiObject, updateApiObject, deleteApiObject } 
 import { AlertContext } from '../../../app_infrastructure/store/AlertContext';
 import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
 import ApiError from '../../../app_infrastructure/utils/ApiError';
-import { black } from '../../../app_infrastructure/utils/Colors';
 import StyledDataGrid from '../../../app_infrastructure/components/DataGrid/StyledDataGrid';
 import getSortFieldMapping from '../../../app_infrastructure/components/DataGrid/utils/getSortFieldMapping';
+import StyledGridActionsCellItem from '../../../app_infrastructure/components/DataGrid/StyledGridActionsCellItem';
 
 
 const pageSizeOptions = [10, 50, 100]
-
-const gridActionsCellItemStyle = { "& .MuiSvgIcon-root": { color: black } }
 
 
 /**
@@ -83,11 +80,10 @@ const TransferDataGrid = ({
             getActions: (params) => {
                 if (readOnly) {
                     return [
-                        <GridActionsCellItem
+                        <StyledGridActionsCellItem
                             key={params.id}
                             icon={<OpenInNewIcon />}
                             label="Open"
-                            sx={gridActionsCellItemStyle}
                             onClick={() => navigate(`${clientUrl}${params.id}`)}
                         />,
                     ];
@@ -95,36 +91,32 @@ const TransferDataGrid = ({
                     const isInEditMode = rowModesModel[params.id]?.mode === GridRowModes.Edit;
                     if (isInEditMode) {
                         return [
-                            <GridActionsCellItem
+                            <StyledGridActionsCellItem
                                 key={params.id}
                                 icon={<SaveIcon />}
                                 label="Save"
-                                sx={gridActionsCellItemStyle}
                                 onClick={handleSaveClick(params.row)}
                             />,
-                            <GridActionsCellItem
+                            <StyledGridActionsCellItem
                                 key={params.id}
                                 icon={<CancelIcon />}
                                 label="Cancel"
-                                sx={gridActionsCellItemStyle}
                                 onClick={handleCancelClick(params.row.id)}
                             />,
                         ];
                     } else {
                         return [
-                            <GridActionsCellItem
+                            <StyledGridActionsCellItem
                                 key={params.id}
                                 icon={<EditIcon />}
                                 label="Edit"
-                                sx={gridActionsCellItemStyle}
                                 onClick={handleEditClick(params.row)}
                             />,
-                            <GridActionsCellItem
+                            <StyledGridActionsCellItem
                                 key={params.id}
                                 icon={<DeleteIcon />}
                                 label="Delete"
                                 onClick={() => handleApiDelete(params.row)}
-                                sx={gridActionsCellItemStyle}
                             />,
                         ]
                     }

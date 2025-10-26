@@ -1,7 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react';
-import {
-    GridActionsCellItem,
-} from "@mui/x-data-grid";
 import Box from "@mui/material/Box";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useNavigate } from "react-router-dom";
@@ -11,11 +8,10 @@ import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
 import StyledDataGrid from '../../app_infrastructure/components/DataGrid/StyledDataGrid';
 import { formatFilterModel, mappedFilterOperators } from '../../app_infrastructure/components/DataGrid/utils/FilterHandlers';
 import getSortFieldMapping from '../../app_infrastructure/components/DataGrid/utils/getSortFieldMapping';
+import StyledGridActionsCellItem from '../../app_infrastructure/components/DataGrid/StyledGridActionsCellItem';
 
 
 const pageSizeOptions = [10, 50, 100]
-
-const gridActionsCellItemStyle = { "& .MuiSvgIcon-root": { color: "#252525" } }
 
 
 /**
@@ -60,11 +56,10 @@ const BudgetDepositsDataGrid = ({
             cellClassName: 'actions',
             getActions: (params) => {
                 return [
-                    <GridActionsCellItem
+                    <StyledGridActionsCellItem
                         key={params.id}
                         icon={<OpenInNewIcon />}
                         label="Open"
-                        sx={gridActionsCellItemStyle}
                         onClick={() => navigate(`${clientUrl}${params.id}`)}
                     />,
                 ];
