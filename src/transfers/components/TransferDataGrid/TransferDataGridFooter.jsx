@@ -90,7 +90,6 @@ const TransferDataGridFooterButtons = ({ apiUrl, handleAddClick, selectedRows, s
 /**
  * DataTableFooter component for DataTable custom footer.
  * @param {object} props
- * @param {boolean} props.readOnly - Indicates if DataTable is read only or editable.
  * @param {string} props.apiUrl - Base API url for fetching data.
  * @param {function} props.handleAddClick - Function to handle Add button click.
  * @param {array} props.selectedRows - Array containing ids of selected rows.
@@ -101,9 +100,9 @@ const TransferDataGridFooterButtons = ({ apiUrl, handleAddClick, selectedRows, s
  * @param {boolean} props.deleteSelectedDisabled - Indicates if footer 'delete selected' button should be visible or not
  * @param {object} props.props - Other properties.
  */
-const TransferDataGridFooter = ({ readOnly, apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows, rightbarDepositsRefresh, copySelectedDisabled, deleteSelectedDisabled, ...props }) => {
+const TransferDataGridFooter = ({ apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows, rightbarDepositsRefresh, copySelectedDisabled, deleteSelectedDisabled, ...props }) => {
     return <>
-        {(!readOnly) && <TransferDataGridFooterButtons
+        <TransferDataGridFooterButtons
             apiUrl={apiUrl}
             handleAddClick={handleAddClick}
             selectedRows={selectedRows}
@@ -112,7 +111,7 @@ const TransferDataGridFooter = ({ readOnly, apiUrl, handleAddClick, selectedRows
             rightbarDepositsRefresh={rightbarDepositsRefresh}
             copySelectedDisabled={copySelectedDisabled}
             deleteSelectedDisabled={deleteSelectedDisabled}
-        />}
+        />
         <GridPagination {...props} />
     </>
 }

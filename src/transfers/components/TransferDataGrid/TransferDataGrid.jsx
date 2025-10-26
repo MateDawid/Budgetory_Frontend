@@ -8,8 +8,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CancelIcon from '@mui/icons-material/Close';
 import SaveIcon from "@mui/icons-material/Save";
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { useNavigate } from "react-router-dom";
 import TransferDataGridFooter from './TransferDataGridFooter';
 import { prepareApiInput } from '../../../app_infrastructure/components/DataGrid/utils/ApiInputFormatters';
 import { mappedFilterOperators, formatFilterModel } from '../../../app_infrastructure/components/DataGrid/utils/FilterHandlers';
@@ -30,8 +28,6 @@ const pageSizeOptions = [10, 50, 100]
  * @param {object} props
  * @param {object} props.columns - Displayed columns settings.
  * @param {string} props.apiUrl - Base API url for fetching data.
- * @param {boolean} props.readOnly - Indicates if DataTable is read only or editable.
- * @param {string|null}props.clientUrl - Frontend base url for redirects in readOnly mode.
  * @param {number} props.height - Height of DataTable.
  * @param {boolean} props.rightbarDepositsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
  * @param {boolean} props.copySelectedDisabled - Indicates if footer 'copy selected' button should be visible or not
@@ -40,14 +36,11 @@ const pageSizeOptions = [10, 50, 100]
 const TransferDataGrid = ({
     columns,
     apiUrl,
-    readOnly = false,
-    clientUrl = null,
     height = 600,
     rightbarDepositsRefresh = false,
     copySelectedDisabled = false,
     deleteSelectedDisabled = false,
 }) => {
-    const navigate = useNavigate();
     const [rows, setRows] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
     const [removedRows, setRemovedRows] = useState([]);
@@ -78,50 +71,38 @@ const TransferDataGrid = ({
             headerName: 'Actions',
             cellClassName: 'actions',
             getActions: (params) => {
-                if (readOnly) {
+                const isInEditMode = rowModesModel[params.id]?.mode === GridRowModes.Edit;
+                if (isInEditMode) {
                     return [
                         <StyledGridActionsCellItem
                             key={params.id}
-                            icon={<OpenInNewIcon />}
-                            label="Open"
-                            onClick={() => navigate(`${clientUrl}${params.id}`)}
+                            icon={<SaveIcon />}
+                            label="Save"
+                            onClick={handleSaveClick(params.row)}
+                        />,
+                        <StyledGridActionsCellItem
+                            key={params.id}
+                            icon={<CancelIcon />}
+                            label="Cancel"
+                            onClick={handleCancelClick(params.row.id)}
                         />,
                     ];
                 } else {
-                    const isInEditMode = rowModesModel[params.id]?.mode === GridRowModes.Edit;
-                    if (isInEditMode) {
-                        return [
-                            <StyledGridActionsCellItem
-                                key={params.id}
-                                icon={<SaveIcon />}
-                                label="Save"
-                                onClick={handleSaveClick(params.row)}
-                            />,
-                            <StyledGridActionsCellItem
-                                key={params.id}
-                                icon={<CancelIcon />}
-                                label="Cancel"
-                                onClick={handleCancelClick(params.row.id)}
-                            />,
-                        ];
-                    } else {
-                        return [
-                            <StyledGridActionsCellItem
-                                key={params.id}
-                                icon={<EditIcon />}
-                                label="Edit"
-                                onClick={handleEditClick(params.row)}
-                            />,
-                            <StyledGridActionsCellItem
-                                key={params.id}
-                                icon={<DeleteIcon />}
-                                label="Delete"
-                                onClick={() => handleApiDelete(params.row)}
-                            />,
-                        ]
-                    }
+                    return [
+                        <StyledGridActionsCellItem
+                            key={params.id}
+                            icon={<EditIcon />}
+                            label="Edit"
+                            onClick={handleEditClick(params.row)}
+                        />,
+                        <StyledGridActionsCellItem
+                            key={params.id}
+                            icon={<DeleteIcon />}
+                            label="Delete"
+                            onClick={() => handleApiDelete(params.row)}
+                        />,
+                    ]
                 }
-
             }
         },
     ]
@@ -424,9 +405,7 @@ const TransferDataGrid = ({
                     onRowEditStop={handleRowEditStop}
                     processRowUpdate={processRowUpdate}
                     onProcessRowUpdateError={handleProcessRowUpdateError}
-                    checkboxSelection={
-                        !readOnly && !(copySelectedDisabled && deleteSelectedDisabled)
-                    }
+                    checkboxSelection={!(copySelectedDisabled && deleteSelectedDisabled)}
                     disableRowSelectionOnClick
                     onRowSelectionModelChange={(selectedRowsIds) => setSelectedRows(selectedRowsIds)}
                     isRowSelectable={(params) => params.row.isNew !== true}
@@ -435,7 +414,6 @@ const TransferDataGrid = ({
                     }}
                     slotProps={{
                         pagination: {
-                            readOnly,
                             apiUrl,
                             handleAddClick,
                             selectedRows,
