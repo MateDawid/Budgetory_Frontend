@@ -8,9 +8,9 @@ import { useNavigate } from "react-router-dom";
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
 import { AlertContext } from '../../app_infrastructure/store/AlertContext';
 import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
-import StyledDataGrid from '../../app_infrastructure/components/DataTable/StyledDataGrid';
-import { formatFilterModel, mappedFilterOperators } from '../../app_infrastructure/components/DataTable/utils/FilterHandlers';
-import getSortFieldMapping from '../../app_infrastructure/components/DataTable/utils/getSortFieldMapping';
+import StyledDataGrid from '../../app_infrastructure/components/DataGrid/StyledDataGrid';
+import { formatFilterModel, mappedFilterOperators } from '../../app_infrastructure/components/DataGrid/utils/FilterHandlers';
+import getSortFieldMapping from '../../app_infrastructure/components/DataGrid/utils/getSortFieldMapping';
 
 
 const pageSizeOptions = [10, 50, 100]

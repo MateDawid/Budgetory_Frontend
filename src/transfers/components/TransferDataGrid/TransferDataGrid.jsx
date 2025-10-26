@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
 import {
-    DataGrid,
     GridActionsCellItem,
     GridRowEditStopReasons,
     GridRowModes,
@@ -11,62 +10,37 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CancelIcon from '@mui/icons-material/Close';
 import SaveIcon from "@mui/icons-material/Save";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import ApiError from "../../utils/ApiError";
-import { AlertContext } from "../../store/AlertContext";
-import { BudgetContext } from "../../store/BudgetContext";
-import { prepareApiInput } from "./utils/ApiInputFormatters";
-import { black } from "../../utils/Colors";
-import { formatFilterModel, mappedFilterOperators } from "./utils/FilterHandlers";
-import { createApiObject, deleteApiObject, getApiObjectsList, updateApiObject } from "../../services/APIService";
-import { styled } from "@mui/material/styles";
-import DataTableFooter from "./DataTableFooter";
 import { useNavigate } from "react-router-dom";
+import TransferDataGridFooter from './TransferDataGridFooter';
+import { prepareApiInput } from '../../../app_infrastructure/components/DataGrid/utils/ApiInputFormatters';
+import { mappedFilterOperators, formatFilterModel } from '../../../app_infrastructure/components/DataGrid/utils/FilterHandlers';
+import { getApiObjectsList, createApiObject, updateApiObject, deleteApiObject } from '../../../app_infrastructure/services/APIService';
+import { AlertContext } from '../../../app_infrastructure/store/AlertContext';
+import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
+import ApiError from '../../../app_infrastructure/utils/ApiError';
+import { black } from '../../../app_infrastructure/utils/Colors';
+import StyledDataGrid from '../../../app_infrastructure/components/DataGrid/StyledDataGrid';
+import getSortFieldMapping from '../../../app_infrastructure/components/DataGrid/utils/getSortFieldMapping';
 
 
 const pageSizeOptions = [10, 50, 100]
 
 const gridActionsCellItemStyle = { "& .MuiSvgIcon-root": { color: black } }
-const StyledDataGrid = styled(DataGrid)(() => ({
-    minWidth: "100%",
-    maxWidth: "100%",
-    border: 0,
-    '& .MuiDataGrid-columnHeaderTitle, .MuiTablePagination-selectLabel, .MuiTablePagination-select, .MuiTablePagination-displayedRows': { fontWeight: 'bold', },
-    '& .MuiDataGrid-cell': {
-        borderRight: '1px solid #303030',
-        borderRightColor: '#f0f0f0',
-    },
-    '& .MuiDataGrid-columnsContainer, .MuiDataGrid-cell, .MuiDataGrid-footerContainer': {
-        borderBottom: '#f0f0f0'
-    },
-}));
-
-/**
- * Function to prepare mapping of API ordering fields for DataTable columns other than column names.
- * @param {object} columns - DataTable columns definitions.
- * @return {object} - Mapping for sorting DataTable rows.
- */
-const getSortFieldMapping = (columns) => {
-    return columns.reduce((acc, column) => {
-        if (column.sortField) {
-            acc[column.field] = column.sortField;
-        }
-        return acc;
-    }, {});
-};
 
 
 /**
  * DataTable component for displaying DataGrid with data fetched from API.
- * @param {object} columns - Displayed columns settings.
- * @param {string} apiUrl - Base API url for fetching data.
- * @param {boolean} readOnly - Indicates if DataTable is read only or editable.
- * @param {string|null} clientUrl - Frontend base url for redirects in readOnly mode.
- * @param {number} height - Height of DataTable.
- * @param {boolean} rightbarDepositsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
- * @param {boolean} copySelectedDisabled - Indicates if footer 'copy selected' button should be visible or not
- * @param {boolean} deleteSelectedDisabled - Indicates if footer 'delete selected' button should be visible or not
+ * @param {object} props
+ * @param {object} props.columns - Displayed columns settings.
+ * @param {string} props.apiUrl - Base API url for fetching data.
+ * @param {boolean} props.readOnly - Indicates if DataTable is read only or editable.
+ * @param {string|null}props.clientUrl - Frontend base url for redirects in readOnly mode.
+ * @param {number} props.height - Height of DataTable.
+ * @param {boolean} props.rightbarDepositsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
+ * @param {boolean} props.copySelectedDisabled - Indicates if footer 'copy selected' button should be visible or not
+ * @param {boolean} props.deleteSelectedDisabled - Indicates if footer 'delete selected' button should be visible or not
  */
-const DataTable = ({
+const TransferDataGrid = ({
     columns,
     apiUrl,
     readOnly = false,
@@ -465,7 +439,7 @@ const DataTable = ({
                     onRowSelectionModelChange={(selectedRowsIds) => setSelectedRows(selectedRowsIds)}
                     isRowSelectable={(params) => params.row.isNew !== true}
                     slots={{
-                        pagination: DataTableFooter,
+                        pagination: TransferDataGridFooter,
                     }}
                     slotProps={{
                         pagination: {
@@ -485,4 +459,4 @@ const DataTable = ({
         </>
     )
 }
-export default DataTable;
+export default TransferDataGrid;

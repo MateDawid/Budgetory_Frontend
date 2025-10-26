@@ -5,9 +5,9 @@ import Divider from "@mui/material/Divider";
 import Alert from '@mui/material/Alert';
 import { AlertContext } from "../../app_infrastructure/store/AlertContext";
 import { BudgetContext } from "../../app_infrastructure/store/BudgetContext";
-import DataTable from "../../app_infrastructure/components/DataTable/DataTable";
-import AutocompleteCell from "../../app_infrastructure/components/DataTable/AutocompleteCell";
-import TransferValueInputCell from "../../app_infrastructure/components/DataTable/TransferValueInputCell";
+import AutocompleteCell from "../../app_infrastructure/components/DataGrid/AutocompleteCell";
+import TransferDataGrid from '../components/TransferDataGrid/TransferDataGrid';
+import TransferValueInputCell from '../components/TransferDataGrid/TransferValueInputCell';
 
 /**
  * IncomeList component to display list of Budget INCOME Transfers.
@@ -151,7 +151,7 @@ export default function IncomeList() {
                 <Divider sx={{ marginBottom: 1 }} />
                 {alert && <Alert sx={{ marginBottom: 1, whiteSpace: 'pre-wrap' }} severity={alert.type}
                     onClose={() => setAlert(null)}>{alert.message}</Alert>}
-                <DataTable
+                <TransferDataGrid
                     columns={columns}
                     apiUrl={apiUrl}
                     rightbarDepositsRefresh
