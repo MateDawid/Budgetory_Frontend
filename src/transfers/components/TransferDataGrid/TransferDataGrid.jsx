@@ -18,29 +18,28 @@ import ApiError from '../../../app_infrastructure/utils/ApiError';
 import StyledDataGrid from '../../../app_infrastructure/components/DataGrid/StyledDataGrid';
 import getSortFieldMapping from '../../../app_infrastructure/components/DataGrid/utils/getSortFieldMapping';
 import StyledGridActionsCellItem from '../../../app_infrastructure/components/DataGrid/StyledGridActionsCellItem';
+import AutocompleteCell from './AutocompleteCell';
+import TransferValueInputCell from './TransferValueInputCell';
 
 
 const pageSizeOptions = [10, 50, 100]
+
+/**
+ * Mapping of TransferTypes.
+ */
+const TransferTypes = {
+    INCOME: 1,
+    EXPENSE: 2,
+};
 
 
 /**
  * DataTable component for displaying DataGrid with data fetched from API.
  * @param {object} props
- * @param {object} props.columns - Displayed columns settings.
  * @param {string} props.apiUrl - Base API url for fetching data.
- * @param {number} props.height - Height of DataTable.
- * @param {boolean} props.rightbarDepositsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
- * @param {boolean} props.copySelectedDisabled - Indicates if footer 'copy selected' button should be visible or not
- * @param {boolean} props.deleteSelectedDisabled - Indicates if footer 'delete selected' button should be visible or not
  */
-const TransferDataGrid = ({
-    columns,
-    apiUrl,
-    height = 600,
-    rightbarDepositsRefresh = false,
-    copySelectedDisabled = false,
-    deleteSelectedDisabled = false,
-}) => {
+const TransferDataGrid = ({apiUrl}) => {
+    const transferType = apiUrl.endsWith('expenses/') ? TransferTypes.EXPENSE : TransferTypes.INCOME
     const [rows, setRows] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
     const [removedRows, setRemovedRows] = useState([]);
@@ -55,12 +54,137 @@ const TransferDataGrid = ({
     const [sortModel, setSortModel] = React.useState({});
     const [filterModel, setFilterModel] = React.useState({ items: [] });
     const { setAlert } = useContext(AlertContext);
-    const { contextBudgetId, updateRefreshTimestamp } = useContext(BudgetContext);
+    const { contextBudgetId, contextBudgetCurrency, updateRefreshTimestamp } = useContext(BudgetContext);
 
-    const visibleColumns = columns.filter(column => !column.hide);
+    const [periodOptions, setPeriodOptions] = useState([]);
+    const [entityOptions, setEntityOptions] = useState([]);
+    const [categoryOptions, setCategoryOptions] = useState([]);
+    const [depositOptions, setDepositOptions] = useState([]);
+
+    const columns = [
+        {
+            field: 'date',
+            type: 'date',
+            headerName: 'Date',
+            headerAlign: 'center',
+            align: 'center',
+            flex: 2,
+            filterable: true,
+            sortable: true,
+            editable: true,
+            valueGetter: (value) => {
+                return new Date(value);
+            },
+            valueFormatter: (value) => {
+                try {
+                    return value.toLocaleDateString('en-CA')
+                } catch (error) {
+                    return value
+                }
+            },
+        },
+        {
+            field: 'period',
+            type: 'singleSelect',
+            headerName: 'Period',
+            headerAlign: 'center',
+            align: 'center',
+            flex: 2,
+            filterable: true,
+            sortable: true,
+            editable: true,
+            valueOptions: periodOptions,
+            valueOptionsSetter: setPeriodOptions,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`,
+            renderEditCell: (params) => <AutocompleteCell{...params} />
+        },
+        {
+            field: 'name',
+            type: 'string',
+            headerName: 'Name',
+            headerAlign: 'center',
+            align: 'center',
+            flex: 2,
+            filterable: true,
+            sortable: true,
+            editable: true,
+        },
+        {
+            field: 'deposit',
+            type: 'singleSelect',
+            headerName: 'Deposit',
+            headerAlign: 'center',
+            align: 'center',
+            flex: 2,
+            filterable: true,
+            sortable: true,
+            editable: true,
+            valueOptions: depositOptions,
+            valueOptionsSetter: setDepositOptions,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`,
+            renderEditCell: (params) => <AutocompleteCell{...params} />
+        },
+        {
+            field: 'entity',
+            type: 'singleSelect',
+            headerName: transferType === TransferTypes.EXPENSE ? 'Receiver' : 'Sender',
+            headerAlign: 'center',
+            align: 'center',
+            flex: 2,
+            filterable: true,
+            sortable: true,
+            editable: true,
+            valueOptions: entityOptions,
+            valueOptionsSetter: setEntityOptions,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?ordering=is_deposit,name`,
+            renderEditCell: (params) => <AutocompleteCell {...params} groupBy={(option) => option.is_deposit ? 'Deposits' : 'Entities'} />
+
+        },
+        {
+            field: 'category',
+            type: 'singleSelect',
+            headerName: 'Category',
+            headerAlign: 'center',
+            align: 'center',
+            flex: 2,
+            filterable: true,
+            sortable: true,
+            editable: true,
+            valueOptions: categoryOptions,
+            valueOptionsSetter: setCategoryOptions,
+            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?ordering=owner,name&category_type=${transferType === TransferTypes.EXPENSE ? '2' : '1'}`,
+            renderEditCell: (params) => <AutocompleteCell {...params} groupBy={(option) => option.owner_display} />
+        },
+
+        {
+            field: 'value',
+            type: 'number',
+            headerName: 'Value',
+            headerAlign: 'center',
+            align: 'center',
+            flex: 2,
+            filterable: true,
+            sortable: true,
+            editable: true,
+            valueFormatter: (value) => `${value} ${contextBudgetCurrency}`,
+            renderEditCell: (params) => <TransferValueInputCell {...params} />,
+        },
+
+        {
+            field: 'description',
+            type: 'string',
+            headerName: 'Description',
+            headerAlign: 'center',
+            align: 'left',
+            flex: 2,
+            filterable: true,
+            sortable: false,
+            editable: true,
+        },
+    ]
 
     const extendedColumns = [
-        ...visibleColumns.map((column) => ({
+        ...columns.map((column) => ({
             ...column,
             filterOperators: column.type in mappedFilterOperators ? mappedFilterOperators[column.type] : undefined,
         }
@@ -119,7 +243,7 @@ const TransferDataGrid = ({
             }
             try {
                 const rowsResponse = await getApiObjectsList(
-                    apiUrl, paginationModel, sortModel, formatFilterModel(filterModel, visibleColumns)
+                    apiUrl, paginationModel, sortModel, formatFilterModel(filterModel, columns)
                 )
                 setRows(rowsResponse.results);
                 setRowCount(rowsResponse.count);
@@ -141,7 +265,7 @@ const TransferDataGrid = ({
      */
     useEffect(() => {
         const loadSingleSelectChoices = async () => {
-            for (const column of visibleColumns) {
+            for (const column of columns) {
                 if (column.type !== 'singleSelect') {
                     continue;
                 }
@@ -231,12 +355,13 @@ const TransferDataGrid = ({
         });
 
         // Find the first visible, editable column for focus
-        const firstEditableColumn = visibleColumns.find(col => col.editable);
+        const firstEditableColumn = columns.find(col => col.editable);
 
         setRowModesModel((oldModel) => ({
             ...oldModel,
-            [id]: { mode: GridRowModes.Edit, fieldToFocus: firstEditableColumn?.field || visibleColumns[0]?.field },
+            [id]: { mode: GridRowModes.Edit, fieldToFocus: firstEditableColumn?.field || columns[0]?.field },
         }));
+
     };
 
     /**
@@ -295,16 +420,12 @@ const TransferDataGrid = ({
                         return 0;
                     });
             });
-            if (rightbarDepositsRefresh) {
-                updateRefreshTimestamp()
-            }
+            updateRefreshTimestamp()
             return createResponse;
         } else {
             const updateResponse = await updateApiObject(apiUrl, processedRow);
             setAlert({ type: 'success', message: `Object updated successfully.` })
-            if (rightbarDepositsRefresh) {
-                updateRefreshTimestamp()
-            }
+            updateRefreshTimestamp()
             return updateResponse;
         }
 
@@ -372,9 +493,7 @@ const TransferDataGrid = ({
         try {
             await deleteApiObject(apiUrl, row.id);
             setRemovedRows([row.id])
-            if (rightbarDepositsRefresh) {
-                updateRefreshTimestamp()
-            }
+            updateRefreshTimestamp()
             setAlert({ type: 'success', message: "Object deleted successfully" });
         } catch (error) {
             setAlert({ type: 'error', message: error.message });
@@ -383,7 +502,7 @@ const TransferDataGrid = ({
 
     return (
         <>
-            <Box sx={{ flexGrow: 1, marginTop: 2, width: '100%', maxWidth: '100%', height: height }}>
+            <Box sx={{ flexGrow: 1, marginTop: 2, width: '100%', maxWidth: '100%', height: 600 }}>
                 <StyledDataGrid
                     rows={rows}
                     columns={extendedColumns}
@@ -405,7 +524,7 @@ const TransferDataGrid = ({
                     onRowEditStop={handleRowEditStop}
                     processRowUpdate={processRowUpdate}
                     onProcessRowUpdateError={handleProcessRowUpdateError}
-                    checkboxSelection={!(copySelectedDisabled && deleteSelectedDisabled)}
+                    checkboxSelection
                     disableRowSelectionOnClick
                     onRowSelectionModelChange={(selectedRowsIds) => setSelectedRows(selectedRowsIds)}
                     isRowSelectable={(params) => params.row.isNew !== true}
@@ -419,9 +538,6 @@ const TransferDataGrid = ({
                             selectedRows,
                             setRemovedRows,
                             setCopiedRows,
-                            rightbarDepositsRefresh,
-                            copySelectedDisabled,
-                            deleteSelectedDisabled,
                         },
                     }}
                 />

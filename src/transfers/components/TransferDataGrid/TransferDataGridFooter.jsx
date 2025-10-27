@@ -16,11 +16,8 @@ import { AlertContext } from '../../../app_infrastructure/store/AlertContext';
  * @param {array} props.selectedRows - Array containing ids of selected rows.
  * @param {function} props.setRemovedRows - Function to set new value of removedRows to refresh DataTable.
  * @param {function} props.setCopiedRows - Function to set new value of copiedRows to refresh DataTable.
- * @param {boolean} props.rightbarDepositsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
- * @param {boolean} props.copySelectedDisabled - Indicates if footer 'copy selected' button should be visible or not
- * @param {boolean} props.deleteSelectedDisabled - Indicates if footer 'delete selected' button should be visible or not
  */
-const TransferDataGridFooterButtons = ({ apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows, rightbarDepositsRefresh, copySelectedDisabled, deleteSelectedDisabled }) => {
+const TransferDataGridFooterButtons = ({ apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows }) => {
     const { setAlert } = useContext(AlertContext);
     const { updateRefreshTimestamp } = useContext(BudgetContext);
 
@@ -37,9 +34,7 @@ const TransferDataGridFooterButtons = ({ apiUrl, handleAddClick, selectedRows, s
             await bulkDeleteApiObjects(apiUrl, selectedRows);
             setAlert({ type: 'success', message: `Selected Transfers deleted successfully.` })
             setRemovedRows(selectedRows)
-            if (rightbarDepositsRefresh) {
-                updateRefreshTimestamp()
-            }
+            updateRefreshTimestamp()
         } catch (error) {
             setAlert({ type: 'error', message: 'Transfers deleting failed.' })
             console.error(error)
@@ -54,9 +49,7 @@ const TransferDataGridFooterButtons = ({ apiUrl, handleAddClick, selectedRows, s
             const copyResponse = await copyApiObjects(apiUrl, selectedRows);
             setAlert({ type: 'success', message: `Selected Transfers copied successfully.` })
             setCopiedRows(copyResponse.ids)
-            if (rightbarDepositsRefresh) {
-                updateRefreshTimestamp()
-            }
+            updateRefreshTimestamp()
         } catch (error) {
             setAlert({ type: 'error', message: 'Transfers copying failed.' })
             console.error(error)
@@ -66,16 +59,13 @@ const TransferDataGridFooterButtons = ({ apiUrl, handleAddClick, selectedRows, s
     return <>
         {selectedRows.length > 0 ?
             <>
-                {!deleteSelectedDisabled &&
-                    <StyledButton variant="outlined" startIcon={<DeleteIcon />} onClick={handleDeleteClick} sx={{ marginLeft: 1 }}>
-                        Delete
-                    </StyledButton>
-                }
-                {!copySelectedDisabled &&
-                    <StyledButton variant="outlined" startIcon={<ContentCopyIcon />} onClick={handleCopyClick} sx={{ marginLeft: 1 }}>
-                        Copy
-                    </StyledButton>
-                }
+                <StyledButton variant="outlined" startIcon={<DeleteIcon />} onClick={handleDeleteClick} sx={{ marginLeft: 1 }}>
+                    Delete
+                </StyledButton>
+
+                <StyledButton variant="outlined" startIcon={<ContentCopyIcon />} onClick={handleCopyClick} sx={{ marginLeft: 1 }}>
+                    Copy
+                </StyledButton>
             </>
             :
             <StyledButton variant="outlined" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ marginLeft: 1 }}>
@@ -95,12 +85,9 @@ const TransferDataGridFooterButtons = ({ apiUrl, handleAddClick, selectedRows, s
  * @param {array} props.selectedRows - Array containing ids of selected rows.
  * @param {function} props.setRemovedRows - Function to set new value of removedRows to refresh DataTable.
  * @param {function} props.setCopiedRows - Function to set new value of copiedRows to refresh DataTable.
- * @param {boolean} props.rightbarDepositsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
- * @param {boolean} props.copySelectedDisabled - Indicates if footer 'copy selected' button should be visible or not
- * @param {boolean} props.deleteSelectedDisabled - Indicates if footer 'delete selected' button should be visible or not
  * @param {object} props.props - Other properties.
  */
-const TransferDataGridFooter = ({ apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows, rightbarDepositsRefresh, copySelectedDisabled, deleteSelectedDisabled, ...props }) => {
+const TransferDataGridFooter = ({ apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows, ...props }) => {
     return <>
         <TransferDataGridFooterButtons
             apiUrl={apiUrl}
@@ -108,9 +95,6 @@ const TransferDataGridFooter = ({ apiUrl, handleAddClick, selectedRows, setRemov
             selectedRows={selectedRows}
             setRemovedRows={setRemovedRows}
             setCopiedRows={setCopiedRows}
-            rightbarDepositsRefresh={rightbarDepositsRefresh}
-            copySelectedDisabled={copySelectedDisabled}
-            deleteSelectedDisabled={deleteSelectedDisabled}
         />
         <GridPagination {...props} />
     </>
