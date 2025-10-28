@@ -1,65 +1,104 @@
 import React, { useContext, useEffect, useState } from 'react';
-import {
-    GridRowEditStopReasons,
-    GridRowModes,
-} from "@mui/x-data-grid";
 import Box from "@mui/material/Box";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import CancelIcon from '@mui/icons-material/Close';
-import SaveIcon from "@mui/icons-material/Save";
 import TransferDataGridFooter from './TransferDataGridFooter';
-import { prepareApiInput } from '../../../app_infrastructure/components/DataGrid/utils/ApiInputFormatters';
 import { mappedFilterOperators, formatFilterModel } from '../../../app_infrastructure/components/DataGrid/utils/FilterHandlers';
-import { getApiObjectsList, createApiObject, updateApiObject, deleteApiObject } from '../../../app_infrastructure/services/APIService';
+import { getApiObjectsList } from '../../../app_infrastructure/services/APIService';
 import { AlertContext } from '../../../app_infrastructure/store/AlertContext';
 import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
-import ApiError from '../../../app_infrastructure/utils/ApiError';
 import StyledDataGrid from '../../../app_infrastructure/components/DataGrid/StyledDataGrid';
 import getSortFieldMapping from '../../../app_infrastructure/components/DataGrid/utils/getSortFieldMapping';
 import StyledGridActionsCellItem from '../../../app_infrastructure/components/DataGrid/StyledGridActionsCellItem';
 import AutocompleteCell from './AutocompleteCell';
 import TransferValueInputCell from './TransferValueInputCell';
+import TransferAddModal from './TransferAddModal';
+import TransferTypes from '../../utils/TransferTypes';
 
 
 const pageSizeOptions = [10, 50, 100]
-
-/**
- * Mapping of TransferTypes.
- */
-const TransferTypes = {
-    INCOME: 1,
-    EXPENSE: 2,
-};
 
 
 /**
  * DataTable component for displaying DataGrid with data fetched from API.
  * @param {object} props
- * @param {string} props.apiUrl - Base API url for fetching data.
+ * @param {number} props.transferType - Type of Transfer to be created. Options: TransferTypes.INCOME, TransferTypes.EXPENSE.
  */
-const TransferDataGrid = ({apiUrl}) => {
-    const transferType = apiUrl.endsWith('expenses/') ? TransferTypes.EXPENSE : TransferTypes.INCOME
+const TransferDataGrid = ({ transferType }) => {
+    // Contexts
+    const { setAlert } = useContext(AlertContext);
+    const { contextBudgetId, contextBudgetCurrency } = useContext(BudgetContext);
+    
+    // API URL
+    let apiUrl;
+    switch (transferType) {
+        case TransferTypes.INCOME:
+            apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/incomes/`
+            break
+        case TransferTypes.EXPENSE:
+            apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expenses/`
+            break
+    }
+    
+    // Data rows
     const [rows, setRows] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
     const [removedRows, setRemovedRows] = useState([]);
     const [copiedRows, setCopiedRows] = useState([]);
     const [rowCount, setRowCount] = useState(0);
-    const [rowModesModel, setRowModesModel] = React.useState({});
+
+    // Loading and pagination
     const [loading, setLoading] = useState(true);
     const [paginationModel, setPaginationModel] = React.useState({
         pageSize: pageSizeOptions[0],
         page: 0,
     });
+    
+    // Filtering and sorting
     const [sortModel, setSortModel] = React.useState({});
     const [filterModel, setFilterModel] = React.useState({ items: [] });
-    const { setAlert } = useContext(AlertContext);
-    const { contextBudgetId, contextBudgetCurrency, updateRefreshTimestamp } = useContext(BudgetContext);
-
     const [periodOptions, setPeriodOptions] = useState([]);
     const [entityOptions, setEntityOptions] = useState([]);
     const [categoryOptions, setCategoryOptions] = useState([]);
     const [depositOptions, setDepositOptions] = useState([]);
+
+    // Forms handlers
+    const [addFormOpen, setAddFormOpen] = useState(false);
+    const [editFormOpen, setEditFormOpen] = useState(false);
+    const [deleteFormOpen, setDeleteFormOpen] = useState(false);
+
+    /**
+     * Fetches select options for Transfer select fields from API.
+     */
+    useEffect(() => {
+        async function getPeriodsChoices() {
+            try {
+                const response = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`)
+                setPeriodOptions(response);
+            } catch (err) {
+                setPeriodOptions([])
+            }
+        }
+        async function getCategories() {
+            const response = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?ordering=owner,name&category_type=${transferType === TransferTypes.EXPENSE ? '2' : '1'}`)
+            setCategoryOptions(response);
+        }
+        async function getDeposits() {
+            const response = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/?deposit_type=${transferType === TransferTypes.EXPENSE ? '2' : '1'}`)
+            setDepositOptions(response);
+        }
+        async function getEntities() {
+            const response = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?ordering=is_deposit,name`)
+            setEntityOptions(response);
+        }
+        if (!contextBudgetId) {
+            return
+        }
+        getPeriodsChoices();
+        getCategories();
+        getDeposits();
+        getEntities();
+    }, [contextBudgetId]);
 
     const columns = [
         {
@@ -71,7 +110,6 @@ const TransferDataGrid = ({apiUrl}) => {
             flex: 2,
             filterable: true,
             sortable: true,
-            editable: true,
             valueGetter: (value) => {
                 return new Date(value);
             },
@@ -92,10 +130,8 @@ const TransferDataGrid = ({apiUrl}) => {
             flex: 2,
             filterable: true,
             sortable: true,
-            editable: true,
             valueOptions: periodOptions,
-            valueOptionsSetter: setPeriodOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`,
+            // TODO: renderEditCell function to TransferAddModal/TransferEditModal
             renderEditCell: (params) => <AutocompleteCell{...params} />
         },
         {
@@ -107,7 +143,6 @@ const TransferDataGrid = ({apiUrl}) => {
             flex: 2,
             filterable: true,
             sortable: true,
-            editable: true,
         },
         {
             field: 'deposit',
@@ -118,10 +153,8 @@ const TransferDataGrid = ({apiUrl}) => {
             flex: 2,
             filterable: true,
             sortable: true,
-            editable: true,
             valueOptions: depositOptions,
-            valueOptionsSetter: setDepositOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`,
+            // TODO: renderEditCell function to TransferAddModal/TransferEditModal
             renderEditCell: (params) => <AutocompleteCell{...params} />
         },
         {
@@ -133,10 +166,8 @@ const TransferDataGrid = ({apiUrl}) => {
             flex: 2,
             filterable: true,
             sortable: true,
-            editable: true,
             valueOptions: entityOptions,
-            valueOptionsSetter: setEntityOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?ordering=is_deposit,name`,
+            // TODO: renderEditCell function to TransferAddModal/TransferEditModal
             renderEditCell: (params) => <AutocompleteCell {...params} groupBy={(option) => option.is_deposit ? 'Deposits' : 'Entities'} />
 
         },
@@ -149,10 +180,8 @@ const TransferDataGrid = ({apiUrl}) => {
             flex: 2,
             filterable: true,
             sortable: true,
-            editable: true,
             valueOptions: categoryOptions,
-            valueOptionsSetter: setCategoryOptions,
-            valueOptionsApiUrl: `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?ordering=owner,name&category_type=${transferType === TransferTypes.EXPENSE ? '2' : '1'}`,
+            // TODO: renderEditCell function to TransferAddModal/TransferEditModal
             renderEditCell: (params) => <AutocompleteCell {...params} groupBy={(option) => option.owner_display} />
         },
 
@@ -165,8 +194,8 @@ const TransferDataGrid = ({apiUrl}) => {
             flex: 2,
             filterable: true,
             sortable: true,
-            editable: true,
             valueFormatter: (value) => `${value} ${contextBudgetCurrency}`,
+            // TODO: renderEditCell function to TransferAddModal/TransferEditModal
             renderEditCell: (params) => <TransferValueInputCell {...params} />,
         },
 
@@ -179,54 +208,37 @@ const TransferDataGrid = ({apiUrl}) => {
             flex: 2,
             filterable: true,
             sortable: false,
-            editable: true,
         },
     ]
 
     const extendedColumns = [
+        // Map column type to proper filter operators
         ...columns.map((column) => ({
             ...column,
             filterOperators: column.type in mappedFilterOperators ? mappedFilterOperators[column.type] : undefined,
         }
         )),
+        // Extend columns with Actions column
         {
             field: 'actions',
             type: 'actions',
             headerName: 'Actions',
             cellClassName: 'actions',
             getActions: (params) => {
-                const isInEditMode = rowModesModel[params.id]?.mode === GridRowModes.Edit;
-                if (isInEditMode) {
-                    return [
-                        <StyledGridActionsCellItem
-                            key={params.id}
-                            icon={<SaveIcon />}
-                            label="Save"
-                            onClick={handleSaveClick(params.row)}
-                        />,
-                        <StyledGridActionsCellItem
-                            key={params.id}
-                            icon={<CancelIcon />}
-                            label="Cancel"
-                            onClick={handleCancelClick(params.row.id)}
-                        />,
-                    ];
-                } else {
-                    return [
-                        <StyledGridActionsCellItem
-                            key={params.id}
-                            icon={<EditIcon />}
-                            label="Edit"
-                            onClick={handleEditClick(params.row)}
-                        />,
-                        <StyledGridActionsCellItem
-                            key={params.id}
-                            icon={<DeleteIcon />}
-                            label="Delete"
-                            onClick={() => handleApiDelete(params.row)}
-                        />,
-                    ]
-                }
+                return [
+                    <StyledGridActionsCellItem
+                        key={params.id}
+                        icon={<EditIcon />}
+                        label="Edit"
+                        onClick={handleEditClick(params.row)}
+                    />,
+                    <StyledGridActionsCellItem
+                        key={params.id}
+                        icon={<DeleteIcon />}
+                        label="Delete"
+                        onClick={() => handleDeleteClick(params.row)}
+                    />,
+                ]
             }
         },
     ]
@@ -260,30 +272,6 @@ const TransferDataGrid = ({apiUrl}) => {
     }, [contextBudgetId, paginationModel, sortModel, filterModel, removedRows, copiedRows]);
 
     /**
-     * Fetches singleSelect choices from API.
-     * In case of nullChoice (choice saving null value in API) extends valueOptions with such choice.
-     */
-    useEffect(() => {
-        const loadSingleSelectChoices = async () => {
-            for (const column of columns) {
-                if (column.type !== 'singleSelect') {
-                    continue;
-                }
-                try {
-                    const choicesResponse = await getApiObjectsList(column.valueOptionsApiUrl)
-                    column.valueOptionsSetter(column.nullChoice ? [column.nullChoice, ...choicesResponse] : choicesResponse);
-                } catch (err) {
-                    setAlert({ type: 'error', message: "Failed to load choices for select field.\n" + err });
-                }
-            }
-        }
-        if (!contextBudgetId) {
-            return
-        }
-        loadSingleSelectChoices();
-    }, [contextBudgetId])
-
-    /**
      * Function to update DataGrid pagination model.
      * @param {object} updatedPaginationModel - updated pagination model.
      */
@@ -315,189 +303,35 @@ const TransferDataGrid = ({apiUrl}) => {
     }
 
     /**
-     * Function to handle events that interrupts editing row.
-     * @param {object} params - Edited row parameters.
-     * @param {object} event - Event preventing row editing.
-     */
-    const handleRowEditStop = (params, event) => {
-        if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-            event.defaultMuiPrevented = true;
-        }
-    };
-
-    /**
      * Function to handle clicking "Add" toolbar button.
      */
     const handleAddClick = () => {
-        let id = 0
-        const emptyCells = (columns.reduce((emptyRow, column) => {
-            // Handle hidden columns with default values
-            if (column.hide && column.defaultValue !== undefined) {
-                emptyRow[column.field] = column.defaultValue;
-            } else if (column.type === 'date') {
-                emptyRow[column.field] = new Date().toISOString().split('T')[0];
-            } else {
-                emptyRow[column.field] = '';
-            }
-            return emptyRow;
-        }, {}))
-
-        setRows((oldRows) => {
-            if (oldRows.length !== 0) {
-                id = oldRows.reduce((maxId, row) => row.id > maxId ? row.id : maxId, oldRows[0].id) + 100
-            } else {
-                id = 1
-            }
-            return [
-                ...oldRows,
-                { id, ...emptyCells, isNew: true },
-            ]
-        });
-
-        // Find the first visible, editable column for focus
-        const firstEditableColumn = columns.find(col => col.editable);
-
-        setRowModesModel((oldModel) => ({
-            ...oldModel,
-            [id]: { mode: GridRowModes.Edit, fieldToFocus: firstEditableColumn?.field || columns[0]?.field },
-        }));
-
+        setAddFormOpen(true)
     };
 
     /**
      * Function performed after clicking row Edit button.
-     * Changes particular row mode to "Edit".
      * @param {object} row - Row data.
      */
     const handleEditClick = (row) => () => {
-        setRowModesModel((prevModel) => ({
-            ...prevModel,
-            [row.id]: { mode: GridRowModes.Edit },
-        }));
+        // OPEN EDIT FORM
+        console.log('Edit click')
+        console.log(row)
+        console.log(editFormOpen)
+        setEditFormOpen(true)
     };
 
-    /**
-     * Function performed after clicking row Save button.
-     * Changes particular row mode to "View" and keeps done modifications,
-     * which leads to perform processRowUpdate function.
-     * @param {object} row - Row data.
-     */
-    const handleSaveClick = (row) => () => {
-        setRowModesModel((prevModel) => ({
-            ...prevModel,
-            [row.id]: { mode: GridRowModes.View },
-        }));
-    };
 
     /**
-     * Function performed after saving changes in DataGrid row.
-     * Makes call to API to update particular row.
-     * @param {object} row - DataGrid row content.
-     * @return {object} - Created/updated object content.
-     */
-    const processRowUpdate = async (row) => {
-        const rowWithHiddenFields = { ...row };
-        columns.forEach(column => {
-            if (column.hide && column.defaultValue !== undefined && !rowWithHiddenFields[column.field]) {
-                rowWithHiddenFields[column.field] = column.defaultValue;
-            }
-        });
-
-        const processedRow = prepareApiInput(rowWithHiddenFields, columns)
-        if (processedRow.isNew) {
-            const temporaryRowId = processedRow.id;
-            delete processedRow.id;
-            const createResponse = await createApiObject(apiUrl, processedRow);
-            setAlert({ type: 'success', message: `Object created successfully.` })
-            setRows((oldRows) => {
-                return [...oldRows.filter(row => row.id !== temporaryRowId), createResponse]
-                    .sort((a, b) => {
-                        // If a doesn't have isNew and b has it, a comes first
-                        if (!('isNew' in a) && 'isNew' in b) return -1;
-                        // If b doesn't have isNew and a has it, b comes first
-                        if (!('isNew' in b) && 'isNew' in a) return 1;
-                        // Otherwise maintain original order
-                        return 0;
-                    });
-            });
-            updateRefreshTimestamp()
-            return createResponse;
-        } else {
-            const updateResponse = await updateApiObject(apiUrl, processedRow);
-            setAlert({ type: 'success', message: `Object updated successfully.` })
-            updateRefreshTimestamp()
-            return updateResponse;
-        }
-
-    };
-
-    /**
-     * Function performed in case of error during processing row update.
-     * @param {Error | ApiError} error - Error occurred during row update.
-     */
-    const handleProcessRowUpdateError = (error) => {
-        if (error instanceof ApiError && typeof error.data === 'object') {
-            let message = 'Invalid data provided:'
-            Object.keys(error.data.detail).forEach(key => {
-                if (key === 'non_field_errors') {
-                    message = message + `\n• ${error.data.detail[key]}`
-                } else {
-                    const column = columns.find(column => column.field === key)
-                    if (column) {
-                        message = message + `\n• "${column.headerName}" field - ${error.data.detail[key]}`
-                    } else {
-                        message = message + `\n• "${key}" API field - ${error.data.detail[key]}`
-                    }
-                }
-
-            });
-            setAlert({ type: 'error', message: message });
-        } else {
-            console.error(error)
-            setAlert({ type: 'error', message: "Unexpected error occurred." });
-        }
-    };
-
-    /**
-     * Function performed after clicking row Cancel button.
-     * Changes particular row mode to "View" and removes done modifications.
-     * @param {number} id - Edited object id.
-     */
-    const handleCancelClick = (id) => () => {
-        setRowModesModel({
-            ...rowModesModel,
-            [id]: { mode: GridRowModes.View, ignoreModifications: true },
-        });
-
-        const editedRow = rows.find((row) => row.id === id);
-        if (editedRow.isNew) {
-            setRows(rows.filter((row) => row.id !== id));
-        }
-        setAlert(null);
-    };
-
-    /**
-     * Function performed after double-clicking row to be edited.
-     * Changes particular row mode to "Edit".
-     * @param {number} newRowModesModel - Data of updated row.
-     */
-    const handleRowModesModelChange = (newRowModesModel) => {
-        setRowModesModel(newRowModesModel);
-    };
-
-    /**
-     * Function to perform API call to delete selected object.
+     * Function performed after clicking row Delete button.
      * @param {object} row - DataGrid row.
      */
-    const handleApiDelete = async (row) => {
-        try {
-            await deleteApiObject(apiUrl, row.id);
-            setRemovedRows([row.id])
-            updateRefreshTimestamp()
-            setAlert({ type: 'success', message: "Object deleted successfully" });
-        } catch (error) {
-            setAlert({ type: 'error', message: error.message });
-        }
+    const handleDeleteClick = async (row) => {
+        // OPEN DELETE FORM
+        console.log('Delete click')
+        console.log(row)
+        console.log(deleteFormOpen)
+        setDeleteFormOpen(true)
     };
 
     return (
@@ -518,16 +352,9 @@ const TransferDataGrid = ({apiUrl}) => {
                     filterModel={filterModel}
                     onFilterModelChange={updateFiltering}
                     disableColumnResize={true}
-                    editMode="row"
-                    rowModesModel={rowModesModel}
-                    onRowModesModelChange={handleRowModesModelChange}
-                    onRowEditStop={handleRowEditStop}
-                    processRowUpdate={processRowUpdate}
-                    onProcessRowUpdateError={handleProcessRowUpdateError}
                     checkboxSelection
                     disableRowSelectionOnClick
                     onRowSelectionModelChange={(selectedRowsIds) => setSelectedRows(selectedRowsIds)}
-                    isRowSelectable={(params) => params.row.isNew !== true}
                     slots={{
                         pagination: TransferDataGridFooter,
                     }}
@@ -542,6 +369,7 @@ const TransferDataGrid = ({apiUrl}) => {
                     }}
                 />
             </Box>
+            <TransferAddModal apiUrl={apiUrl} transferType={transferType} addFormOpen={addFormOpen} setAddFormOpen={setAddFormOpen}/>
         </>
     )
 }

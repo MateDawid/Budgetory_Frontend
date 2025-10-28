@@ -4,15 +4,13 @@ import { Paper, Stack } from "@mui/material";
 import Divider from "@mui/material/Divider";
 import Alert from '@mui/material/Alert';
 import { AlertContext } from "../../app_infrastructure/store/AlertContext";
-import { BudgetContext } from "../../app_infrastructure/store/BudgetContext";
 import TransferDataGrid from '../components/TransferDataGrid/TransferDataGrid';
+import TransferTypes from '../utils/TransferTypes';
 
 /**
  * IncomeList component to display list of Budget INCOME Transfers.
  */
 export default function IncomeList() {
-    const { contextBudgetId } = useContext(BudgetContext);
-    const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/incomes/`
     const { alert, setAlert } = useContext(AlertContext);
 
     return (
@@ -25,7 +23,7 @@ export default function IncomeList() {
                 <Divider sx={{ marginBottom: 1 }} />
                 {alert && <Alert sx={{ marginBottom: 1, whiteSpace: 'pre-wrap' }} severity={alert.type}
                     onClose={() => setAlert(null)}>{alert.message}</Alert>}
-                <TransferDataGrid apiUrl={apiUrl}/>
+                <TransferDataGrid transferType={TransferTypes.INCOME}/>
             </Paper>
         </>
     );
