@@ -13,7 +13,7 @@ const SelectFormField = (
         ...props
     }
 ) => {
-
+    console.log(fieldParams)
 
     return (
         <Controller
@@ -25,6 +25,7 @@ const SelectFormField = (
                     {...field}
                     fullWidth
                     options={fieldParams['options']}
+                    groupBy={fieldParams['groupBy']}
                     getOptionLabel={(selectedOption) => {
                         if (selectedOption === "") {
                             return selectedOption
