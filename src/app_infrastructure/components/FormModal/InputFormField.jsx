@@ -8,7 +8,7 @@ const InputFormField = (
         fieldParams,
         fieldErrors,
         defaultValue,
-        disabledFields
+        ...props
     }
 ) => {
     return (
@@ -27,7 +27,7 @@ const InputFormField = (
             error={!!fieldErrors[fieldName]}
             helperText={fieldErrors[fieldName] ? fieldErrors[fieldName] : ''}
             sx={{ mb: 2 }}
-            disabled={disabledFields.includes(fieldName)}
+            {...props}
         />
     )
 }

@@ -10,7 +10,7 @@ const SelectFormField = (
         fieldParams,
         fieldErrors,
         defaultValue,
-        disabledFields
+        ...props
     }
 ) => {
 
@@ -20,7 +20,6 @@ const SelectFormField = (
             name={fieldName}
             control={control}
             defaultValue={defaultValue ? defaultValue : fieldParams.defaultValue}
-            disabled={disabledFields.includes(fieldName)}
             render={({ field }) => (
                 <Autocomplete
                     {...field}
@@ -67,6 +66,7 @@ const SelectFormField = (
                     )}
                 />
             )}
+            {...props}
         />
     )
 }
