@@ -63,8 +63,8 @@ const SelectFormField = (
                             field.onChange(selectedValue);
 
                             // Clear dependent fields if specified
-                            if (fieldParams.clearDependentFields && Array.isArray(fieldParams.clearDependentFields)) {
-                                fieldParams.clearDependentFields.forEach(dependentFieldName => {
+                            if (fieldParams.clearFieldsOnChange && Array.isArray(fieldParams.clearFieldsOnChange)) {
+                                fieldParams.clearFieldsOnChange.forEach(dependentFieldName => {
                                     setValue(dependentFieldName, null);
                                 });
                             }
