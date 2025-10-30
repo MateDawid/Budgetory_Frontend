@@ -30,7 +30,8 @@ export default function PredictionEditModal({ prediction, editOpen, setEditOpen 
             options: [{
                 value: prediction.category,
                 label: prediction.category_display
-            }]
+            }],
+            disabled: true
         },
         current_plan: {
             type: 'number',
