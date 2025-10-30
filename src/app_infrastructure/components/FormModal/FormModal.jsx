@@ -9,16 +9,6 @@ import ApiError from "../../utils/ApiError"
 import { useContext } from "react"
 import { BudgetContext } from "../../store/BudgetContext"
 
-/**
- * FormModal component to display Modal with form.
- * @param {object} fields - Create form fields.
- * @param {string} objectType - Type of created object.
- * @param {boolean} open - Indicates if Form is open.
- * @param {boolean} setOpen - Changes state of open value.
- * @param {function} callApi - Function called on Form submit.
- * @param {function} setAlert - Alert setter function.
- * @param {object | undefined} updatedObject - Object being updated by form.
- */
 const FormModal = (
     {
         fields,
@@ -26,11 +16,11 @@ const FormModal = (
         open,
         setOpen,
         callApi,
-        setAlert=undefined,
-        updatedObject=undefined,
+        setAlert = undefined,
+        updatedObject = undefined,
     }
 ) => {
-    const { register, handleSubmit, reset, control } = useForm();
+    const { register, handleSubmit, reset, control, setValue } = useForm();
     const [fieldErrors, setFieldErrors] = useState({});
     const [nonFieldErrors, setNonFieldErrors] = useState(null);
     const { updateRefreshTimestamp } = useContext(BudgetContext);
@@ -90,6 +80,7 @@ const FormModal = (
                             <SelectFormField
                                 key={fieldName}
                                 control={control}
+                                setValue={setValue}
                                 fieldName={fieldName}
                                 fieldParams={fields[fieldName]}
                                 fieldErrors={fieldErrors}
