@@ -10,8 +10,6 @@ import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
 import StyledDataGrid from '../../../app_infrastructure/components/DataGrid/StyledDataGrid';
 import getSortFieldMapping from '../../../app_infrastructure/components/DataGrid/utils/getSortFieldMapping';
 import StyledGridActionsCellItem from '../../../app_infrastructure/components/DataGrid/StyledGridActionsCellItem';
-import AutocompleteCell from './AutocompleteCell';
-import TransferValueInputCell from './TransferValueInputCell';
 import TransferAddModal from './TransferAddModal';
 import TransferTypes from '../../utils/TransferTypes';
 
@@ -131,8 +129,6 @@ const TransferDataGrid = ({ transferType }) => {
             filterable: true,
             sortable: true,
             valueOptions: periodOptions,
-            // TODO: renderEditCell function to TransferAddModal/TransferEditModal
-            renderEditCell: (params) => <AutocompleteCell{...params} />
         },
         {
             field: 'name',
@@ -154,8 +150,6 @@ const TransferDataGrid = ({ transferType }) => {
             filterable: true,
             sortable: true,
             valueOptions: depositOptions,
-            // TODO: renderEditCell function to TransferAddModal/TransferEditModal
-            renderEditCell: (params) => <AutocompleteCell{...params} />
         },
         {
             field: 'entity',
@@ -167,9 +161,6 @@ const TransferDataGrid = ({ transferType }) => {
             filterable: true,
             sortable: true,
             valueOptions: entityOptions,
-            // TODO: renderEditCell function to TransferAddModal/TransferEditModal
-            renderEditCell: (params) => <AutocompleteCell {...params} groupBy={(option) => option.is_deposit ? 'Deposits' : 'Entities'} />
-
         },
         {
             field: 'category',
@@ -181,8 +172,6 @@ const TransferDataGrid = ({ transferType }) => {
             filterable: true,
             sortable: true,
             valueOptions: categoryOptions,
-            // TODO: renderEditCell function to TransferAddModal/TransferEditModal
-            renderEditCell: (params) => <AutocompleteCell {...params} groupBy={(option) => option.owner_display} />
         },
 
         {
@@ -195,8 +184,6 @@ const TransferDataGrid = ({ transferType }) => {
             filterable: true,
             sortable: true,
             valueFormatter: (value) => `${value} ${contextBudgetCurrency}`,
-            // TODO: renderEditCell function to TransferAddModal/TransferEditModal
-            renderEditCell: (params) => <TransferValueInputCell {...params} />,
         },
 
         {
