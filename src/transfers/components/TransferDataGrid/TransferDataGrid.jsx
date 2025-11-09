@@ -25,8 +25,8 @@ const pageSizeOptions = [10, 50, 100]
 const TransferDataGrid = ({ transferType }) => {
     // Contexts
     const { setAlert } = useContext(AlertContext);
-    const { contextBudgetId, contextBudgetCurrency } = useContext(BudgetContext);
-    
+    const { contextBudgetId, contextBudgetCurrency, updateRefreshTimestamp } = useContext(BudgetContext);
+
     // API URL
     let apiUrl;
     switch (transferType) {
@@ -37,7 +37,7 @@ const TransferDataGrid = ({ transferType }) => {
             apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expenses/`
             break
     }
-    
+
     // Data rows
     const [rows, setRows] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
@@ -51,7 +51,7 @@ const TransferDataGrid = ({ transferType }) => {
         pageSize: pageSizeOptions[0],
         page: 0,
     });
-    
+
     // Filtering and sorting
     const [sortModel, setSortModel] = React.useState({});
     const [filterModel, setFilterModel] = React.useState({ items: [] });
@@ -79,15 +79,15 @@ const TransferDataGrid = ({ transferType }) => {
         }
         async function getCategories() {
             const response = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?ordering=owner,name&category_type=${transferType === TransferTypes.EXPENSE ? '2' : '1'}`)
-            setCategoryOptions(response);
+            setCategoryOptions([{ value: -1, label: '[Without Category]' }, ...response]);
         }
         async function getDeposits() {
-            const response = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/?deposit_type=${transferType === TransferTypes.EXPENSE ? '2' : '1'}`)
+            const response = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`)
             setDepositOptions(response);
         }
         async function getEntities() {
             const response = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?ordering=is_deposit,name`)
-            setEntityOptions(response);
+            setEntityOptions([{ value: -1, label: '[Without Entity]' }, ...response]);
         }
         if (!contextBudgetId) {
             return
@@ -154,7 +154,7 @@ const TransferDataGrid = ({ transferType }) => {
         {
             field: 'entity',
             type: 'singleSelect',
-            headerName: transferType === TransferTypes.EXPENSE ? 'Receiver' : 'Sender',
+            headerName: 'Entity',
             headerAlign: 'center',
             align: 'center',
             flex: 2,
@@ -183,7 +183,14 @@ const TransferDataGrid = ({ transferType }) => {
             flex: 2,
             filterable: true,
             sortable: true,
-            valueFormatter: (value) => `${value} ${contextBudgetCurrency}`,
+            renderCell: (params) => (
+                <span style={{
+                    color: transferType === TransferTypes.EXPENSE ? '#BD0000' : '#008000',
+                    fontWeight: 'bold'
+                }}>
+                    {params.value} {contextBudgetCurrency}
+                </span>
+            ),
         },
 
         {
@@ -256,7 +263,7 @@ const TransferDataGrid = ({ transferType }) => {
             return
         }
         loadData();
-    }, [contextBudgetId, paginationModel, sortModel, filterModel, removedRows, copiedRows]);
+    }, [contextBudgetId, paginationModel, sortModel, filterModel, updateRefreshTimestamp, removedRows, copiedRows]);
 
     /**
      * Function to update DataGrid pagination model.
@@ -356,7 +363,7 @@ const TransferDataGrid = ({ transferType }) => {
                     }}
                 />
             </Box>
-            <TransferAddModal apiUrl={apiUrl} transferType={transferType} addFormOpen={addFormOpen} setAddFormOpen={setAddFormOpen}/>
+            <TransferAddModal apiUrl={apiUrl} transferType={transferType} addFormOpen={addFormOpen} setAddFormOpen={setAddFormOpen} />
         </>
     )
 }
