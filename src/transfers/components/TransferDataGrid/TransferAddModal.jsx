@@ -10,7 +10,6 @@ import CategoryTypes from "../../../categories/utils/CategoryTypes";
 export default function TransferAddModal({ apiUrl, transferType, addFormOpen, setAddFormOpen }) {
     const { contextBudgetId, contextBudgetCurrency, updateRefreshTimestamp } = useContext(BudgetContext);
     const { setAlert } = useContext(AlertContext);
-    const [periods, setPeriods] = useState([])
     const [categories, setCategories] = useState([])
     const [deposits, setDeposits] = useState([])
     const [entities, setEntities] = useState([])
@@ -21,13 +20,6 @@ export default function TransferAddModal({ apiUrl, transferType, addFormOpen, se
             type: 'date',
             label: 'Date',
             required: true,
-        },
-        period: {
-            type: 'select',
-            select: true,
-            label: 'Period',
-            required: true,
-            options: periods
         },
         name: {
             type: 'string',
@@ -55,7 +47,6 @@ export default function TransferAddModal({ apiUrl, transferType, addFormOpen, se
             type: 'select',
             select: true,
             label: `Entity ${transferType === TransferTypes.EXPENSE ? 'that receives funds from Deposit' : 'that transfers funds to Deposit'}`,
-            required: true,
             options: entities,
             groupBy: (option) => option.is_deposit ? 'Deposits' : 'Entities'
         },
@@ -81,14 +72,6 @@ export default function TransferAddModal({ apiUrl, transferType, addFormOpen, se
     }
 
     useEffect(() => {
-        async function getPeriodsChoices() {
-            try {
-                const response = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`)
-                setPeriods(response);
-            } catch (err) {
-                setPeriods([])
-            }
-        }
         async function getDeposits() {
             const response = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/?ordering=deposit_type,name`)
             setDeposits(response);
@@ -100,7 +83,6 @@ export default function TransferAddModal({ apiUrl, transferType, addFormOpen, se
         if (!contextBudgetId) {
             return
         }
-        getPeriodsChoices();
         getDeposits();
         getEntities();
     }, [contextBudgetId]);
