@@ -14,8 +14,6 @@ const SelectFormField = (
         ...props
     }
 ) => {
-    console.log(fieldParams)
-
     return (
         <Controller
             name={fieldName}
