@@ -1,15 +1,22 @@
 import React, { useContext, useEffect, useState } from "react";
 import FormModal from "../../../app_infrastructure/components/FormModal/FormModal";
-import { AlertContext } from "../../../app_infrastructure/store/AlertContext";
 import { BudgetContext } from "../../../app_infrastructure/store/BudgetContext";
-import { createApiObject, getApiObjectsList } from "../../../app_infrastructure/services/APIService";
+import { getApiObjectsList } from "../../../app_infrastructure/services/APIService";
 import { InputAdornment } from "@mui/material";
 import TransferTypes from "../../utils/TransferTypes";
 import CategoryTypes from "../../../categories/utils/CategoryTypes";
 
-export default function TransferAddModal({ apiUrl, transferType, addFormOpen, setAddFormOpen }) {
-    const { contextBudgetId, contextBudgetCurrency, updateRefreshTimestamp } = useContext(BudgetContext);
-    const { setAlert } = useContext(AlertContext);
+/**
+ * BaseTransferModal component for displaying Transfer form for adding and editing.
+ * @param {object} props
+ * @param {number} props.transferType - Type of Transfer to be created. Options: TransferTypes.INCOME, TransferTypes.EXPENSE.
+ * @param {boolean} props.formOpen - Flag indicating if form is opened or not.
+ * @param {function} props.setFormOpen - Setter for formOpen flag.
+ * @param {function} props.callApi - Function to be called on form submit.
+ * @param {object | undefined} [props.editedTransfer] - Edited Transfer object.
+ */
+export default function BaseTransferModal({ transferType, formOpen, setFormOpen, callApi, editedTransfer = undefined }) {
+    const { contextBudgetId, contextBudgetCurrency } = useContext(BudgetContext);
     const [categories, setCategories] = useState([])
     const [deposits, setDeposits] = useState([])
     const [entities, setEntities] = useState([])
@@ -71,6 +78,17 @@ export default function TransferAddModal({ apiUrl, transferType, addFormOpen, se
         }
     }
 
+    /**
+     * Updates selectedDeposit state depending on passed transfer.
+     */
+    useEffect(() => {
+        if (editedTransfer) setSelectedDeposit(editedTransfer.deposit)
+        else setSelectedDeposit(null)
+    }, [editedTransfer]);
+
+    /**
+     * Fetches select options for Transfer deposits and entities objects from API.
+     */
     useEffect(() => {
         async function getDeposits() {
             const response = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/?ordering=deposit_type,name`)
@@ -88,14 +106,14 @@ export default function TransferAddModal({ apiUrl, transferType, addFormOpen, se
     }, [contextBudgetId]);
 
     /**
-     * Fetches select options for ExpensePrediction categories object from API.
+     * Fetches select options for Transfer categories object from API.
      */
     useEffect(() => {
         async function getCategories() {
-            const filterModel = { 
+            const filterModel = {
                 category_type: transferType === TransferTypes.EXPENSE ? CategoryTypes.EXPENSE : CategoryTypes.INCOME,
                 ordering: 'priority'
-             }
+            }
             if (selectedDeposit) {
                 filterModel['deposit'] = selectedDeposit
             }
@@ -108,19 +126,13 @@ export default function TransferAddModal({ apiUrl, transferType, addFormOpen, se
         getCategories();
     }, [contextBudgetId, selectedDeposit]);
 
-    const callApiOnAdd = async (data) => {
-        const updateResponse = await createApiObject(apiUrl, data);
-        updateRefreshTimestamp();
-        setAlert({ type: 'success', message: `${transferType === TransferTypes.EXPENSE ? 'Expense' : 'Income'} created successfully.` })
-        return updateResponse
-    }
-
     return (<FormModal
         fields={fields}
-        objectType={`New ${transferType === TransferTypes.EXPENSE ? 'Expense' : 'Income'}`}
-        open={addFormOpen}
-        setOpen={setAddFormOpen}
-        callApi={callApiOnAdd}
+        formLabel={`${editedTransfer ? "Edit" : "Add"} ${transferType === TransferTypes.EXPENSE ? 'Expense' : 'Income'}`}
+        open={formOpen}
+        setOpen={setFormOpen}
+        callApi={callApi}
+        updatedObject={editedTransfer}
     />
     )
 }

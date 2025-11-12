@@ -10,8 +10,9 @@ import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
 import StyledDataGrid from '../../../app_infrastructure/components/DataGrid/StyledDataGrid';
 import getSortFieldMapping from '../../../app_infrastructure/components/DataGrid/utils/getSortFieldMapping';
 import StyledGridActionsCellItem from '../../../app_infrastructure/components/DataGrid/StyledGridActionsCellItem';
-import TransferAddModal from './TransferAddModal';
 import TransferTypes from '../../utils/TransferTypes';
+import TransferAddModal from '../TransferModal/TransferAddModal';
+import TransferEditModal from '../TransferModal/TransferEditModal';
 
 
 const pageSizeOptions = [10, 50, 100]
@@ -61,9 +62,10 @@ const TransferDataGrid = ({ transferType }) => {
     const [depositOptions, setDepositOptions] = useState([]);
 
     // Forms handlers
+    const [editedTransfer, setEditedTransfer] = useState()
     const [addFormOpen, setAddFormOpen] = useState(false);
     const [editFormOpen, setEditFormOpen] = useState(false);
-    const [deleteFormOpen, setDeleteFormOpen] = useState(false);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
     /**
      * Fetches select options for Transfer select fields from API.
@@ -308,10 +310,7 @@ const TransferDataGrid = ({ transferType }) => {
      * @param {object} row - Row data.
      */
     const handleEditClick = (row) => () => {
-        // OPEN EDIT FORM
-        console.log('Edit click')
-        console.log(row)
-        console.log(editFormOpen)
+        setEditedTransfer(row)
         setEditFormOpen(true)
     };
 
@@ -324,8 +323,8 @@ const TransferDataGrid = ({ transferType }) => {
         // OPEN DELETE FORM
         console.log('Delete click')
         console.log(row)
-        console.log(deleteFormOpen)
-        setDeleteFormOpen(true)
+        console.log(deleteModalOpen)
+        setDeleteModalOpen(true)
     };
 
     return (
@@ -363,7 +362,8 @@ const TransferDataGrid = ({ transferType }) => {
                     }}
                 />
             </Box>
-            <TransferAddModal apiUrl={apiUrl} transferType={transferType} addFormOpen={addFormOpen} setAddFormOpen={setAddFormOpen} />
+            <TransferAddModal apiUrl={apiUrl} transferType={transferType} formOpen={addFormOpen} setFormOpen={setAddFormOpen} />
+            <TransferEditModal apiUrl={apiUrl} transferType={transferType} formOpen={editFormOpen} setFormOpen={setEditFormOpen} editedTransfer={editedTransfer} setEditedTransfer={setEditedTransfer}/>
         </>
     )
 }
