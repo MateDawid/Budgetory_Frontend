@@ -15,7 +15,7 @@ import BaseTransferModal from "./BaseTransferModal";
  * @param {boolean} props.formOpen - Flag indicating if form is opened or not.
  * @param {function} props.setFormOpen - Setter for formOpen flag.
  * @param {object} [props.editedTransfer] - Edited Transfer object.
- * @param {function} [props.setEditedTransfer] - Edited Transfer object.
+ * @param {function} [props.setEditedTransfer] - Setter for editedTransfer value.
  */
 export default function TransferEditModal({ apiUrl, transferType, formOpen, setFormOpen, editedTransfer, setEditedTransfer }) {
     const { updateRefreshTimestamp } = useContext(BudgetContext);
