@@ -61,7 +61,7 @@ const FormModal = (
     };
 
     return (
-        <StyledModal open={open} onClose={() => setOpen(false)}>
+        <StyledModal open={open} onClose={() => {setOpen(false); reset();}}>
             <Box
                 width={400}
                 bgcolor="#F1F1F1"
