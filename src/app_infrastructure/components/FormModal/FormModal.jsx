@@ -9,10 +9,21 @@ import ApiError from "../../utils/ApiError"
 import { useContext } from "react"
 import { BudgetContext } from "../../store/BudgetContext"
 
+/**
+ * FormModal component for displaying add/edit form.
+ * @param {object} props
+ * @param {object} props.fields - Form fields mapping with their properties.
+ * @param {string} props.formLabel - Form label
+ * @param {boolean} props.open - Flag indicating if form is opened.
+ * @param {function} props.setOpen - Setter for open flag.
+ * @param {function} props.callApi - Function calling API performed on form submit.
+ * @param {function} [props.setAlert] - Optional custom setAlert function.
+ * @param {object} [props.updatedObject] - Object to be updated in edit form.
+ */
 const FormModal = (
     {
         fields,
-        objectType,
+        formLabel,
         open,
         setOpen,
         callApi,
@@ -69,7 +80,7 @@ const FormModal = (
                 borderRadius={5}
             >
                 <Typography variant="h6" textAlign="center">
-                    {objectType}
+                    {formLabel}
                 </Typography>
                 {nonFieldErrors &&
                     <Alert sx={{ marginTop: 2, marginBottom: 2, whiteSpace: 'pre-wrap' }} severity="error"

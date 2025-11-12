@@ -39,7 +39,7 @@ export default function PredictionEditModal({ prediction, editOpen, setEditOpen 
             label: 'Value',
             required: true,
             slotProps: {
-                input: {endAdornment: <InputAdornment position="end">{contextBudgetCurrency}</InputAdornment>},
+                input: { endAdornment: <InputAdornment position="end">{contextBudgetCurrency}</InputAdornment> },
                 htmlInput: {
                     step: 0.01,
                     min: 0
@@ -71,12 +71,11 @@ export default function PredictionEditModal({ prediction, editOpen, setEditOpen 
 
     return (<FormModal
         fields={fields}
-        objectType={"Prediction edit"}
+        formLabel={"Prediction edit"}
         open={editOpen}
         setOpen={setEditOpen}
         callApi={callApiOnEdit}
         updatedObject={prediction}
-        disabledFields={['category']}
     />
     )
 }
