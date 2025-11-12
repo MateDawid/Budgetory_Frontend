@@ -13,6 +13,7 @@ import StyledGridActionsCellItem from '../../../app_infrastructure/components/Da
 import TransferTypes from '../../utils/TransferTypes';
 import TransferAddModal from '../TransferModal/TransferAddModal';
 import TransferEditModal from '../TransferModal/TransferEditModal';
+import TransferDeleteModal from '../TransferModal/TransferDeleteModal';
 
 
 const pageSizeOptions = [10, 50, 100]
@@ -63,9 +64,10 @@ const TransferDataGrid = ({ transferType }) => {
 
     // Forms handlers
     const [editedTransfer, setEditedTransfer] = useState()
+    const [deletedTransferId, setDeletedTransferId] = useState()
     const [addFormOpen, setAddFormOpen] = useState(false);
     const [editFormOpen, setEditFormOpen] = useState(false);
-    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [deleteFormOpen, setDeleteFormOpen] = useState(false);
 
     /**
      * Fetches select options for Transfer select fields from API.
@@ -320,11 +322,8 @@ const TransferDataGrid = ({ transferType }) => {
      * @param {object} row - DataGrid row.
      */
     const handleDeleteClick = async (row) => {
-        // OPEN DELETE FORM
-        console.log('Delete click')
-        console.log(row)
-        console.log(deleteModalOpen)
-        setDeleteModalOpen(true)
+        setDeletedTransferId(row.id)
+        setDeleteFormOpen(true)
     };
 
     return (
@@ -364,6 +363,7 @@ const TransferDataGrid = ({ transferType }) => {
             </Box>
             <TransferAddModal apiUrl={apiUrl} transferType={transferType} formOpen={addFormOpen} setFormOpen={setAddFormOpen} />
             <TransferEditModal apiUrl={apiUrl} transferType={transferType} formOpen={editFormOpen} setFormOpen={setEditFormOpen} editedTransfer={editedTransfer} setEditedTransfer={setEditedTransfer}/>
+            <TransferDeleteModal apiUrl={apiUrl} transferType={transferType} formOpen={deleteFormOpen} setFormOpen={setDeleteFormOpen} deletedTransferId={deletedTransferId} setDeletedTransferId={setDeletedTransferId}/>
         </>
     )
 }
