@@ -14,9 +14,11 @@ import TransferTypes from '../../utils/TransferTypes';
 import TransferAddModal from '../TransferModal/TransferAddModal';
 import TransferEditModal from '../TransferModal/TransferEditModal';
 import TransferDeleteModal from '../TransferModal/TransferDeleteModal';
+import renderHyperlink from '../../../app_infrastructure/components/DataGrid/utils/renderHyperlink';
 
 
 const pageSizeOptions = [10, 50, 100]
+
 
 
 /**
@@ -133,6 +135,7 @@ const TransferDataGrid = ({ transferType }) => {
             filterable: true,
             sortable: true,
             valueOptions: periodOptions,
+            renderCell: (params) => renderHyperlink('periods/', params)
         },
         {
             field: 'name',
@@ -154,6 +157,7 @@ const TransferDataGrid = ({ transferType }) => {
             filterable: true,
             sortable: true,
             valueOptions: depositOptions,
+            renderCell: (params) => renderHyperlink('deposits/', params)
         },
         {
             field: 'entity',
@@ -165,6 +169,7 @@ const TransferDataGrid = ({ transferType }) => {
             filterable: true,
             sortable: true,
             valueOptions: entityOptions,
+            renderCell: (params) => renderHyperlink('entities/', params)
         },
         {
             field: 'category',
@@ -176,6 +181,7 @@ const TransferDataGrid = ({ transferType }) => {
             filterable: true,
             sortable: true,
             valueOptions: categoryOptions,
+            renderCell: (params) => renderHyperlink('categories/', params)
         },
 
         {
@@ -362,8 +368,8 @@ const TransferDataGrid = ({ transferType }) => {
                 />
             </Box>
             <TransferAddModal apiUrl={apiUrl} transferType={transferType} formOpen={addFormOpen} setFormOpen={setAddFormOpen} />
-            <TransferEditModal apiUrl={apiUrl} transferType={transferType} formOpen={editFormOpen} setFormOpen={setEditFormOpen} editedTransfer={editedTransfer} setEditedTransfer={setEditedTransfer}/>
-            <TransferDeleteModal apiUrl={apiUrl} transferType={transferType} formOpen={deleteFormOpen} setFormOpen={setDeleteFormOpen} deletedTransferId={deletedTransferId} setDeletedTransferId={setDeletedTransferId}/>
+            <TransferEditModal apiUrl={apiUrl} transferType={transferType} formOpen={editFormOpen} setFormOpen={setEditFormOpen} editedTransfer={editedTransfer} setEditedTransfer={setEditedTransfer} />
+            <TransferDeleteModal apiUrl={apiUrl} transferType={transferType} formOpen={deleteFormOpen} setFormOpen={setDeleteFormOpen} deletedTransferId={deletedTransferId} setDeletedTransferId={setDeletedTransferId} />
         </>
     )
 }
