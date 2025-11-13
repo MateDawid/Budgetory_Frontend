@@ -9,7 +9,7 @@ import CategoryTypes from "../../../categories/utils/CategoryTypes";
 /**
  * BaseTransferModal component for displaying Transfer form for adding and editing.
  * @param {object} props
- * @param {number} props.transferType - Type of Transfer to be created. Options: TransferTypes.INCOME, TransferTypes.EXPENSE.
+ * @param {number} props.transferType - Type of Transfer. Options: TransferTypes.INCOME, TransferTypes.EXPENSE.
  * @param {boolean} props.formOpen - Flag indicating if form is opened or not.
  * @param {function} props.setFormOpen - Setter for formOpen flag.
  * @param {function} props.callApi - Function to be called on form submit.

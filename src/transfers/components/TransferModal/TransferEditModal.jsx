@@ -11,7 +11,7 @@ import BaseTransferModal from "./BaseTransferModal";
  * TransferEditModal component for displaying edit Transfer form.
  * @param {object} props
  * @param {string} props.apiUrl - URL to be called on form submit.
- * @param {number} props.transferType - Type of Transfer to be created. Options: TransferTypes.INCOME, TransferTypes.EXPENSE.
+ * @param {number} props.transferType - Type of Transfer. Options: TransferTypes.INCOME, TransferTypes.EXPENSE.
  * @param {boolean} props.formOpen - Flag indicating if form is opened or not.
  * @param {function} props.setFormOpen - Setter for formOpen flag.
  * @param {object} [props.editedTransfer] - Edited Transfer object.

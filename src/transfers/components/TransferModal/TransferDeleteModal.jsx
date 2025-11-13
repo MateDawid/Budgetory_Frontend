@@ -12,7 +12,7 @@ import StyledModal from "../../../app_infrastructure/components/StyledModal";
  * TransferDeleteModal component for displaying delete Transfer form.
  * @param {object} props
  * @param {string} props.apiUrl - URL to be called on form submit.
- * @param {number} props.transferType - Type of Transfer to be created. Options: TransferTypes.INCOME, TransferTypes.EXPENSE.
+ * @param {number} props.transferType - Type of Transfer. Options: TransferTypes.INCOME, TransferTypes.EXPENSE.
  * @param {boolean} props.formOpen - Flag indicating if form is opened or not.
  * @param {function} props.setFormOpen - Setter for formOpen flag.
  * @param {string} [props.deletedTransferId] - Transfer object to be deleted id value.
@@ -47,7 +47,7 @@ export default function TransferDeleteModal({ apiUrl, transferType, formOpen, se
                     Delete {transferType === TransferTypes.INCOME ? 'Income' : 'Expense'}
                 </Typography>
                 <Box component="form" onSubmit={handleDelete} noValidate sx={{ mt: 1 }}>
-                    <Typography>Are you sure you want to delete Income?</Typography>
+                    <Typography>Are you sure you want to delete {transferType === TransferTypes.EXPENSE ? 'Expense' : 'Income'}?</Typography>
                     <Box display="flex" justifyContent="space-between">
                         <Button onClick={() => setFormOpen(false)}
                             variant="contained" fullWidth sx={{
