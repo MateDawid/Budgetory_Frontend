@@ -45,8 +45,6 @@ const TransferDataGrid = ({ transferType }) => {
     // Data rows
     const [rows, setRows] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
-    const [removedRows, setRemovedRows] = useState([]);
-    const [copiedRows, setCopiedRows] = useState([]);
     const [rowCount, setRowCount] = useState(0);
 
     // Loading and pagination
@@ -273,7 +271,7 @@ const TransferDataGrid = ({ transferType }) => {
             return
         }
         loadData();
-    }, [contextBudgetId, paginationModel, sortModel, filterModel, updateRefreshTimestamp, removedRows, copiedRows]);
+    }, [contextBudgetId, paginationModel, sortModel, filterModel, updateRefreshTimestamp]);
 
     /**
      * Function to update DataGrid pagination model.
@@ -359,10 +357,9 @@ const TransferDataGrid = ({ transferType }) => {
                     slotProps={{
                         pagination: {
                             apiUrl,
+                            transferType,
                             handleAddClick,
-                            selectedRows,
-                            setRemovedRows,
-                            setCopiedRows,
+                            selectedRows
                         },
                     }}
                 />

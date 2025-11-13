@@ -1,44 +1,34 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import { GridPagination } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
 import StyledButton from '../../../app_infrastructure/components/StyledButton';
-import { bulkDeleteApiObjects, copyApiObjects } from '../../../app_infrastructure/services/APIService';
 import { AlertContext } from '../../../app_infrastructure/store/AlertContext';
+import TransferBulkDeleteModal from '../TransferModal/TransferBulkDeleteModal';
+import { copyApiObjects } from '../../../app_infrastructure/services/APIService';
+
 
 /**
- * DataTableFooterButtons component that displays buttons basing on selected rows.
+ * DataTableFooter component for DataTable custom footer.
  * @param {object} props
  * @param {string} props.apiUrl - Base API url for fetching data.
+ * @param {number} props.transferType - Type of Transfer. Options: TransferTypes.INCOME, TransferTypes.EXPENSE.
  * @param {function} props.handleAddClick - Function to handle Add button click.
  * @param {array} props.selectedRows - Array containing ids of selected rows.
- * @param {function} props.setRemovedRows - Function to set new value of removedRows to refresh DataTable.
- * @param {function} props.setCopiedRows - Function to set new value of copiedRows to refresh DataTable.
+ * @param {object} props.props - Other properties.
  */
-const TransferDataGridFooterButtons = ({ apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows }) => {
+const TransferDataGridFooter = ({ apiUrl, transferType, handleAddClick, selectedRows, ...props }) => {
     const { setAlert } = useContext(AlertContext);
     const { updateRefreshTimestamp } = useContext(BudgetContext);
-
-    /**
-     * Used to rerender component on rows selection.
-     */
-    useEffect(() => { }, [selectedRows]);
+    const [bulkDeleteFormOpen, setBulkDeleteFormOpen] = useState(false);
 
     /**
      * Function to handle clicking "Delete" toolbar button.
      */
     const handleDeleteClick = async () => {
-        try {
-            await bulkDeleteApiObjects(apiUrl, selectedRows);
-            setAlert({ type: 'success', message: `Selected Transfers deleted successfully.` })
-            setRemovedRows(selectedRows)
-            updateRefreshTimestamp()
-        } catch (error) {
-            setAlert({ type: 'error', message: 'Transfers deleting failed.' })
-            console.error(error)
-        }
+        setBulkDeleteFormOpen(true)
     };
 
     /**
@@ -46,9 +36,8 @@ const TransferDataGridFooterButtons = ({ apiUrl, handleAddClick, selectedRows, s
      */
     const handleCopyClick = async () => {
         try {
-            const copyResponse = await copyApiObjects(apiUrl, selectedRows);
+            await copyApiObjects(apiUrl, selectedRows);
             setAlert({ type: 'success', message: `Selected Transfers copied successfully.` })
-            setCopiedRows(copyResponse.ids)
             updateRefreshTimestamp()
         } catch (error) {
             setAlert({ type: 'error', message: 'Transfers copying failed.' })
@@ -66,37 +55,21 @@ const TransferDataGridFooterButtons = ({ apiUrl, handleAddClick, selectedRows, s
                 <StyledButton variant="outlined" startIcon={<ContentCopyIcon />} onClick={handleCopyClick} sx={{ marginLeft: 1 }}>
                     Copy
                 </StyledButton>
+
             </>
             :
             <StyledButton variant="outlined" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ marginLeft: 1 }}>
                 Add
             </StyledButton>
         }
-    </>
-
-}
-
-
-/**
- * DataTableFooter component for DataTable custom footer.
- * @param {object} props
- * @param {string} props.apiUrl - Base API url for fetching data.
- * @param {function} props.handleAddClick - Function to handle Add button click.
- * @param {array} props.selectedRows - Array containing ids of selected rows.
- * @param {function} props.setRemovedRows - Function to set new value of removedRows to refresh DataTable.
- * @param {function} props.setCopiedRows - Function to set new value of copiedRows to refresh DataTable.
- * @param {object} props.props - Other properties.
- */
-const TransferDataGridFooter = ({ apiUrl, handleAddClick, selectedRows, setRemovedRows, setCopiedRows, ...props }) => {
-    return <>
-        <TransferDataGridFooterButtons
-            apiUrl={apiUrl}
-            handleAddClick={handleAddClick}
-            selectedRows={selectedRows}
-            setRemovedRows={setRemovedRows}
-            setCopiedRows={setCopiedRows}
-        />
         <GridPagination {...props} />
+        <TransferBulkDeleteModal
+            apiUrl={apiUrl}
+            transferType={transferType}
+            formOpen={bulkDeleteFormOpen}
+            setFormOpen={setBulkDeleteFormOpen}
+            selectedRows={selectedRows}
+        />
     </>
 }
 
