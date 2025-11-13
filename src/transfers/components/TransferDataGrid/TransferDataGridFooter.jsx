@@ -1,13 +1,11 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { GridPagination } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
 import StyledButton from '../../../app_infrastructure/components/StyledButton';
-import { AlertContext } from '../../../app_infrastructure/store/AlertContext';
 import TransferBulkDeleteModal from '../TransferModal/TransferBulkDeleteModal';
-import { copyApiObjects } from '../../../app_infrastructure/services/APIService';
+import TransferCopyModal from '../TransferModal/TransferCopyModal';
 
 
 /**
@@ -20,39 +18,17 @@ import { copyApiObjects } from '../../../app_infrastructure/services/APIService'
  * @param {object} props.props - Other properties.
  */
 const TransferDataGridFooter = ({ apiUrl, transferType, handleAddClick, selectedRows, ...props }) => {
-    const { setAlert } = useContext(AlertContext);
-    const { updateRefreshTimestamp } = useContext(BudgetContext);
     const [bulkDeleteFormOpen, setBulkDeleteFormOpen] = useState(false);
-
-    /**
-     * Function to handle clicking "Delete" toolbar button.
-     */
-    const handleDeleteClick = async () => {
-        setBulkDeleteFormOpen(true)
-    };
-
-    /**
-     * Function to handle clicking "Copy" toolbar button.
-     */
-    const handleCopyClick = async () => {
-        try {
-            await copyApiObjects(apiUrl, selectedRows);
-            setAlert({ type: 'success', message: `Selected Transfers copied successfully.` })
-            updateRefreshTimestamp()
-        } catch (error) {
-            setAlert({ type: 'error', message: 'Transfers copying failed.' })
-            console.error(error)
-        }
-    };
+    const [copyFormOpen, setCopyFormOpen] = useState(false);
 
     return <>
         {selectedRows.length > 0 ?
             <>
-                <StyledButton variant="outlined" startIcon={<DeleteIcon />} onClick={handleDeleteClick} sx={{ marginLeft: 1 }}>
+                <StyledButton variant="outlined" startIcon={<DeleteIcon />} onClick={() => setBulkDeleteFormOpen(true)} sx={{ marginLeft: 1 }}>
                     Delete
                 </StyledButton>
 
-                <StyledButton variant="outlined" startIcon={<ContentCopyIcon />} onClick={handleCopyClick} sx={{ marginLeft: 1 }}>
+                <StyledButton variant="outlined" startIcon={<ContentCopyIcon />} onClick={() => setCopyFormOpen(true)} sx={{ marginLeft: 1 }}>
                     Copy
                 </StyledButton>
 
@@ -68,6 +44,13 @@ const TransferDataGridFooter = ({ apiUrl, transferType, handleAddClick, selected
             transferType={transferType}
             formOpen={bulkDeleteFormOpen}
             setFormOpen={setBulkDeleteFormOpen}
+            selectedRows={selectedRows}
+        />
+        <TransferCopyModal
+            apiUrl={apiUrl}
+            transferType={transferType}
+            formOpen={copyFormOpen}
+            setFormOpen={setCopyFormOpen}
             selectedRows={selectedRows}
         />
     </>

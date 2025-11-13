@@ -24,7 +24,7 @@ const pageSizeOptions = [10, 50, 100]
 /**
  * DataTable component for displaying DataGrid with data fetched from API.
  * @param {object} props
- * @param {number} props.transferType - Type of Transfer to be created. Options: TransferTypes.INCOME, TransferTypes.EXPENSE.
+ * @param {number} props.transferType - Type of Transfer. Options: TransferTypes.INCOME, TransferTypes.EXPENSE.
  */
 const TransferDataGrid = ({ transferType }) => {
     // Contexts
