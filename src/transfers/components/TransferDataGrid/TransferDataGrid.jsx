@@ -29,7 +29,7 @@ const pageSizeOptions = [10, 50, 100]
 const TransferDataGrid = ({ transferType }) => {
     // Contexts
     const { setAlert } = useContext(AlertContext);
-    const { contextBudgetId, contextBudgetCurrency, updateRefreshTimestamp } = useContext(BudgetContext);
+    const { contextBudgetId, contextBudgetCurrency, refreshTimestamp } = useContext(BudgetContext);
 
     // API URL
     let apiUrl;
@@ -271,7 +271,7 @@ const TransferDataGrid = ({ transferType }) => {
             return
         }
         loadData();
-    }, [contextBudgetId, paginationModel, sortModel, filterModel, updateRefreshTimestamp]);
+    }, [contextBudgetId, paginationModel, sortModel, filterModel, refreshTimestamp]);
 
     /**
      * Function to update DataGrid pagination model.
