@@ -25,7 +25,6 @@ export default function TransferEditModal({ apiUrl, transferType, formOpen, setF
         data['id'] = editedTransfer.id
         const response = await updateApiObject(apiUrl, data);
         updateRefreshTimestamp();
-        console.log('CALLING API AFTER ERRORS')
         setEditedTransfer(undefined)
         setAlert({ type: 'success', message: `${transferType === TransferTypes.EXPENSE ? 'Expense' : 'Income'} updated successfully.` })
         return response
