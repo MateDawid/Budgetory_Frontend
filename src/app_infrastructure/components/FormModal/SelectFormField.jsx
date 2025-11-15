@@ -1,4 +1,4 @@
-import { Autocomplete } from "@mui/material"
+import { Autocomplete} from "@mui/material"
 import React from "react"
 import { Controller } from "react-hook-form"
 import StyledTextField from "../StyledTextField"
@@ -14,6 +14,7 @@ const SelectFormField = (
         ...props
     }
 ) => {
+    
     return (
         <Controller
             name={fieldName}
@@ -83,7 +84,18 @@ const SelectFormField = (
                                     inputLabel: {
                                         shrink: true,
                                     },
-                                    ...fieldParams.slotProps
+                                    ...fieldParams.slotProps,
+                                    input: {
+                                        ...params.InputProps,
+                                        endAdornment: (
+                                            <>
+                                                {params.InputProps.endAdornment}
+                                                {fieldParams.slotProps?.input?.endAdornment}
+                                            </>
+                                        )
+                                        
+                                    },
+                                    
                                 }}
                                 sx={{ mb: 2 }}
                             />

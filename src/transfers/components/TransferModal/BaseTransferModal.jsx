@@ -2,9 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import FormModal from "../../../app_infrastructure/components/FormModal/FormModal";
 import { BudgetContext } from "../../../app_infrastructure/store/BudgetContext";
 import { getApiObjectsList } from "../../../app_infrastructure/services/APIService";
-import { InputAdornment } from "@mui/material";
+import { IconButton, InputAdornment } from "@mui/material";
 import TransferTypes from "../../utils/TransferTypes";
 import CategoryTypes from "../../../categories/utils/CategoryTypes";
+import EntityAddModal from "../../../entities/components/EntityAddModal";
+import AddIcon from '@mui/icons-material/Add';
 
 /**
  * BaseTransferModal component for displaying Transfer form for adding and editing.
@@ -16,11 +18,18 @@ import CategoryTypes from "../../../categories/utils/CategoryTypes";
  * @param {object | undefined} [props.editedTransfer] - Edited Transfer object.
  */
 export default function BaseTransferModal({ transferType, formOpen, setFormOpen, callApi, editedTransfer = undefined }) {
-    const { contextBudgetId, contextBudgetCurrency } = useContext(BudgetContext);
+    const { contextBudgetId, contextBudgetCurrency, refreshTimestamp } = useContext(BudgetContext);
+
+    // Selectables
     const [categories, setCategories] = useState([])
     const [deposits, setDeposits] = useState([])
     const [entities, setEntities] = useState([])
     const [selectedDeposit, setSelectedDeposit] = useState(null);
+
+    // Entity add form variables 
+    const entityApiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/`
+    const [entityFormOpen, setEntityFormOpen] = useState(false)
+    const [entityAdded, setEntityAdded] = useState(0)
 
     const fields = {
         date: {
@@ -55,7 +64,23 @@ export default function BaseTransferModal({ transferType, formOpen, setFormOpen,
             select: true,
             label: `Entity ${transferType === TransferTypes.EXPENSE ? 'that receives funds from Deposit' : 'that transfers funds to Deposit'}`,
             options: entities,
-            groupBy: (option) => option.is_deposit ? 'Deposits' : 'Entities'
+            groupBy: (option) => option.is_deposit ? 'Deposits' : 'Entities',
+            slotProps: {
+                input: {
+                    endAdornment: (
+                        <InputAdornment position="end">
+                            <IconButton
+                                onClick={() => setEntityFormOpen(true)}
+                                edge="end"
+                                size="small"
+                            >
+                                <AddIcon />
+                            </IconButton>
+                        </InputAdornment>
+                    ),
+                },
+
+            }
         },
         value: {
             type: 'number',
@@ -87,13 +112,23 @@ export default function BaseTransferModal({ transferType, formOpen, setFormOpen,
     }, [editedTransfer]);
 
     /**
-     * Fetches select options for Transfer deposits and entities objects from API.
+     * Fetches select options for Transfer deposits objects from API.
      */
     useEffect(() => {
         async function getDeposits() {
             const response = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/?ordering=deposit_type,name`)
             setDeposits(response);
         }
+        if (!contextBudgetId) {
+            return
+        }
+        getDeposits();
+    }, [contextBudgetId, refreshTimestamp]);
+
+    /**
+     * Fetches select options for Transfer entities objects from API.
+     */
+    useEffect(() => {
         async function getEntities() {
             const response = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?ordering=-is_deposit,name`)
             setEntities(response);
@@ -101,9 +136,8 @@ export default function BaseTransferModal({ transferType, formOpen, setFormOpen,
         if (!contextBudgetId) {
             return
         }
-        getDeposits();
         getEntities();
-    }, [contextBudgetId]);
+    }, [contextBudgetId, refreshTimestamp, entityAdded]);
 
     /**
      * Fetches select options for Transfer categories object from API.
@@ -126,13 +160,22 @@ export default function BaseTransferModal({ transferType, formOpen, setFormOpen,
         getCategories();
     }, [contextBudgetId, selectedDeposit]);
 
-    return (<FormModal
-        fields={fields}
-        formLabel={`${editedTransfer ? "Edit" : "Add"} ${transferType === TransferTypes.EXPENSE ? 'Expense' : 'Income'}`}
-        open={formOpen}
-        setOpen={setFormOpen}
-        callApi={callApi}
-        updatedObject={editedTransfer}
-    />
+    return (
+        <>
+            <FormModal
+                fields={fields}
+                formLabel={`${editedTransfer ? "Edit" : "Add"} ${transferType === TransferTypes.EXPENSE ? 'Expense' : 'Income'}`}
+                open={formOpen}
+                setOpen={setFormOpen}
+                callApi={callApi}
+                updatedObject={editedTransfer}
+            />
+            <EntityAddModal
+                apiUrl={entityApiUrl}
+                formOpen={entityFormOpen}
+                setFormOpen={setEntityFormOpen}
+                onSuccess={() => setEntityAdded(Date.now())}
+            />
+        </>
     )
 }
