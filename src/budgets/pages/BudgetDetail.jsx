@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
 import Divider from "@mui/material/Divider";
-import Alert from '@mui/material/Alert';
 import { AlertContext } from "../../app_infrastructure/store/AlertContext";
 import {
     Typography,
@@ -25,7 +24,7 @@ export default function BudgetDetail() {
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/`
     const [updatedObjectParam, setUpdatedObjectParam] = useState(null);
     const { updateRefreshTimestamp } = useContext(BudgetContext);
-    const { alert, setAlert } = useContext(AlertContext);
+    const { setAlert } = useContext(AlertContext);
     const [budgetData, setBudgetData] = useState([]);
     const depositsColumns = [
         {
@@ -110,8 +109,6 @@ export default function BudgetDetail() {
                 <DeleteButton apiUrl={apiUrl} objectId={id} objectDisplayName="Budget" redirectOnSuccess={'/budgets'} rightbarBudgetsRefresh />
             </Stack>
             <Divider />
-            {alert && <Alert sx={{ marginTop: 2, whiteSpace: 'pre-wrap' }} severity={alert.type}
-                onClose={() => setAlert(null)}>{alert.message}</Alert>}
             <Box sx={{ marginTop: 2 }}>
                 <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>Details</Typography>
                 <Divider sx={{ marginBottom: 2 }} />
