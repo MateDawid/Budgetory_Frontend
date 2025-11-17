@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Alert, Box, Chip, CircularProgress, Divider, InputAdornment, Paper, Stack, Typography } from "@mui/material";
+import { Box, Chip, CircularProgress, Divider, InputAdornment, Paper, Stack, Typography } from "@mui/material";
 import { BudgetContext } from "../../app_infrastructure/store/BudgetContext";
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
 import FilterField from '../../app_infrastructure/components/FilterField';
@@ -38,7 +38,7 @@ const draftPeriodOrderingOptions = [
  */
 export default function ExpensePredictionsPage() {
     const { contextBudgetId, contextBudgetCurrency, refreshTimestamp } = useContext(BudgetContext);
-    const { alert, setAlert } = useContext(AlertContext);
+    const { setAlert } = useContext(AlertContext);
     const [periodResultsLoading, setPeriodResultsLoading] = useState(false);
     const [predictionsLoading, setPredictionsLoading] = useState(false);
 
@@ -286,8 +286,6 @@ export default function ExpensePredictionsPage() {
                 </Stack>
             </Stack>
             <Divider />
-            {alert && <Alert sx={{ marginTop: 2, whiteSpace: 'pre-wrap' }} severity={alert.type}
-                onClose={() => setAlert(null)}>{alert.message}</Alert>}
             {/* Users summaries */}
             <Box sx={{ marginTop: 2 }}>
                 <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>Period results</Typography>

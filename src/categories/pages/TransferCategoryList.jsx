@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import Typography from "@mui/material/Typography";
 import { Box, Paper, Stack } from "@mui/material";
 import Divider from "@mui/material/Divider";
-import Alert from '@mui/material/Alert';
 import { AlertContext } from "../../app_infrastructure/store/AlertContext";
 import { BudgetContext } from "../../app_infrastructure/store/BudgetContext";
 import { getApiObjectsList } from "../../app_infrastructure/services/APIService";
@@ -26,7 +25,7 @@ export default function TransferCategoryList() {
     const [depositFilter, setDepositFilter] = useState(null);
     const [activeFilter, setActiveFilter] = useState(null);
 
-    const { alert, setAlert } = useContext(AlertContext);
+    const { setAlert } = useContext(AlertContext);
     const [updatedObjectId, setUpdatedObjectId] = useState(null);
     const [deletedObjectId, setDeletedObjectId] = useState(null);
     const [objects, setObjects] = useState([]);
@@ -148,8 +147,6 @@ export default function TransferCategoryList() {
                 <CreateButton fields={createFields} apiUrl={apiUrl} objectType={"Transfer Category"} />
             </Stack>
             <Divider sx={{ mb: 1 }} />
-            {alert && <Alert sx={{ mb: 1, whiteSpace: 'pre-wrap' }} severity={alert.type}
-                onClose={() => setAlert(null)}>{alert.message}</Alert>}
             <SearchField setSearchQuery={setSearchQuery} label="Search" sx={{ width: "100%", marginBottom: 1 }} />
             <Stack direction={{ sm: "column", md: "row" }} alignItems={{ sm: "flex-start", md: "center" }}
                 justifyContent="flex-start" spacing={1} mb={1}>

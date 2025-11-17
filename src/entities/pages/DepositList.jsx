@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import Typography from "@mui/material/Typography";
 import { Box, Paper, Stack } from "@mui/material";
 import Divider from "@mui/material/Divider";
-import Alert from '@mui/material/Alert';
 import { AlertContext } from "../../app_infrastructure/store/AlertContext";
 import { BudgetContext } from "../../app_infrastructure/store/BudgetContext";
 import { getApiObjectsList } from "../../app_infrastructure/services/APIService";
@@ -16,7 +15,7 @@ import CreateButton from "../../app_infrastructure/components/CreateButton";
 export default function DepositList() {
     const { contextBudgetId, refreshTimestamp } = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`
-    const { alert, setAlert } = useContext(AlertContext);
+    const { setAlert } = useContext(AlertContext);
     const [updatedObjectId, setUpdatedObjectId] = useState(null);
     const [deletedObjectId, setDeletedObjectId] = useState(null);
     const [objects, setObjects] = useState([]);
@@ -117,8 +116,6 @@ export default function DepositList() {
                 <CreateButton fields={createFields} apiUrl={apiUrl} objectType={"Deposit"} />
             </Stack>
             <Divider />
-            {alert && <Alert sx={{ marginTop: 2, whiteSpace: 'pre-wrap' }} severity={alert.type}
-                onClose={() => setAlert(null)}>{alert.message}</Alert>}
             <Box sx={{ display: "flex", flexWrap: 'wrap', justifyContent: 'flex-start' }}>
                 {objects.map(object => (
                     <Box key={object.id} sx={{ width: 330, m: 1 }}>

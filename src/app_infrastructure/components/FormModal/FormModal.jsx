@@ -10,29 +10,28 @@ import { useContext } from "react"
 import { BudgetContext } from "../../store/BudgetContext"
 
 /**
- * FormModal component to display Modal with form.
- * @param {object} fields - Create form fields.
- * @param {string} objectType - Type of created object.
- * @param {boolean} open - Indicates if Form is open.
- * @param {boolean} setOpen - Changes state of open value.
- * @param {function} callApi - Function called on Form submit.
- * @param {function} setAlert - Alert setter function.
- * @param {object | undefined} updatedObject - Object being updated by form.
- * @param {array} disabledFields - Array of disabled fields.
+ * FormModal component for displaying add/edit form.
+ * @param {object} props
+ * @param {object} props.fields - Form fields mapping with their properties.
+ * @param {string} props.formLabel - Form label
+ * @param {boolean} props.open - Flag indicating if form is opened.
+ * @param {function} props.setOpen - Setter for open flag.
+ * @param {function} props.callApi - Function calling API performed on form submit.
+ * @param {function} [props.setAlert] - Optional custom setAlert function.
+ * @param {object} [props.updatedObject] - Object to be updated in edit form.
  */
 const FormModal = (
     {
         fields,
-        objectType,
+        formLabel,
         open,
         setOpen,
         callApi,
-        setAlert=undefined,
-        updatedObject=undefined,
-        disabledFields=[]
+        setAlert = undefined,
+        updatedObject = undefined,
     }
 ) => {
-    const { register, handleSubmit, reset, control } = useForm();
+    const { register, handleSubmit, reset, control, setValue } = useForm();
     const [fieldErrors, setFieldErrors] = useState({});
     const [nonFieldErrors, setNonFieldErrors] = useState(null);
     const { updateRefreshTimestamp } = useContext(BudgetContext);
@@ -73,7 +72,7 @@ const FormModal = (
     };
 
     return (
-        <StyledModal open={open} onClose={() => setOpen(false)}>
+        <StyledModal open={open} onClose={() => {setOpen(false); reset();}}>
             <Box
                 width={400}
                 bgcolor="#F1F1F1"
@@ -81,7 +80,7 @@ const FormModal = (
                 borderRadius={5}
             >
                 <Typography variant="h6" textAlign="center">
-                    {objectType}
+                    {formLabel}
                 </Typography>
                 {nonFieldErrors &&
                     <Alert sx={{ marginTop: 2, marginBottom: 2, whiteSpace: 'pre-wrap' }} severity="error"
@@ -92,11 +91,12 @@ const FormModal = (
                             <SelectFormField
                                 key={fieldName}
                                 control={control}
+                                setValue={setValue}
                                 fieldName={fieldName}
                                 fieldParams={fields[fieldName]}
                                 fieldErrors={fieldErrors}
                                 defaultValue={updatedObject ? updatedObject[fieldName] : undefined}
-                                disabledFields={disabledFields}
+                                {...fields[fieldName]}
                             />
                         ) : (
                             <InputFormField
@@ -106,7 +106,7 @@ const FormModal = (
                                 fieldParams={fields[fieldName]}
                                 fieldErrors={fieldErrors}
                                 defaultValue={updatedObject ? updatedObject[fieldName] : undefined}
-                                disabledFields={disabledFields}
+                                {...fields[fieldName]}
                             />
                         )
                     ))}

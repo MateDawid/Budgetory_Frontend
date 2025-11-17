@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
 import Divider from "@mui/material/Divider";
-import Alert from '@mui/material/Alert';
 import { AlertContext } from "../../app_infrastructure/store/AlertContext";
 import { Typography, Paper, Box, Stack, Chip } from "@mui/material";
 import { getApiObjectDetails } from "../../app_infrastructure/services/APIService";
@@ -19,7 +18,7 @@ export default function EntityDetail() {
     const [updatedObjectParam, setUpdatedObjectParam] = useState(null);
     const { contextBudgetId } = useContext(BudgetContext);
     const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/`
-    const { alert, setAlert } = useContext(AlertContext);
+    const { setAlert } = useContext(AlertContext);
     const [objectData, setObjectData] = useState([]);
     const objectFields = {
         name: {
@@ -96,8 +95,6 @@ export default function EntityDetail() {
                 </Stack>
             </Stack>
             <Divider />
-            {alert && <Alert sx={{ marginTop: 2, whiteSpace: 'pre-wrap' }} severity={alert.type}
-                onClose={() => setAlert(null)}>{alert.message}</Alert>}
             <Box sx={{ marginTop: 2 }}>
                 <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>Details</Typography>
                 <Divider sx={{ marginBottom: 2 }} />
