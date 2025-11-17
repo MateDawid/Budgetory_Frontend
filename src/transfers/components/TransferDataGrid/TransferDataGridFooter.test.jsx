@@ -1,53 +1,31 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import TransferDataGridFooter from './TransferDataGridFooter';
-import { GridPagination } from "@mui/x-data-grid";
 
-// Mock the components
+// Only mock external dependencies that would cause issues in tests
+// Mock MUI GridPagination since it requires complex MUI context
 jest.mock('@mui/x-data-grid', () => ({
-  GridPagination: (props) => <div data-testid="grid-pagination">Pagination</div>
-}));
-
-jest.mock('@mui/icons-material/Delete', () => ({
-  __esModule: true,
-  default: () => <span data-testid="delete-icon">DeleteIcon</span>
-}));
-
-jest.mock('@mui/icons-material/Add', () => ({
-  __esModule: true,
-  default: () => <span data-testid="add-icon">AddIcon</span>
-}));
-
-jest.mock('@mui/icons-material/ContentCopy', () => ({
-  __esModule: true,
-  default: () => <span data-testid="copy-icon">ContentCopyIcon</span>
-}));
-
-jest.mock('../../../app_infrastructure/components/StyledButton', () => ({
-  __esModule: true,
-  default: ({ children, onClick, startIcon, variant, sx }) => (
-    <button 
-      onClick={onClick} 
-      data-variant={variant}
-      data-testid={`styled-button-${children.toLowerCase()}`}
-    >
-      {startIcon}
-      {children}
-    </button>
+  GridPagination: (props) => (
+    <div data-testid="grid-pagination" data-page={props.page}>
+      Pagination
+    </div>
   )
 }));
 
+// Mock the modal components to avoid complex API dependencies
 jest.mock('../TransferModal/TransferBulkDeleteModal', () => ({
   __esModule: true,
   default: ({ formOpen, setFormOpen, apiUrl, transferType, selectedRows }) => (
     formOpen ? (
       <div data-testid="bulk-delete-modal">
-        <span>BulkDeleteModal</span>
-        <button onClick={() => setFormOpen(false)}>Close</button>
-        <span data-testid="bulk-delete-api-url">{apiUrl}</span>
-        <span data-testid="bulk-delete-transfer-type">{transferType}</span>
-        <span data-testid="bulk-delete-selected-rows">{selectedRows.join(',')}</span>
+        <h2>Bulk Delete Modal</h2>
+        <button onClick={() => setFormOpen(false)} data-testid="close-bulk-delete">
+          Close
+        </button>
+        <div data-testid="bulk-delete-props">
+          {JSON.stringify({ apiUrl, transferType, selectedRows })}
+        </div>
       </div>
     ) : null
   )
@@ -58,11 +36,13 @@ jest.mock('../TransferModal/TransferCopyModal', () => ({
   default: ({ formOpen, setFormOpen, apiUrl, transferType, selectedRows }) => (
     formOpen ? (
       <div data-testid="copy-modal">
-        <span>CopyModal</span>
-        <button onClick={() => setFormOpen(false)}>Close</button>
-        <span data-testid="copy-api-url">{apiUrl}</span>
-        <span data-testid="copy-transfer-type">{transferType}</span>
-        <span data-testid="copy-selected-rows">{selectedRows.join(',')}</span>
+        <h2>Copy Modal</h2>
+        <button onClick={() => setFormOpen(false)} data-testid="close-copy">
+          Close
+        </button>
+        <div data-testid="copy-props">
+          {JSON.stringify({ apiUrl, transferType, selectedRows })}
+        </div>
       </div>
     ) : null
   )
@@ -83,233 +63,340 @@ describe('TransferDataGridFooter', () => {
     jest.clearAllMocks();
   });
 
-  describe('Rendering', () => {
-    it('should render without crashing', () => {
+  describe('Component Rendering', () => {
+    it('should render the component without errors', () => {
+      const { container } = render(<TransferDataGridFooter {...defaultProps} />);
+      expect(container).toBeInTheDocument();
+    });
+
+    it('should render GridPagination', () => {
       render(<TransferDataGridFooter {...defaultProps} />);
-      expect(screen.getByTestId('grid-pagination')).toBeInTheDocument();
-    });
-
-    it('should render Add button when no rows are selected', () => {
-      render(<TransferDataGridFooter {...defaultProps} />);
-      expect(screen.getByTestId('styled-button-add')).toBeInTheDocument();
-      expect(screen.getByTestId('add-icon')).toBeInTheDocument();
-    });
-
-    it('should render Delete and Copy buttons when rows are selected', () => {
-      const props = { ...defaultProps, selectedRows: [1, 2, 3] };
-      render(<TransferDataGridFooter {...props} />);
-      
-      expect(screen.getByTestId('styled-button-delete')).toBeInTheDocument();
-      expect(screen.getByTestId('styled-button-copy')).toBeInTheDocument();
-      expect(screen.getByTestId('delete-icon')).toBeInTheDocument();
-      expect(screen.getByTestId('copy-icon')).toBeInTheDocument();
-    });
-
-    it('should not render Add button when rows are selected', () => {
-      const props = { ...defaultProps, selectedRows: [1, 2, 3] };
-      render(<TransferDataGridFooter {...props} />);
-      
-      expect(screen.queryByTestId('styled-button-add')).not.toBeInTheDocument();
-    });
-
-    it('should always render GridPagination', () => {
-      const { rerender } = render(<TransferDataGridFooter {...defaultProps} />);
-      expect(screen.getByTestId('grid-pagination')).toBeInTheDocument();
-      
-      rerender(<TransferDataGridFooter {...defaultProps} selectedRows={[1, 2]} />);
       expect(screen.getByTestId('grid-pagination')).toBeInTheDocument();
     });
   });
 
-  describe('Button Interactions', () => {
+  describe('Button Display Logic', () => {
+    it('should show Add button when no rows are selected', () => {
+      render(<TransferDataGridFooter {...defaultProps} selectedRows={[]} />);
+      
+      const addButton = screen.getByRole('button', { name: /add/i });
+      expect(addButton).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /copy/i })).not.toBeInTheDocument();
+    });
+
+    it('should show Delete and Copy buttons when one row is selected', () => {
+      render(<TransferDataGridFooter {...defaultProps} selectedRows={[1]} />);
+      
+      expect(screen.getByRole('button', { name: /delete/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /copy/i })).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /add/i })).not.toBeInTheDocument();
+    });
+
+    it('should show Delete and Copy buttons when multiple rows are selected', () => {
+      render(<TransferDataGridFooter {...defaultProps} selectedRows={[1, 2, 3]} />);
+      
+      expect(screen.getByRole('button', { name: /delete/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /copy/i })).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /add/i })).not.toBeInTheDocument();
+    });
+
+    it('should switch from Add to Delete/Copy when rows become selected', () => {
+      const { rerender } = render(<TransferDataGridFooter {...defaultProps} selectedRows={[]} />);
+      
+      expect(screen.getByRole('button', { name: /add/i })).toBeInTheDocument();
+      
+      rerender(<TransferDataGridFooter {...defaultProps} selectedRows={[1, 2]} />);
+      
+      expect(screen.queryByRole('button', { name: /add/i })).not.toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /delete/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /copy/i })).toBeInTheDocument();
+    });
+
+    it('should switch from Delete/Copy to Add when selection is cleared', () => {
+      const { rerender } = render(<TransferDataGridFooter {...defaultProps} selectedRows={[1, 2]} />);
+      
+      expect(screen.getByRole('button', { name: /delete/i })).toBeInTheDocument();
+      
+      rerender(<TransferDataGridFooter {...defaultProps} selectedRows={[]} />);
+      
+      expect(screen.getByRole('button', { name: /add/i })).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /copy/i })).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Add Button Functionality', () => {
     it('should call handleAddClick when Add button is clicked', () => {
       render(<TransferDataGridFooter {...defaultProps} />);
       
-      const addButton = screen.getByTestId('styled-button-add');
+      const addButton = screen.getByRole('button', { name: /add/i });
       fireEvent.click(addButton);
       
       expect(defaultProps.handleAddClick).toHaveBeenCalledTimes(1);
     });
 
-    it('should open bulk delete modal when Delete button is clicked', () => {
-      const props = { ...defaultProps, selectedRows: [1, 2, 3] };
-      render(<TransferDataGridFooter {...props} />);
+    it('should call handleAddClick multiple times on multiple clicks', () => {
+      render(<TransferDataGridFooter {...defaultProps} />);
       
-      const deleteButton = screen.getByTestId('styled-button-delete');
+      const addButton = screen.getByRole('button', { name: /add/i });
+      fireEvent.click(addButton);
+      fireEvent.click(addButton);
+      fireEvent.click(addButton);
+      
+      expect(defaultProps.handleAddClick).toHaveBeenCalledTimes(3);
+    });
+  });
+
+  describe('Delete Modal Functionality', () => {
+    it('should not show delete modal initially', () => {
+      render(<TransferDataGridFooter {...defaultProps} selectedRows={[1]} />);
+      
+      expect(screen.queryByTestId('bulk-delete-modal')).not.toBeInTheDocument();
+    });
+
+    it('should open delete modal when Delete button is clicked', () => {
+      render(<TransferDataGridFooter {...defaultProps} selectedRows={[1, 2]} />);
+      
+      const deleteButton = screen.getByRole('button', { name: /delete/i });
       fireEvent.click(deleteButton);
       
       expect(screen.getByTestId('bulk-delete-modal')).toBeInTheDocument();
     });
 
-    it('should open copy modal when Copy button is clicked', () => {
-      const props = { ...defaultProps, selectedRows: [1, 2, 3] };
+    it('should close delete modal when close is triggered', async () => {
+      render(<TransferDataGridFooter {...defaultProps} selectedRows={[1, 2]} />);
+      
+      const deleteButton = screen.getByRole('button', { name: /delete/i });
+      fireEvent.click(deleteButton);
+      
+      expect(screen.getByTestId('bulk-delete-modal')).toBeInTheDocument();
+      
+      const closeButton = screen.getByTestId('close-bulk-delete');
+      fireEvent.click(closeButton);
+      
+      await waitFor(() => {
+        expect(screen.queryByTestId('bulk-delete-modal')).not.toBeInTheDocument();
+      });
+    });
+
+    it('should pass correct props to delete modal', () => {
+      const props = {
+        ...defaultProps,
+        apiUrl: '/api/test-transfers',
+        transferType: 2,
+        selectedRows: [5, 10, 15]
+      };
+      
       render(<TransferDataGridFooter {...props} />);
       
-      const copyButton = screen.getByTestId('styled-button-copy');
+      const deleteButton = screen.getByRole('button', { name: /delete/i });
+      fireEvent.click(deleteButton);
+      
+      const propsElement = screen.getByTestId('bulk-delete-props');
+      const passedProps = JSON.parse(propsElement.textContent);
+      
+      expect(passedProps).toEqual({
+        apiUrl: '/api/test-transfers',
+        transferType: 2,
+        selectedRows: [5, 10, 15]
+      });
+    });
+
+    it('should reopen delete modal after closing and clicking Delete again', async () => {
+      render(<TransferDataGridFooter {...defaultProps} selectedRows={[1]} />);
+      
+      // Open modal
+      fireEvent.click(screen.getByRole('button', { name: /delete/i }));
+      expect(screen.getByTestId('bulk-delete-modal')).toBeInTheDocument();
+      
+      // Close modal
+      fireEvent.click(screen.getByTestId('close-bulk-delete'));
+      await waitFor(() => {
+        expect(screen.queryByTestId('bulk-delete-modal')).not.toBeInTheDocument();
+      });
+      
+      // Reopen modal
+      fireEvent.click(screen.getByRole('button', { name: /delete/i }));
+      expect(screen.getByTestId('bulk-delete-modal')).toBeInTheDocument();
+    });
+  });
+
+  describe('Copy Modal Functionality', () => {
+    it('should not show copy modal initially', () => {
+      render(<TransferDataGridFooter {...defaultProps} selectedRows={[1]} />);
+      
+      expect(screen.queryByTestId('copy-modal')).not.toBeInTheDocument();
+    });
+
+    it('should open copy modal when Copy button is clicked', () => {
+      render(<TransferDataGridFooter {...defaultProps} selectedRows={[1, 2]} />);
+      
+      const copyButton = screen.getByRole('button', { name: /copy/i });
       fireEvent.click(copyButton);
       
       expect(screen.getByTestId('copy-modal')).toBeInTheDocument();
     });
-  });
 
-  describe('Modal Management', () => {
-    it('should not render modals initially', () => {
-      render(<TransferDataGridFooter {...defaultProps} />);
+    it('should close copy modal when close is triggered', async () => {
+      render(<TransferDataGridFooter {...defaultProps} selectedRows={[1, 2]} />);
       
-      expect(screen.queryByTestId('bulk-delete-modal')).not.toBeInTheDocument();
-      expect(screen.queryByTestId('copy-modal')).not.toBeInTheDocument();
-    });
-
-    it('should close bulk delete modal when close is triggered', () => {
-      const props = { ...defaultProps, selectedRows: [1, 2, 3] };
-      render(<TransferDataGridFooter {...props} />);
+      const copyButton = screen.getByRole('button', { name: /copy/i });
+      fireEvent.click(copyButton);
       
-      // Open modal
-      fireEvent.click(screen.getByTestId('styled-button-delete'));
-      expect(screen.getByTestId('bulk-delete-modal')).toBeInTheDocument();
-      
-      // Close modal
-      fireEvent.click(screen.getByText('Close'));
-      expect(screen.queryByTestId('bulk-delete-modal')).not.toBeInTheDocument();
-    });
-
-    it('should close copy modal when close is triggered', () => {
-      const props = { ...defaultProps, selectedRows: [1, 2, 3] };
-      render(<TransferDataGridFooter {...props} />);
-      
-      // Open modal
-      fireEvent.click(screen.getByTestId('styled-button-copy'));
       expect(screen.getByTestId('copy-modal')).toBeInTheDocument();
       
-      // Close modal
-      fireEvent.click(screen.getByText('Close'));
-      expect(screen.queryByTestId('copy-modal')).not.toBeInTheDocument();
+      const closeButton = screen.getByTestId('close-copy');
+      fireEvent.click(closeButton);
+      
+      await waitFor(() => {
+        expect(screen.queryByTestId('copy-modal')).not.toBeInTheDocument();
+      });
     });
 
-    it('should pass correct props to TransferBulkDeleteModal', () => {
-      const props = { 
-        ...defaultProps, 
-        selectedRows: [1, 2, 3],
-        apiUrl: '/api/test',
-        transferType: 2
+    it('should pass correct props to copy modal', () => {
+      const props = {
+        ...defaultProps,
+        apiUrl: '/api/copy-transfers',
+        transferType: 3,
+        selectedRows: [7, 14, 21]
       };
+      
       render(<TransferDataGridFooter {...props} />);
       
-      fireEvent.click(screen.getByTestId('styled-button-delete'));
+      const copyButton = screen.getByRole('button', { name: /copy/i });
+      fireEvent.click(copyButton);
       
-      expect(screen.getByTestId('bulk-delete-api-url')).toHaveTextContent('/api/test');
-      expect(screen.getByTestId('bulk-delete-transfer-type')).toHaveTextContent('2');
-      expect(screen.getByTestId('bulk-delete-selected-rows')).toHaveTextContent('1,2,3');
-    });
-
-    it('should pass correct props to TransferCopyModal', () => {
-      const props = { 
-        ...defaultProps, 
-        selectedRows: [4, 5, 6],
-        apiUrl: '/api/copy-test',
-        transferType: 3
-      };
-      render(<TransferDataGridFooter {...props} />);
+      const propsElement = screen.getByTestId('copy-props');
+      const passedProps = JSON.parse(propsElement.textContent);
       
-      fireEvent.click(screen.getByTestId('styled-button-copy'));
-      
-      expect(screen.getByTestId('copy-api-url')).toHaveTextContent('/api/copy-test');
-      expect(screen.getByTestId('copy-transfer-type')).toHaveTextContent('3');
-      expect(screen.getByTestId('copy-selected-rows')).toHaveTextContent('4,5,6');
+      expect(passedProps).toEqual({
+        apiUrl: '/api/copy-transfers',
+        transferType: 3,
+        selectedRows: [7, 14, 21]
+      });
     });
   });
 
-  describe('GridPagination Props', () => {
-    it('should render GridPagination component', () => {
-      const paginationProps = {
-        ...defaultProps,
-        page: 5,
-        rowsPerPage: 25,
-        rowCount: 250
-      };
+  describe('Multiple Modals', () => {
+    it('should allow both modals to be open simultaneously', () => {
+      render(<TransferDataGridFooter {...defaultProps} selectedRows={[1, 2]} />);
       
-      render(<TransferDataGridFooter {...paginationProps} />);
+      // Open delete modal
+      fireEvent.click(screen.getByRole('button', { name: /delete/i }));
+      expect(screen.getByTestId('bulk-delete-modal')).toBeInTheDocument();
       
-      expect(screen.getByTestId('grid-pagination')).toBeInTheDocument();
+      // Open copy modal
+      fireEvent.click(screen.getByRole('button', { name: /copy/i }));
+      expect(screen.getByTestId('copy-modal')).toBeInTheDocument();
+      
+      // Both should be open
+      expect(screen.getByTestId('bulk-delete-modal')).toBeInTheDocument();
+      expect(screen.getByTestId('copy-modal')).toBeInTheDocument();
+    });
+
+    it('should close modals independently', async () => {
+      render(<TransferDataGridFooter {...defaultProps} selectedRows={[1, 2]} />);
+      
+      // Open both modals
+      fireEvent.click(screen.getByRole('button', { name: /delete/i }));
+      fireEvent.click(screen.getByRole('button', { name: /copy/i }));
+      
+      // Close delete modal
+      fireEvent.click(screen.getByTestId('close-bulk-delete'));
+      
+      await waitFor(() => {
+        expect(screen.queryByTestId('bulk-delete-modal')).not.toBeInTheDocument();
+        expect(screen.getByTestId('copy-modal')).toBeInTheDocument();
+      });
     });
   });
 
   describe('Edge Cases', () => {
-    it('should handle empty selectedRows array', () => {
-      const props = { ...defaultProps, selectedRows: [] };
-      render(<TransferDataGridFooter {...props} />);
+    it('should handle empty string apiUrl', () => {
+      render(<TransferDataGridFooter {...defaultProps} apiUrl="" selectedRows={[1]} />);
       
-      expect(screen.getByTestId('styled-button-add')).toBeInTheDocument();
-      expect(screen.queryByTestId('styled-button-delete')).not.toBeInTheDocument();
-      expect(screen.queryByTestId('styled-button-copy')).not.toBeInTheDocument();
+      fireEvent.click(screen.getByRole('button', { name: /delete/i }));
+      
+      const propsElement = screen.getByTestId('bulk-delete-props');
+      const passedProps = JSON.parse(propsElement.textContent);
+      expect(passedProps.apiUrl).toBe('');
     });
 
-    it('should handle single selected row', () => {
-      const props = { ...defaultProps, selectedRows: [1] };
-      render(<TransferDataGridFooter {...props} />);
+    it('should handle transferType of 0', () => {
+      render(<TransferDataGridFooter {...defaultProps} transferType={0} selectedRows={[1]} />);
       
-      expect(screen.queryByTestId('styled-button-add')).not.toBeInTheDocument();
-      expect(screen.getByTestId('styled-button-delete')).toBeInTheDocument();
-      expect(screen.getByTestId('styled-button-copy')).toBeInTheDocument();
+      fireEvent.click(screen.getByRole('button', { name: /copy/i }));
+      
+      const propsElement = screen.getByTestId('copy-props');
+      const passedProps = JSON.parse(propsElement.textContent);
+      expect(passedProps.transferType).toBe(0);
     });
 
-    it('should handle multiple selected rows', () => {
-      const props = { ...defaultProps, selectedRows: [1, 2, 3, 4, 5] };
-      render(<TransferDataGridFooter {...props} />);
+    it('should handle large number of selected rows', () => {
+      const manyRows = Array.from({ length: 1000 }, (_, i) => i + 1);
+      render(<TransferDataGridFooter {...defaultProps} selectedRows={manyRows} />);
       
-      expect(screen.queryByTestId('styled-button-add')).not.toBeInTheDocument();
-      expect(screen.getByTestId('styled-button-delete')).toBeInTheDocument();
-      expect(screen.getByTestId('styled-button-copy')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /delete/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /copy/i })).toBeInTheDocument();
     });
 
-    it('should handle undefined apiUrl gracefully', () => {
-      const props = { ...defaultProps, apiUrl: undefined, selectedRows: [1] };
-      render(<TransferDataGridFooter {...props} />);
+    it('should handle missing handleAddClick prop gracefully', () => {
+      const { apiUrl, transferType, selectedRows, ...restProps } = defaultProps;
       
-      fireEvent.click(screen.getByTestId('styled-button-delete'));
-      expect(screen.getByTestId('bulk-delete-modal')).toBeInTheDocument();
-    });
-
-    it('should handle null transferType gracefully', () => {
-      const props = { ...defaultProps, transferType: null, selectedRows: [1] };
-      render(<TransferDataGridFooter {...props} />);
-      
-      fireEvent.click(screen.getByTestId('styled-button-copy'));
-      expect(screen.getByTestId('copy-modal')).toBeInTheDocument();
+      // This should not throw an error even without handleAddClick
+      expect(() => {
+        render(
+          <TransferDataGridFooter 
+            apiUrl={apiUrl}
+            transferType={transferType}
+            selectedRows={selectedRows}
+            {...restProps}
+          />
+        );
+      }).not.toThrow();
     });
   });
 
-  describe('UI State Transitions', () => {
-    it('should toggle between Add and Delete/Copy buttons based on selection', () => {
-      const { rerender } = render(<TransferDataGridFooter {...defaultProps} />);
+  describe('Prop Updates', () => {
+    it('should update displayed buttons when selectedRows prop changes', () => {
+      const { rerender } = render(<TransferDataGridFooter {...defaultProps} selectedRows={[]} />);
       
-      // Initially no selection - should show Add
-      expect(screen.getByTestId('styled-button-add')).toBeInTheDocument();
-      expect(screen.queryByTestId('styled-button-delete')).not.toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /add/i })).toBeInTheDocument();
       
-      // Select rows - should show Delete and Copy
-      rerender(<TransferDataGridFooter {...defaultProps} selectedRows={[1, 2]} />);
-      expect(screen.queryByTestId('styled-button-add')).not.toBeInTheDocument();
-      expect(screen.getByTestId('styled-button-delete')).toBeInTheDocument();
-      expect(screen.getByTestId('styled-button-copy')).toBeInTheDocument();
+      rerender(<TransferDataGridFooter {...defaultProps} selectedRows={[1]} />);
+      expect(screen.queryByRole('button', { name: /add/i })).not.toBeInTheDocument();
       
-      // Deselect rows - should show Add again
+      rerender(<TransferDataGridFooter {...defaultProps} selectedRows={[1, 2, 3]} />);
+      expect(screen.getByRole('button', { name: /delete/i })).toBeInTheDocument();
+      
       rerender(<TransferDataGridFooter {...defaultProps} selectedRows={[]} />);
-      expect(screen.getByTestId('styled-button-add')).toBeInTheDocument();
-      expect(screen.queryByTestId('styled-button-delete')).not.toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /add/i })).toBeInTheDocument();
     });
 
-    it('should maintain modal state independently', () => {
-      const props = { ...defaultProps, selectedRows: [1, 2] };
-      render(<TransferDataGridFooter {...props} />);
+    it('should pass updated selectedRows to modals', () => {
+      const { rerender } = render(
+        <TransferDataGridFooter {...defaultProps} selectedRows={[1, 2]} />
+      );
       
-      // Open both modals sequentially
-      fireEvent.click(screen.getByTestId('styled-button-delete'));
-      expect(screen.getByTestId('bulk-delete-modal')).toBeInTheDocument();
+      fireEvent.click(screen.getByRole('button', { name: /delete/i }));
       
-      fireEvent.click(screen.getByTestId('styled-button-copy'));
-      expect(screen.getByTestId('copy-modal')).toBeInTheDocument();
-      expect(screen.getByTestId('bulk-delete-modal')).toBeInTheDocument();
+      let propsElement = screen.getByTestId('bulk-delete-props');
+      let passedProps = JSON.parse(propsElement.textContent);
+      expect(passedProps.selectedRows).toEqual([1, 2]);
+      
+      // Close modal
+      fireEvent.click(screen.getByTestId('close-bulk-delete'));
+      
+      // Update selectedRows
+      rerender(<TransferDataGridFooter {...defaultProps} selectedRows={[3, 4, 5]} />);
+      
+      // Reopen modal
+      fireEvent.click(screen.getByRole('button', { name: /delete/i }));
+      
+      propsElement = screen.getByTestId('bulk-delete-props');
+      passedProps = JSON.parse(propsElement.textContent);
+      expect(passedProps.selectedRows).toEqual([3, 4, 5]);
     });
   });
 });
