@@ -1,4 +1,4 @@
-name: Run Tests
+name: Main
 
 on:
   push:
@@ -48,7 +48,7 @@ jobs:
         uses: dorny/test-reporter@v1
         if: always()
         with:
-          name: Jest Tests
+          name: Tests results
           path: junit.xml
           reporter: jest-junit
           fail-on-error: false
