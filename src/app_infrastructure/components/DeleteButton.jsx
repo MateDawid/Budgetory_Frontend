@@ -1,10 +1,7 @@
-import React, {useState} from "react";
-import {
-    Delete as DeleteIcon,
-} from "@mui/icons-material";
-import StyledButton from "./StyledButton";
-import DeleteModal from "./DeleteModal";
-
+import React, { useState } from 'react';
+import { Delete as DeleteIcon } from '@mui/icons-material';
+import StyledButton from './StyledButton';
+import DeleteModal from './DeleteModal';
 
 /**
  * DeleteButton component to display Modal with warning before deleting object.
@@ -17,28 +14,42 @@ import DeleteModal from "./DeleteModal";
  * @param {boolean} rightbarBudgetsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
  * @param {boolean} rightbarDepositsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
  */
-const DeleteButton = ({objectId, apiUrl, objectDisplayName, setDeletedObjectId = null, redirectOnSuccess = null, isDisabled = null, rightbarBudgetsRefresh = false, rightbarDepositsRefresh = false}) => {
-    const [open, setOpen] = useState(false);
+const DeleteButton = ({
+  objectId,
+  apiUrl,
+  objectDisplayName,
+  setDeletedObjectId = null,
+  redirectOnSuccess = null,
+  isDisabled = null,
+  rightbarBudgetsRefresh = false,
+  rightbarDepositsRefresh = false,
+}) => {
+  const [open, setOpen] = useState(false);
 
-    return (
-        <>
-            <StyledButton onClick={() => setOpen(true)} variant="outlined" startIcon={<DeleteIcon/>} disabled={isDisabled}>
-                Delete
-            </StyledButton>
-            <DeleteModal
-                open={open}
-                setOpen={setOpen}
-                objectId={objectId}
-                apiUrl={apiUrl}
-                setDeletedObjectId={setDeletedObjectId}
-                objectDisplayName={objectDisplayName}
-                message={`Deleting ${objectDisplayName} will cause removing all related objects. Do you want to continue?`}
-                redirectOnSuccess={redirectOnSuccess}
-                rightbarBudgetsRefresh={rightbarBudgetsRefresh}
-                rightbarDepositsRefresh={rightbarDepositsRefresh}
-            />
-        </>
-    );
+  return (
+    <>
+      <StyledButton
+        onClick={() => setOpen(true)}
+        variant="outlined"
+        startIcon={<DeleteIcon />}
+        disabled={isDisabled}
+      >
+        Delete
+      </StyledButton>
+      <DeleteModal
+        open={open}
+        setOpen={setOpen}
+        objectId={objectId}
+        apiUrl={apiUrl}
+        setDeletedObjectId={setDeletedObjectId}
+        objectDisplayName={objectDisplayName}
+        message={`Deleting ${objectDisplayName} will cause removing all related objects. Do you want to continue?`}
+        redirectOnSuccess={redirectOnSuccess}
+        rightbarBudgetsRefresh={rightbarBudgetsRefresh}
+        rightbarDepositsRefresh={rightbarDepositsRefresh}
+      />
+    </>
+  );
 };
 
 export default DeleteButton;

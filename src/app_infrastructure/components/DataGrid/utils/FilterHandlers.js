@@ -1,22 +1,36 @@
 import {
-    getGridDateOperators,
-    getGridStringOperators,
-    getGridNumericOperators,
-    getGridBooleanOperators,
-    getGridSingleSelectOperators
-} from "@mui/x-data-grid";
+  getGridDateOperators,
+  getGridStringOperators,
+  getGridNumericOperators,
+  getGridBooleanOperators,
+  getGridSingleSelectOperators,
+} from '@mui/x-data-grid';
 
 /**
  * Mapping of DataGrid columns types with supported filter methods.
  */
 export const mappedFilterOperators = {
-    'string': getGridStringOperators().filter(operator => ['contains'].includes(operator.value)),
-    'date': getGridDateOperators().filter(operator => ['is', 'before', 'onOrBefore', 'after', 'onOrAfter'].includes(operator.value)),
-    'dateTime': getGridDateOperators(true).filter(operator => ['is', 'before', 'onOrBefore', 'after', 'onOrAfter'].includes(operator.value)),
-    'number': getGridNumericOperators().filter(operator => ['=', '>=', '<='].includes(operator.value)),
-    'boolean': getGridBooleanOperators(),
-    'singleSelect': getGridSingleSelectOperators().filter(operator => ['is'].includes(operator.value)),
-}
+  string: getGridStringOperators().filter((operator) =>
+    ['contains'].includes(operator.value)
+  ),
+  date: getGridDateOperators().filter((operator) =>
+    ['is', 'before', 'onOrBefore', 'after', 'onOrAfter'].includes(
+      operator.value
+    )
+  ),
+  dateTime: getGridDateOperators(true).filter((operator) =>
+    ['is', 'before', 'onOrBefore', 'after', 'onOrAfter'].includes(
+      operator.value
+    )
+  ),
+  number: getGridNumericOperators().filter((operator) =>
+    ['=', '>=', '<='].includes(operator.value)
+  ),
+  boolean: getGridBooleanOperators(),
+  singleSelect: getGridSingleSelectOperators().filter((operator) =>
+    ['is'].includes(operator.value)
+  ),
+};
 
 /**
  * Function for formatting filterModel for API calls purposes.
@@ -25,21 +39,21 @@ export const mappedFilterOperators = {
  * @return {object} - Formatted filterModel for DataGrid.
  */
 export function formatFilterModel(updatedFilterModel, columns) {
-    if (updatedFilterModel.items.length === 0) {
-        return {}
-    } else if (updatedFilterModel.items[0].value == null) {
-        return {}
-    }
-    const filterItem = updatedFilterModel.items[0]
-    const column = columns.find(column => column.field === filterItem.field)
-    switch (column.type) {
-        case 'date':
-            return formatDateFilter(filterItem)
-        case 'number':
-            return formatNumberFilter(filterItem)
-        default:
-            return {[filterItem.field]: filterItem.value}
-    }
+  if (updatedFilterModel.items.length === 0) {
+    return {};
+  } else if (updatedFilterModel.items[0].value == null) {
+    return {};
+  }
+  const filterItem = updatedFilterModel.items[0];
+  const column = columns.find((column) => column.field === filterItem.field);
+  switch (column.type) {
+    case 'date':
+      return formatDateFilter(filterItem);
+    case 'number':
+      return formatNumberFilter(filterItem);
+    default:
+      return { [filterItem.field]: filterItem.value };
+  }
 }
 
 /**
@@ -48,29 +62,29 @@ export function formatFilterModel(updatedFilterModel, columns) {
  * @return {object} - Formatted filterModel with date filter for DataGrid.
  */
 function formatDateFilter(filterItem) {
-    switch (filterItem.operator) {
-        case 'is':
-            return {
-                [`${filterItem.field}_after`]: formatDate(filterItem.value),
-                [`${filterItem.field}_before`]: formatDate(filterItem.value)
-            };
-        case 'before': {
-            let dayBefore = new Date(filterItem.value);
-            dayBefore.setDate(dayBefore.getDate() - 1);
-            return {[`${filterItem.field}_before`]: formatDate(dayBefore)};
-        }
-        case 'onOrBefore':
-            return {[`${filterItem.field}_before`]: formatDate(filterItem.value)};
-        case 'after': {
-            let dayAfter = new Date(filterItem.value);
-            dayAfter.setDate(dayAfter.getDate() + 1);
-            return {[`${filterItem.field}_after`]: formatDate(dayAfter)};
-        }
-        case 'onOrAfter':
-            return {[`${filterItem.field}_after`]: formatDate(filterItem.value)};
-        default:
-            return {[filterItem.field]: filterItem.value};
+  switch (filterItem.operator) {
+    case 'is':
+      return {
+        [`${filterItem.field}_after`]: formatDate(filterItem.value),
+        [`${filterItem.field}_before`]: formatDate(filterItem.value),
+      };
+    case 'before': {
+      let dayBefore = new Date(filterItem.value);
+      dayBefore.setDate(dayBefore.getDate() - 1);
+      return { [`${filterItem.field}_before`]: formatDate(dayBefore) };
     }
+    case 'onOrBefore':
+      return { [`${filterItem.field}_before`]: formatDate(filterItem.value) };
+    case 'after': {
+      let dayAfter = new Date(filterItem.value);
+      dayAfter.setDate(dayAfter.getDate() + 1);
+      return { [`${filterItem.field}_after`]: formatDate(dayAfter) };
+    }
+    case 'onOrAfter':
+      return { [`${filterItem.field}_after`]: formatDate(filterItem.value) };
+    default:
+      return { [filterItem.field]: filterItem.value };
+  }
 }
 
 /**
@@ -79,8 +93,8 @@ function formatDateFilter(filterItem) {
  * @return {string} - Formatted filterModel with date filter for DataGrid.
  */
 function formatDate(date) {
-    // TODO - use it in all places where formatting appears
-    return date.toLocaleDateString('en-CA');
+  // TODO - use it in all places where formatting appears
+  return date.toLocaleDateString('en-CA');
 }
 
 /**
@@ -89,13 +103,13 @@ function formatDate(date) {
  * @return {object} - Formatted filterModel with number filter for DataGrid.
  */
 function formatNumberFilter(filterItem) {
-    switch (filterItem.operator) {
-        case '>=': {
-            return {[`${filterItem.field}_min`]: filterItem.value};
-        }
-        case '<=':
-            return {[`${filterItem.field}_max`]: filterItem.value};
-        default:
-            return {[filterItem.field]: filterItem.value};
+  switch (filterItem.operator) {
+    case '>=': {
+      return { [`${filterItem.field}_min`]: filterItem.value };
     }
+    case '<=':
+      return { [`${filterItem.field}_max`]: filterItem.value };
+    default:
+      return { [filterItem.field]: filterItem.value };
+  }
 }

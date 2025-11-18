@@ -1,5 +1,5 @@
-import {updateApiObject} from "../services/APIService";
-import ApiError from "./ApiError";
+import { updateApiObject } from '../services/APIService';
+import ApiError from './ApiError';
 
 /**
  * Handles saving EditableTextField.
@@ -11,41 +11,41 @@ import ApiError from "./ApiError";
  * @param {function} setAlert - Alert setter.
  */
 const onEditableFieldSave = async (
-    id,
-    apiFieldName,
-    value,
-    apiUrl,
-    updateRefreshTimestamp,
-    setAlert
+  id,
+  apiFieldName,
+  value,
+  apiUrl,
+  updateRefreshTimestamp,
+  setAlert
 ) => {
-    let payload = {id: id, [apiFieldName]: value}
-    try {
-        await updateApiObject(apiUrl, payload);
-        updateRefreshTimestamp()
-        setAlert({type: 'success', message: 'Object updated successfully.'})
-    } catch (error) {
-        setAlert({type: 'error', message: 'Update failed.'})
-        if (error instanceof ApiError) {
-            let errorMessage = ''
-            if (typeof error.data.detail === 'object') {
-                let errorMessageParts = []
-                Object.keys(error.data.detail).forEach(key => {
-                    error.data.detail[key].forEach((message) => {
-                        if (key === 'non_field_errors') {
-                            errorMessageParts.push(message)
-                        } else {
-                            errorMessageParts.push(`${key}: ${message}`)
-                        }
-                    });
-                 })
-                errorMessage = errorMessageParts.join('\n')
+  let payload = { id: id, [apiFieldName]: value };
+  try {
+    await updateApiObject(apiUrl, payload);
+    updateRefreshTimestamp();
+    setAlert({ type: 'success', message: 'Object updated successfully.' });
+  } catch (error) {
+    setAlert({ type: 'error', message: 'Update failed.' });
+    if (error instanceof ApiError) {
+      let errorMessage = '';
+      if (typeof error.data.detail === 'object') {
+        let errorMessageParts = [];
+        Object.keys(error.data.detail).forEach((key) => {
+          error.data.detail[key].forEach((message) => {
+            if (key === 'non_field_errors') {
+              errorMessageParts.push(message);
             } else {
-                errorMessage = error.data.detail
+              errorMessageParts.push(`${key}: ${message}`);
             }
-            throw new ApiError(errorMessage);
-        }
-        throw error
+          });
+        });
+        errorMessage = errorMessageParts.join('\n');
+      } else {
+        errorMessage = error.data.detail;
+      }
+      throw new ApiError(errorMessage);
     }
+    throw error;
+  }
 };
 
 export default onEditableFieldSave;

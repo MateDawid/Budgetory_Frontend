@@ -1,5 +1,5 @@
 import React from 'react';
-import StyledTextField from "./StyledTextField";
+import StyledTextField from './StyledTextField';
 
 /**
  * SearchField component to display search field for list pages.
@@ -7,17 +7,17 @@ import StyledTextField from "./StyledTextField";
  * @param {function} setSearchQuery - Setter for search query stored in page state.
  * @param {object} sx - Additional styling.
  */
-const SearchField = ({label, setSearchQuery, sx={}}) => (
-    <StyledTextField
-        onInput={(e) => {
-            setTimeout(() => {
-                setSearchQuery(e.target.value);
-            }, 1000)
-        }}
-        label={label}
-        sx={sx}
-        variant="outlined"
-    />
+const SearchField = ({ label, setSearchQuery, sx = {} }) => (
+  <StyledTextField
+    onInput={(e) => {
+      setTimeout(() => {
+        setSearchQuery(e.target.value);
+      }, 1000);
+    }}
+    label={label}
+    sx={sx}
+    variant="outlined"
+  />
 );
 
 export default SearchField;

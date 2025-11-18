@@ -1,6 +1,6 @@
 class ApiError extends Error {
   constructor(data) {
-    const message = ApiError.getMessage(data)
+    const message = ApiError.getMessage(data);
     super(message);
     this.name = 'ApiError';
     this.data = data;
@@ -13,15 +13,15 @@ class ApiError extends Error {
    */
   static getMessage(apiErrors) {
     if (typeof apiErrors === 'string') {
-      return apiErrors
+      return apiErrors;
     }
     if (apiErrors.detail) {
       switch (typeof apiErrors.detail) {
-        case "string": {
-          return `API Error: ${apiErrors.detail}`
+        case 'string': {
+          return `API Error: ${apiErrors.detail}`;
         }
         default: {
-          return `API Error`
+          return `API Error`;
         }
       }
     }
