@@ -52,19 +52,3 @@ jobs:
           path: junit.xml
           reporter: jest-junit
           fail-on-error: false
-      
-      # 7. Upload coverage to Codecov
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage/coverage-final.json
-          fail_ci_if_error: false
-        continue-on-error: true
-      
-      # 8. Generate coverage badge
-      - name: Generate coverage badge
-        if: github.ref == 'refs/heads/master'
-        run: |
-          npm install -g coverage-badge
-          coverage-badge -o coverage-badge.svg
