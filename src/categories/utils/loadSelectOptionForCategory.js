@@ -1,4 +1,4 @@
-import {getApiObjectsList} from "../../app_infrastructure/services/APIService";
+import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
 
 /**
  * Loads select options for TransferCategory object.
@@ -8,18 +8,30 @@ import {getApiObjectsList} from "../../app_infrastructure/services/APIService";
  * @param {function} setDepositOptions - Setter for "deposit" field options.
  * @param {function} setAlert - Setter for context Alert.
  */
-const loadSelectOptionForCategory = async (contextBudgetId, setTypeOptions, setPriorityOptions, setDepositOptions, setAlert) => {
-    try {
-        const typeResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/categories/types`)
-        setTypeOptions(typeResponse.results);
-        const priorityResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/categories/priorities`)
-        setPriorityOptions(priorityResponse.results);
-        const depositResponse = await getApiObjectsList(`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits`)
-        setDepositOptions(depositResponse);
-    } catch (err) {
-        console.error(err)
-        setAlert({type: 'error', message: "Failed to load select options."});
-    }
-}
+const loadSelectOptionForCategory = async (
+  contextBudgetId,
+  setTypeOptions,
+  setPriorityOptions,
+  setDepositOptions,
+  setAlert
+) => {
+  try {
+    const typeResponse = await getApiObjectsList(
+      `${process.env.REACT_APP_BACKEND_URL}/api/categories/types`
+    );
+    setTypeOptions(typeResponse.results);
+    const priorityResponse = await getApiObjectsList(
+      `${process.env.REACT_APP_BACKEND_URL}/api/categories/priorities`
+    );
+    setPriorityOptions(priorityResponse.results);
+    const depositResponse = await getApiObjectsList(
+      `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits`
+    );
+    setDepositOptions(depositResponse);
+  } catch (err) {
+    console.error(err);
+    setAlert({ type: 'error', message: 'Failed to load select options.' });
+  }
+};
 
 export default loadSelectOptionForCategory;

@@ -5,20 +5,21 @@
  * @return {object} - Formatted DataGrid row.
  */
 export function prepareApiInput(apiInput, columns) {
-    Object.keys(apiInput).forEach(key => {
-        const column = columns.find(column => column.field === key)
-        if (!column) {
-            return;
-        }
-        if (column.type === 'date' && apiInput[key] instanceof Date) {
-            apiInput[key] = apiInput[key].toLocaleDateString('en-CA');
-        }
-        else if (column.type === 'boolean' && typeof apiInput[key] !== 'boolean'){
-            apiInput[key] = !!apiInput[key]
-        }
-        else if (column.type === 'singleSelect') {
-            apiInput[key] = apiInput[key] === -1 ? null : apiInput[key]
-        }
-    });
-    return apiInput
+  Object.keys(apiInput).forEach((key) => {
+    const column = columns.find((column) => column.field === key);
+    if (!column) {
+      return;
+    }
+    if (column.type === 'date' && apiInput[key] instanceof Date) {
+      apiInput[key] = apiInput[key].toLocaleDateString('en-CA');
+    } else if (
+      column.type === 'boolean' &&
+      typeof apiInput[key] !== 'boolean'
+    ) {
+      apiInput[key] = !!apiInput[key];
+    } else if (column.type === 'singleSelect') {
+      apiInput[key] = apiInput[key] === -1 ? null : apiInput[key];
+    }
+  });
+  return apiInput;
 }

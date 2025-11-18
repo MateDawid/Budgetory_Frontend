@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 /**
  * Renders a hyperlink for a DataGrid cell.
@@ -8,25 +8,23 @@ import React from "react";
  */
 
 const renderHyperlink = (url, cellParams) => {
-    if (!cellParams.value || cellParams.value === -1) {
-        return <span></span>;
-    }
-    return (
-        <a
-            href={`${url}${cellParams.value}/`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-
-                fontWeight: 'bold',
-                color: 'inherit',
-                textDecoration: 'none',
-
-            }}
-        >
-            {cellParams.formattedValue}
-        </a>
-    );
+  if (!cellParams.value || cellParams.value === -1) {
+    return <span></span>;
+  }
+  return (
+    <a
+      href={`${url}${cellParams.value}/`}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        fontWeight: 'bold',
+        color: 'inherit',
+        textDecoration: 'none',
+      }}
+    >
+      {cellParams.formattedValue}
+    </a>
+  );
 };
 
 export default renderHyperlink;

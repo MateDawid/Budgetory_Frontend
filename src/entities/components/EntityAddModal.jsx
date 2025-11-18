@@ -1,7 +1,7 @@
-import React, { useContext } from "react";
-import FormModal from "../../app_infrastructure/components/FormModal/FormModal";
-import { AlertContext } from "../../app_infrastructure/store/AlertContext";
-import { createApiObject } from "../../app_infrastructure/services/APIService";
+import React, { useContext } from 'react';
+import FormModal from '../../app_infrastructure/components/FormModal/FormModal';
+import { AlertContext } from '../../app_infrastructure/store/AlertContext';
+import { createApiObject } from '../../app_infrastructure/services/APIService';
 
 /**
  * EntityAddModal component for displaying add Entity form.
@@ -11,56 +11,61 @@ import { createApiObject } from "../../app_infrastructure/services/APIService";
  * @param {function} props.setFormOpen - Setter for formOpen flag.
  * @param {function} [props.onSuccess] - Optional function performed on form submit success.
  */
-export default function EntityAddModal({ apiUrl, formOpen, setFormOpen, onSuccess=undefined }) {
-    const { setAlert } = useContext(AlertContext);
+export default function EntityAddModal({
+  apiUrl,
+  formOpen,
+  setFormOpen,
+  onSuccess = undefined,
+}) {
+  const { setAlert } = useContext(AlertContext);
 
-    const fields = {
-        name: {
-            type: 'string',
-            label: 'Name',
-            autoFocus: true,
-            required: true
+  const fields = {
+    name: {
+      type: 'string',
+      label: 'Name',
+      autoFocus: true,
+      required: true,
+    },
+    description: {
+      type: 'string',
+      label: 'Description',
+      required: false,
+      multiline: true,
+      rows: 4,
+    },
+    is_active: {
+      type: 'select',
+      select: true,
+      label: 'Status',
+      defaultValue: true,
+      required: true,
+      options: [
+        {
+          value: true,
+          label: '🟢 Active',
         },
-        description: {
-            type: 'string',
-            label: 'Description',
-            required: false,
-            multiline: true,
-            rows: 4
+        {
+          value: false,
+          label: '🔴 Inactive',
         },
-        is_active: {
-            type: 'select',
-            select: true,
-            label: 'Status',
-            defaultValue: true,
-            required: true,
-            options: [
-                {
-                    value: true,
-                    label: '🟢 Active',
-                },
-                {
-                    value: false,
-                    label: '🔴 Inactive',
-                }
-            ]
-        }
-    }
+      ],
+    },
+  };
 
-    const callApi = async (data) => {
-        const response = await createApiObject(apiUrl, data);
-        if (onSuccess) onSuccess();
-        setAlert({ type: 'success', message: `Entity created successfully.` })
-        return response
-    }
+  const callApi = async (data) => {
+    const response = await createApiObject(apiUrl, data);
+    if (onSuccess) onSuccess();
+    setAlert({ type: 'success', message: `Entity created successfully.` });
+    return response;
+  };
 
-    return (
-        <FormModal
-            fields={fields}
-            formLabel="Add Entity"
-            open={formOpen}
-            setOpen={setFormOpen}
-            callApi={callApi}
-        />
-    )
+  return (
+    <FormModal
+      fields={fields}
+      formLabel="Add Entity"
+      open={formOpen}
+      setOpen={setFormOpen}
+      callApi={callApi}
+    />
+  );
 }

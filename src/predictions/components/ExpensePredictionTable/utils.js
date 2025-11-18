@@ -1,6 +1,5 @@
-import { Stack, Typography } from "@mui/material";
-import React from "react";
-
+import { Stack, Typography } from '@mui/material';
+import React from 'react';
 
 /**
  * Function preparing "Category" column value to be displayed in Table.
@@ -12,8 +11,8 @@ export const getCategoryCellContent = (row) => {
     <Stack
       gap={1}
       sx={{
-        justifyContent: "center",
-        alignItems: "center",
+        justifyContent: 'center',
+        alignItems: 'center',
       }}
     >
       <Typography variant="body2" fontWeight="bold">

@@ -1,0 +1,54 @@
+name: Main
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  quality_and_tests:
+    name: Code quality and tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+    steps:
+      # 1. Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      # 2. Setup Node.js
+      - name: Setup Node.js 24.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: 'npm'
+      
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: yarn install
+      
+      # 4. Run linter
+      - name: Run linter
+        run: yarn lint
+      
+      # 5. Run tests with JUnit reporter
+      - name: Run tests
+        run: yarn test -- --coverage --watchAll=false --reporters=default --reporters=jest-junit
+        env:
+          CI: true 
+          REACT_APP_BACKEND_URL: http://localhost:8000
+          JEST_JUNIT_OUTPUT_DIR: ./
+          JEST_JUNIT_OUTPUT_NAME: junit.xml
+      
+      # 6. Publish test results to GitHub UI
+      - name: Publish test results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Tests results
+          path: junit.xml
+          reporter: jest-junit
+          fail-on-error: false

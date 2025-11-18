@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 
 /**
  * Function to calculate token expiration time.
@@ -24,16 +24,16 @@ export const logIn = async (email, password) => {
       password: password,
     });
     window.localStorage.setItem(
-      "budgetory.accessTokenExpiresIn",
+      'budgetory.accessTokenExpiresIn',
       calculateTokenExpirationTime(process.env.REACT_APP_ACCESS_TOKEN_LIFETIME)
     );
     window.localStorage.setItem(
-      "budgetory.refreshTokenExpiresIn",
+      'budgetory.refreshTokenExpiresIn',
       calculateTokenExpirationTime(process.env.REACT_APP_REFRESH_TOKEN_LIFETIME)
     );
-    window.localStorage.setItem("budgetory.accessToken", response.data.access);
+    window.localStorage.setItem('budgetory.accessToken', response.data.access);
     window.localStorage.setItem(
-      "budgetory.refreshToken",
+      'budgetory.refreshToken',
       response.data.refresh
     );
     return { response, isError: false };
@@ -46,10 +46,10 @@ export const logIn = async (email, password) => {
  * Function to remove User tokens from localStorage.
  */
 export const removeTokens = () => {
-  window.localStorage.removeItem("budgetory.accessToken");
-  window.localStorage.removeItem("budgetory.accessTokenExpiresIn");
-  window.localStorage.removeItem("budgetory.refreshToken");
-  window.localStorage.removeItem("budgetory.refreshTokenExpiresIn");
+  window.localStorage.removeItem('budgetory.accessToken');
+  window.localStorage.removeItem('budgetory.accessTokenExpiresIn');
+  window.localStorage.removeItem('budgetory.refreshToken');
+  window.localStorage.removeItem('budgetory.refreshTokenExpiresIn');
 };
 
 /**
@@ -58,13 +58,13 @@ export const removeTokens = () => {
  */
 export const getAccessToken = async () => {
   if (
-    window.localStorage.getItem("budgetory.accessTokenExpiresIn") <=
+    window.localStorage.getItem('budgetory.accessTokenExpiresIn') <=
     new Date().getTime()
   ) {
     await refreshToken();
-    return window.localStorage.getItem("budgetory.accessToken");
+    return window.localStorage.getItem('budgetory.accessToken');
   } else {
-    return window.localStorage.getItem("budgetory.accessToken");
+    return window.localStorage.getItem('budgetory.accessToken');
   }
 };
 
@@ -73,7 +73,7 @@ export const getAccessToken = async () => {
  */
 const refreshToken = async () => {
   if (
-    window.localStorage.getItem("budgetory.refreshTokenExpiresIn") <=
+    window.localStorage.getItem('budgetory.refreshTokenExpiresIn') <=
     new Date().getTime()
   ) {
     removeTokens();
@@ -81,20 +81,20 @@ const refreshToken = async () => {
     const url = `${process.env.REACT_APP_BACKEND_URL}/api/users/token/refresh/`;
     try {
       const response = await axios.post(url, {
-        refresh: window.localStorage.getItem("budgetory.refreshToken"),
+        refresh: window.localStorage.getItem('budgetory.refreshToken'),
       });
       window.localStorage.setItem(
-        "budgetory.accessTokenExpiresIn",
+        'budgetory.accessTokenExpiresIn',
         (
           new Date().getTime() +
           parseInt(process.env.REACT_APP_ACCESS_TOKEN_LIFETIME) * 1000
         ).toString()
       );
       window.localStorage.setItem(
-        "budgetory.accessToken",
+        'budgetory.accessToken',
         response.data.access
       );
-    } catch (error) {
+    } catch {
       removeTokens();
     }
   }

@@ -4,12 +4,12 @@
  * @return {object} - Mapping for sorting DataTable rows.
  */
 const getSortFieldMapping = (columns) => {
-    return columns.reduce((acc, column) => {
-        if (column.sortField) {
-            acc[column.field] = column.sortField;
-        }
-        return acc;
-    }, {});
+  return columns.reduce((acc, column) => {
+    if (column.sortField) {
+      acc[column.field] = column.sortField;
+    }
+    return acc;
+  }, {});
 };
 
 export default getSortFieldMapping;
