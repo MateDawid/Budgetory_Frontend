@@ -7,9 +7,13 @@ on:
     branches: [ master ]
 
 jobs:
-  test:
+  quality_and_tests:
+    name: Code quality and tests
     runs-on: ubuntu-latest
-    
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
     steps:
       # 1. Checkout the repository
       - name: Checkout code
@@ -30,14 +34,26 @@ jobs:
       - name: Run linter
         run: yarn lint
       
-      # 5. Run tests
+      # 5. Run tests with JUnit reporter
       - name: Run tests
-        run: yarn test -- --coverage --watchAll=false
+        run: yarn test -- --coverage --watchAll=false --reporters=default --reporters=jest-junit
         env:
           CI: true 
           REACT_APP_BACKEND_URL: http://localhost:8000
+          JEST_JUNIT_OUTPUT_DIR: ./
+          JEST_JUNIT_OUTPUT_NAME: junit.xml
       
-      # 6. Upload coverage reports
+      # 6. Publish test results to GitHub UI
+      - name: Publish test results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Jest Tests
+          path: junit.xml
+          reporter: jest-junit
+          fail-on-error: false
+      
+      # 7. Upload coverage to Codecov
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
@@ -46,20 +62,9 @@ jobs:
           fail_ci_if_error: false
         continue-on-error: true
       
-      # 7. Generate coverage badge
+      # 8. Generate coverage badge
       - name: Generate coverage badge
         if: github.ref == 'refs/heads/master'
         run: |
           npm install -g coverage-badge
           coverage-badge -o coverage-badge.svg
-      
-      # 8. Archive test results
-      - name: Archive test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: |
-            coverage/
-            junit.xml
-          retention-days: 30
