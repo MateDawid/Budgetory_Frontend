@@ -27,8 +27,8 @@ export default [
     rules: {
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
-      'react/jsx-uses-react': 'error', // ✅ prevents "React is unused"
-      'react/jsx-uses-vars': 'error',  // ✅ prevents "Component is unused"
+      'react/jsx-uses-react': 'error',
+      'react/jsx-uses-vars': 'error', 
       'no-unused-vars': 'warn',
       'jsx-a11y/alt-text': 'warn',
       'prettier/prettier': [
@@ -37,7 +37,8 @@ export default [
           singleQuote: true,
           semi: true,
           tabWidth: 2,
-          trailingComma: 'es5'
+          trailingComma: 'es5',
+          endOfLine: "auto"
         }
       ]
     },
