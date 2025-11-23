@@ -20,6 +20,9 @@ import PeriodFilterField from '../components/PeriodFilterField';
 import ExpensePredictionTable from '../components/ExpensePredictionTable/ExpensePredictionTable';
 import PeriodResultsTable from '../components/PeriodResultsTable/PeriodResultsTable';
 
+const UNCATEGORIZED_PRIORITY = -1;
+const OVERUSED_PROGRESS_STATUS = 4;
+
 const baseOrderingOptions = [
   { value: 'category__name', label: 'Category name ↗' },
   { value: '-category__name', label: 'Category name ↘' },
@@ -54,6 +57,7 @@ export default function ExpensePredictionsPage() {
 
   // Urls
   const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expense_predictions/`;
+  const uncategorizedPredictionUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/uncategorized_prediction/`;
   const copyPredictionsUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/copy_predictions_from_previous_period/`;
 
   // Selectors choices
@@ -142,7 +146,10 @@ export default function ExpensePredictionsPage() {
       const priorityResponse = await getApiObjectsList(
         `${process.env.REACT_APP_BACKEND_URL}/api/categories/priorities/?type=2`
       );
-      setPriorities(priorityResponse.results);
+      setPriorities([
+        { value: UNCATEGORIZED_PRIORITY, label: '❗Not categorized' },
+        ...priorityResponse.results,
+      ]);
     }
 
     async function getProgressStatuses() {
@@ -182,7 +189,9 @@ export default function ExpensePredictionsPage() {
       setCategories(categoryResponse);
       setCategoryFilter(null);
     }
-    if (!contextBudgetId) {
+    console.log(priorityFilter);
+    console.log(priorityFilter === UNCATEGORIZED_PRIORITY);
+    if (!contextBudgetId || priorityFilter === UNCATEGORIZED_PRIORITY) {
       return;
     }
     getCategories();
@@ -229,16 +238,43 @@ export default function ExpensePredictionsPage() {
       return filterModel;
     };
     async function getPredictions() {
-      const predictionsResponse = await getApiObjectsList(
-        apiUrl,
-        {},
-        {},
-        getFilterModel()
-      );
-      setPeriodPredictions(predictionsResponse);
+      let predictionsResponse;
+      let uncategorizedPredictionResponse;
+      // Usual Expense Predictions
+      if (priorityFilter === UNCATEGORIZED_PRIORITY) {
+        predictionsResponse = [];
+      } else {
+        predictionsResponse = await getApiObjectsList(
+          apiUrl,
+          {},
+          {},
+          getFilterModel()
+        );
+      }
+      // Uncategorized Expense Predictions
+      if (
+        (priorityFilter && priorityFilter !== UNCATEGORIZED_PRIORITY) ||
+        (progressStatusFilter &&
+          progressStatusFilter != OVERUSED_PROGRESS_STATUS)
+      ) {
+        uncategorizedPredictionResponse = [];
+      } else {
+        const filterModel = depositFilter ? { deposit: depositFilter } : {};
+        uncategorizedPredictionResponse = await getApiObjectsList(
+          `${uncategorizedPredictionUrl}${periodFilter}/`,
+          {},
+          {},
+          filterModel
+        );
+      }
+
+      setPeriodPredictions([
+        ...uncategorizedPredictionResponse,
+        ...predictionsResponse,
+      ]);
       setPredictionsLoading(false);
     }
-    if (!contextBudgetId || !periodFilter) {
+    if (!contextBudgetId) {
       setPeriodPredictions([]);
       return;
     }
@@ -457,7 +493,9 @@ export default function ExpensePredictionsPage() {
               options={categories}
               label="Category"
               sx={{ width: { sm: '100%', md: 200 }, margin: 0 }}
-              disabled={!depositFilter}
+              disabled={
+                !depositFilter || priorityFilter === UNCATEGORIZED_PRIORITY
+              }
               groupBy={(option) => option.priority_display}
               renderGroup={(params) => (
                 <li key={params.key}>
