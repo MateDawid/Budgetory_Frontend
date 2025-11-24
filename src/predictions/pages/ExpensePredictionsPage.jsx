@@ -238,40 +238,13 @@ export default function ExpensePredictionsPage() {
       return filterModel;
     };
     async function getPredictions() {
-      let predictionsResponse;
-      let uncategorizedPredictionResponse;
-      // Usual Expense Predictions
-      if (priorityFilter === UNCATEGORIZED_PRIORITY) {
-        predictionsResponse = [];
-      } else {
-        predictionsResponse = await getApiObjectsList(
-          apiUrl,
-          {},
-          {},
-          getFilterModel()
-        );
-      }
-      // Uncategorized Expense Predictions
-      if (
-        (priorityFilter && priorityFilter !== UNCATEGORIZED_PRIORITY) ||
-        (progressStatusFilter &&
-          progressStatusFilter != OVERUSED_PROGRESS_STATUS)
-      ) {
-        uncategorizedPredictionResponse = [];
-      } else {
-        const filterModel = depositFilter ? { deposit: depositFilter } : {};
-        uncategorizedPredictionResponse = await getApiObjectsList(
-          `${uncategorizedPredictionUrl}${periodFilter}/`,
-          {},
-          {},
-          filterModel
-        );
-      }
-
-      setPeriodPredictions([
-        ...uncategorizedPredictionResponse,
-        ...predictionsResponse,
-      ]);
+      const predictionsResponse = await getApiObjectsList(
+        apiUrl,
+        {},
+        {},
+        getFilterModel()
+      );
+      setPeriodPredictions(predictionsResponse);
       setPredictionsLoading(false);
     }
     if (!contextBudgetId) {
