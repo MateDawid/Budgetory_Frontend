@@ -42,11 +42,11 @@ export default function PredictionInspectModal({
       }
     }
 
-    if (!contextBudgetId) {
+    if (!contextBudgetId || !inspectOpen) {
       return;
     }
     getPeriodCategoryExpenses();
-  }, [contextBudgetId]);
+  }, [contextBudgetId, inspectOpen]);
 
   return (
     <StyledModal open={inspectOpen} onClose={() => setInspectOpen(false)}>

@@ -11,10 +11,10 @@ import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
-import PredictionDeleteModal from './PredictionDeleteModal';
+import PredictionDeleteModal from '../PredictionModal/PredictionDeleteModal';
 import { getFontColor } from '../utils';
 import { getCategoryCellContent } from './utils';
-import PredictionInspectModal from './PredictionInspectModal';
+import PredictionInspectModal from '../PredictionModal/PredictionInspectModal';
 import PredictionEditModal from '../PredictionModal/PredictionEditModal';
 
 /**
@@ -36,7 +36,6 @@ export default function DraftPeriodPredictionRow({ row }) {
     row.current_result,
     row.current_plan
   );
-
 
   return (
     <>
