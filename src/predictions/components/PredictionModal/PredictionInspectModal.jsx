@@ -32,7 +32,7 @@ export default function PredictionInspectModal({
       try {
         const filterModel = {
           period: periodId,
-          category: categoryId,
+          category: categoryId ? categoryId : -1,
           ordering: 'date',
         };
         const response = await getApiObjectsList(apiUrl, {}, {}, filterModel);

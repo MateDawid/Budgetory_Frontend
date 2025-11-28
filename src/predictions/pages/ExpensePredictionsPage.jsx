@@ -50,8 +50,7 @@ const draftPeriodOrderingOptions = [
  * ExpensePredictionsPage component to display list of ExpensePredictions
  */
 export default function ExpensePredictionsPage() {
-  const { contextBudgetId, contextBudgetCurrency, refreshTimestamp } =
-    useContext(BudgetContext);
+  const { contextBudgetId, refreshTimestamp } = useContext(BudgetContext);
   const { setAlert } = useContext(AlertContext);
   const [periodResultsLoading, setPeriodResultsLoading] = useState(false);
   const [predictionsLoading, setPredictionsLoading] = useState(false);
