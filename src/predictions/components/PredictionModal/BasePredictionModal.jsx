@@ -37,6 +37,7 @@ export default function BasePredictionModal({
       groupBy: (option) => option.deposit_type_display,
       onChange: (value) => setSelectedDeposit(value),
       clearFieldsOnChange: ['category'],
+      disabled: editedPrediction,
     },
     category: {
       type: 'select',
@@ -45,7 +46,7 @@ export default function BasePredictionModal({
       required: true,
       options: categories,
       groupBy: (option) => option.priority_display,
-      disabled: !selectedDeposit,
+      disabled: editedPrediction || !selectedDeposit,
     },
     current_plan: {
       type: 'number',

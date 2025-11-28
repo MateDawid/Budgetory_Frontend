@@ -12,10 +12,10 @@ import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
 import EditIcon from '@mui/icons-material/Edit';
 import SearchIcon from '@mui/icons-material/Search';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import PredictionEditModal from './PredictionEditModal';
 import { getFontColor } from '../utils';
 import { getCategoryCellContent } from './utils';
 import PredictionInspectModal from './PredictionInspectModal';
+import PredictionEditModal from '../PredictionModal/PredictionEditModal';
 
 /**
  * DraftPeriodPredictionRow component to display ExpensePrediction data row with data suitable for ACTIVE Period.
@@ -91,9 +91,11 @@ export default function ActivePeriodPredictionRow({ row }) {
           <IconButton onClick={() => setInspectOpen(!inspectOpen)}>
             <SearchIcon />
           </IconButton>
-          <IconButton onClick={() => setEditOpen(!editOpen)}>
-            <EditIcon />
-          </IconButton>
+          {row.category !== null && (
+            <IconButton onClick={() => setEditOpen(!editOpen)}>
+              <EditIcon />
+            </IconButton>
+          )}
         </TableCell>
       </TableRow>
       <PredictionInspectModal
@@ -103,9 +105,9 @@ export default function ActivePeriodPredictionRow({ row }) {
         setInspectOpen={setInspectOpen}
       />
       <PredictionEditModal
-        prediction={row}
-        editOpen={editOpen}
-        setEditOpen={setEditOpen}
+        formOpen={editOpen}
+        setFormOpen={setEditOpen}
+        editedPrediction={row}
       />
     </>
   );
