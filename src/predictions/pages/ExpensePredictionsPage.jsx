@@ -13,12 +13,16 @@ import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
 import FilterField from '../../app_infrastructure/components/FilterField';
 import { AlertContext } from '../../app_infrastructure/store/AlertContext';
-import CreateButton from '../../app_infrastructure/components/CreateButton';
 import CopyPreviousPredictionsButton from '../components/CopyPreviousPredictionsButton';
 import PeriodStatuses from '../../budgets/utils/PeriodStatuses';
 import PeriodFilterField from '../components/PeriodFilterField';
 import ExpensePredictionTable from '../components/ExpensePredictionTable/ExpensePredictionTable';
 import PeriodResultsTable from '../components/PeriodResultsTable/PeriodResultsTable';
+import PredictionAddModal from '../components/PredictionModal/PredictionAddModal';
+import StyledButton from '../../app_infrastructure/components/StyledButton';
+import AddIcon from '@mui/icons-material/Add';
+
+const UNCATEGORIZED_PRIORITY = -1;
 
 const baseOrderingOptions = [
   { value: 'category__name', label: 'Category name ↗' },
@@ -46,8 +50,7 @@ const draftPeriodOrderingOptions = [
  * ExpensePredictionsPage component to display list of ExpensePredictions
  */
 export default function ExpensePredictionsPage() {
-  const { contextBudgetId, contextBudgetCurrency, refreshTimestamp } =
-    useContext(BudgetContext);
+  const { contextBudgetId, refreshTimestamp } = useContext(BudgetContext);
   const { setAlert } = useContext(AlertContext);
   const [periodResultsLoading, setPeriodResultsLoading] = useState(false);
   const [predictionsLoading, setPredictionsLoading] = useState(false);
@@ -77,44 +80,7 @@ export default function ExpensePredictionsPage() {
   const [periodPredictions, setPeriodPredictions] = useState([]);
   const [periodResults, setPeriodResults] = useState([]);
 
-  const createFields = {
-    period: {
-      prefixedValue: periodFilter,
-    },
-    category: {
-      type: 'select',
-      select: true,
-      label: 'Category',
-      required: true,
-      options: categories,
-    },
-    current_plan: {
-      type: 'number',
-      step: 'any',
-      label: 'Value',
-      required: true,
-      slotProps: {
-        input: {
-          endAdornment: (
-            <InputAdornment position="end">
-              {contextBudgetCurrency}
-            </InputAdornment>
-          ),
-        },
-        htmlInput: {
-          step: 0.01,
-          min: 0,
-        },
-      },
-    },
-    description: {
-      type: 'string',
-      label: 'Description',
-      required: false,
-      multiline: true,
-      rows: 4,
-    },
-  };
+  const [addFormOpen, setAddFormOpen] = useState(false);
 
   /**
    * Fetches select options for ExpensePrediction select fields from API.
@@ -142,7 +108,10 @@ export default function ExpensePredictionsPage() {
       const priorityResponse = await getApiObjectsList(
         `${process.env.REACT_APP_BACKEND_URL}/api/categories/priorities/?type=2`
       );
-      setPriorities(priorityResponse.results);
+      setPriorities([
+        { value: UNCATEGORIZED_PRIORITY, label: '❗Not categorized' },
+        ...priorityResponse.results,
+      ]);
     }
 
     async function getProgressStatuses() {
@@ -182,7 +151,7 @@ export default function ExpensePredictionsPage() {
       setCategories(categoryResponse);
       setCategoryFilter(null);
     }
-    if (!contextBudgetId) {
+    if (!contextBudgetId || priorityFilter === UNCATEGORIZED_PRIORITY) {
       return;
     }
     getCategories();
@@ -238,7 +207,7 @@ export default function ExpensePredictionsPage() {
       setPeriodPredictions(predictionsResponse);
       setPredictionsLoading(false);
     }
-    if (!contextBudgetId || !periodFilter) {
+    if (!contextBudgetId) {
       setPeriodPredictions([]);
       return;
     }
@@ -253,6 +222,16 @@ export default function ExpensePredictionsPage() {
     progressStatusFilter,
     orderingFilter,
   ]);
+
+  const addButton = (
+    <StyledButton
+      variant="outlined"
+      startIcon={<AddIcon />}
+      onClick={() => setAddFormOpen(true)}
+    >
+      Add
+    </StyledButton>
+  );
 
   // Period results section establishing
 
@@ -337,14 +316,7 @@ export default function ExpensePredictionsPage() {
         <Typography color="primary" fontWeight="bold">
           No Predictions found.
         </Typography>
-        {periodStatus === PeriodStatuses.DRAFT && (
-          <CreateButton
-            fields={createFields}
-            objectType={'Expense prediction'}
-            apiUrl={apiUrl}
-            customLabel={'Add new Prediction'}
-          />
-        )}
+        {periodStatus === PeriodStatuses.DRAFT && addButton}
         {periodStatus === PeriodStatuses.DRAFT &&
           periods.length > 1 &&
           !categoryFilter &&
@@ -360,143 +332,149 @@ export default function ExpensePredictionsPage() {
   }
 
   return (
-    <Paper
-      elevation={24}
-      sx={{
-        padding: 2,
-        bgColor: '#F1F1F1',
-      }}
-    >
-      {/* Main header */}
-      <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        spacing={1}
-        mb={1}
+    <>
+      <Paper
+        elevation={24}
+        sx={{
+          padding: 2,
+          bgColor: '#F1F1F1',
+        }}
       >
-        <Typography variant="h4" sx={{ display: 'block', color: '#BD0000' }}>
-          Expenses Predictions in Period
-        </Typography>
+        {/* Main header */}
         <Stack
           direction="row"
           alignItems="center"
           justifyContent="space-between"
           spacing={1}
-        >
-          {periodStatusLabel && (
-            <Chip label={periodStatusLabel} variant="outlined" />
-          )}
-          <PeriodFilterField
-            periodOptions={periods}
-            periodFilter={periodFilter || ''}
-            setPeriodFilter={setPeriodFilter}
-            setPeriodStatus={setPeriodStatus}
-            setPeriodStatusLabel={setPeriodStatusLabel}
-          />
-        </Stack>
-      </Stack>
-      <Divider />
-      {/* Users summaries */}
-      <Box sx={{ marginTop: 2 }}>
-        <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>
-          Period results
-        </Typography>
-        <Divider sx={{ mb: 1 }} />
-        {periodResultsSectionContent}
-      </Box>
-      {/* Predictions objects */}
-      <Box sx={{ marginTop: 2 }}>
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-          spacing={1}
-          mt={2}
           mb={1}
         >
-          <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>
-            Predictions
+          <Typography variant="h4" sx={{ display: 'block', color: '#BD0000' }}>
+            Expenses Predictions in Period
           </Typography>
-          {periodPredictions.length > 0 && (
-            <CreateButton
-              fields={createFields}
-              objectType={'Expense prediction'}
-              apiUrl={apiUrl}
-              disabled={periodStatus !== PeriodStatuses.DRAFT}
-            />
-          )}
-        </Stack>
-        <Divider sx={{ mb: 1 }} />
-        {periodFilter && !predictionsLoading && (
           <Stack
-            direction={{ sm: 'column', md: 'row' }}
-            alignItems={{ sm: 'flex-start', md: 'center' }}
-            justifyContent="flex-start"
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
             spacing={1}
-            mb={1}
-            mt={1}
           >
-            <FilterField
-              filterValue={depositFilter}
-              setFilterValue={setDepositFilter}
-              options={deposits}
-              label="Deposit"
-              sx={{ width: { sm: '100%', md: 200 }, margin: 0 }}
-            />
-            <FilterField
-              filterValue={priorityFilter}
-              setFilterValue={setPriorityFilter}
-              options={priorities}
-              label="Category Priority"
-              sx={{ width: { sm: '100%', md: 200 }, margin: 0 }}
-            />
-            <FilterField
-              filterValue={categoryFilter}
-              setFilterValue={setCategoryFilter}
-              options={categories}
-              label="Category"
-              sx={{ width: { sm: '100%', md: 200 }, margin: 0 }}
-              disabled={!depositFilter}
-              groupBy={(option) => option.priority_display}
-              renderGroup={(params) => (
-                <li key={params.key}>
-                  <div
-                    style={{
-                      fontWeight: '400',
-                      fontSize: '14px',
-                      padding: '8px 16px',
-                      color: 'rgba(0, 0, 0, 0.6)',
-                    }}
-                  >
-                    {params.group}
-                  </div>
-                  <ul style={{ padding: 0 }}>{params.children}</ul>
-                </li>
-              )}
-            />
-            <FilterField
-              filterValue={progressStatusFilter}
-              setFilterValue={setProgressStatusFilter}
-              options={progressStatuses}
-              label="Progress"
-              sx={{ width: { sm: '100%', md: 200 }, margin: 0 }}
-            />
-            <FilterField
-              filterValue={orderingFilter}
-              setFilterValue={setOrderingFilter}
-              options={
-                periodStatus === PeriodStatuses.DRAFT
-                  ? [...baseOrderingOptions, ...draftPeriodOrderingOptions]
-                  : baseOrderingOptions
-              }
-              label="Sort by"
-              sx={{ width: { sm: '100%', md: 200 }, margin: 0 }}
+            {periodStatusLabel && (
+              <Chip label={periodStatusLabel} variant="outlined" />
+            )}
+            <PeriodFilterField
+              periodOptions={periods}
+              periodFilter={periodFilter || ''}
+              setPeriodFilter={setPeriodFilter}
+              setPeriodStatus={setPeriodStatus}
+              setPeriodStatusLabel={setPeriodStatusLabel}
             />
           </Stack>
-        )}
-        {predictionSectionContent}
-      </Box>
-    </Paper>
+        </Stack>
+        <Divider />
+        {/* Users summaries */}
+        <Box sx={{ marginTop: 2 }}>
+          <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>
+            Period results
+          </Typography>
+          <Divider sx={{ mb: 1 }} />
+          {periodResultsSectionContent}
+        </Box>
+        {/* Predictions objects */}
+        <Box sx={{ marginTop: 2 }}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            spacing={1}
+            mt={2}
+            mb={1}
+          >
+            <Typography
+              variant="h5"
+              sx={{ display: 'block', color: '#BD0000' }}
+            >
+              Predictions
+            </Typography>
+            {periodPredictions.length > 0 && addButton}
+          </Stack>
+          <Divider sx={{ mb: 1 }} />
+          {periodFilter && !predictionsLoading && (
+            <Stack
+              direction={{ sm: 'column', md: 'row' }}
+              alignItems={{ sm: 'flex-start', md: 'center' }}
+              justifyContent="flex-start"
+              spacing={1}
+              mb={1}
+              mt={1}
+            >
+              <FilterField
+                filterValue={depositFilter}
+                setFilterValue={setDepositFilter}
+                options={deposits}
+                label="Deposit"
+                sx={{ width: { sm: '100%', md: 200 }, margin: 0 }}
+              />
+              <FilterField
+                filterValue={priorityFilter}
+                setFilterValue={setPriorityFilter}
+                options={priorities}
+                label="Category Priority"
+                sx={{ width: { sm: '100%', md: 200 }, margin: 0 }}
+              />
+              <FilterField
+                filterValue={categoryFilter}
+                setFilterValue={setCategoryFilter}
+                options={categories}
+                label="Category"
+                sx={{ width: { sm: '100%', md: 200 }, margin: 0 }}
+                disabled={
+                  !depositFilter || priorityFilter === UNCATEGORIZED_PRIORITY
+                }
+                groupBy={(option) => option.priority_display}
+                renderGroup={(params) => (
+                  <li key={params.key}>
+                    <div
+                      style={{
+                        fontWeight: '400',
+                        fontSize: '14px',
+                        padding: '8px 16px',
+                        color: 'rgba(0, 0, 0, 0.6)',
+                      }}
+                    >
+                      {params.group}
+                    </div>
+                    <ul style={{ padding: 0 }}>{params.children}</ul>
+                  </li>
+                )}
+              />
+              <FilterField
+                filterValue={progressStatusFilter}
+                setFilterValue={setProgressStatusFilter}
+                options={progressStatuses}
+                label="Progress"
+                sx={{ width: { sm: '100%', md: 200 }, margin: 0 }}
+              />
+              <FilterField
+                filterValue={orderingFilter}
+                setFilterValue={setOrderingFilter}
+                options={
+                  periodStatus === PeriodStatuses.DRAFT
+                    ? [...baseOrderingOptions, ...draftPeriodOrderingOptions]
+                    : baseOrderingOptions
+                }
+                label="Sort by"
+                sx={{ width: { sm: '100%', md: 200 }, margin: 0 }}
+              />
+            </Stack>
+          )}
+          {predictionSectionContent}
+        </Box>
+      </Paper>
+      <PredictionAddModal
+        apiUrl={apiUrl}
+        formOpen={addFormOpen}
+        setFormOpen={setAddFormOpen}
+        periodId={periodFilter}
+      />
+    </>
   );
 }

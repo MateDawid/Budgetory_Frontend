@@ -11,11 +11,11 @@ import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
-import PredictionDeleteModal from './PredictionDeleteModal';
-import PredictionEditModal from './PredictionEditModal';
+import PredictionDeleteModal from '../PredictionModal/PredictionDeleteModal';
 import { getFontColor } from '../utils';
 import { getCategoryCellContent } from './utils';
-import PredictionInspectModal from './PredictionInspectModal';
+import PredictionInspectModal from '../PredictionModal/PredictionInspectModal';
+import PredictionEditModal from '../PredictionModal/PredictionEditModal';
 
 /**
  * DraftPeriodPredictionRow component to display ExpensePrediction data row with data suitable for DRAFT Period.
@@ -86,12 +86,16 @@ export default function DraftPeriodPredictionRow({ row }) {
           <IconButton onClick={() => setInspectOpen(!inspectOpen)}>
             <SearchIcon />
           </IconButton>
-          <IconButton onClick={() => setEditOpen(!editOpen)}>
-            <EditIcon />
-          </IconButton>
-          <IconButton onClick={() => setDeleteOpen(!deleteOpen)}>
-            <DeleteIcon />
-          </IconButton>
+          {row.category !== null && (
+            <>
+              <IconButton onClick={() => setEditOpen(!editOpen)}>
+                <EditIcon />
+              </IconButton>
+              <IconButton onClick={() => setDeleteOpen(!deleteOpen)}>
+                <DeleteIcon />
+              </IconButton>
+            </>
+          )}
         </TableCell>
       </TableRow>
       <PredictionInspectModal
@@ -106,9 +110,9 @@ export default function DraftPeriodPredictionRow({ row }) {
         setDeleteOpen={setDeleteOpen}
       />
       <PredictionEditModal
-        prediction={row}
-        editOpen={editOpen}
-        setEditOpen={setEditOpen}
+        formOpen={editOpen}
+        setFormOpen={setEditOpen}
+        editedPrediction={row}
       />
     </>
   );

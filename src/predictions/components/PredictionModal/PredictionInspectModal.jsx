@@ -32,7 +32,7 @@ export default function PredictionInspectModal({
       try {
         const filterModel = {
           period: periodId,
-          category: categoryId,
+          category: categoryId ? categoryId : -1,
           ordering: 'date',
         };
         const response = await getApiObjectsList(apiUrl, {}, {}, filterModel);
@@ -42,11 +42,11 @@ export default function PredictionInspectModal({
       }
     }
 
-    if (!contextBudgetId) {
+    if (!contextBudgetId || !inspectOpen) {
       return;
     }
     getPeriodCategoryExpenses();
-  }, [contextBudgetId]);
+  }, [contextBudgetId, inspectOpen]);
 
   return (
     <StyledModal open={inspectOpen} onClose={() => setInspectOpen(false)}>

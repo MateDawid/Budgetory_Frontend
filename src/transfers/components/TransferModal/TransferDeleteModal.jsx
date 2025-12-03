@@ -47,7 +47,8 @@ export default function TransferDeleteModal({
     <StyledModal
       open={formOpen}
       onClose={() => {
-        (setFormOpen(false), setDeletedTransferId(undefined));
+        setFormOpen(false);
+        setDeletedTransferId(undefined);
       }}
     >
       <Box width={400} bgcolor="#F1F1F1" p={3} borderRadius={5}>

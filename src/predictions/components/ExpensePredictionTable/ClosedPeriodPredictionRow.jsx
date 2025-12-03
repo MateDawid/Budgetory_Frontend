@@ -13,7 +13,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { getFontColor } from '../utils';
 import { getCategoryCellContent } from './utils';
-import PredictionInspectModal from './PredictionInspectModal';
+import PredictionInspectModal from '../PredictionModal/PredictionInspectModal';
 
 /**
  * DraftPeriodPredictionRow component to display ExpensePrediction data row with data suitable for CLOSED Period.
