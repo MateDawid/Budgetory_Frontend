@@ -3,7 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 
 import './App.css';
 import BasePage from './app_infrastructure/pages/BasePage';
-import LandingPage from './app_infrastructure/pages/LandingPage';
+import LandingPage from './landing_page/pages/LandingPage';
 import LoginForm from './app_users/pages/LoginForm';
 import RegisterForm from './app_users/pages/RegisterForm';
 import BudgetList from './budgets/pages/BudgetList';
