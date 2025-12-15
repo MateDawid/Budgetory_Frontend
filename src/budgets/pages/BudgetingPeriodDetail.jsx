@@ -17,7 +17,7 @@ import onEditableFieldSave from '../../app_infrastructure/utils/onEditableFieldS
 export default function BudgetingPeriodDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { contextBudgetId, refreshTimestamp, setRefreshTimestamp } =
+  const { contextBudgetId, refreshTimestamp, updateRefreshTimestamp } =
     useContext(BudgetContext);
   const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`;
   const { setAlert } = useContext(AlertContext);
@@ -71,7 +71,7 @@ export default function BudgetingPeriodDetail() {
       apiFieldName,
       value,
       apiUrl,
-      setRefreshTimestamp,
+      updateRefreshTimestamp,
       setAlert
     );
   };
