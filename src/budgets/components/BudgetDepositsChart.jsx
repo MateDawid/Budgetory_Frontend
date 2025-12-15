@@ -7,7 +7,7 @@ import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
 import FilterField from '../../app_infrastructure/components/FilterField';
 
 export default function BudgetDepositsChart() {
-  const { contextBudgetId } = useContext(BudgetContext);
+  const { contextBudgetId, contextBudgetCurrency } = useContext(BudgetContext);
 
   // Selectors choices
   const [periods, setPeriods] = useState([]);
@@ -89,7 +89,9 @@ export default function BudgetDepositsChart() {
         const formattedSeries = response.series.map((serie) => ({
           ...serie,
           valueFormatter: (value) =>
-            value ? `${value.toString()} zł` : '0 zł',
+            value
+              ? `${value.toString()} ${contextBudgetCurrency}`
+              : `0 ${contextBudgetCurrency}`,
         }));
         setXAxis(response.xAxis);
         setSeries(formattedSeries);
