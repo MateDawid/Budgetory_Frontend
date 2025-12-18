@@ -8,6 +8,7 @@ import EditableTextField from '../../app_infrastructure/components/EditableTextF
 import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
 import DeleteButton from '../../app_infrastructure/components/DeleteButton';
 import onEditableFieldSave from '../../app_infrastructure/utils/onEditableFieldSave';
+import PeriodsTransfersChart from '../../landing_page/components/PeriodsTransfersChart';
 
 /**
  * EntityDetail component to display details of single Entity.
@@ -154,6 +155,13 @@ export default function EntityDetail() {
             {...objectFields[fieldName]}
           />
         ))}
+      </Box>
+      <Box>
+        <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>
+          Transfers in Periods
+        </Typography>
+        <Divider sx={{ marginBottom: 2 }} />
+        <PeriodsTransfersChart entityId={id} />
       </Box>
     </Paper>
   );
