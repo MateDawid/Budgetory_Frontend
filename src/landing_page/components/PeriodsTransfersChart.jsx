@@ -8,17 +8,17 @@ import FilterField from '../../app_infrastructure/components/FilterField';
 import CategoryTypes from '../../categories/utils/CategoryTypes';
 
 const TRANSFER_TYPES = [
-  { label: 'All', value: null },
+  { label: 'All Transfers', value: null },
   { label: 'Incomes', value: CategoryTypes.INCOME },
   { label: 'Expenses', value: CategoryTypes.EXPENSE },
 ];
 const PERIODS_ON_CHART = [
-  { label: 'Previous 3', value: 3 },
-  { label: 'Previous 6', value: 6 },
-  { label: 'Previous 9', value: 9 },
-  { label: 'Previous 12', value: 12 },
-  { label: 'Previous 24', value: 24 },
-  { label: 'All', value: -1 },
+  { label: '3 Periods', value: 3 },
+  { label: '6 Periods', value: 6 },
+  { label: '9 Periods', value: 9 },
+  { label: '12 Periods', value: 12 },
+  { label: '24 Periods', value: 24 },
+  { label: 'All Periods', value: null },
 ];
 
 /**
