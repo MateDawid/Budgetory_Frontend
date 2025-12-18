@@ -1,14 +1,14 @@
 import React from 'react';
 import { Grid, Paper, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import PeriodsTransfersChart from '../components/PeriodsTransfersChart'
+import PeriodsTransfersChart from '../components/PeriodsTransfersChart';
 
-
-const StyledHeader = styled(Typography)(({ theme }) => ({
+const StyledHeader = styled(Typography)(() => ({
   display: 'block',
   color: '#BD0000',
   width: '100%',
   textAlign: 'center',
+  marginBottom: '14px',
 }));
 
 /**
