@@ -3,7 +3,6 @@ import { Route, Routes } from 'react-router-dom';
 
 import './App.css';
 import BasePage from './app_infrastructure/pages/BasePage';
-import LandingPage from './landing_page/pages/LandingPage';
 import LoginForm from './app_users/pages/LoginForm';
 import RegisterForm from './app_users/pages/RegisterForm';
 import BudgetList from './budgets/pages/BudgetList';
@@ -23,6 +22,7 @@ import DepositDetail from './entities/pages/DepositDetail';
 import EntityDetail from './entities/pages/EntityDetail';
 import TransferCategoryDetail from './categories/pages/TransferCategoryDetail';
 import ExpensePredictionsPage from './predictions/pages/ExpensePredictionsPage';
+import LandingPage from './app_infrastructure/pages/LandingPage';
 
 /**
  * App component handles routing of application.

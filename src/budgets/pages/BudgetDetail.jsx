@@ -8,8 +8,8 @@ import EditableTextField from '../../app_infrastructure/components/EditableTextF
 import DeleteButton from '../../app_infrastructure/components/DeleteButton';
 import onEditableFieldSave from '../../app_infrastructure/utils/onEditableFieldSave';
 import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
-import BudgetDepositsChart from '../components/BudgetDepositsChart';
 import BudgetDepositsTable from '../components/BudgetDepositsDataGrid';
+import DepositsInPeriodsChart from '../../charts/components/DepositsInPeriodsChart';
 
 /**
  * BudgetDetail component to display details of single Budget.
@@ -164,7 +164,7 @@ export default function BudgetDetail() {
           Deposits
         </Typography>
         <Divider sx={{ marginBottom: 2 }} />
-        <BudgetDepositsChart />
+        <DepositsInPeriodsChart />
         <BudgetDepositsTable
           columns={depositsColumns}
           apiUrl={`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${id}/deposits/`}
