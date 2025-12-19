@@ -1,7 +1,8 @@
 import React from 'react';
 import { Grid, Paper, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import PeriodsTransfersChart from '../components/PeriodsTransfersChart';
+import PeriodsTransfersChart from '../../charts/components/TransfersInPeriodsChart';
+import DepositsInPeriodsChart from '../../charts/components/DepositsInPeriodsChart';
 
 const StyledHeader = styled(Typography)(() => ({
   display: 'block',
@@ -39,6 +40,7 @@ function LandingPage() {
             }}
           >
             <StyledHeader variant="h5">Deposits</StyledHeader>
+            <DepositsInPeriodsChart />
           </Paper>
         </Grid>
         <Grid size={6}>
