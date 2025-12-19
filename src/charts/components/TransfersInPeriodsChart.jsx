@@ -8,17 +8,17 @@ import FilterField from '../../app_infrastructure/components/FilterField';
 import CategoryTypes from '../../categories/utils/CategoryTypes';
 
 const TRANSFER_TYPES = [
-  { label: 'All Transfers', value: null },
+  { label: 'All', value: null },
   { label: 'Incomes', value: CategoryTypes.INCOME },
   { label: 'Expenses', value: CategoryTypes.EXPENSE },
 ];
 const PERIODS_ON_CHART = [
-  { label: '3 Periods', value: 3 },
-  { label: '6 Periods', value: 6 },
-  { label: '9 Periods', value: 9 },
-  { label: '12 Periods', value: 12 },
-  { label: '24 Periods', value: 24 },
-  { label: 'All Periods', value: null },
+  { label: '3', value: 3 },
+  { label: '6', value: 6 },
+  { label: '9', value: 9 },
+  { label: '12', value: 12 },
+  { label: '24', value: 24 },
+  { label: 'All', value: null },
 ];
 
 /**
@@ -166,7 +166,13 @@ export default function TransfersInPeriodsChart({
         height={300}
         series={series}
         slotProps={{
-          legend: { direction: 'vertical' },
+          legend: {
+            direction: 'horizontal',
+            position: {
+              vertical: 'bottom',
+              horizontal: 'center',
+            },
+          },
         }}
       />
     </Stack>
