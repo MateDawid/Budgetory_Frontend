@@ -135,26 +135,33 @@ export default function BudgetDetail() {
           Details
         </Typography>
         <Divider sx={{ marginBottom: 2 }} />
-        <EditableTextField
-          label="Name"
-          initialValue={budgetData.name}
-          apiFieldName="name"
-          onSave={onSave}
-          fullWidth
-        />
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          spacing={1}
+        >
+          <EditableTextField
+            label="Name"
+            initialValue={budgetData.name}
+            apiFieldName="name"
+            onSave={onSave}
+            fullWidth
+          />
+          <EditableTextField
+            label="Currency"
+            initialValue={budgetData.currency}
+            apiFieldName="currency"
+            onSave={onSave}
+            fullWidth
+          />
+        </Stack>
         <EditableTextField
           multiline
           rows={4}
           label="Description"
           initialValue={budgetData.description}
           apiFieldName="description"
-          onSave={onSave}
-          fullWidth
-        />
-        <EditableTextField
-          label="Currency"
-          initialValue={budgetData.currency}
-          apiFieldName="currency"
           onSave={onSave}
           fullWidth
         />
