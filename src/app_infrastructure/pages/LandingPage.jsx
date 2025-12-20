@@ -27,7 +27,7 @@ function LandingPage() {
               bgColor: '#F1F1F1',
             }}
           >
-            <StyledHeader variant="h5">Transfers</StyledHeader>
+            <StyledHeader variant="h5">Transfers in Periods</StyledHeader>
             <TransfersInPeriodsChart />
           </Paper>
         </Grid>
@@ -39,7 +39,7 @@ function LandingPage() {
               bgColor: '#F1F1F1',
             }}
           >
-            <StyledHeader variant="h5">Deposits</StyledHeader>
+            <StyledHeader variant="h5">Deposits in Periods</StyledHeader>
             <DepositsInPeriodsChart />
           </Paper>
         </Grid>
@@ -51,7 +51,7 @@ function LandingPage() {
               bgColor: '#F1F1F1',
             }}
           >
-            <StyledHeader variant="h5">Categories and predictions</StyledHeader>
+            <StyledHeader variant="h5">Categories in Periods</StyledHeader>
           </Paper>
         </Grid>
         <Grid size={6}>
@@ -62,7 +62,7 @@ function LandingPage() {
               bgColor: '#F1F1F1',
             }}
           >
-            <StyledHeader variant="h5">Entities</StyledHeader>
+            <StyledHeader variant="h5">Entities in Periods</StyledHeader>
           </Paper>
         </Grid>
       </Grid>
