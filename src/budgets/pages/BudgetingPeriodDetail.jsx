@@ -141,22 +141,39 @@ export default function BudgetingPeriodDetail() {
           Details
         </Typography>
         <Divider sx={{ marginBottom: 2 }} />
-        {Object.keys(objectFields).map((fieldName) => (
+        <EditableTextField
+          label="Name"
+          isEditable={objectData.status === 1}
+          initialValue={objectData.name}
+          apiFieldName="name"
+          onSave={onSave}
+          fullWidth
+        />
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          spacing={1}
+        >
           <EditableTextField
-            key={fieldName}
-            apiFieldName={fieldName}
-            initialValue={objectData[fieldName]}
-            inputProps={
-              objectFields[fieldName]['type'] === 'date'
-                ? { max: '9999-12-31' }
-                : {}
-            }
-            fullWidth
-            onSave={onSave}
+            label="Date start"
             isEditable={objectData.status === 1}
-            {...objectFields[fieldName]}
+            initialValue={objectData.date_start}
+            apiFieldName="date_start"
+            onSave={onSave}
+            fullWidth
+            inputProps={{ max: '9999-12-31' }}
           />
-        ))}
+          <EditableTextField
+            label="Date end"
+            isEditable={objectData.status === 1}
+            initialValue={objectData.date_end}
+            apiFieldName="date_end"
+            onSave={onSave}
+            fullWidth
+            inputProps={{ max: '9999-12-31' }}
+          />
+        </Stack>
       </Box>
     </Paper>
   );
