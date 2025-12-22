@@ -131,6 +131,7 @@ export default function TransfersInPeriodsChart({
           label="Transfer type"
           filterValue={transferType}
           setFilterValue={setTransferType}
+          disableClearable
           sx={{ width: 160 }}
         />
         <FilterField
@@ -138,6 +139,7 @@ export default function TransfersInPeriodsChart({
           label="Periods on chart"
           filterValue={periodsOnChart}
           setFilterValue={setPeriodsOnChart}
+          disableClearable
           sx={{ width: 160 }}
         />
         {!depositId && (

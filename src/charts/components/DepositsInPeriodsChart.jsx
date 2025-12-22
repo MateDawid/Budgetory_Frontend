@@ -109,6 +109,7 @@ export default function DepositsInPeriodsChart() {
           label="Display"
           filterValue={displayValue}
           setFilterValue={setDisplayValue}
+          disableClearable
           sx={{ width: 160 }}
         />
         <FilterField
