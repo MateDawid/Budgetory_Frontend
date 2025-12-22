@@ -3,6 +3,7 @@ import { Grid, Paper, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import DepositsInPeriodsChart from '../../charts/components/DepositsInPeriodsChart';
 import TransfersInPeriodsChart from '../../charts/components/TransfersInPeriodsChart';
+import CategoriesInPeriodsChart from '../../charts/components/CategoriesInPeriodsChart';
 
 const StyledHeader = styled(Typography)(() => ({
   display: 'block',
@@ -52,6 +53,7 @@ function LandingPage() {
             }}
           >
             <StyledHeader variant="h5">Categories in Periods</StyledHeader>
+            <CategoriesInPeriodsChart />
           </Paper>
         </Grid>
         <Grid size={6}>
