@@ -4,6 +4,7 @@ import { styled } from '@mui/material/styles';
 import DepositsInPeriodsChart from '../../charts/components/DepositsInPeriodsChart';
 import TransfersInPeriodsChart from '../../charts/components/TransfersInPeriodsChart';
 import CategoriesInPeriodsChart from '../../charts/components/CategoriesInPeriodsChart';
+import TopEntitiesInPeriodChart from '../../charts/components/TopEntitiesInPeriodChart';
 
 const StyledHeader = styled(Typography)(() => ({
   display: 'block',
@@ -65,6 +66,7 @@ function LandingPage() {
             }}
           >
             <StyledHeader variant="h5">Entities in Periods</StyledHeader>
+            <TopEntitiesInPeriodChart />
           </Paper>
         </Grid>
       </Grid>

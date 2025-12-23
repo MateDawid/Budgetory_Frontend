@@ -10,6 +10,7 @@ import DeleteButton from '../../app_infrastructure/components/DeleteButton';
 import PeriodStatuses from '../utils/PeriodStatuses';
 import BudgetingPeriodStatusUpdateButton from '../components/BudgetingPeriodStatusUpdateButton';
 import onEditableFieldSave from '../../app_infrastructure/utils/onEditableFieldSave';
+import TopEntitiesInPeriodChart from '../../charts/components/TopEntitiesInPeriodChart';
 
 /**
  * BudgetingPeriodDetail component to display details of single BudgetingPeriod.
@@ -174,6 +175,13 @@ export default function BudgetingPeriodDetail() {
             inputProps={{ max: '9999-12-31' }}
           />
         </Stack>
+        <Box>
+          <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>
+            Entities Transfers
+          </Typography>
+          <Divider sx={{ marginBottom: 2 }} />
+          <TopEntitiesInPeriodChart periodId={id} />
+        </Box>
       </Box>
     </Paper>
   );
