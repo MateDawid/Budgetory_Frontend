@@ -5,18 +5,24 @@ import React from 'react';
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
 import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
 import FilterField from '../../app_infrastructure/components/FilterField';
+import CategoryTypes from '../../categories/utils/CategoryTypes';
 
-export default function BudgetDepositsChart() {
-  const { contextBudgetId } = useContext(BudgetContext);
+const DISPLAY_CHOICES = [
+  { label: 'Expenses', value: CategoryTypes.EXPENSE },
+  { label: 'Incomes', value: CategoryTypes.INCOME },
+  { label: 'Balance', value: null },
+];
+
+export default function DepositsInPeriodsChart() {
+  const { contextBudgetId, contextBudgetCurrency } = useContext(BudgetContext);
 
   // Selectors choices
   const [periods, setPeriods] = useState([]);
-  const [depositTypes, setDepositTypes] = useState([]);
   const [deposits, setDeposits] = useState([]);
   // Filters values
+  const [displayValue, setDisplayValue] = useState(CategoryTypes.EXPENSE);
   const [periodFrom, setPeriodFrom] = useState();
   const [periodTo, setPeriodTo] = useState();
-  const [depositType, setDepositType] = useState();
   const [deposit, setDeposit] = useState();
   // Chart data
   const [xAxis, setXAxis] = useState([]);
@@ -33,16 +39,6 @@ export default function BudgetDepositsChart() {
         setPeriods([]);
       }
     };
-    const loadDepositTypesChoices = async () => {
-      try {
-        const response = await getApiObjectsList(
-          `${process.env.REACT_APP_BACKEND_URL}/api/entities/deposit_types/`
-        );
-        setDepositTypes(response.results);
-      } catch {
-        setDepositTypes([]);
-      }
-    };
     const loadDepositsChoices = async () => {
       try {
         const response = await getApiObjectsList(
@@ -57,7 +53,6 @@ export default function BudgetDepositsChart() {
       return;
     }
     loadPeriodsChoices();
-    loadDepositTypesChoices();
     loadDepositsChoices();
   }, [contextBudgetId]);
 
@@ -67,7 +62,7 @@ export default function BudgetDepositsChart() {
       const selectFilters = [
         { value: periodFrom, apiField: 'period_from' },
         { value: periodTo, apiField: 'period_to' },
-        { value: depositType, apiField: 'deposit_type' },
+        { value: displayValue, apiField: 'display_value' },
         { value: deposit, apiField: 'deposit' },
       ];
       selectFilters.forEach((object) => {
@@ -81,7 +76,7 @@ export default function BudgetDepositsChart() {
     const loadDepositsResults = async () => {
       try {
         const response = await getApiObjectsList(
-          `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits_results/`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/charts/deposits_in_periods/`,
           {},
           {},
           getFilterModel()
@@ -89,7 +84,9 @@ export default function BudgetDepositsChart() {
         const formattedSeries = response.series.map((serie) => ({
           ...serie,
           valueFormatter: (value) =>
-            value ? `${value.toString()} zł` : '0 zł',
+            value
+              ? `${value.toString()} ${contextBudgetCurrency}`
+              : `0 ${contextBudgetCurrency}`,
         }));
         setXAxis(response.xAxis);
         setSeries(formattedSeries);
@@ -102,50 +99,55 @@ export default function BudgetDepositsChart() {
       return;
     }
     loadDepositsResults();
-  }, [contextBudgetId, periodFrom, periodTo, depositType, deposit]);
+  }, [contextBudgetId, displayValue, periodFrom, periodTo, deposit]);
 
   return (
     <Stack sx={{ width: '100%' }}>
-      <Stack direction="row" justifyContent="space-between">
-        <Stack direction="row" spacing={1}>
-          <FilterField
-            options={periods}
-            label="Period from"
-            filterValue={periodFrom || ''}
-            setFilterValue={setPeriodFrom}
-            sx={{ minWidth: 200 }}
-          />
-          <FilterField
-            options={periods}
-            label="Period to"
-            filterValue={periodTo || ''}
-            setFilterValue={setPeriodTo}
-            sx={{ minWidth: 200 }}
-          />
-        </Stack>
-        <Stack direction="row" spacing={1}>
-          <FilterField
-            options={depositTypes}
-            label="Deposit type"
-            filterValue={depositType || ''}
-            setFilterValue={setDepositType}
-            sx={{ minWidth: 250 }}
-          />
-          <FilterField
-            options={deposits}
-            label="Deposit"
-            filterValue={deposit || ''}
-            setFilterValue={setDeposit}
-            sx={{ minWidth: 250 }}
-          />
-        </Stack>
+      <Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: 'wrap' }}>
+        <FilterField
+          options={DISPLAY_CHOICES}
+          label="Display"
+          filterValue={displayValue}
+          setFilterValue={setDisplayValue}
+          disableClearable
+          sx={{ width: 160 }}
+        />
+        <FilterField
+          options={deposits}
+          label="Deposit"
+          filterValue={deposit || ''}
+          setFilterValue={setDeposit}
+          sx={{ width: 160 }}
+        />
+        <FilterField
+          options={periods}
+          label="Period from"
+          filterValue={periodFrom || ''}
+          setFilterValue={setPeriodFrom}
+          sx={{ width: 160 }}
+        />
+        <FilterField
+          options={periods}
+          label="Period to"
+          filterValue={periodTo || ''}
+          setFilterValue={setPeriodTo}
+          sx={{ width: 160 }}
+        />
       </Stack>
-
       <LineChart
         xAxis={[{ scaleType: 'band', data: xAxis }]}
         series={series}
         height={300}
         margin={{ bottom: 10 }}
+        slotProps={{
+          legend: {
+            direction: 'horizontal',
+            position: {
+              vertical: 'bottom',
+              horizontal: 'center',
+            },
+          },
+        }}
       />
     </Stack>
   );

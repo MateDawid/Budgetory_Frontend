@@ -11,6 +11,7 @@ import EditableTextField from '../../app_infrastructure/components/EditableTextF
 import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
 import DeleteButton from '../../app_infrastructure/components/DeleteButton';
 import onEditableFieldSave from '../../app_infrastructure/utils/onEditableFieldSave';
+import TransfersInPeriodsChart from '../../charts/components/TransfersInPeriodsChart';
 
 /**
  * DepositDetail component to display details of single Deposit.
@@ -202,6 +203,13 @@ export default function DepositDetail() {
             {...objectFields[fieldName]}
           />
         ))}
+      </Box>
+      <Box>
+        <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>
+          Transfers in Periods
+        </Typography>
+        <Divider sx={{ marginBottom: 2 }} />
+        <TransfersInPeriodsChart depositId={id} />
       </Box>
     </Paper>
   );
