@@ -15,10 +15,10 @@ import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
 const statusesMapping = {
   [PeriodStatuses.ACTIVE]: {
     icon: <PlayArrowIcon />,
-    label: 'Open',
-    modalHeader: 'Opening Period',
+    label: 'Activate',
+    modalHeader: 'Activating Period',
     modalMessage:
-      'After opening Period you will not be able modify, remove it and add more Expense Predictions in it. Do you want to continue?',
+      'After activating Period you will not be able modify, remove it and add more Expense Predictions in it. Do you want to continue?',
   },
   [PeriodStatuses.CLOSED]: {
     icon: <LockIcon />,
