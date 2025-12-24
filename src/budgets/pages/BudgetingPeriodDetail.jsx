@@ -23,24 +23,6 @@ export default function BudgetingPeriodDetail() {
   const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`;
   const { setAlert } = useContext(AlertContext);
   const [objectData, setObjectData] = useState([]);
-  const objectFields = {
-    name: {
-      type: 'string',
-      label: 'Name',
-      autoFocus: true,
-      required: true,
-    },
-    date_start: {
-      type: 'date',
-      label: 'Date start',
-      required: true,
-    },
-    date_end: {
-      type: 'date',
-      label: 'Date end',
-      required: true,
-    },
-  };
 
   /**
    * Fetches BudgetingPeriod detail from API.
