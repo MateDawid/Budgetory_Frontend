@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import BudgetingPeriodDataGridFooter from './BudgetingPeriodDataGridFooter';
 import PeriodAddModal from './PeriodAddModal';
 import PeriodEditModal from './PeriodEditModal';
+import PeriodDeleteModal from './PeriodDeleteModal';
 
 const STATUS_OPTIONS = [
   { value: 1, label: '📝 Draft' },
@@ -179,26 +180,39 @@ const BudgetingPeriodDataGrid = () => {
       headerName: 'Actions',
       cellClassName: 'actions',
       getActions: (params) => {
-        return [
-          <StyledGridActionsCellItem
-            key={params.id}
-            icon={<OpenInNewIcon />}
-            label="Open"
-            onClick={() => navigate(`/periods/${params.id}`)}
-          />,
-          <StyledGridActionsCellItem
-            key={params.id}
-            icon={<EditIcon />}
-            label="Edit"
-            onClick={handleEditClick(params.row)}
-          />,
-          <StyledGridActionsCellItem
-            key={params.id}
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={() => handleDeleteClick(params.row)}
-          />,
-        ];
+        console.log(params);
+        if (params.row.status === 1) {
+          return [
+            <StyledGridActionsCellItem
+              key={params.id}
+              icon={<OpenInNewIcon />}
+              label="Open"
+              onClick={() => navigate(`/periods/${params.id}`)}
+            />,
+
+            <StyledGridActionsCellItem
+              key={params.id}
+              icon={<EditIcon />}
+              label="Edit"
+              onClick={handleEditClick(params.row)}
+            />,
+            <StyledGridActionsCellItem
+              key={params.id}
+              icon={<DeleteIcon />}
+              label="Delete"
+              onClick={() => handleDeleteClick(params.row)}
+            />,
+          ];
+        } else {
+          return [
+            <StyledGridActionsCellItem
+              key={params.id}
+              icon={<OpenInNewIcon />}
+              label="Open"
+              onClick={() => navigate(`/periods/${params.id}`)}
+            />,
+          ];
+        }
       },
     },
   ];
@@ -346,13 +360,13 @@ const BudgetingPeriodDataGrid = () => {
         editedPeriod={editedPeriod}
         setEditedPeriod={setEditedPeriod}
       />
-      {/* <PeriodDeleteModal
+      <PeriodDeleteModal
         apiUrl={apiUrl}
         formOpen={deleteFormOpen}
         setFormOpen={setDeleteFormOpen}
         deletedPeriodId={deletedPeriodId}
         setDeletedPeriodId={setDeletedPeriodId}
-      /> */}
+      />
     </>
   );
 };

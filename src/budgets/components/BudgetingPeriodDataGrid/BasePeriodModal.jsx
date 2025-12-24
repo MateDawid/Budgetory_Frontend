@@ -37,7 +37,7 @@ export default function BasePeriodModal({
   return (
     <FormModal
       fields={fields}
-      formLabel={`${editedPeriod ? 'Edit' : 'Add'} Budgeting Period`}
+      formLabel={`${editedPeriod ? 'Edit' : 'Add'} Period`}
       open={formOpen}
       setOpen={setFormOpen}
       callApi={callApi}

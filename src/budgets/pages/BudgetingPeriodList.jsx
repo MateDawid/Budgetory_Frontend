@@ -1,17 +1,13 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import Typography from '@mui/material/Typography';
 import { Paper, Stack } from '@mui/material';
 import Divider from '@mui/material/Divider';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
 import BudgetingPeriodDataGrid from '../components/BudgetingPeriodDataGrid/BudgetingPeriodDataGrid';
 
 /**
  * BudgetingPeriodList component to display list of Budget BudgetingPeriods.
  */
 export default function BudgetingPeriodList() {
-  const { contextBudgetId } = useContext(BudgetContext);
-  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`;
-
   return (
     <Paper
       elevation={24}
