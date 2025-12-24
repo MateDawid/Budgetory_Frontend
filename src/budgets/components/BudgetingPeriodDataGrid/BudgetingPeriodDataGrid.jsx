@@ -16,6 +16,7 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useNavigate } from 'react-router-dom';
 import BudgetingPeriodDataGridFooter from './BudgetingPeriodDataGridFooter';
 import PeriodAddModal from './PeriodAddModal';
+import PeriodEditModal from './PeriodEditModal';
 
 const STATUS_OPTIONS = [
   { value: 1, label: '📝 Draft' },
@@ -338,14 +339,14 @@ const BudgetingPeriodDataGrid = () => {
         formOpen={addFormOpen}
         setFormOpen={setAddFormOpen}
       />
-      {/* <PeriodEditModal
+      <PeriodEditModal
         apiUrl={apiUrl}
         formOpen={editFormOpen}
         setFormOpen={setEditFormOpen}
         editedPeriod={editedPeriod}
         setEditedPeriod={setEditedPeriod}
       />
-      <PeriodDeleteModal
+      {/* <PeriodDeleteModal
         apiUrl={apiUrl}
         formOpen={deleteFormOpen}
         setFormOpen={setDeleteFormOpen}
