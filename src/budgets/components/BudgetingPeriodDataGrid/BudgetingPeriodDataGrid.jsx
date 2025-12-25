@@ -67,7 +67,7 @@ const BudgetingPeriodDataGrid = () => {
       headerName: 'Name',
       headerAlign: 'center',
       align: 'center',
-      flex: 2,
+      flex: 1,
       filterable: true,
       sortable: true,
     },
@@ -77,7 +77,7 @@ const BudgetingPeriodDataGrid = () => {
       headerName: 'Status',
       headerAlign: 'center',
       align: 'center',
-      flex: 2,
+      flex: 1,
       filterable: true,
       sortable: true,
       valueOptions: STATUS_OPTIONS,
@@ -88,7 +88,7 @@ const BudgetingPeriodDataGrid = () => {
       headerName: 'Date start',
       headerAlign: 'center',
       align: 'center',
-      flex: 2,
+      flex: 1,
       filterable: true,
       sortable: true,
       valueGetter: (value) => {
@@ -108,7 +108,7 @@ const BudgetingPeriodDataGrid = () => {
       headerName: 'Date end',
       headerAlign: 'center',
       align: 'center',
-      flex: 2,
+      flex: 1,
       filterable: true,
       sortable: true,
       valueGetter: (value) => {
@@ -128,7 +128,7 @@ const BudgetingPeriodDataGrid = () => {
       headerName: 'Period Expenses',
       headerAlign: 'center',
       align: 'center',
-      flex: 2,
+      flex: 1,
       filterable: true,
       sortable: true,
       renderCell: (params) => (
@@ -148,7 +148,7 @@ const BudgetingPeriodDataGrid = () => {
       headerName: 'Period Incomes',
       headerAlign: 'center',
       align: 'center',
-      flex: 2,
+      flex: 1,
       filterable: true,
       sortable: true,
       renderCell: (params) => (
@@ -177,6 +177,7 @@ const BudgetingPeriodDataGrid = () => {
     {
       field: 'actions',
       type: 'actions',
+      flex: 1,
       headerName: 'Actions',
       cellClassName: 'actions',
       getActions: (params) => {
