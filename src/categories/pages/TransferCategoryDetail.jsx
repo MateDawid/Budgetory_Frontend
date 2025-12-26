@@ -2,13 +2,17 @@ import React, { useContext, useEffect, useState } from 'react';
 import Divider from '@mui/material/Divider';
 import { AlertContext } from '../../app_infrastructure/store/AlertContext';
 import { Typography, Paper, Box, Stack, Chip } from '@mui/material';
-import { getApiObjectDetails } from '../../app_infrastructure/services/APIService';
+import {
+  getApiObjectDetails,
+  getApiObjectsList,
+} from '../../app_infrastructure/services/APIService';
 import { useNavigate, useParams } from 'react-router-dom';
 import EditableTextField from '../../app_infrastructure/components/EditableTextField';
 import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
 import DeleteButton from '../../app_infrastructure/components/DeleteButton';
-import loadSelectOptionForCategory from '../utils/loadSelectOptionForCategory';
 import onEditableFieldSave from '../../app_infrastructure/utils/onEditableFieldSave';
+import CategoryResultsAndPredictionsInPeriodsChart from '../../charts/components/CategoryResultsAndPredictionsInPeriodsChart';
+import CategoryTypes from '../utils/CategoryTypes';
 
 /**
  * TransferCategoryDetail component to display details of single Transfer Category.
@@ -23,65 +27,8 @@ export default function TransferCategoryDetail() {
   const [objectData, setObjectData] = useState([]);
   const [typeOptions, setTypeOptions] = useState([]);
   const [priorityOptions, setPriorityOptions] = useState([]);
-  const [ownerOptions, setOwnerOptions] = useState([]);
-  const objectFields = {
-    name: {
-      type: 'string',
-      label: 'Name',
-      autoFocus: true,
-      required: true,
-    },
-    category_type: {
-      type: 'select',
-      select: true,
-      label: 'Type',
-      required: true,
-      disabled: true,
-      options: typeOptions,
-    },
-    priority: {
-      type: 'select',
-      select: true,
-      label: 'Priority',
-      required: true,
-      options: priorityOptions,
-    },
-    owner: {
-      type: 'select',
-      select: true,
-      label: 'Owner',
-      required: true,
-      options: ownerOptions,
-    },
-    description: {
-      type: 'string',
-      label: 'Description',
-      required: false,
-      multiline: true,
-      rows: 4,
-    },
-    is_active: {
-      type: 'select',
-      select: true,
-      label: 'Status',
-      defaultValue: true,
-      required: true,
-      options: [
-        {
-          value: true,
-          label: '🟢 Active',
-        },
-        {
-          value: false,
-          label: '🔴 Inactive',
-        },
-      ],
-    },
-  };
+  const [depositOptions, setDepositOptions] = useState([]);
 
-  /**
-   * Fetches Budgets list from API.
-   */
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -102,19 +49,34 @@ export default function TransferCategoryDetail() {
   }, [updatedObjectParam, contextBudgetId]);
 
   /**
-   * Fetches select options for TransferCategory object from API.
+   * Fetches select options for Category select fields from API.
    */
   useEffect(() => {
+    async function getDeposits() {
+      const response = await getApiObjectsList(
+        `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`
+      );
+      setDepositOptions(response);
+    }
+    async function getCategoryTypes() {
+      const typeResponse = await getApiObjectsList(
+        `${process.env.REACT_APP_BACKEND_URL}/api/categories/types`
+      );
+      setTypeOptions(typeResponse.results);
+    }
+    async function getPriorities() {
+      const priorityResponse = await getApiObjectsList(
+        `${process.env.REACT_APP_BACKEND_URL}/api/categories/priorities`
+      );
+      setPriorityOptions(priorityResponse.results);
+    }
+
     if (!contextBudgetId) {
       return;
     }
-    loadSelectOptionForCategory(
-      contextBudgetId,
-      setTypeOptions,
-      setPriorityOptions,
-      setOwnerOptions,
-      setAlert
-    );
+    getDeposits();
+    getCategoryTypes();
+    getPriorities();
   }, [contextBudgetId]);
 
   /**
@@ -157,7 +119,7 @@ export default function TransferCategoryDetail() {
           mb={1}
         >
           <Typography variant="h4" sx={{ display: 'block', color: '#BD0000' }}>
-            {objectData.name}
+            {objectData.label}
           </Typography>
           <Chip
             label={objectData.is_active ? '🟢 Active' : '🔴 Inactive'}
@@ -185,21 +147,89 @@ export default function TransferCategoryDetail() {
           Details
         </Typography>
         <Divider sx={{ marginBottom: 2 }} />
-        {Object.keys(objectFields).map((fieldName) => (
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          spacing={1}
+        >
           <EditableTextField
-            key={fieldName}
-            apiFieldName={fieldName}
-            initialValue={objectData[fieldName]}
-            inputProps={
-              objectFields[fieldName]['type'] === 'date'
-                ? { max: '9999-12-31' }
-                : {}
-            }
+            label="Name"
+            apiFieldName="name"
+            initialValue={objectData.name}
             fullWidth
             onSave={onSave}
-            {...objectFields[fieldName]}
+            autoFocus
+            required
+            type="string"
           />
-        ))}
+          <EditableTextField
+            label="Type"
+            apiFieldName="category_type"
+            initialValue={objectData.category_type}
+            fullWidth
+            onSave={onSave}
+            required
+            disabled
+            type="select"
+            options={typeOptions}
+            select
+          />
+        </Stack>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          spacing={1}
+        >
+          <EditableTextField
+            label="Deposit"
+            apiFieldName="deposit"
+            initialValue={objectData.deposit}
+            fullWidth
+            onSave={onSave}
+            required
+            type="select"
+            options={depositOptions}
+            select
+          />
+          <EditableTextField
+            label="Priority"
+            apiFieldName="priority"
+            initialValue={objectData.priority}
+            fullWidth
+            onSave={onSave}
+            required
+            type="select"
+            options={priorityOptions}
+            select
+          />
+        </Stack>
+
+        <EditableTextField
+          label="Description"
+          apiFieldName="description"
+          initialValue={objectData.description}
+          fullWidth
+          onSave={onSave}
+          type="string"
+          multiline
+          rows={4}
+        />
+        <Box>
+          <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>
+            Category{' '}
+            {objectData.category_type === CategoryTypes.INCOME
+              ? 'results'
+              : 'results and predictions'}{' '}
+            in Periods
+          </Typography>
+          <Divider sx={{ marginBottom: 2 }} />
+          <CategoryResultsAndPredictionsInPeriodsChart
+            categoryId={id}
+            categoryType={objectData.category_type}
+          />
+        </Box>
       </Box>
     </Paper>
   );
