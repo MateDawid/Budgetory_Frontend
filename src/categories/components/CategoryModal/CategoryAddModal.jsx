@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { AlertContext } from '../../../app_infrastructure/store/AlertContext';
 import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
 import { createApiObject } from '../../../app_infrastructure/services/APIService';
-import CategoryTypes from '../../utils/CategoryTypes';
 import BaseCategoryModal from './BaseCategoryModal';
 
 /**
@@ -12,11 +11,7 @@ import BaseCategoryModal from './BaseCategoryModal';
  * @param {boolean} props.formOpen - Flag indicating if form is opened or not.
  * @param {function} props.setFormOpen - Setter for formOpen flag.
  */
-export default function CategoryAddModal({
-  apiUrl,
-  formOpen,
-  setFormOpen,
-}) {
+export default function CategoryAddModal({ apiUrl, formOpen, setFormOpen }) {
   const { updateRefreshTimestamp } = useContext(BudgetContext);
   const { setAlert } = useContext(AlertContext);
 

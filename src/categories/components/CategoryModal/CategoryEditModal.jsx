@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { AlertContext } from '../../../app_infrastructure/store/AlertContext';
 import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
 import { updateApiObject } from '../../../app_infrastructure/services/APIService';
-import CategoryTypes from '../../utils/CategoryTypes';
 import BaseCategoryModal from './BaseCategoryModal';
 
 /**

@@ -58,7 +58,7 @@ export default function BaseCategoryModal({
       required: false,
       multiline: true,
       rows: 4,
-    }
+    },
   };
 
   /**
