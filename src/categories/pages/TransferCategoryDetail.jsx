@@ -11,6 +11,8 @@ import EditableTextField from '../../app_infrastructure/components/EditableTextF
 import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
 import DeleteButton from '../../app_infrastructure/components/DeleteButton';
 import onEditableFieldSave from '../../app_infrastructure/utils/onEditableFieldSave';
+import CategoryResultsAndPredictionsInPeriodsChart from '../../charts/components/CategoryResultsAndPredictionsInPeriodsChart';
+import CategoryTypes from '../utils/CategoryTypes';
 
 /**
  * TransferCategoryDetail component to display details of single Transfer Category.
@@ -117,7 +119,7 @@ export default function TransferCategoryDetail() {
           mb={1}
         >
           <Typography variant="h4" sx={{ display: 'block', color: '#BD0000' }}>
-            {objectData.name}
+            {objectData.label}
           </Typography>
           <Chip
             label={objectData.is_active ? '🟢 Active' : '🔴 Inactive'}
@@ -214,6 +216,20 @@ export default function TransferCategoryDetail() {
           multiline
           rows={4}
         />
+        <Box>
+          <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>
+            Category{' '}
+            {objectData.category_type === CategoryTypes.INCOME
+              ? 'results'
+              : 'results and predictions'}{' '}
+            in Periods
+          </Typography>
+          <Divider sx={{ marginBottom: 2 }} />
+          <CategoryResultsAndPredictionsInPeriodsChart
+            categoryId={id}
+            categoryType={objectData.category_type}
+          />
+        </Box>
       </Box>
     </Paper>
   );
