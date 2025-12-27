@@ -16,42 +16,11 @@ import TransfersInPeriodsChart from '../../charts/components/TransfersInPeriodsC
 export default function EntityDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [updatedObjectParam, setUpdatedObjectParam] = useState(null);
-  const { contextBudgetId } = useContext(BudgetContext);
+  const { contextBudgetId, refreshTimestamp, updateRefreshTimestamp } =
+    useContext(BudgetContext);
   const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/`;
   const { setAlert } = useContext(AlertContext);
   const [objectData, setObjectData] = useState([]);
-  const objectFields = {
-    name: {
-      type: 'string',
-      label: 'Name',
-      autoFocus: true,
-      required: true,
-    },
-    description: {
-      type: 'string',
-      label: 'Description',
-      required: false,
-      multiline: true,
-      rows: 4,
-    },
-    is_active: {
-      type: 'select',
-      select: true,
-      label: 'Status',
-      required: true,
-      options: [
-        {
-          value: true,
-          label: '🟢 Active',
-        },
-        {
-          value: false,
-          label: '🔴 Inactive',
-        },
-      ],
-    },
-  };
 
   /**
    * Fetches Budgets list from API.
@@ -70,7 +39,7 @@ export default function EntityDetail() {
       return;
     }
     loadData();
-  }, [updatedObjectParam, contextBudgetId]);
+  }, [refreshTimestamp, contextBudgetId]);
 
   /**
    * Function to save updated object via API call.
@@ -84,7 +53,7 @@ export default function EntityDetail() {
       apiFieldName,
       value,
       apiUrl,
-      setUpdatedObjectParam,
+      updateRefreshTimestamp,
       setAlert
     );
   };
@@ -140,21 +109,53 @@ export default function EntityDetail() {
           Details
         </Typography>
         <Divider sx={{ marginBottom: 2 }} />
-        {Object.keys(objectFields).map((fieldName) => (
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          spacing={1}
+        >
           <EditableTextField
-            key={fieldName}
-            apiFieldName={fieldName}
-            initialValue={objectData[fieldName]}
-            inputProps={
-              objectFields[fieldName]['type'] === 'date'
-                ? { max: '9999-12-31' }
-                : {}
-            }
+            label="Name"
+            apiFieldName="name"
+            initialValue={objectData.name}
             fullWidth
             onSave={onSave}
-            {...objectFields[fieldName]}
+            autoFocus
+            required
+            type="string"
           />
-        ))}
+          <EditableTextField
+            label="Status"
+            apiFieldName="is_active"
+            initialValue={objectData.is_active}
+            fullWidth
+            onSave={onSave}
+            autoFocus
+            required
+            type="select"
+            options={[
+              {
+                value: true,
+                label: '🟢 Active',
+              },
+              {
+                value: false,
+                label: '🔴 Inactive',
+              },
+            ]}
+          />
+        </Stack>
+        <EditableTextField
+          label="Description"
+          apiFieldName="description"
+          initialValue={objectData.description}
+          fullWidth
+          onSave={onSave}
+          type="string"
+          multiline
+          rows={4}
+        />
       </Box>
       <Box>
         <Typography variant="h5" sx={{ display: 'block', color: '#BD0000' }}>
