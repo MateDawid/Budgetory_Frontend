@@ -20,8 +20,8 @@ import CategoryTypes from '../utils/CategoryTypes';
 export default function TransferCategoryDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [updatedObjectParam, setUpdatedObjectParam] = useState(null);
-  const { contextBudgetId } = useContext(BudgetContext);
+  const { contextBudgetId, refreshTimestamp, updateRefreshTimestamp } =
+    useContext(BudgetContext);
   const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/`;
   const { setAlert } = useContext(AlertContext);
   const [objectData, setObjectData] = useState([]);
@@ -46,7 +46,7 @@ export default function TransferCategoryDetail() {
       return;
     }
     loadData();
-  }, [updatedObjectParam, contextBudgetId]);
+  }, [refreshTimestamp, contextBudgetId]);
 
   /**
    * Fetches select options for Category select fields from API.
@@ -91,7 +91,7 @@ export default function TransferCategoryDetail() {
       apiFieldName,
       value,
       apiUrl,
-      setUpdatedObjectParam,
+      updateRefreshTimestamp,
       setAlert
     );
   };
@@ -121,10 +121,6 @@ export default function TransferCategoryDetail() {
           <Typography variant="h4" sx={{ display: 'block', color: '#BD0000' }}>
             {objectData.label}
           </Typography>
-          <Chip
-            label={objectData.is_active ? '🟢 Active' : '🔴 Inactive'}
-            variant="outlined"
-          />
         </Stack>
         <Stack
           direction="row"
