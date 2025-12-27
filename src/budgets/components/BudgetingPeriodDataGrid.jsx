@@ -1,40 +1,43 @@
-import React, { useContext, useEffect, useState } from 'react';
-import Box from '@mui/material/Box';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Box } from '@mui/material';
+import React, { useContext, useState, useEffect } from 'react';
+import StyledDataGrid from '../../app_infrastructure/components/DataGrid/StyledDataGrid';
 import {
   mappedFilterOperators,
   formatFilterModel,
-} from '../../../app_infrastructure/components/DataGrid/utils/FilterHandlers';
-import { getApiObjectsList } from '../../../app_infrastructure/services/APIService';
-import { AlertContext } from '../../../app_infrastructure/store/AlertContext';
-import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
-import StyledDataGrid from '../../../app_infrastructure/components/DataGrid/StyledDataGrid';
-import getSortFieldMapping from '../../../app_infrastructure/components/DataGrid/utils/getSortFieldMapping';
-import StyledGridActionsCellItem from '../../../app_infrastructure/components/DataGrid/StyledGridActionsCellItem';
-import renderHyperlink from '../../../app_infrastructure/components/DataGrid/utils/renderHyperlink';
-import CategoryDataGridFooter from './CategoryDataGridFooter';
-import CategoryAddModal from '../CategoryModal/CategoryAddModal';
-import CategoryEditModal from '../CategoryModal/CategoryEditModal';
-import CategoryDeleteModal from '../CategoryModal/CategoryDeleteModal';
+} from '../../app_infrastructure/components/DataGrid/utils/FilterHandlers';
+import getSortFieldMapping from '../../app_infrastructure/components/DataGrid/utils/getSortFieldMapping';
+import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
+import { AlertContext } from '../../app_infrastructure/store/AlertContext';
+import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
+import StyledGridActionsCellItem from '../../app_infrastructure/components/DataGrid/StyledGridActionsCellItem';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-
 import { useNavigate } from 'react-router-dom';
+import DataGridFooterWithAdd from '../../app_infrastructure/components/DataGrid/DataGridFooterWithAdd';
+import PeriodAddModal from './PeriodModal/PeriodAddModal';
+import PeriodEditModal from './PeriodModal/PeriodEditModal';
+import PeriodDeleteModal from './PeriodModal/PeriodDeleteModal';
+
+const STATUS_OPTIONS = [
+  { value: 1, label: '📝 Draft' },
+  { value: 2, label: '🟢 Active' },
+  { value: 3, label: '🔒 Closed' },
+];
 
 const pageSizeOptions = [10, 50, 100];
 
 /**
  * DataTable component for displaying DataGrid with data fetched from API.
  */
-const CategoryDataGrid = () => {
+const BudgetingPeriodDataGrid = () => {
   const navigate = useNavigate();
   // Contexts
   const { setAlert } = useContext(AlertContext);
-  const { contextBudgetId, refreshTimestamp } = useContext(BudgetContext);
-
+  const { contextBudgetId, contextBudgetCurrency, refreshTimestamp } =
+    useContext(BudgetContext);
   // API URL
-  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?ordering=category_type,priority,name`;
-
+  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`;
   // Data rows
   const [rows, setRows] = useState([]);
   const [rowCount, setRowCount] = useState(0);
@@ -49,47 +52,13 @@ const CategoryDataGrid = () => {
   // Filtering and sorting
   const [sortModel, setSortModel] = React.useState({});
   const [filterModel, setFilterModel] = React.useState({ items: [] });
-  const [depositOptions, setDepositOptions] = useState([]);
-  const [typeOptions, setTypeOptions] = useState([]);
-  const [priorityOptions, setPriorityOptions] = useState([]);
 
   // Forms handlers
-  const [editedCategory, setEditedCategory] = useState();
-  const [deletedCategoryId, setDeletedCategoryId] = useState();
+  const [editedPeriod, setEditedPeriod] = useState();
+  const [deletedPeriodId, setDeletedPeriodId] = useState();
   const [addFormOpen, setAddFormOpen] = useState(false);
   const [editFormOpen, setEditFormOpen] = useState(false);
   const [deleteFormOpen, setDeleteFormOpen] = useState(false);
-
-  /**
-   * Fetches select options for Category select fields from API.
-   */
-  useEffect(() => {
-    async function getDeposits() {
-      const response = await getApiObjectsList(
-        `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`
-      );
-      setDepositOptions(response);
-    }
-    async function getCategoryTypes() {
-      const typeResponse = await getApiObjectsList(
-        `${process.env.REACT_APP_BACKEND_URL}/api/categories/types`
-      );
-      setTypeOptions(typeResponse.results);
-    }
-    async function getPriorities() {
-      const priorityResponse = await getApiObjectsList(
-        `${process.env.REACT_APP_BACKEND_URL}/api/categories/priorities`
-      );
-      setPriorityOptions(priorityResponse.results);
-    }
-
-    if (!contextBudgetId) {
-      return;
-    }
-    getDeposits();
-    getCategoryTypes();
-    getPriorities();
-  }, [contextBudgetId]);
 
   const columns = [
     {
@@ -103,38 +72,95 @@ const CategoryDataGrid = () => {
       sortable: true,
     },
     {
-      field: 'deposit',
+      field: 'status',
       type: 'singleSelect',
-      headerName: 'Deposit',
+      headerName: 'Status',
       headerAlign: 'center',
       align: 'center',
       flex: 1,
       filterable: true,
       sortable: true,
-      valueOptions: depositOptions,
-      renderCell: (params) => renderHyperlink('deposits/', params),
+      valueOptions: STATUS_OPTIONS,
     },
     {
-      field: 'category_type',
-      type: 'singleSelect',
-      headerName: 'Type',
+      field: 'date_start',
+      type: 'date',
+      headerName: 'Date start',
       headerAlign: 'center',
       align: 'center',
       flex: 1,
-      valueOptions: typeOptions,
       filterable: true,
       sortable: true,
+      valueGetter: (value) => {
+        return new Date(value);
+      },
+      valueFormatter: (value) => {
+        try {
+          return value.toLocaleDateString('en-CA');
+        } catch {
+          return value;
+        }
+      },
     },
     {
-      field: 'priority',
-      type: 'singleSelect',
-      headerName: 'Priority',
+      field: 'date_end',
+      type: 'date',
+      headerName: 'Date end',
       headerAlign: 'center',
       align: 'center',
       flex: 1,
-      valueOptions: priorityOptions,
       filterable: true,
       sortable: true,
+      valueGetter: (value) => {
+        return new Date(value);
+      },
+      valueFormatter: (value) => {
+        try {
+          return value.toLocaleDateString('en-CA');
+        } catch {
+          return value;
+        }
+      },
+    },
+    {
+      field: 'expenses_sum',
+      type: 'number',
+      headerName: 'Period Expenses',
+      headerAlign: 'center',
+      align: 'center',
+      flex: 1,
+      filterable: true,
+      sortable: true,
+      renderCell: (params) => (
+        <span
+          style={{
+            color: '#BD0000',
+            fontWeight: 'bold',
+          }}
+        >
+          {params.value} {contextBudgetCurrency}
+        </span>
+      ),
+    },
+    {
+      field: 'incomes_sum',
+      type: 'number',
+      headerName: 'Period Incomes',
+      headerAlign: 'center',
+      align: 'center',
+      flex: 1,
+      filterable: true,
+      sortable: true,
+      renderCell: (params) => (
+        <span
+          style={{
+            color: '#008000',
+            // fontWeight: 'bold',
+          }}
+        >
+          {params.value} {contextBudgetCurrency}
+        </span>
+      ),
     },
   ];
 
@@ -155,26 +181,39 @@ const CategoryDataGrid = () => {
       headerName: 'Actions',
       cellClassName: 'actions',
       getActions: (params) => {
-        return [
-          <StyledGridActionsCellItem
-            key={params.id}
-            icon={<OpenInNewIcon />}
-            label="Open"
-            onClick={() => navigate(`/categories/${params.id}`)}
-          />,
-          <StyledGridActionsCellItem
-            key={params.id}
-            icon={<EditIcon />}
-            label="Edit"
-            onClick={handleEditClick(params.row)}
-          />,
-          <StyledGridActionsCellItem
-            key={params.id}
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={() => handleDeleteClick(params.row)}
-          />,
-        ];
+        console.log(params);
+        if (params.row.status === 1) {
+          return [
+            <StyledGridActionsCellItem
+              key={params.id}
+              icon={<OpenInNewIcon />}
+              label="Open"
+              onClick={() => navigate(`/periods/${params.id}`)}
+            />,
+
+            <StyledGridActionsCellItem
+              key={params.id}
+              icon={<EditIcon />}
+              label="Edit"
+              onClick={handleEditClick(params.row)}
+            />,
+            <StyledGridActionsCellItem
+              key={params.id}
+              icon={<DeleteIcon />}
+              label="Delete"
+              onClick={() => handleDeleteClick(params.row)}
+            />,
+          ];
+        } else {
+          return [
+            <StyledGridActionsCellItem
+              key={params.id}
+              icon={<OpenInNewIcon />}
+              label="Open"
+              onClick={() => navigate(`/periods/${params.id}`)}
+            />,
+          ];
+        }
       },
     },
   ];
@@ -262,7 +301,7 @@ const CategoryDataGrid = () => {
    * @param {object} row - Row data.
    */
   const handleEditClick = (row) => () => {
-    setEditedCategory(row);
+    setEditedPeriod(row);
     setEditFormOpen(true);
   };
 
@@ -271,7 +310,7 @@ const CategoryDataGrid = () => {
    * @param {object} row - DataGrid row.
    */
   const handleDeleteClick = async (row) => {
-    setDeletedCategoryId(row.id);
+    setDeletedPeriodId(row.id);
     setDeleteFormOpen(true);
   };
 
@@ -299,35 +338,37 @@ const CategoryDataGrid = () => {
           onSortModelChange={updateSorting}
           filterMode="server"
           filterModel={filterModel}
+          disableRowSelectionOnClick
           onFilterModelChange={updateFiltering}
           disableColumnResize={true}
-          disableRowSelectionOnClick
           slots={{
-            pagination: CategoryDataGridFooter,
+            pagination: DataGridFooterWithAdd,
           }}
-          slotProps={{ pagination: { handleAddClick } }}
+          slotProps={{
+            pagination: { handleAddClick },
+          }}
         />
       </Box>
-      <CategoryAddModal
+      <PeriodAddModal
         apiUrl={apiUrl}
         formOpen={addFormOpen}
         setFormOpen={setAddFormOpen}
       />
-      <CategoryEditModal
+      <PeriodEditModal
         apiUrl={apiUrl}
         formOpen={editFormOpen}
         setFormOpen={setEditFormOpen}
-        editedCategory={editedCategory}
-        setEditedCategory={setEditedCategory}
+        editedPeriod={editedPeriod}
+        setEditedPeriod={setEditedPeriod}
       />
-      <CategoryDeleteModal
+      <PeriodDeleteModal
         apiUrl={apiUrl}
         formOpen={deleteFormOpen}
         setFormOpen={setDeleteFormOpen}
-        deletedCategoryId={deletedCategoryId}
-        setDeletedCategoryId={setDeletedCategoryId}
+        deletedPeriodId={deletedPeriodId}
+        setDeletedPeriodId={setDeletedPeriodId}
       />
     </>
   );
 };
-export default CategoryDataGrid;
+export default BudgetingPeriodDataGrid;
