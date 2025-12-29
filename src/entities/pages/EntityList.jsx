@@ -2,12 +2,14 @@ import React from 'react';
 import Typography from '@mui/material/Typography';
 import { Paper } from '@mui/material';
 import Divider from '@mui/material/Divider';
-import EntityDataGrid from '../components/EntityDataGrid';
+import EntityDataGrid, { EntityTypes } from '../components/EntityDataGrid';
 
 /**
  * EntityList component to display list of Budget Entities.
  */
 export default function EntityList() {
+  document.title = 'Entities';
+
   return (
     <Paper
       elevation={24}
@@ -23,7 +25,7 @@ export default function EntityList() {
         Entities
       </Typography>
       <Divider sx={{ mb: 1 }} />
-      <EntityDataGrid />
+      <EntityDataGrid entityType={EntityTypes.ENTITY} />
     </Paper>
   );
 }

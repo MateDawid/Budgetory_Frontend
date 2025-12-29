@@ -30,6 +30,7 @@ export default function EntityDetail() {
       try {
         const apiResponse = await getApiObjectDetails(apiUrl, id);
         setObjectData(apiResponse);
+        document.title = `Entity • ${apiResponse.name}`;
       } catch {
         setAlert({ type: 'error', message: 'Entity details loading failed.' });
         navigate('/entities');
@@ -131,7 +132,6 @@ export default function EntityDetail() {
             initialValue={objectData.is_active}
             fullWidth
             onSave={onSave}
-            autoFocus
             required
             type="select"
             options={[
