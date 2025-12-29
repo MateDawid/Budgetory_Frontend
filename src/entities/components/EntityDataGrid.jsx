@@ -21,17 +21,34 @@ import EntityDeleteModal from './EntityModal/EntityDeleteModal';
 
 const pageSizeOptions = [10, 50, 100];
 
+export const EntityTypes = {
+  ENTITY: 1,
+  DEPOSIT: 2,
+};
+
 /**
  * DataTable component for displaying DataGrid with data fetched from API.
  */
-const EntityDataGrid = () => {
+const EntityDataGrid = ({ entityType }) => {
   const navigate = useNavigate();
   // Contexts
   const { setAlert } = useContext(AlertContext);
-  const { contextBudgetId, refreshTimestamp } = useContext(BudgetContext);
+  const { contextBudgetId, contextBudgetCurrency, refreshTimestamp } =
+    useContext(BudgetContext);
 
   // API URL
-  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?is_deposit=false`;
+  let apiUrl;
+  let detailUrl;
+  switch (entityType) {
+    case EntityTypes.ENTITY:
+      apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?is_deposit=false`;
+      detailUrl = '/entities/';
+      break;
+    case EntityTypes.DEPOSIT:
+      apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`;
+      detailUrl = '/deposits/';
+      break;
+  }
 
   // Data rows
   const [rows, setRows] = useState([]);
@@ -98,6 +115,28 @@ const EntityDataGrid = () => {
     },
   ];
 
+  if (entityType === EntityTypes.DEPOSIT) {
+    columns.push({
+      field: 'balance',
+      type: 'number',
+      headerName: 'Balance',
+      headerAlign: 'center',
+      align: 'center',
+      flex: 1,
+      filterable: true,
+      sortable: true,
+      renderCell: (params) => (
+        <span
+          style={{
+            color: params.value < 0 ? '#BD0000' : '#008000',
+          }}
+        >
+          {params.value} {contextBudgetCurrency}
+        </span>
+      ),
+    });
+  }
+
   const extendedColumns = [
     // Map column type to proper filter operators
     ...columns.map((column) => ({
@@ -120,7 +159,7 @@ const EntityDataGrid = () => {
             key={params.id}
             icon={<OpenInNewIcon />}
             label="Open"
-            onClick={() => navigate(`/entities/${params.id}`)}
+            onClick={() => navigate(`${detailUrl}${params.id}`)}
           />,
           <StyledGridActionsCellItem
             key={params.id}
@@ -270,11 +309,13 @@ const EntityDataGrid = () => {
       </Box>
       <EntityAddModal
         apiUrl={apiUrl}
+        entityType={entityType}
         formOpen={addFormOpen}
         setFormOpen={setAddFormOpen}
       />
       <EntityEditModal
         apiUrl={apiUrl}
+        entityType={entityType}
         formOpen={editFormOpen}
         setFormOpen={setEditFormOpen}
         editedEntity={editedEntity}
@@ -282,6 +323,7 @@ const EntityDataGrid = () => {
       />
       <EntityDeleteModal
         apiUrl={apiUrl}
+        entityType={entityType}
         formOpen={deleteFormOpen}
         setFormOpen={setDeleteFormOpen}
         deletedEntityId={deletedEntityId}
