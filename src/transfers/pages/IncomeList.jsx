@@ -9,6 +9,8 @@ import TransferTypes from '../utils/TransferTypes';
  * IncomeList component to display list of Budget INCOME Transfers.
  */
 export default function IncomeList() {
+  document.title = 'Incomes';
+
   return (
     <>
       <Paper elevation={24} sx={{ padding: 2, bgColor: '#F1F1F1' }}>

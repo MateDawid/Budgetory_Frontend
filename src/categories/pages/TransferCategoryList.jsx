@@ -8,6 +8,8 @@ import CategoryDataGrid from '../components/CategoryDataGrid';
  * TransferCategoryList component to display list of Budget TransferCategories.
  */
 export default function TransferCategoryList() {
+  document.title = 'Categories';
+
   return (
     <Paper
       elevation={24}

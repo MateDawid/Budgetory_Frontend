@@ -32,6 +32,7 @@ export default function BudgetingPeriodDetail() {
       try {
         const apiResponse = await getApiObjectDetails(apiUrl, id);
         setObjectData(apiResponse);
+        document.title = `Period • ${apiResponse.name}`;
       } catch {
         setAlert({ type: 'error', message: 'Period details loading failed.' });
         navigate('/periods');

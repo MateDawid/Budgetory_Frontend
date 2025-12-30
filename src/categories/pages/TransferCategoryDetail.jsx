@@ -34,6 +34,7 @@ export default function TransferCategoryDetail() {
       try {
         const apiResponse = await getApiObjectDetails(apiUrl, id);
         setObjectData(apiResponse);
+        document.title = `Category • ${apiResponse.label}`;
       } catch {
         setAlert({
           type: 'error',

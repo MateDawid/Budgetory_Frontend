@@ -9,6 +9,8 @@ import TransferTypes from '../utils/TransferTypes';
  * ExpenseList component to display list of Budget EXPENSE Transfers.
  */
 export default function ExpenseList() {
+  document.title = 'Expenses';
+
   return (
     <>
       <Paper elevation={24} sx={{ padding: 2, bgColor: '#F1F1F1' }}>
