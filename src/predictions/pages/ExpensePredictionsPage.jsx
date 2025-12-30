@@ -150,7 +150,11 @@ export default function ExpensePredictionsPage() {
       setCategories(categoryResponse);
       setCategoryFilter(null);
     }
-    if (!contextBudgetId || priorityFilter === UNCATEGORIZED_PRIORITY) {
+    if (
+      !contextBudgetId ||
+      (!priorityFilter && !depositFilter) ||
+      priorityFilter === UNCATEGORIZED_PRIORITY
+    ) {
       return;
     }
     getCategories();
@@ -227,6 +231,7 @@ export default function ExpensePredictionsPage() {
       variant="outlined"
       startIcon={<AddIcon />}
       onClick={() => setAddFormOpen(true)}
+      disabled={!periodFilter}
     >
       Add
     </StyledButton>

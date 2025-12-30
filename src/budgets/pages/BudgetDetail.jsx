@@ -76,6 +76,7 @@ export default function BudgetDetail() {
       try {
         const budgetResponse = await getApiObjectDetails(apiUrl, id);
         setBudgetData(budgetResponse);
+        document.title = `Budget • ${budgetResponse.name}`;
       } catch {
         setAlert({ type: 'error', message: 'Budget details loading failed.' });
         navigate('/budgets');

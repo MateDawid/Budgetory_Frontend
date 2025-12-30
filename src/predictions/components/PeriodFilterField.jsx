@@ -58,6 +58,7 @@ const PeriodFilterField = ({
         setPeriodFilter(storagePeriodObject.id);
         setPeriodStatus(storagePeriodObject.status);
         setPeriodStatusLabel(storagePeriodObject.status_display);
+        document.title = `Predictions • ${storagePeriodObject.name}`;
       } else {
         setPeriodFilter(null);
         setPeriodStatus(0);
@@ -80,11 +81,13 @@ const PeriodFilterField = ({
           setPeriodFilter(null);
           setPeriodStatus(null);
           setPeriodStatus(null);
+          document.title = 'Predictions';
           localStorage.removeItem('budgetory.periodFilter');
         } else {
           setPeriodFilter(selectedOption.id);
           setPeriodStatus(selectedOption.status);
           setPeriodStatusLabel(selectedOption.status_display);
+          document.title = `Predictions • ${selectedOption.name}`;
           localStorage.setItem('budgetory.periodFilter', selectedOption.value);
         }
       }}

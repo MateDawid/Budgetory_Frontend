@@ -1,15 +1,15 @@
 import React from 'react';
 import { GridPagination } from '@mui/x-data-grid';
 import AddIcon from '@mui/icons-material/Add';
-import StyledButton from '../../../app_infrastructure/components/StyledButton';
+import StyledButton from '../StyledButton';
 
 /**
- * BudgetingPeriodDataGridFooter component for DataTable custom footer.
+ * DataTableFooter component for DataTable custom footer with Add button.
  * @param {object} props
  * @param {function} props.handleAddClick - Function to handle Add button click.
  * @param {object} props.props - Other properties.
  */
-const BudgetingPeriodDataGridFooter = ({ handleAddClick, ...props }) => {
+const DataGridFooterWithAdd = ({ handleAddClick, ...props }) => {
   return (
     <>
       <StyledButton
@@ -25,4 +25,4 @@ const BudgetingPeriodDataGridFooter = ({ handleAddClick, ...props }) => {
   );
 };
 
-export default BudgetingPeriodDataGridFooter;
+export default DataGridFooterWithAdd;

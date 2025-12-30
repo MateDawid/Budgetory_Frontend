@@ -2,12 +2,14 @@ import React from 'react';
 import Typography from '@mui/material/Typography';
 import { Paper } from '@mui/material';
 import Divider from '@mui/material/Divider';
-import BudgetingPeriodDataGrid from '../components/BudgetingPeriodDataGrid/BudgetingPeriodDataGrid';
+import BudgetingPeriodDataGrid from '../components/BudgetingPeriodDataGrid';
 
 /**
  * BudgetingPeriodList component to display list of Budget BudgetingPeriods.
  */
 export default function BudgetingPeriodList() {
+  document.title = 'Periods';
+
   return (
     <Paper
       elevation={24}

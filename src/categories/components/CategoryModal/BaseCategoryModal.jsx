@@ -84,13 +84,11 @@ export default function BaseCategoryModal({
       setPriorityOptions(priorityResponse.results);
     }
 
-    if (!contextBudgetId) {
-      return;
-    }
+    if (!contextBudgetId || !formOpen) return;
     getDeposits();
     getCategoryTypes();
     getPriorities();
-  }, [contextBudgetId]);
+  }, [contextBudgetId, formOpen]);
 
   return (
     <>

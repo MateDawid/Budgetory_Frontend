@@ -5,8 +5,8 @@ import { getApiObjectsList } from '../../../app_infrastructure/services/APIServi
 import { IconButton, InputAdornment } from '@mui/material';
 import TransferTypes from '../../utils/TransferTypes';
 import CategoryTypes from '../../../categories/utils/CategoryTypes';
-import EntityAddModal from '../../../entities/components/EntityAddModal';
 import AddIcon from '@mui/icons-material/Add';
+import EntityAddModal from '../../../entities/components/EntityModal/EntityAddModal';
 
 /**
  * BaseTransferModal component for displaying Transfer form for adding and editing.
@@ -133,9 +133,7 @@ export default function BaseTransferModal({
       );
       setDeposits(response);
     }
-    if (!contextBudgetId) {
-      return;
-    }
+    if (!contextBudgetId || !formOpen) return;
     getDeposits();
   }, [contextBudgetId, refreshTimestamp]);
 
@@ -149,9 +147,7 @@ export default function BaseTransferModal({
       );
       setEntities(response);
     }
-    if (!contextBudgetId) {
-      return;
-    }
+    if (!contextBudgetId || !formOpen) return;
     getEntities();
   }, [contextBudgetId, refreshTimestamp, entityAdded]);
 
@@ -178,11 +174,9 @@ export default function BaseTransferModal({
       );
       setCategories(response);
     }
-    if (!contextBudgetId) {
-      return;
-    }
+    if (!contextBudgetId || !formOpen) return;
     getCategories();
-  }, [contextBudgetId, selectedDeposit]);
+  }, [contextBudgetId, selectedDeposit, formOpen]);
 
   return (
     <>

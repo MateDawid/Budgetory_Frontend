@@ -1,43 +1,55 @@
-import { Box } from '@mui/material';
-import React, { useContext, useState, useEffect } from 'react';
-import StyledDataGrid from '../../../app_infrastructure/components/DataGrid/StyledDataGrid';
-import {
-  mappedFilterOperators,
-  formatFilterModel,
-} from '../../../app_infrastructure/components/DataGrid/utils/FilterHandlers';
-import getSortFieldMapping from '../../../app_infrastructure/components/DataGrid/utils/getSortFieldMapping';
-import { getApiObjectsList } from '../../../app_infrastructure/services/APIService';
-import { AlertContext } from '../../../app_infrastructure/store/AlertContext';
-import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
-import StyledGridActionsCellItem from '../../../app_infrastructure/components/DataGrid/StyledGridActionsCellItem';
+import React, { useContext, useEffect, useState } from 'react';
+import Box from '@mui/material/Box';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useNavigate } from 'react-router-dom';
-import BudgetingPeriodDataGridFooter from './BudgetingPeriodDataGridFooter';
-import PeriodAddModal from './PeriodAddModal';
-import PeriodEditModal from './PeriodEditModal';
-import PeriodDeleteModal from './PeriodDeleteModal';
-
-const STATUS_OPTIONS = [
-  { value: 1, label: '📝 Draft' },
-  { value: 2, label: '🟢 Active' },
-  { value: 3, label: '🔒 Closed' },
-];
+import DataGridFooterWithAdd from '../../app_infrastructure/components/DataGrid/DataGridFooterWithAdd';
+import StyledDataGrid from '../../app_infrastructure/components/DataGrid/StyledDataGrid';
+import StyledGridActionsCellItem from '../../app_infrastructure/components/DataGrid/StyledGridActionsCellItem';
+import {
+  mappedFilterOperators,
+  formatFilterModel,
+} from '../../app_infrastructure/components/DataGrid/utils/FilterHandlers';
+import getSortFieldMapping from '../../app_infrastructure/components/DataGrid/utils/getSortFieldMapping';
+import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
+import { AlertContext } from '../../app_infrastructure/store/AlertContext';
+import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
+import EntityAddModal from './EntityModal/EntityAddModal';
+import EntityEditModal from './EntityModal/EntityEditModal';
+import EntityDeleteModal from './EntityModal/EntityDeleteModal';
 
 const pageSizeOptions = [10, 50, 100];
+
+export const EntityTypes = {
+  ENTITY: 1,
+  DEPOSIT: 2,
+};
 
 /**
  * DataTable component for displaying DataGrid with data fetched from API.
  */
-const BudgetingPeriodDataGrid = () => {
+const EntityDataGrid = ({ entityType }) => {
   const navigate = useNavigate();
   // Contexts
   const { setAlert } = useContext(AlertContext);
   const { contextBudgetId, contextBudgetCurrency, refreshTimestamp } =
     useContext(BudgetContext);
+
   // API URL
-  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`;
+  let apiUrl;
+  let detailUrl;
+  switch (entityType) {
+    case EntityTypes.ENTITY:
+      apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?is_deposit=false`;
+      detailUrl = '/entities/';
+      break;
+    case EntityTypes.DEPOSIT:
+      apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`;
+      detailUrl = '/deposits/';
+      break;
+  }
+
   // Data rows
   const [rows, setRows] = useState([]);
   const [rowCount, setRowCount] = useState(0);
@@ -54,8 +66,8 @@ const BudgetingPeriodDataGrid = () => {
   const [filterModel, setFilterModel] = React.useState({ items: [] });
 
   // Forms handlers
-  const [editedPeriod, setEditedPeriod] = useState();
-  const [deletedPeriodId, setDeletedPeriodId] = useState();
+  const [editedEntity, setEditedEntity] = useState();
+  const [deletedEntityId, setDeletedEntityId] = useState();
   const [addFormOpen, setAddFormOpen] = useState(false);
   const [editFormOpen, setEditFormOpen] = useState(false);
   const [deleteFormOpen, setDeleteFormOpen] = useState(false);
@@ -72,97 +84,58 @@ const BudgetingPeriodDataGrid = () => {
       sortable: true,
     },
     {
-      field: 'status',
+      field: 'description',
+      type: 'string',
+      headerName: 'Description',
+      headerAlign: 'center',
+      align: 'left',
+      flex: 2,
+      filterable: true,
+      sortable: false,
+    },
+    {
+      field: 'is_active',
       type: 'singleSelect',
       headerName: 'Status',
       headerAlign: 'center',
       align: 'center',
       flex: 1,
+      valueOptions: [
+        {
+          value: true,
+          label: '🟢 Active',
+        },
+        {
+          value: false,
+          label: '🔴 Inactive',
+        },
+      ],
       filterable: true,
-      sortable: true,
-      valueOptions: STATUS_OPTIONS,
-    },
-    {
-      field: 'date_start',
-      type: 'date',
-      headerName: 'Date start',
-      headerAlign: 'center',
-      align: 'center',
-      flex: 1,
-      filterable: true,
-      sortable: true,
-      valueGetter: (value) => {
-        return new Date(value);
-      },
-      valueFormatter: (value) => {
-        try {
-          return value.toLocaleDateString('en-CA');
-        } catch {
-          return value;
-        }
-      },
-    },
-    {
-      field: 'date_end',
-      type: 'date',
-      headerName: 'Date end',
-      headerAlign: 'center',
-      align: 'center',
-      flex: 1,
-      filterable: true,
-      sortable: true,
-      valueGetter: (value) => {
-        return new Date(value);
-      },
-      valueFormatter: (value) => {
-        try {
-          return value.toLocaleDateString('en-CA');
-        } catch {
-          return value;
-        }
-      },
-    },
-    {
-      field: 'expenses_sum',
-      type: 'number',
-      headerName: 'Period Expenses',
-      headerAlign: 'center',
-      align: 'center',
-      flex: 1,
-      filterable: true,
-      sortable: true,
-      renderCell: (params) => (
-        <span
-          style={{
-            color: '#BD0000',
-            fontWeight: 'bold',
-          }}
-        >
-          {params.value} {contextBudgetCurrency}
-        </span>
-      ),
-    },
-    {
-      field: 'incomes_sum',
-      type: 'number',
-      headerName: 'Period Incomes',
-      headerAlign: 'center',
-      align: 'center',
-      flex: 1,
-      filterable: true,
-      sortable: true,
-      renderCell: (params) => (
-        <span
-          style={{
-            color: '#008000',
-            // fontWeight: 'bold',
-          }}
-        >
-          {params.value} {contextBudgetCurrency}
-        </span>
-      ),
+      sortable: false,
     },
   ];
+
+  if (entityType === EntityTypes.DEPOSIT) {
+    columns.push({
+      field: 'balance',
+      type: 'number',
+      headerName: 'Balance',
+      headerAlign: 'center',
+      align: 'center',
+      flex: 1,
+      filterable: true,
+      sortable: true,
+      renderCell: (params) => (
+        <span
+          style={{
+            color: params.value < 0 ? '#BD0000' : '#008000',
+          }}
+        >
+          {params.value} {contextBudgetCurrency}
+        </span>
+      ),
+    });
+  }
 
   const extendedColumns = [
     // Map column type to proper filter operators
@@ -181,39 +154,26 @@ const BudgetingPeriodDataGrid = () => {
       headerName: 'Actions',
       cellClassName: 'actions',
       getActions: (params) => {
-        console.log(params);
-        if (params.row.status === 1) {
-          return [
-            <StyledGridActionsCellItem
-              key={params.id}
-              icon={<OpenInNewIcon />}
-              label="Open"
-              onClick={() => navigate(`/periods/${params.id}`)}
-            />,
-
-            <StyledGridActionsCellItem
-              key={params.id}
-              icon={<EditIcon />}
-              label="Edit"
-              onClick={handleEditClick(params.row)}
-            />,
-            <StyledGridActionsCellItem
-              key={params.id}
-              icon={<DeleteIcon />}
-              label="Delete"
-              onClick={() => handleDeleteClick(params.row)}
-            />,
-          ];
-        } else {
-          return [
-            <StyledGridActionsCellItem
-              key={params.id}
-              icon={<OpenInNewIcon />}
-              label="Open"
-              onClick={() => navigate(`/periods/${params.id}`)}
-            />,
-          ];
-        }
+        return [
+          <StyledGridActionsCellItem
+            key={params.id}
+            icon={<OpenInNewIcon />}
+            label="Open"
+            onClick={() => navigate(`${detailUrl}${params.id}`)}
+          />,
+          <StyledGridActionsCellItem
+            key={params.id}
+            icon={<EditIcon />}
+            label="Edit"
+            onClick={handleEditClick(params.row)}
+          />,
+          <StyledGridActionsCellItem
+            key={params.id}
+            icon={<DeleteIcon />}
+            label="Delete"
+            onClick={() => handleDeleteClick(params.row)}
+          />,
+        ];
       },
     },
   ];
@@ -301,7 +261,7 @@ const BudgetingPeriodDataGrid = () => {
    * @param {object} row - Row data.
    */
   const handleEditClick = (row) => () => {
-    setEditedPeriod(row);
+    setEditedEntity(row);
     setEditFormOpen(true);
   };
 
@@ -310,7 +270,7 @@ const BudgetingPeriodDataGrid = () => {
    * @param {object} row - DataGrid row.
    */
   const handleDeleteClick = async (row) => {
-    setDeletedPeriodId(row.id);
+    setDeletedEntityId(row.id);
     setDeleteFormOpen(true);
   };
 
@@ -338,37 +298,38 @@ const BudgetingPeriodDataGrid = () => {
           onSortModelChange={updateSorting}
           filterMode="server"
           filterModel={filterModel}
-          disableRowSelectionOnClick
           onFilterModelChange={updateFiltering}
           disableColumnResize={true}
+          disableRowSelectionOnClick
           slots={{
-            pagination: BudgetingPeriodDataGridFooter,
+            pagination: DataGridFooterWithAdd,
           }}
-          slotProps={{
-            pagination: { handleAddClick },
-          }}
+          slotProps={{ pagination: { handleAddClick } }}
         />
       </Box>
-      <PeriodAddModal
+      <EntityAddModal
         apiUrl={apiUrl}
+        entityType={entityType}
         formOpen={addFormOpen}
         setFormOpen={setAddFormOpen}
       />
-      <PeriodEditModal
+      <EntityEditModal
         apiUrl={apiUrl}
+        entityType={entityType}
         formOpen={editFormOpen}
         setFormOpen={setEditFormOpen}
-        editedPeriod={editedPeriod}
-        setEditedPeriod={setEditedPeriod}
+        editedEntity={editedEntity}
+        setEditedEntity={setEditedEntity}
       />
-      <PeriodDeleteModal
+      <EntityDeleteModal
         apiUrl={apiUrl}
+        entityType={entityType}
         formOpen={deleteFormOpen}
         setFormOpen={setDeleteFormOpen}
-        deletedPeriodId={deletedPeriodId}
-        setDeletedPeriodId={setDeletedPeriodId}
+        deletedEntityId={deletedEntityId}
+        setDeletedEntityId={setDeletedEntityId}
       />
     </>
   );
 };
-export default BudgetingPeriodDataGrid;
+export default EntityDataGrid;

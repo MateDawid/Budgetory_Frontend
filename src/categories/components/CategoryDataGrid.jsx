@@ -5,21 +5,21 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import {
   mappedFilterOperators,
   formatFilterModel,
-} from '../../../app_infrastructure/components/DataGrid/utils/FilterHandlers';
-import { getApiObjectsList } from '../../../app_infrastructure/services/APIService';
-import { AlertContext } from '../../../app_infrastructure/store/AlertContext';
-import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
-import StyledDataGrid from '../../../app_infrastructure/components/DataGrid/StyledDataGrid';
-import getSortFieldMapping from '../../../app_infrastructure/components/DataGrid/utils/getSortFieldMapping';
-import StyledGridActionsCellItem from '../../../app_infrastructure/components/DataGrid/StyledGridActionsCellItem';
-import renderHyperlink from '../../../app_infrastructure/components/DataGrid/utils/renderHyperlink';
-import CategoryDataGridFooter from './CategoryDataGridFooter';
-import CategoryAddModal from '../CategoryModal/CategoryAddModal';
-import CategoryEditModal from '../CategoryModal/CategoryEditModal';
-import CategoryDeleteModal from '../CategoryModal/CategoryDeleteModal';
+} from '../../app_infrastructure/components/DataGrid/utils/FilterHandlers';
+import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
+import { AlertContext } from '../../app_infrastructure/store/AlertContext';
+import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
+import StyledDataGrid from '../../app_infrastructure/components/DataGrid/StyledDataGrid';
+import getSortFieldMapping from '../../app_infrastructure/components/DataGrid/utils/getSortFieldMapping';
+import StyledGridActionsCellItem from '../../app_infrastructure/components/DataGrid/StyledGridActionsCellItem';
+import renderHyperlink from '../../app_infrastructure/components/DataGrid/utils/renderHyperlink';
+import CategoryAddModal from './CategoryModal/CategoryAddModal';
+import CategoryEditModal from './CategoryModal/CategoryEditModal';
+import CategoryDeleteModal from './CategoryModal/CategoryDeleteModal';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 import { useNavigate } from 'react-router-dom';
+import DataGridFooterWithAdd from '../../app_infrastructure/components/DataGrid/DataGridFooterWithAdd';
 
 const pageSizeOptions = [10, 50, 100];
 
@@ -303,7 +303,7 @@ const CategoryDataGrid = () => {
           disableColumnResize={true}
           disableRowSelectionOnClick
           slots={{
-            pagination: CategoryDataGridFooter,
+            pagination: DataGridFooterWithAdd,
           }}
           slotProps={{ pagination: { handleAddClick } }}
         />

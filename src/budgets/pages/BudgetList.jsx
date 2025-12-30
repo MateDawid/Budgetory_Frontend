@@ -11,6 +11,7 @@ import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
  * BudgetList component to display list of User Budgets.
  */
 export default function BudgetList() {
+  document.title = 'Budgets';
   const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/`;
   const { refreshTimestamp } = useContext(BudgetContext);
   const { setAlert } = useContext(AlertContext);

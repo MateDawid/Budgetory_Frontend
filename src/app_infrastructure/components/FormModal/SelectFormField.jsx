@@ -19,13 +19,14 @@ const SelectFormField = ({
       defaultValue={defaultValue ? defaultValue : fieldParams.defaultValue}
       render={({ field }) => {
         // Find the actual option object from the value
-        const selectedOption = field.value
-          ? fieldParams['options'].find(
-              (option) =>
-                (option[fieldParams['selectValue']] || option.value) ===
-                field.value
-            ) || null
-          : null;
+        const selectedOption =
+          field.value === null || field.value === undefined
+            ? null
+            : fieldParams['options'].find(
+                (option) =>
+                  (option[fieldParams['selectValue']] || option.value) ===
+                  field.value
+              ) || null;
 
         return (
           <Autocomplete

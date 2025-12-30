@@ -26,7 +26,7 @@ const Rightbar = () => {
       }
       try {
         const response = await getApiObjectsList(
-          `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`
+          `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/?ordering=name`
         );
         setDeposits(response);
       } catch (error) {
