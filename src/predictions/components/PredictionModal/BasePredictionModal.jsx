@@ -97,6 +97,7 @@ export default function BasePredictionModal({
     if (!contextBudgetId) {
       return;
     }
+    if (!contextBudgetId || !formOpen) return;
     getDeposits();
   }, [contextBudgetId, refreshTimestamp]);
 
@@ -105,6 +106,7 @@ export default function BasePredictionModal({
    */
   useEffect(() => {
     async function getCategories() {
+      console.log('getCategories')
       const filterModel = {
         category_type: CategoryTypes.EXPENSE,
         ordering: 'priority',
@@ -120,9 +122,7 @@ export default function BasePredictionModal({
       );
       setCategories(response);
     }
-    if (!contextBudgetId || !selectedDeposit) {
-      return;
-    }
+    if (!contextBudgetId || !formOpen || !selectedDeposit) return;
     getCategories();
   }, [contextBudgetId, selectedDeposit]);
 

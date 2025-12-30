@@ -133,9 +133,7 @@ export default function BaseTransferModal({
       );
       setDeposits(response);
     }
-    if (!contextBudgetId) {
-      return;
-    }
+    if (!contextBudgetId || !formOpen) return;
     getDeposits();
   }, [contextBudgetId, refreshTimestamp]);
 
@@ -149,9 +147,7 @@ export default function BaseTransferModal({
       );
       setEntities(response);
     }
-    if (!contextBudgetId) {
-      return;
-    }
+    if (!contextBudgetId || !formOpen) return;
     getEntities();
   }, [contextBudgetId, refreshTimestamp, entityAdded]);
 
@@ -178,9 +174,7 @@ export default function BaseTransferModal({
       );
       setCategories(response);
     }
-    if (!contextBudgetId) {
-      return;
-    }
+    if (!contextBudgetId || !formOpen) return;
     getCategories();
   }, [contextBudgetId, selectedDeposit]);
 
