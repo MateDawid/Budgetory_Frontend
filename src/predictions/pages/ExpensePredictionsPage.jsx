@@ -231,6 +231,7 @@ export default function ExpensePredictionsPage() {
       variant="outlined"
       startIcon={<AddIcon />}
       onClick={() => setAddFormOpen(true)}
+      disabled={!periodFilter}
     >
       Add
     </StyledButton>

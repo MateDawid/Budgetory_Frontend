@@ -176,7 +176,7 @@ export default function BaseTransferModal({
     }
     if (!contextBudgetId || !formOpen) return;
     getCategories();
-  }, [contextBudgetId, selectedDeposit]);
+  }, [contextBudgetId, selectedDeposit, formOpen]);
 
   return (
     <>

@@ -99,14 +99,14 @@ export default function BasePredictionModal({
     }
     if (!contextBudgetId || !formOpen) return;
     getDeposits();
-  }, [contextBudgetId, refreshTimestamp]);
+  }, [contextBudgetId, refreshTimestamp, formOpen]);
 
   /**
    * Fetches select options for Transfer categories object from API.
    */
   useEffect(() => {
     async function getCategories() {
-      console.log('getCategories')
+      console.log('getCategories');
       const filterModel = {
         category_type: CategoryTypes.EXPENSE,
         ordering: 'priority',
@@ -124,7 +124,7 @@ export default function BasePredictionModal({
     }
     if (!contextBudgetId || !formOpen || !selectedDeposit) return;
     getCategories();
-  }, [contextBudgetId, selectedDeposit]);
+  }, [contextBudgetId, selectedDeposit, formOpen]);
 
   return (
     <FormModal

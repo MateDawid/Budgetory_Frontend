@@ -88,7 +88,7 @@ export default function BaseCategoryModal({
     getDeposits();
     getCategoryTypes();
     getPriorities();
-  }, [contextBudgetId]);
+  }, [contextBudgetId, formOpen]);
 
   return (
     <>
