@@ -6,6 +6,7 @@ import { getApiObjectsList } from '../../app_infrastructure/services/APIService'
 import { Stack } from '@mui/material';
 import FilterField from '../../app_infrastructure/components/FilterField';
 import CategoryTypes from '../../categories/utils/CategoryTypes';
+import { LandingPageContext } from '../../app_infrastructure/store/LandingPageContext';
 
 const TRANSFER_TYPES = [
   { label: 'Expenses', value: CategoryTypes.EXPENSE },
@@ -25,13 +26,12 @@ const ENTITIES_ON_CHART = [
  */
 export default function TopEntitiesInPeriodChart({ periodId = null }) {
   const { contextBudgetId, contextBudgetCurrency } = useContext(BudgetContext);
-  // Select choices
-  const [periodChoices, setPeriodChoices] = useState([]);
-  const [depositChoices, setDepositChoices] = useState([]);
+  const { periodChoices, depositChoices } = useContext(LandingPageContext);
+
   // Filters values
   const [transferType, setTransferType] = useState(CategoryTypes.EXPENSE);
   const [entitiesOnChart, setEntitiesOnChart] = useState(5);
-  const [period, setPeriod] = useState();
+  const [period, setPeriod] = useState(null);
   const [deposit, setDeposit] = useState(null);
   // Chart data
   const [xAxis, setXAxis] = useState([]);
@@ -42,35 +42,12 @@ export default function TopEntitiesInPeriodChart({ periodId = null }) {
       ? `${value.toString()} ${contextBudgetCurrency}`
       : `0 ${contextBudgetCurrency}`;
 
+  /**
+   * Set initial value for Period filter.
+   */
   useEffect(() => {
-    const loadPeriodsChoices = async () => {
-      try {
-        const response = await getApiObjectsList(
-          `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`
-        );
-        setPeriodChoices(response);
-        setPeriod(response[0].id);
-      } catch {
-        setPeriodChoices([]);
-        setPeriod(null);
-      }
-    };
-    const loadDepositsChoices = async () => {
-      try {
-        const response = await getApiObjectsList(
-          `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`
-        );
-        setDepositChoices(response);
-      } catch {
-        setDepositChoices([]);
-      }
-    };
-    if (!contextBudgetId) {
-      return;
-    }
-    if (!periodId) loadPeriodsChoices();
-    loadDepositsChoices();
-  }, [contextBudgetId]);
+    if (periodChoices.length > 0) setPeriod(periodChoices[0].id);
+  }, [periodChoices]);
 
   useEffect(() => {
     const loadEntitiesResults = async () => {

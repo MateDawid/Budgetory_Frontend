@@ -23,6 +23,7 @@ import EntityDetail from './entities/pages/EntityDetail';
 import TransferCategoryDetail from './categories/pages/TransferCategoryDetail';
 import ExpensePredictionsPage from './predictions/pages/ExpensePredictionsPage';
 import LandingPage from './app_infrastructure/pages/LandingPage';
+import { LandingPageProvider } from './app_infrastructure/store/LandingPageContext';
 
 /**
  * App component handles routing of application.
@@ -34,7 +35,14 @@ function App() {
         <ContextBudgetProvider>
           <Routes>
             <Route path="/" element={<BasePage />}>
-              <Route index element={<LandingPage />} />
+              <Route
+                index
+                element={
+                  <LandingPageProvider>
+                    <LandingPage />
+                  </LandingPageProvider>
+                }
+              />
               <Route path="budgets">
                 <Route index element={<BudgetList />} />
                 <Route path=":id" element={<BudgetDetail />} />
