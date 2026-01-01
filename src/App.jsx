@@ -23,7 +23,7 @@ import EntityDetail from './entities/pages/EntityDetail';
 import TransferCategoryDetail from './categories/pages/TransferCategoryDetail';
 import ExpensePredictionsPage from './predictions/pages/ExpensePredictionsPage';
 import LandingPage from './app_infrastructure/pages/LandingPage';
-import { LandingPageProvider } from './app_infrastructure/store/LandingPageContext';
+import { ChartsProvider } from './app_infrastructure/store/ChartsContext';
 
 /**
  * App component handles routing of application.
@@ -38,26 +38,54 @@ function App() {
               <Route
                 index
                 element={
-                  <LandingPageProvider>
+                  <ChartsProvider>
                     <LandingPage />
-                  </LandingPageProvider>
+                  </ChartsProvider>
                 }
               />
               <Route path="budgets">
                 <Route index element={<BudgetList />} />
-                <Route path=":id" element={<BudgetDetail />} />
+                <Route
+                  path=":id"
+                  element={
+                    <ChartsProvider>
+                      <BudgetDetail />
+                    </ChartsProvider>
+                  }
+                />
               </Route>
               <Route path="periods">
                 <Route index element={<BudgetingPeriodList />} />
-                <Route path=":id" element={<BudgetingPeriodDetail />} />
+                <Route
+                  path=":id"
+                  element={
+                    <ChartsProvider>
+                      <BudgetingPeriodDetail />
+                    </ChartsProvider>
+                  }
+                />
               </Route>
               <Route path="deposits">
                 <Route index element={<DepositList />} />
-                <Route path=":id" element={<DepositDetail />} />
+                <Route
+                  path=":id"
+                  element={
+                    <ChartsProvider>
+                      <DepositDetail />
+                    </ChartsProvider>
+                  }
+                />
               </Route>
               <Route path="entities">
                 <Route index element={<EntityList />} />
-                <Route path=":id" element={<EntityDetail />} />
+                <Route
+                  path=":id"
+                  element={
+                    <ChartsProvider>
+                      <EntityDetail />
+                    </ChartsProvider>
+                  }
+                />
               </Route>
               <Route path="categories">
                 <Route index element={<TransferCategoryList />} />

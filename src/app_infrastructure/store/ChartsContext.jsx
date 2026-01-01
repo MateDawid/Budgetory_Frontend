@@ -2,12 +2,12 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { getApiObjectsList } from '../services/APIService';
 import { BudgetContext } from './BudgetContext';
 
-export const LandingPageContext = createContext();
+export const ChartsContext = createContext();
 
 /**
- * LandingPageProvider for storing LandingPage choices fields options.
+ * ChartsProvider for storing choices fields options for Charts purposes.
  */
-export const LandingPageProvider = ({ children }) => {
+export const ChartsProvider = ({ children }) => {
   const { contextBudgetId } = useContext(BudgetContext);
   const [periodChoices, setPeriodChoices] = useState([]);
   const [depositChoices, setDepositChoices] = useState([]);
@@ -52,11 +52,13 @@ export const LandingPageProvider = ({ children }) => {
     loadEntityChoices();
   }, [contextBudgetId]);
 
-  const value = { periodChoices, depositChoices, entityChoices };
+  const value = {
+    periodChoices,
+    depositChoices,
+    entityChoices,
+  };
 
   return (
-    <LandingPageContext.Provider value={value}>
-      {children}
-    </LandingPageContext.Provider>
+    <ChartsContext.Provider value={value}>{children}</ChartsContext.Provider>
   );
 };

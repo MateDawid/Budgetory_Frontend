@@ -6,7 +6,7 @@ import { getApiObjectsList } from '../../app_infrastructure/services/APIService'
 import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
 import FilterField from '../../app_infrastructure/components/FilterField';
 import CategoryTypes from '../../categories/utils/CategoryTypes';
-import { LandingPageContext } from '../../app_infrastructure/store/LandingPageContext';
+import { ChartsContext } from '../../app_infrastructure/store/ChartsContext';
 
 const CATEGORY_TYPE_CHOICES = [
   { label: 'Expenses', value: CategoryTypes.EXPENSE },
@@ -15,7 +15,7 @@ const CATEGORY_TYPE_CHOICES = [
 
 export default function CategoriesInPeriodsChart() {
   const { contextBudgetId, contextBudgetCurrency } = useContext(BudgetContext);
-  const { periodChoices, depositChoices } = useContext(LandingPageContext);
+  const { periodChoices, depositChoices } = useContext(ChartsContext);
 
   // Filters values
   const [periodFrom, setPeriodFrom] = useState();

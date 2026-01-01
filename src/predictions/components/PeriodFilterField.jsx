@@ -59,6 +59,11 @@ const PeriodFilterField = ({
         setPeriodStatus(storagePeriodObject.status);
         setPeriodStatusLabel(storagePeriodObject.status_display);
         document.title = `Predictions • ${storagePeriodObject.name}`;
+      } else if (periodOptions.length > 0) {
+        setPeriodFilter(periodOptions[0].id);
+        setPeriodStatus(periodOptions[0].status);
+        setPeriodStatusLabel(periodOptions[0].status_display);
+        localStorage.setItem('budgetory.periodFilter', periodOptions[0].id);
       } else {
         setPeriodFilter(null);
         setPeriodStatus(0);
@@ -74,6 +79,7 @@ const PeriodFilterField = ({
   return (
     <Autocomplete
       disablePortal
+      disableClearable
       options={periodOptions}
       value={periodOptions.find((option) => option.id === periodFilter) || null}
       onChange={(e, selectedOption) => {
@@ -91,7 +97,7 @@ const PeriodFilterField = ({
           localStorage.setItem('budgetory.periodFilter', selectedOption.value);
         }
       }}
-      sx={{ minWidth: 200, maxWidth: 200 }}
+      sx={{ minWidth: 100, maxWidth: 200 }}
       renderInput={(params) => {
         return (
           <Tooltip

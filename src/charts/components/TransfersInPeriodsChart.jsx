@@ -6,7 +6,7 @@ import { getApiObjectsList } from '../../app_infrastructure/services/APIService'
 import { Stack } from '@mui/material';
 import FilterField from '../../app_infrastructure/components/FilterField';
 import CategoryTypes from '../../categories/utils/CategoryTypes';
-import { LandingPageContext } from '../../app_infrastructure/store/LandingPageContext';
+import { ChartsContext } from '../../app_infrastructure/store/ChartsContext';
 
 const TRANSFER_TYPES = [
   { label: 'All', value: null },
@@ -33,7 +33,7 @@ export default function TransfersInPeriodsChart({
   entityId = null,
 }) {
   const { contextBudgetId, contextBudgetCurrency } = useContext(BudgetContext);
-  const { depositChoices, entityChoices } = useContext(LandingPageContext);
+  const { depositChoices, entityChoices } = useContext(ChartsContext);
 
   // Filters values
   const [transferType, setTransferType] = useState(null);

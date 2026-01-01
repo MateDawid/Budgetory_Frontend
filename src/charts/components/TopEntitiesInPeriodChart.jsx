@@ -6,7 +6,7 @@ import { getApiObjectsList } from '../../app_infrastructure/services/APIService'
 import { Stack } from '@mui/material';
 import FilterField from '../../app_infrastructure/components/FilterField';
 import CategoryTypes from '../../categories/utils/CategoryTypes';
-import { LandingPageContext } from '../../app_infrastructure/store/LandingPageContext';
+import { ChartsContext } from '../../app_infrastructure/store/ChartsContext';
 
 const TRANSFER_TYPES = [
   { label: 'Expenses', value: CategoryTypes.EXPENSE },
@@ -26,7 +26,7 @@ const ENTITIES_ON_CHART = [
  */
 export default function TopEntitiesInPeriodChart({ periodId = null }) {
   const { contextBudgetId, contextBudgetCurrency } = useContext(BudgetContext);
-  const { periodChoices, depositChoices } = useContext(LandingPageContext);
+  const { periodChoices, depositChoices } = useContext(ChartsContext);
 
   // Filters values
   const [transferType, setTransferType] = useState(CategoryTypes.EXPENSE);
@@ -46,7 +46,7 @@ export default function TopEntitiesInPeriodChart({ periodId = null }) {
    * Set initial value for Period filter.
    */
   useEffect(() => {
-    if (periodChoices.length > 0) setPeriod(periodChoices[0].id);
+    if (!periodId && periodChoices.length > 0) setPeriod(periodChoices[0].id);
   }, [periodChoices]);
 
   useEffect(() => {
