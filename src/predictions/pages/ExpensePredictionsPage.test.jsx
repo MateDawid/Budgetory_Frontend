@@ -247,7 +247,7 @@ describe('ExpensePredictionsPage', () => {
       });
       await waitFor(() => {
         expect(getApiObjectsList).toHaveBeenCalledWith(
-          'http://localhost:8000/api/budgets/budget-123/deposits/?deposit_type=1'
+          'http://localhost:8000/api/budgets/budget-123/deposits/'
         );
       });
     });
