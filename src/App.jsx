@@ -23,7 +23,9 @@ import EntityDetail from './entities/pages/EntityDetail';
 import TransferCategoryDetail from './categories/pages/TransferCategoryDetail';
 import ExpensePredictionsPage from './predictions/pages/ExpensePredictionsPage';
 import LandingPage from './app_infrastructure/pages/LandingPage';
-import { ChartsProvider } from './app_infrastructure/store/ChartsContext';
+import { DepositChoicesProvider } from './app_infrastructure/store/DepositChoicesContext';
+import { EntityChoicesProvider } from './app_infrastructure/store/EntityChoicesContext';
+import { PeriodChoicesProvider } from './app_infrastructure/store/PeriodChoicesContext';
 
 /**
  * App component handles routing of application.
@@ -38,9 +40,13 @@ function App() {
               <Route
                 index
                 element={
-                  <ChartsProvider>
-                    <LandingPage />
-                  </ChartsProvider>
+                  <DepositChoicesProvider>
+                    <EntityChoicesProvider>
+                      <PeriodChoicesProvider>
+                        <LandingPage />
+                      </PeriodChoicesProvider>
+                    </EntityChoicesProvider>
+                  </DepositChoicesProvider>
                 }
               />
               <Route path="budgets">
@@ -48,9 +54,11 @@ function App() {
                 <Route
                   path=":id"
                   element={
-                    <ChartsProvider>
-                      <BudgetDetail />
-                    </ChartsProvider>
+                    <DepositChoicesProvider>
+                      <PeriodChoicesProvider>
+                        <BudgetDetail />
+                      </PeriodChoicesProvider>
+                    </DepositChoicesProvider>
                   }
                 />
               </Route>
@@ -59,9 +67,11 @@ function App() {
                 <Route
                   path=":id"
                   element={
-                    <ChartsProvider>
-                      <BudgetingPeriodDetail />
-                    </ChartsProvider>
+                    <DepositChoicesProvider>
+                      <PeriodChoicesProvider>
+                        <BudgetingPeriodDetail />
+                      </PeriodChoicesProvider>
+                    </DepositChoicesProvider>
                   }
                 />
               </Route>
@@ -70,9 +80,11 @@ function App() {
                 <Route
                   path=":id"
                   element={
-                    <ChartsProvider>
-                      <DepositDetail />
-                    </ChartsProvider>
+                    <DepositChoicesProvider>
+                      <EntityChoicesProvider>
+                        <DepositDetail />
+                      </EntityChoicesProvider>
+                    </DepositChoicesProvider>
                   }
                 />
               </Route>
@@ -81,9 +93,11 @@ function App() {
                 <Route
                   path=":id"
                   element={
-                    <ChartsProvider>
-                      <EntityDetail />
-                    </ChartsProvider>
+                    <DepositChoicesProvider>
+                      <EntityChoicesProvider>
+                        <EntityDetail />
+                      </EntityChoicesProvider>
+                    </DepositChoicesProvider>
                   }
                 />
               </Route>

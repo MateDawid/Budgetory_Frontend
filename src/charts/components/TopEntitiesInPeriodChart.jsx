@@ -6,7 +6,8 @@ import { getApiObjectsList } from '../../app_infrastructure/services/APIService'
 import { Stack } from '@mui/material';
 import FilterField from '../../app_infrastructure/components/FilterField';
 import CategoryTypes from '../../categories/utils/CategoryTypes';
-import { ChartsContext } from '../../app_infrastructure/store/ChartsContext';
+import { DepositChoicesContext } from '../../app_infrastructure/store/DepositChoicesContext';
+import { PeriodChoicesContext } from '../../app_infrastructure/store/PeriodChoicesContext';
 
 const TRANSFER_TYPES = [
   { label: 'Expenses', value: CategoryTypes.EXPENSE },
@@ -26,7 +27,8 @@ const ENTITIES_ON_CHART = [
  */
 export default function TopEntitiesInPeriodChart({ periodId = null }) {
   const { contextBudgetId, contextBudgetCurrency } = useContext(BudgetContext);
-  const { periodChoices, depositChoices } = useContext(ChartsContext);
+  const { depositChoices } = useContext(DepositChoicesContext);
+  const { periodChoices } = useContext(PeriodChoicesContext);
 
   // Filters values
   const [transferType, setTransferType] = useState(CategoryTypes.EXPENSE);
@@ -78,7 +80,7 @@ export default function TopEntitiesInPeriodChart({ periodId = null }) {
         setSeries([]);
       }
     };
-    if (!contextBudgetId) {
+    if (!contextBudgetId || (!periodId && !period)) {
       return;
     }
     loadEntitiesResults();
@@ -109,6 +111,7 @@ export default function TopEntitiesInPeriodChart({ periodId = null }) {
             label="Period"
             filterValue={period}
             setFilterValue={setPeriod}
+            disableClearable
             sx={{ width: 160 }}
           />
         )}
