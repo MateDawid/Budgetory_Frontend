@@ -23,6 +23,9 @@ import EntityDetail from './entities/pages/EntityDetail';
 import TransferCategoryDetail from './categories/pages/TransferCategoryDetail';
 import ExpensePredictionsPage from './predictions/pages/ExpensePredictionsPage';
 import LandingPage from './app_infrastructure/pages/LandingPage';
+import { DepositChoicesProvider } from './app_infrastructure/store/DepositChoicesContext';
+import { EntityChoicesProvider } from './app_infrastructure/store/EntityChoicesContext';
+import { PeriodChoicesProvider } from './app_infrastructure/store/PeriodChoicesContext';
 
 /**
  * App component handles routing of application.
@@ -34,22 +37,69 @@ function App() {
         <ContextBudgetProvider>
           <Routes>
             <Route path="/" element={<BasePage />}>
-              <Route index element={<LandingPage />} />
+              <Route
+                index
+                element={
+                  <DepositChoicesProvider>
+                    <EntityChoicesProvider>
+                      <PeriodChoicesProvider>
+                        <LandingPage />
+                      </PeriodChoicesProvider>
+                    </EntityChoicesProvider>
+                  </DepositChoicesProvider>
+                }
+              />
               <Route path="budgets">
                 <Route index element={<BudgetList />} />
-                <Route path=":id" element={<BudgetDetail />} />
+                <Route
+                  path=":id"
+                  element={
+                    <DepositChoicesProvider>
+                      <PeriodChoicesProvider>
+                        <BudgetDetail />
+                      </PeriodChoicesProvider>
+                    </DepositChoicesProvider>
+                  }
+                />
               </Route>
               <Route path="periods">
                 <Route index element={<BudgetingPeriodList />} />
-                <Route path=":id" element={<BudgetingPeriodDetail />} />
+                <Route
+                  path=":id"
+                  element={
+                    <DepositChoicesProvider>
+                      <PeriodChoicesProvider>
+                        <BudgetingPeriodDetail />
+                      </PeriodChoicesProvider>
+                    </DepositChoicesProvider>
+                  }
+                />
               </Route>
               <Route path="deposits">
                 <Route index element={<DepositList />} />
-                <Route path=":id" element={<DepositDetail />} />
+                <Route
+                  path=":id"
+                  element={
+                    <DepositChoicesProvider>
+                      <EntityChoicesProvider>
+                        <DepositDetail />
+                      </EntityChoicesProvider>
+                    </DepositChoicesProvider>
+                  }
+                />
               </Route>
               <Route path="entities">
                 <Route index element={<EntityList />} />
-                <Route path=":id" element={<EntityDetail />} />
+                <Route
+                  path=":id"
+                  element={
+                    <DepositChoicesProvider>
+                      <EntityChoicesProvider>
+                        <EntityDetail />
+                      </EntityChoicesProvider>
+                    </DepositChoicesProvider>
+                  }
+                />
               </Route>
               <Route path="categories">
                 <Route index element={<TransferCategoryList />} />

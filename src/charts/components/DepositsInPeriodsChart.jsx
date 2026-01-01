@@ -6,6 +6,8 @@ import { getApiObjectsList } from '../../app_infrastructure/services/APIService'
 import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
 import FilterField from '../../app_infrastructure/components/FilterField';
 import CategoryTypes from '../../categories/utils/CategoryTypes';
+import { DepositChoicesContext } from '../../app_infrastructure/store/DepositChoicesContext';
+import { PeriodChoicesContext } from '../../app_infrastructure/store/PeriodChoicesContext';
 
 const DISPLAY_CHOICES = [
   { label: 'Expenses', value: CategoryTypes.EXPENSE },
@@ -15,10 +17,9 @@ const DISPLAY_CHOICES = [
 
 export default function DepositsInPeriodsChart() {
   const { contextBudgetId, contextBudgetCurrency } = useContext(BudgetContext);
+  const { depositChoices } = useContext(DepositChoicesContext);
+  const { periodChoices } = useContext(PeriodChoicesContext);
 
-  // Selectors choices
-  const [periods, setPeriods] = useState([]);
-  const [deposits, setDeposits] = useState([]);
   // Filters values
   const [displayValue, setDisplayValue] = useState(CategoryTypes.EXPENSE);
   const [periodFrom, setPeriodFrom] = useState();
@@ -27,34 +28,6 @@ export default function DepositsInPeriodsChart() {
   // Chart data
   const [xAxis, setXAxis] = useState([]);
   const [series, setSeries] = useState([]);
-
-  useEffect(() => {
-    const loadPeriodsChoices = async () => {
-      try {
-        const response = await getApiObjectsList(
-          `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`
-        );
-        setPeriods(response);
-      } catch {
-        setPeriods([]);
-      }
-    };
-    const loadDepositsChoices = async () => {
-      try {
-        const response = await getApiObjectsList(
-          `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`
-        );
-        setDeposits(response);
-      } catch {
-        setDeposits([]);
-      }
-    };
-    if (!contextBudgetId) {
-      return;
-    }
-    loadPeriodsChoices();
-    loadDepositsChoices();
-  }, [contextBudgetId]);
 
   useEffect(() => {
     const getFilterModel = () => {
@@ -113,21 +86,21 @@ export default function DepositsInPeriodsChart() {
           sx={{ width: 160 }}
         />
         <FilterField
-          options={deposits}
+          options={depositChoices}
           label="Deposit"
           filterValue={deposit || ''}
           setFilterValue={setDeposit}
           sx={{ width: 160 }}
         />
         <FilterField
-          options={periods}
+          options={periodChoices}
           label="Period from"
           filterValue={periodFrom || ''}
           setFilterValue={setPeriodFrom}
           sx={{ width: 160 }}
         />
         <FilterField
-          options={periods}
+          options={periodChoices}
           label="Period to"
           filterValue={periodTo || ''}
           setFilterValue={setPeriodTo}

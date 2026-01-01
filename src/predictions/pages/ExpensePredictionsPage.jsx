@@ -98,7 +98,7 @@ export default function ExpensePredictionsPage() {
 
     async function getDeposits() {
       const depositsResponse = await getApiObjectsList(
-        `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/?deposit_type=1`
+        `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`
       );
       setDeposits(depositsResponse);
     }
@@ -210,7 +210,7 @@ export default function ExpensePredictionsPage() {
       setPeriodPredictions(predictionsResponse);
       setPredictionsLoading(false);
     }
-    if (!contextBudgetId) {
+    if (!contextBudgetId || !periodFilter) {
       setPeriodPredictions([]);
       return;
     }

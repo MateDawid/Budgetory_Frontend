@@ -6,6 +6,8 @@ import { getApiObjectsList } from '../../app_infrastructure/services/APIService'
 import { Stack } from '@mui/material';
 import FilterField from '../../app_infrastructure/components/FilterField';
 import CategoryTypes from '../../categories/utils/CategoryTypes';
+import { EntityChoicesContext } from '../../app_infrastructure/store/EntityChoicesContext';
+import { DepositChoicesContext } from '../../app_infrastructure/store/DepositChoicesContext';
 
 const TRANSFER_TYPES = [
   { label: 'All', value: null },
@@ -32,9 +34,9 @@ export default function TransfersInPeriodsChart({
   entityId = null,
 }) {
   const { contextBudgetId, contextBudgetCurrency } = useContext(BudgetContext);
-  // Select choices
-  const [depositChoices, setDepositChoices] = useState([]);
-  const [entityChoices, setEntityChocies] = useState([]);
+  const { depositChoices } = useContext(DepositChoicesContext);
+  const { entityChoices } = useContext(EntityChoicesContext);
+
   // Filters values
   const [transferType, setTransferType] = useState(null);
   const [periodsOnChart, setPeriodsOnChart] = useState(12);
@@ -48,34 +50,6 @@ export default function TransfersInPeriodsChart({
     value
       ? `${value.toString()} ${contextBudgetCurrency}`
       : `0 ${contextBudgetCurrency}`;
-
-  useEffect(() => {
-    const loadDepositsChoices = async () => {
-      try {
-        const response = await getApiObjectsList(
-          `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`
-        );
-        setDepositChoices(response);
-      } catch {
-        setDepositChoices([]);
-      }
-    };
-    const loadEntityChoices = async () => {
-      try {
-        const response = await getApiObjectsList(
-          `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?ordering=-is_deposit,name`
-        );
-        setEntityChocies(response);
-      } catch {
-        setEntityChocies([]);
-      }
-    };
-    if (!contextBudgetId) {
-      return;
-    }
-    if (!depositId) loadDepositsChoices();
-    if (!entityId) loadEntityChoices();
-  }, [contextBudgetId]);
 
   useEffect(() => {
     const loadDepositsResults = async () => {
