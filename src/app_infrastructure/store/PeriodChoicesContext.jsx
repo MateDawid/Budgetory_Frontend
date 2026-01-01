@@ -31,6 +31,8 @@ export const PeriodChoicesProvider = ({ children }) => {
   const value = { periodChoices };
 
   return (
-    <PeriodChoicesContext.Provider value={value}>{children}</PeriodChoicesContext.Provider>
+    <PeriodChoicesContext.Provider value={value}>
+      {children}
+    </PeriodChoicesContext.Provider>
   );
 };

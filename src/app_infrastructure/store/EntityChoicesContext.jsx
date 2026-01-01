@@ -31,6 +31,8 @@ export const EntityChoicesProvider = ({ children }) => {
   const value = { entityChoices };
 
   return (
-    <EntityChoicesContext.Provider value={value}>{children}</EntityChoicesContext.Provider>
+    <EntityChoicesContext.Provider value={value}>
+      {children}
+    </EntityChoicesContext.Provider>
   );
 };

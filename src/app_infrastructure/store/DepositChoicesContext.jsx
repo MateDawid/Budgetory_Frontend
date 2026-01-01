@@ -31,6 +31,8 @@ export const DepositChoicesProvider = ({ children }) => {
   const value = { depositChoices };
 
   return (
-    <DepositChoicesContext.Provider value={value}>{children}</DepositChoicesContext.Provider>
+    <DepositChoicesContext.Provider value={value}>
+      {children}
+    </DepositChoicesContext.Provider>
   );
 };
