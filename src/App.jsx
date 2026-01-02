@@ -7,7 +7,6 @@ import LoginForm from './app_users/pages/LoginForm';
 import RegisterForm from './app_users/pages/RegisterForm';
 import BudgetList from './budgets/pages/BudgetList';
 import { AlertProvider } from './app_infrastructure/store/AlertContext';
-import BudgetingPeriodList from './budgets/pages/BudgetingPeriodList';
 import { ContextBudgetProvider } from './app_infrastructure/store/BudgetContext';
 import TransferCategoryList from './categories/pages/TransferCategoryList';
 import EntityList from './entities/pages/EntityList';
@@ -17,7 +16,6 @@ import ExpenseList from './transfers/pages/ExpenseList';
 import { ThemeProvider } from '@mui/material';
 import { theme } from './theme';
 import BudgetDetail from './budgets/pages/BudgetDetail';
-import BudgetingPeriodDetail from './budgets/pages/BudgetingPeriodDetail';
 import DepositDetail from './entities/pages/DepositDetail';
 import EntityDetail from './entities/pages/EntityDetail';
 import TransferCategoryDetail from './categories/pages/TransferCategoryDetail';
@@ -26,6 +24,8 @@ import LandingPage from './app_infrastructure/pages/LandingPage';
 import { DepositChoicesProvider } from './app_infrastructure/store/DepositChoicesContext';
 import { EntityChoicesProvider } from './app_infrastructure/store/EntityChoicesContext';
 import { PeriodChoicesProvider } from './app_infrastructure/store/PeriodChoicesContext';
+import BudgetingPeriodList from './periods/pages/BudgetingPeriodList';
+import BudgetingPeriodDetail from './periods/pages/BudgetingPeriodDetail';
 
 /**
  * App component handles routing of application.

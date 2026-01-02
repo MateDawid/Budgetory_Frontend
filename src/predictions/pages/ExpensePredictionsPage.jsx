@@ -13,13 +13,13 @@ import { getApiObjectsList } from '../../app_infrastructure/services/APIService'
 import FilterField from '../../app_infrastructure/components/FilterField';
 import { AlertContext } from '../../app_infrastructure/store/AlertContext';
 import CopyPreviousPredictionsButton from '../components/CopyPreviousPredictionsButton';
-import PeriodStatuses from '../../budgets/utils/PeriodStatuses';
 import PeriodFilterField from '../components/PeriodFilterField';
 import ExpensePredictionTable from '../components/ExpensePredictionTable/ExpensePredictionTable';
 import PeriodResultsTable from '../components/PeriodResultsTable/PeriodResultsTable';
 import PredictionAddModal from '../components/PredictionModal/PredictionAddModal';
 import StyledButton from '../../app_infrastructure/components/StyledButton';
 import AddIcon from '@mui/icons-material/Add';
+import PeriodStatuses from '../../periods/utils/PeriodStatuses';
 
 const UNCATEGORIZED_PRIORITY = -1;
 
