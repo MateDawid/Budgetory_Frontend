@@ -3,7 +3,7 @@ import { LineChart } from '@mui/x-charts/LineChart';
 import { useContext, useEffect, useState } from 'react';
 import React from 'react';
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../app_infrastructure/store/WalletContext';
 import FilterField from '../../app_infrastructure/components/FilterField';
 import CategoryTypes from '../../categories/utils/CategoryTypes';
 import { DepositChoicesContext } from '../../app_infrastructure/store/DepositChoicesContext';
@@ -16,7 +16,7 @@ const DISPLAY_CHOICES = [
 ];
 
 export default function DepositsInPeriodsChart() {
-  const { contextBudgetId, contextBudgetCurrency } = useContext(BudgetContext);
+  const { contextWalletId, contextWalletCurrency } = useContext(WalletContext);
   const { depositChoices } = useContext(DepositChoicesContext);
   const { periodChoices } = useContext(PeriodChoicesContext);
 
@@ -49,7 +49,7 @@ export default function DepositsInPeriodsChart() {
     const loadDepositsResults = async () => {
       try {
         const response = await getApiObjectsList(
-          `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/charts/deposits_in_periods/`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/charts/deposits_in_periods/`,
           {},
           {},
           getFilterModel()
@@ -58,8 +58,8 @@ export default function DepositsInPeriodsChart() {
           ...serie,
           valueFormatter: (value) =>
             value
-              ? `${value.toString()} ${contextBudgetCurrency}`
-              : `0 ${contextBudgetCurrency}`,
+              ? `${value.toString()} ${contextWalletCurrency}`
+              : `0 ${contextWalletCurrency}`,
         }));
         setXAxis(response.xAxis);
         setSeries(formattedSeries);
@@ -68,11 +68,11 @@ export default function DepositsInPeriodsChart() {
         setSeries([]);
       }
     };
-    if (!contextBudgetId) {
+    if (!contextWalletId) {
       return;
     }
     loadDepositsResults();
-  }, [contextBudgetId, displayValue, periodFrom, periodTo, deposit]);
+  }, [contextWalletId, displayValue, periodFrom, periodTo, deposit]);
 
   return (
     <Stack sx={{ width: '100%' }}>

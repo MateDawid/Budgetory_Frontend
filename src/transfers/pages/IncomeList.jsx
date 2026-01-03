@@ -6,7 +6,7 @@ import TransferDataGrid from '../components/TransferDataGrid/TransferDataGrid';
 import TransferTypes from '../utils/TransferTypes';
 
 /**
- * IncomeList component to display list of Budget INCOME Transfers.
+ * IncomeList component to display list of Wallet INCOME Transfers.
  */
 export default function IncomeList() {
   document.title = 'Incomes';

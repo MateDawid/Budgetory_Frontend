@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { AlertContext } from '../../../app_infrastructure/store/AlertContext';
-import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../../app_infrastructure/store/WalletContext';
 import { createApiObject } from '../../../app_infrastructure/services/APIService';
 import BasePredictionModal from './BasePredictionModal';
 
@@ -18,7 +18,7 @@ export default function PredictionAddModal({
   setFormOpen,
   periodId,
 }) {
-  const { updateRefreshTimestamp } = useContext(BudgetContext);
+  const { updateRefreshTimestamp } = useContext(WalletContext);
   const { setAlert } = useContext(AlertContext);
 
   const callApi = async (data) => {

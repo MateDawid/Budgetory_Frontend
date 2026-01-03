@@ -4,7 +4,7 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useNavigate } from 'react-router-dom';
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
 import { AlertContext } from '../../app_infrastructure/store/AlertContext';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../app_infrastructure/store/WalletContext';
 import StyledDataGrid from '../../app_infrastructure/components/DataGrid/StyledDataGrid';
 import {
   formatFilterModel,
@@ -23,7 +23,7 @@ const pageSizeOptions = [10, 50, 100];
  * @param {object} props.clientUrl - Frontend base url for redirects in readOnly mode.
  * @param {object} props.height - Height of DataTable.
  */
-const BudgetDepositsDataGrid = ({
+const WalletDepositsDataGrid = ({
   columns,
   apiUrl,
   clientUrl = null,
@@ -40,7 +40,7 @@ const BudgetDepositsDataGrid = ({
   const [sortModel, setSortModel] = React.useState({});
   const [filterModel, setFilterModel] = React.useState({ items: [] });
   const { setAlert } = useContext(AlertContext);
-  const { contextBudgetId } = useContext(BudgetContext);
+  const { contextWalletId } = useContext(WalletContext);
 
   const visibleColumns = columns.filter((column) => !column.hide);
 
@@ -76,7 +76,7 @@ const BudgetDepositsDataGrid = ({
    */
   useEffect(() => {
     const loadData = async () => {
-      if (!contextBudgetId) {
+      if (!contextWalletId) {
         setLoading(false);
         return;
       }
@@ -95,11 +95,11 @@ const BudgetDepositsDataGrid = ({
         setLoading(false);
       }
     };
-    if (!contextBudgetId) {
+    if (!contextWalletId) {
       return;
     }
     loadData();
-  }, [contextBudgetId, paginationModel, sortModel, filterModel]);
+  }, [contextWalletId, paginationModel, sortModel, filterModel]);
 
   /**
    * Function to update DataGrid pagination model.
@@ -167,4 +167,4 @@ const BudgetDepositsDataGrid = ({
     </>
   );
 };
-export default BudgetDepositsDataGrid;
+export default WalletDepositsDataGrid;

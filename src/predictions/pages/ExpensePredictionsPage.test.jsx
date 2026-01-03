@@ -8,7 +8,7 @@ import {
 } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ExpensePredictionsPage from './ExpensePredictionsPage';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../app_infrastructure/store/WalletContext';
 import { AlertContext } from '../../app_infrastructure/store/AlertContext';
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
 
@@ -108,11 +108,11 @@ jest.mock('../../app_infrastructure/components/FilterField', () => {
 
 describe('ExpensePredictionsPage', () => {
   const mockSetAlert = jest.fn();
-  const mockContextBudgetId = 'budget-123';
+  const mockContextWalletId = 'wallet-123';
   const mockRefreshTimestamp = Date.now();
 
-  const defaultBudgetContext = {
-    contextBudgetId: mockContextBudgetId,
+  const defaultWalletContext = {
+    contextWalletId: mockContextWalletId,
     refreshTimestamp: mockRefreshTimestamp,
   };
 
@@ -142,7 +142,7 @@ describe('ExpensePredictionsPage', () => {
 
   const mockProgressStatuses = [
     { value: 'on-track', label: 'On Track' },
-    { value: 'over-budget', label: 'Over Budget' },
+    { value: 'over-wallet', label: 'Over Wallet' },
   ];
 
   const mockPredictions = [
@@ -156,15 +156,15 @@ describe('ExpensePredictionsPage', () => {
   ];
 
   const renderComponent = (
-    budgetContext = defaultBudgetContext,
+    walletContext = defaultWalletContext,
     alertContext = defaultAlertContext
   ) => {
     return render(
-      <BudgetContext.Provider value={budgetContext}>
+      <WalletContext.Provider value={walletContext}>
         <AlertContext.Provider value={alertContext}>
           <ExpensePredictionsPage />
         </AlertContext.Provider>
-      </BudgetContext.Provider>
+      </WalletContext.Provider>
     );
   };
 
@@ -236,7 +236,7 @@ describe('ExpensePredictionsPage', () => {
       });
       await waitFor(() => {
         expect(getApiObjectsList).toHaveBeenCalledWith(
-          'http://localhost:8000/api/budgets/budget-123/periods/'
+          'http://localhost:8000/api/wallets/wallet-123/periods/'
         );
       });
     });
@@ -247,7 +247,7 @@ describe('ExpensePredictionsPage', () => {
       });
       await waitFor(() => {
         expect(getApiObjectsList).toHaveBeenCalledWith(
-          'http://localhost:8000/api/budgets/budget-123/deposits/'
+          'http://localhost:8000/api/wallets/wallet-123/deposits/'
         );
       });
     });
@@ -274,10 +274,10 @@ describe('ExpensePredictionsPage', () => {
       });
     });
 
-    test('does not fetch data when contextBudgetId is null', async () => {
+    test('does not fetch data when contextWalletId is null', async () => {
       await act(async () => {
         renderComponent({
-          contextBudgetId: null,
+          contextWalletId: null,
           refreshTimestamp: mockRefreshTimestamp,
         });
       });
@@ -300,7 +300,7 @@ describe('ExpensePredictionsPage', () => {
 
       await waitFor(() => {
         expect(getApiObjectsList).toHaveBeenCalledWith(
-          'http://localhost:8000/api/budgets/budget-123/expense_predictions/',
+          'http://localhost:8000/api/wallets/wallet-123/expense_predictions/',
           {},
           {},
           expect.objectContaining({ period: 'period-1' })
@@ -320,7 +320,7 @@ describe('ExpensePredictionsPage', () => {
 
       await waitFor(() => {
         expect(getApiObjectsList).toHaveBeenCalledWith(
-          'http://localhost:8000/api/budgets/budget-123/deposits_predictions_results/period-1/'
+          'http://localhost:8000/api/wallets/wallet-123/deposits_predictions_results/period-1/'
         );
       });
     });
@@ -471,7 +471,7 @@ describe('ExpensePredictionsPage', () => {
 
       await waitFor(() => {
         expect(getApiObjectsList).toHaveBeenCalledWith(
-          'http://localhost:8000/api/budgets/budget-123/categories/?category_type=2',
+          'http://localhost:8000/api/wallets/wallet-123/categories/?category_type=2',
           {},
           {},
           expect.objectContaining({ priority: '1' })
@@ -500,7 +500,7 @@ describe('ExpensePredictionsPage', () => {
 
       await waitFor(() => {
         expect(getApiObjectsList).toHaveBeenCalledWith(
-          'http://localhost:8000/api/budgets/budget-123/categories/?category_type=2',
+          'http://localhost:8000/api/wallets/wallet-123/categories/?category_type=2',
           {},
           {},
           expect.objectContaining({ deposit: 'deposit-1' })
@@ -548,7 +548,7 @@ describe('ExpensePredictionsPage', () => {
 
       await waitFor(() => {
         expect(getApiObjectsList).toHaveBeenCalledWith(
-          'http://localhost:8000/api/budgets/budget-123/expense_predictions/',
+          'http://localhost:8000/api/wallets/wallet-123/expense_predictions/',
           {},
           {},
           expect.objectContaining({
@@ -774,13 +774,13 @@ describe('ExpensePredictionsPage', () => {
       // Update refreshTimestamp
       await act(async () => {
         rerender(
-          <BudgetContext.Provider
-            value={{ ...defaultBudgetContext, refreshTimestamp: Date.now() }}
+          <WalletContext.Provider
+            value={{ ...defaultWalletContext, refreshTimestamp: Date.now() }}
           >
             <AlertContext.Provider value={defaultAlertContext}>
               <ExpensePredictionsPage />
             </AlertContext.Provider>
-          </BudgetContext.Provider>
+          </WalletContext.Provider>
         );
       });
 

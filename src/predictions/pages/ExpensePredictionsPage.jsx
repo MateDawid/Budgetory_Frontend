@@ -8,7 +8,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../app_infrastructure/store/WalletContext';
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
 import FilterField from '../../app_infrastructure/components/FilterField';
 import { AlertContext } from '../../app_infrastructure/store/AlertContext';
@@ -49,14 +49,14 @@ const draftPeriodOrderingOptions = [
  * ExpensePredictionsPage component to display list of ExpensePredictions
  */
 export default function ExpensePredictionsPage() {
-  const { contextBudgetId, refreshTimestamp } = useContext(BudgetContext);
+  const { contextWalletId, refreshTimestamp } = useContext(WalletContext);
   const { setAlert } = useContext(AlertContext);
   const [periodResultsLoading, setPeriodResultsLoading] = useState(false);
   const [predictionsLoading, setPredictionsLoading] = useState(false);
 
   // Urls
-  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expense_predictions/`;
-  const copyPredictionsUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/copy_predictions_from_previous_period/`;
+  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/expense_predictions/`;
+  const copyPredictionsUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/copy_predictions_from_previous_period/`;
 
   // Selectors choices
   const [periods, setPeriods] = useState([]);
@@ -88,7 +88,7 @@ export default function ExpensePredictionsPage() {
     async function getPeriodsChoices() {
       try {
         const response = await getApiObjectsList(
-          `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`
+          `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/periods/`
         );
         setPeriods(response);
       } catch {
@@ -98,7 +98,7 @@ export default function ExpensePredictionsPage() {
 
     async function getDeposits() {
       const depositsResponse = await getApiObjectsList(
-        `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`
+        `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits/`
       );
       setDeposits(depositsResponse);
     }
@@ -120,14 +120,14 @@ export default function ExpensePredictionsPage() {
       setProgressStatuses(progressStatusResponse);
     }
 
-    if (!contextBudgetId) {
+    if (!contextWalletId) {
       return;
     }
     getPeriodsChoices();
     getDeposits();
     getPriorities();
     getProgressStatuses();
-  }, [contextBudgetId]);
+  }, [contextWalletId]);
 
   /**
    * Fetches select options for ExpensePrediction categories object from API.
@@ -142,7 +142,7 @@ export default function ExpensePredictionsPage() {
         filterModel['priority'] = priorityFilter;
       }
       const categoryResponse = await getApiObjectsList(
-        `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?category_type=2`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/categories/?category_type=2`,
         {},
         {},
         filterModel
@@ -151,14 +151,14 @@ export default function ExpensePredictionsPage() {
       setCategoryFilter(null);
     }
     if (
-      !contextBudgetId ||
+      !contextWalletId ||
       (!priorityFilter && !depositFilter) ||
       priorityFilter === UNCATEGORIZED_PRIORITY
     ) {
       return;
     }
     getCategories();
-  }, [contextBudgetId, depositFilter, priorityFilter]);
+  }, [contextWalletId, depositFilter, priorityFilter]);
 
   /**
    * Fetches Period results from API.
@@ -166,12 +166,12 @@ export default function ExpensePredictionsPage() {
   useEffect(() => {
     async function getPeriodResults() {
       const depositsPeriodResultsResponse = await getApiObjectsList(
-        `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits_predictions_results/${periodFilter}/`
+        `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits_predictions_results/${periodFilter}/`
       );
       setPeriodResults(depositsPeriodResultsResponse);
       setPeriodResultsLoading(false);
     }
-    if (!contextBudgetId || !periodFilter) {
+    if (!contextWalletId || !periodFilter) {
       return;
     }
     setPeriodResultsLoading(true);
@@ -210,7 +210,7 @@ export default function ExpensePredictionsPage() {
       setPeriodPredictions(predictionsResponse);
       setPredictionsLoading(false);
     }
-    if (!contextBudgetId || !periodFilter) {
+    if (!contextWalletId || !periodFilter) {
       setPeriodPredictions([]);
       return;
     }

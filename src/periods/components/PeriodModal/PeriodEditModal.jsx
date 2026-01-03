@@ -1,16 +1,16 @@
 import React, { useContext } from 'react';
 import { AlertContext } from '../../../app_infrastructure/store/AlertContext';
-import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../../app_infrastructure/store/WalletContext';
 import { updateApiObject } from '../../../app_infrastructure/services/APIService';
 import BasePeriodModal from './BasePeriodModal';
 
 /**
- * PeriodEditModal component for displaying edit BudgetingPeriod form.
+ * PeriodEditModal component for displaying edit  Period form.
  * @param {object} props
  * @param {string} props.apiUrl - URL to be called on form submit.
  * @param {boolean} props.formOpen - Flag indicating if form is opened or not.
  * @param {function} props.setFormOpen - Setter for formOpen flag.
- * @param {object} [props.editedPeriod] - Edited BudgetingPeriod object.
+ * @param {object} [props.editedPeriod] - Edited  Period object.
  * @param {function} [props.setEditedPeriod] - Setter for editedPeriod value.
  */
 export default function PeriodEditModal({
@@ -20,7 +20,7 @@ export default function PeriodEditModal({
   editedPeriod,
   setEditedPeriod,
 }) {
-  const { updateRefreshTimestamp } = useContext(BudgetContext);
+  const { updateRefreshTimestamp } = useContext(WalletContext);
   const { setAlert } = useContext(AlertContext);
 
   const callApi = async (data) => {

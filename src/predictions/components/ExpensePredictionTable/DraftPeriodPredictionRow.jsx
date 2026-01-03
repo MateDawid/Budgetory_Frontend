@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import React, { useState, useContext } from 'react';
 import ColouredLinearProgress from '../../../app_infrastructure/components/CustomLinearProgress/ColouredLinearProgress';
-import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../../app_infrastructure/store/WalletContext';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
@@ -26,7 +26,7 @@ export default function DraftPeriodPredictionRow({ row }) {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [inspectOpen, setInspectOpen] = useState(false);
-  const { contextBudgetCurrency } = useContext(BudgetContext);
+  const { contextWalletCurrency } = useContext(WalletContext);
 
   const previousResultsFontColor = getFontColor(
     row.previous_result,
@@ -44,17 +44,17 @@ export default function DraftPeriodPredictionRow({ row }) {
         <TableCell align="center">{getCategoryCellContent(row)}</TableCell>
         <TableCell align="center" sx={{ color: previousResultsFontColor }}>
           {row.previous_result}
-          {`\u00A0${contextBudgetCurrency}`} / {row.previous_plan}
-          {`\u00A0${contextBudgetCurrency}`}
+          {`\u00A0${contextWalletCurrency}`} / {row.previous_plan}
+          {`\u00A0${contextWalletCurrency}`}
         </TableCell>
         <TableCell align="center" sx={{ color: currentResultsFontColor }}>
           {row.current_result}
-          {`\u00A0${contextBudgetCurrency}`} / {row.current_plan}
-          {`\u00A0${contextBudgetCurrency}`}
+          {`\u00A0${contextWalletCurrency}`} / {row.current_plan}
+          {`\u00A0${contextWalletCurrency}`}
         </TableCell>
         <TableCell align="center" sx={{ color: currentResultsFontColor }}>
           {row.current_funds_left}
-          {`\u00A0${contextBudgetCurrency}`}
+          {`\u00A0${contextWalletCurrency}`}
         </TableCell>
         <TableCell align="center">
           <Stack

@@ -6,7 +6,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import StyledButton from '../../app_infrastructure/components/StyledButton';
 import StyledModal from '../../app_infrastructure/components/StyledModal';
 import { getApiResponse } from '../../app_infrastructure/services/APIService';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../app_infrastructure/store/WalletContext';
 
 /**
  * CopyPreviousPredictionsButton component to display Modal with warning before copying previous Period ExpensePredicitons.
@@ -17,7 +17,7 @@ import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
  */
 const CopyPreviousPredictionsButton = ({ periodId, apiUrl, setAlert }) => {
   const [open, setOpen] = useState(false);
-  const { updateRefreshTimestamp } = useContext(BudgetContext);
+  const { updateRefreshTimestamp } = useContext(WalletContext);
   const { handleSubmit } = useForm();
 
   /**

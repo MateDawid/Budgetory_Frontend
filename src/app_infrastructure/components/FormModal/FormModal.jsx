@@ -7,7 +7,7 @@ import SelectFormField from './SelectFormField';
 import InputFormField from './InputFormField';
 import ApiError from '../../utils/ApiError';
 import { useContext } from 'react';
-import { BudgetContext } from '../../store/BudgetContext';
+import { WalletContext } from '../../store/WalletContext';
 
 /**
  * FormModal component for displaying add/edit form.
@@ -32,7 +32,7 @@ const FormModal = ({
   const { register, handleSubmit, reset, control, setValue } = useForm();
   const [fieldErrors, setFieldErrors] = useState({});
   const [nonFieldErrors, setNonFieldErrors] = useState(null);
-  const { updateRefreshTimestamp } = useContext(BudgetContext);
+  const { updateRefreshTimestamp } = useContext(WalletContext);
 
   const onSubmit = async (data) => {
     setFieldErrors({});

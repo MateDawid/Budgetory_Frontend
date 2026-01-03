@@ -1,24 +1,24 @@
 import * as React from 'react';
 import { Box, Card, List, Divider } from '@mui/material';
 import RightbarItem from './RightbarItem';
-import BudgetSelector from './BudgetSelector';
+import WalletSelector from './WalletSelector';
 import { useContext, useEffect, useState } from 'react';
-import { BudgetContext } from '../store/BudgetContext';
+import { WalletContext } from '../store/WalletContext';
 import { AlertContext } from '../store/AlertContext';
 import { getApiObjectsList } from '../services/APIService';
 
 /**
- * Rightbar component to display BudgetSelector and Deposits balances on right side of screen
+ * Rightbar component to display WalletSelector and Deposits balances on right side of screen
  */
 const Rightbar = () => {
   const { setAlert } = useContext(AlertContext);
-  const { contextBudgetId, refreshTimestamp } = useContext(BudgetContext);
+  const { contextWalletId, refreshTimestamp } = useContext(WalletContext);
   const [deposits, setDeposits] = useState([]);
 
   useEffect(() => {
-    const loadBudgetDeposits = async () => {
+    const loadWalletDeposits = async () => {
       if (
-        !contextBudgetId ||
+        !contextWalletId ||
         ['/login', '/register'].includes(window.location.pathname)
       ) {
         setAlert(null);
@@ -26,7 +26,7 @@ const Rightbar = () => {
       }
       try {
         const response = await getApiObjectsList(
-          `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/?ordering=name`
+          `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits/?ordering=name`
         );
         setDeposits(response);
       } catch (error) {
@@ -34,8 +34,8 @@ const Rightbar = () => {
         setDeposits([]);
       }
     };
-    loadBudgetDeposits();
-  }, [contextBudgetId, refreshTimestamp]);
+    loadWalletDeposits();
+  }, [contextWalletId, refreshTimestamp]);
 
   return (
     <Box width={240} sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}>
@@ -54,7 +54,7 @@ const Rightbar = () => {
             alignItems="center"
             pt={2}
           >
-            <BudgetSelector />
+            <WalletSelector />
             <Divider variant="middle" />
             <List sx={{ width: '100%' }}>
               {deposits.map((deposit) => (

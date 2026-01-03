@@ -8,7 +8,7 @@ import {
 } from '../../app_infrastructure/components/DataGrid/utils/FilterHandlers';
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
 import { AlertContext } from '../../app_infrastructure/store/AlertContext';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../app_infrastructure/store/WalletContext';
 import StyledDataGrid from '../../app_infrastructure/components/DataGrid/StyledDataGrid';
 import getSortFieldMapping from '../../app_infrastructure/components/DataGrid/utils/getSortFieldMapping';
 import StyledGridActionsCellItem from '../../app_infrastructure/components/DataGrid/StyledGridActionsCellItem';
@@ -30,10 +30,10 @@ const CategoryDataGrid = () => {
   const navigate = useNavigate();
   // Contexts
   const { setAlert } = useContext(AlertContext);
-  const { contextBudgetId, refreshTimestamp } = useContext(BudgetContext);
+  const { contextWalletId, refreshTimestamp } = useContext(WalletContext);
 
   // API URL
-  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?ordering=category_type,priority,name`;
+  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/categories/?ordering=category_type,priority,name`;
 
   // Data rows
   const [rows, setRows] = useState([]);
@@ -66,7 +66,7 @@ const CategoryDataGrid = () => {
   useEffect(() => {
     async function getDeposits() {
       const response = await getApiObjectsList(
-        `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`
+        `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits/`
       );
       setDepositOptions(response);
     }
@@ -83,13 +83,13 @@ const CategoryDataGrid = () => {
       setPriorityOptions(priorityResponse.results);
     }
 
-    if (!contextBudgetId) {
+    if (!contextWalletId) {
       return;
     }
     getDeposits();
     getCategoryTypes();
     getPriorities();
-  }, [contextBudgetId]);
+  }, [contextWalletId]);
 
   const columns = [
     {
@@ -185,7 +185,7 @@ const CategoryDataGrid = () => {
    */
   useEffect(() => {
     const loadData = async () => {
-      if (!contextBudgetId) {
+      if (!contextWalletId) {
         setLoading(false);
         return;
       }
@@ -204,12 +204,12 @@ const CategoryDataGrid = () => {
         setLoading(false);
       }
     };
-    if (!contextBudgetId) {
+    if (!contextWalletId) {
       return;
     }
     loadData();
   }, [
-    contextBudgetId,
+    contextWalletId,
     paginationModel,
     sortModel,
     filterModel,

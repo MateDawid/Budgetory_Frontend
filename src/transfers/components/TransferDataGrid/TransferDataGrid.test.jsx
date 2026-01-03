@@ -3,7 +3,7 @@ import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import TransferDataGrid from './TransferDataGrid';
 import { AlertContext } from '../../../app_infrastructure/store/AlertContext';
-import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../../app_infrastructure/store/WalletContext';
 import { getApiObjectsList } from '../../../app_infrastructure/services/APIService';
 import TransferTypes from '../../utils/TransferTypes';
 import axios from 'axios';
@@ -124,17 +124,17 @@ jest.mock(
 
 describe('TransferDataGrid', () => {
   const mockSetAlert = jest.fn();
-  const mockContextBudgetId = 123;
-  const mockContextBudgetCurrency = 'USD';
+  const mockContextWalletId = 123;
+  const mockContextWalletCurrency = 'USD';
   const mockRefreshTimestamp = Date.now();
 
   const mockAlertContext = {
     setAlert: mockSetAlert,
   };
 
-  const mockBudgetContext = {
-    contextBudgetId: mockContextBudgetId,
-    contextBudgetCurrency: mockContextBudgetCurrency,
+  const mockWalletContext = {
+    contextWalletId: mockContextWalletId,
+    contextWalletCurrency: mockContextWalletCurrency,
     refreshTimestamp: mockRefreshTimestamp,
   };
 
@@ -189,9 +189,9 @@ describe('TransferDataGrid', () => {
   const renderComponent = (transferType = TransferTypes.INCOME) => {
     return render(
       <AlertContext.Provider value={mockAlertContext}>
-        <BudgetContext.Provider value={mockBudgetContext}>
+        <WalletContext.Provider value={mockWalletContext}>
           <TransferDataGrid transferType={transferType} />
-        </BudgetContext.Provider>
+        </WalletContext.Provider>
       </AlertContext.Provider>
     );
   };
@@ -329,17 +329,17 @@ describe('TransferDataGrid', () => {
       });
     });
 
-    test('does not fetch data when contextBudgetId is not set', () => {
-      const contextWithoutBudget = {
-        ...mockBudgetContext,
-        contextBudgetId: null,
+    test('does not fetch data when contextWalletId is not set', () => {
+      const contextWithoutWallet = {
+        ...mockWalletContext,
+        contextWalletId: null,
       };
 
       render(
         <AlertContext.Provider value={mockAlertContext}>
-          <BudgetContext.Provider value={contextWithoutBudget}>
+          <WalletContext.Provider value={contextWithoutWallet}>
             <TransferDataGrid transferType={TransferTypes.INCOME} />
-          </BudgetContext.Provider>
+          </WalletContext.Provider>
         </AlertContext.Provider>
       );
 
@@ -496,16 +496,16 @@ describe('TransferDataGrid', () => {
         expect(getApiObjectsList).toHaveBeenCalledTimes(5); // 4 options + 1 data
       });
 
-      const newBudgetContext = {
-        ...mockBudgetContext,
+      const newWalletContext = {
+        ...mockWalletContext,
         refreshTimestamp: Date.now() + 1000,
       };
 
       rerender(
         <AlertContext.Provider value={mockAlertContext}>
-          <BudgetContext.Provider value={newBudgetContext}>
+          <WalletContext.Provider value={newWalletContext}>
             <TransferDataGrid transferType={TransferTypes.INCOME} />
-          </BudgetContext.Provider>
+          </WalletContext.Provider>
         </AlertContext.Provider>
       );
 

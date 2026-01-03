@@ -8,7 +8,7 @@ class ApiError extends Error {
 
   /**
    * Generates message for ApiError.
-   * @param {string|object} apiErrors - ID of Budget to be deleted.
+   * @param {string|object} apiErrors - ID of Wallet to be deleted.
    * @return {string} Error message.
    */
   static getMessage(apiErrors) {

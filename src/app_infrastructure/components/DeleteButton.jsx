@@ -11,8 +11,8 @@ import DeleteModal from './DeleteModal';
  * @param {function|null} setDeletedObjectId - useState setter for refreshing objects list on object deleting.
  * @param {string|null} redirectOnSuccess - url to which redirect on delete success.
  * @param {boolean|null} isDisabled - disables Delete button.
- * @param {boolean} rightbarBudgetsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
- * @param {boolean} rightbarDepositsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
+ * @param {boolean} rightbarWalletsRefresh - Indicates if Rightbar Wallets should be refreshed after deleting an object
+ * @param {boolean} rightbarDepositsRefresh - Indicates if Rightbar Wallets should be refreshed after deleting an object
  */
 const DeleteButton = ({
   objectId,
@@ -21,7 +21,7 @@ const DeleteButton = ({
   setDeletedObjectId = null,
   redirectOnSuccess = null,
   isDisabled = null,
-  rightbarBudgetsRefresh = false,
+  rightbarWalletsRefresh = false,
   rightbarDepositsRefresh = false,
 }) => {
   const [open, setOpen] = useState(false);
@@ -45,7 +45,7 @@ const DeleteButton = ({
         objectDisplayName={objectDisplayName}
         message={`Deleting ${objectDisplayName} will cause removing all related objects. Do you want to continue?`}
         redirectOnSuccess={redirectOnSuccess}
-        rightbarBudgetsRefresh={rightbarBudgetsRefresh}
+        rightbarWalletsRefresh={rightbarWalletsRefresh}
         rightbarDepositsRefresh={rightbarDepositsRefresh}
       />
     </>

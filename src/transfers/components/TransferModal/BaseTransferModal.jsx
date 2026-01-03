@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import FormModal from '../../../app_infrastructure/components/FormModal/FormModal';
-import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../../app_infrastructure/store/WalletContext';
 import { getApiObjectsList } from '../../../app_infrastructure/services/APIService';
 import { IconButton, InputAdornment } from '@mui/material';
 import TransferTypes from '../../utils/TransferTypes';
@@ -24,8 +24,8 @@ export default function BaseTransferModal({
   callApi,
   editedTransfer = undefined,
 }) {
-  const { contextBudgetId, contextBudgetCurrency, refreshTimestamp } =
-    useContext(BudgetContext);
+  const { contextWalletId, contextWalletCurrency, refreshTimestamp } =
+    useContext(WalletContext);
 
   // Selectables
   const [categories, setCategories] = useState([]);
@@ -34,7 +34,7 @@ export default function BaseTransferModal({
   const [selectedDeposit, setSelectedDeposit] = useState(null);
 
   // Entity add form variables
-  const entityApiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/`;
+  const entityApiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/entities/`;
   const [entityFormOpen, setEntityFormOpen] = useState(false);
   const [entityAdded, setEntityAdded] = useState(0);
 
@@ -97,7 +97,7 @@ export default function BaseTransferModal({
         input: {
           endAdornment: (
             <InputAdornment position="end">
-              {contextBudgetCurrency}
+              {contextWalletCurrency}
             </InputAdornment>
           ),
         },
@@ -129,13 +129,13 @@ export default function BaseTransferModal({
   useEffect(() => {
     async function getDeposits() {
       const response = await getApiObjectsList(
-        `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/?ordering=deposit_type,name`
+        `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits/?ordering=deposit_type,name`
       );
       setDeposits(response);
     }
-    if (!contextBudgetId || !formOpen) return;
+    if (!contextWalletId || !formOpen) return;
     getDeposits();
-  }, [contextBudgetId, refreshTimestamp]);
+  }, [contextWalletId, refreshTimestamp]);
 
   /**
    * Fetches select options for Transfer entities objects from API.
@@ -143,13 +143,13 @@ export default function BaseTransferModal({
   useEffect(() => {
     async function getEntities() {
       const response = await getApiObjectsList(
-        `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?ordering=-is_deposit,name`
+        `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/entities/?ordering=-is_deposit,name`
       );
       setEntities(response);
     }
-    if (!contextBudgetId || !formOpen) return;
+    if (!contextWalletId || !formOpen) return;
     getEntities();
-  }, [contextBudgetId, refreshTimestamp, entityAdded]);
+  }, [contextWalletId, refreshTimestamp, entityAdded]);
 
   /**
    * Fetches select options for Transfer categories object from API.
@@ -167,16 +167,16 @@ export default function BaseTransferModal({
         filterModel['deposit'] = selectedDeposit;
       }
       const response = await getApiObjectsList(
-        `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/categories/`,
         {},
         {},
         filterModel
       );
       setCategories(response);
     }
-    if (!contextBudgetId || !formOpen) return;
+    if (!contextWalletId || !formOpen) return;
     getCategories();
-  }, [contextBudgetId, selectedDeposit, formOpen]);
+  }, [contextWalletId, selectedDeposit, formOpen]);
 
   return (
     <>

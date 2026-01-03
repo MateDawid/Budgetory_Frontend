@@ -1,6 +1,6 @@
 import { Box, Grid, Typography } from '@mui/material';
 import React, { useContext } from 'react';
-import { BudgetContext } from '../../store/BudgetContext';
+import { WalletContext } from '../../store/WalletContext';
 import ColouredLinearProgress from './ColouredLinearProgress';
 
 /**
@@ -11,7 +11,7 @@ export const NumericProgressWithLabel = ({
   maxValue,
   withCurrency = false,
 }) => {
-  const { contextBudgetCurrency } = useContext(BudgetContext);
+  const { contextWalletCurrency } = useContext(WalletContext);
 
   const getFontColor = () => {
     if (maxValue <= 0 && currentValue <= 0) {
@@ -34,8 +34,8 @@ export const NumericProgressWithLabel = ({
         <Grid size={7}>
           <Typography variant="body2" color={getFontColor()}>
             {currentValue}
-            {withCurrency ? `\u00A0${contextBudgetCurrency}` : ''} / {maxValue}
-            {withCurrency ? `\u00A0${contextBudgetCurrency}` : ''}
+            {withCurrency ? `\u00A0${contextWalletCurrency}` : ''} / {maxValue}
+            {withCurrency ? `\u00A0${contextWalletCurrency}` : ''}
           </Typography>
         </Grid>
       </Grid>

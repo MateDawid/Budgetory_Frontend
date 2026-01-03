@@ -8,7 +8,7 @@ import {
 import getSortFieldMapping from '../../app_infrastructure/components/DataGrid/utils/getSortFieldMapping';
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
 import { AlertContext } from '../../app_infrastructure/store/AlertContext';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../app_infrastructure/store/WalletContext';
 import StyledGridActionsCellItem from '../../app_infrastructure/components/DataGrid/StyledGridActionsCellItem';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -30,14 +30,14 @@ const pageSizeOptions = [10, 50, 100];
 /**
  * DataTable component for displaying DataGrid with data fetched from API.
  */
-const BudgetingPeriodDataGrid = () => {
+const PeriodDataGrid = () => {
   const navigate = useNavigate();
   // Contexts
   const { setAlert } = useContext(AlertContext);
-  const { contextBudgetId, contextBudgetCurrency, refreshTimestamp } =
-    useContext(BudgetContext);
+  const { contextWalletId, contextWalletCurrency, refreshTimestamp } =
+    useContext(WalletContext);
   // API URL
-  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`;
+  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/periods/`;
   // Data rows
   const [rows, setRows] = useState([]);
   const [rowCount, setRowCount] = useState(0);
@@ -138,7 +138,7 @@ const BudgetingPeriodDataGrid = () => {
             fontWeight: 'bold',
           }}
         >
-          {params.value} {contextBudgetCurrency}
+          {params.value} {contextWalletCurrency}
         </span>
       ),
     },
@@ -158,7 +158,7 @@ const BudgetingPeriodDataGrid = () => {
             // fontWeight: 'bold',
           }}
         >
-          {params.value} {contextBudgetCurrency}
+          {params.value} {contextWalletCurrency}
         </span>
       ),
     },
@@ -224,7 +224,7 @@ const BudgetingPeriodDataGrid = () => {
    */
   useEffect(() => {
     const loadData = async () => {
-      if (!contextBudgetId) {
+      if (!contextWalletId) {
         setLoading(false);
         return;
       }
@@ -243,12 +243,12 @@ const BudgetingPeriodDataGrid = () => {
         setLoading(false);
       }
     };
-    if (!contextBudgetId) {
+    if (!contextWalletId) {
       return;
     }
     loadData();
   }, [
-    contextBudgetId,
+    contextWalletId,
     paginationModel,
     sortModel,
     filterModel,
@@ -371,4 +371,4 @@ const BudgetingPeriodDataGrid = () => {
     </>
   );
 };
-export default BudgetingPeriodDataGrid;
+export default PeriodDataGrid;
