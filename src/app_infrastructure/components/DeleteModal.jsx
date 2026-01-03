@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { deleteApiObject } from '../services/APIService';
 import { useNavigate } from 'react-router-dom';
 import { AlertContext } from '../store/AlertContext';
-import { BudgetContext } from '../store/BudgetContext';
+import { WalletContext } from '../store/WalletContext';
 
 /**
  * DeleteModal to be displayed before deleting object.
@@ -19,8 +19,8 @@ import { BudgetContext } from '../store/BudgetContext';
  * @param {string} message - Message to be displayed on Modal.
  * @param {function|null} setDeletedObjectId - useState setter for refreshing objects list on object deleting.
  * @param {string|null} redirectOnSuccess - url to which redirect on delete success.
- * @param {boolean} rightbarBudgetsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
- * @param {boolean} rightbarDepositsRefresh - Indicates if Rightbar Budgets should be refreshed after deleting an object
+ * @param {boolean} rightbarWalletsRefresh - Indicates if Rightbar Wallets should be refreshed after deleting an object
+ * @param {boolean} rightbarDepositsRefresh - Indicates if Rightbar Wallets should be refreshed after deleting an object
  */
 const DeleteModal = ({
   open,
@@ -31,12 +31,12 @@ const DeleteModal = ({
   message,
   setDeletedObjectId = null,
   redirectOnSuccess = null,
-  rightbarBudgetsRefresh = false,
+  rightbarWalletsRefresh = false,
   rightbarDepositsRefresh = false,
 }) => {
   const navigate = useNavigate();
   const { setAlert } = useContext(AlertContext);
-  const { updateRefreshTimestamp } = useContext(BudgetContext);
+  const { updateRefreshTimestamp } = useContext(WalletContext);
   const { handleSubmit } = useForm();
 
   /**
@@ -52,7 +52,7 @@ const DeleteModal = ({
       if (redirectOnSuccess !== null) {
         navigate(redirectOnSuccess);
       }
-      if (rightbarBudgetsRefresh || rightbarDepositsRefresh) {
+      if (rightbarWalletsRefresh || rightbarDepositsRefresh) {
         updateRefreshTimestamp();
       }
     } catch (error) {

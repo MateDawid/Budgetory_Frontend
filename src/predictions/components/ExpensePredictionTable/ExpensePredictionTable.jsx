@@ -5,12 +5,12 @@ import TableHead from '@mui/material/TableHead';
 import Paper from '@mui/material/Paper';
 import React from 'react';
 import DraftPeriodPredictionRow from './DraftPeriodPredictionRow';
-import PeriodStatuses from '../../../budgets/utils/PeriodStatuses';
 import DraftPeriodPredictionHeader from './DraftPeriodPredictionHeader';
 import ActivePeriodPredictionHeader from './ActivePeriodPredictionHeader';
 import ActivePeriodPredictionRow from './ActivePeriodPredictionRow';
 import ClosedPeriodPredictionHeader from './ClosedPeriodPredictionHeader';
 import ClosedPeriodPredictionRow from './ClosedPeriodPredictionRow';
+import PeriodStatuses from '../../../periods/utils/PeriodStatuses';
 
 export default function ExpensePredictionTable({ predictions, periodStatus }) {
   let header = null;

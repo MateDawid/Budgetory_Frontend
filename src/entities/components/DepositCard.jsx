@@ -14,16 +14,16 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import StyledButton from '../../app_infrastructure/components/StyledButton';
 import DeleteButton from '../../app_infrastructure/components/DeleteButton';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../app_infrastructure/store/WalletContext';
 
 /**
- * DepositCard component to display single Deposit card on Budgets list.
+ * DepositCard component to display single Deposit card on Wallets list.
  * @param {string} apiUrl - Base API url to be called with DELETE method.
  * @param {object} object - Deposit object.
  * @param {function|null} setDeletedObjectId - DepositList useState setter for refreshing Deposit list on Deposit removing.
  */
 const DepositCard = ({ apiUrl, object, setDeletedObjectId }) => {
-  const { contextBudgetCurrency } = useContext(BudgetContext);
+  const { contextWalletCurrency } = useContext(WalletContext);
 
   return (
     <Card variant="outlined" sx={{ marginTop: 2, borderColor: '#D0D0D0' }}>
@@ -97,7 +97,7 @@ const DepositCard = ({ apiUrl, object, setDeletedObjectId }) => {
             Balance:
           </Typography>
           <Typography fontSize={12} color="secondary">
-            {object.balance} {contextBudgetCurrency}
+            {object.balance} {contextWalletCurrency}
           </Typography>
         </Stack>
         <Divider sx={{ width: '100%', mb: 1, mt: 1 }} />

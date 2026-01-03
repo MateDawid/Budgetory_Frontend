@@ -3,20 +3,20 @@ import Divider from '@mui/material/Divider';
 import { AlertContext } from '../../app_infrastructure/store/AlertContext';
 import { Typography, Paper, Box, Stack } from '@mui/material';
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
-import BudgetCard from '../components/BudgetCard';
+import WalletCard from '../components/WalletCard';
 import CreateButton from '../../app_infrastructure/components/CreateButton';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../app_infrastructure/store/WalletContext';
 
 /**
- * BudgetList component to display list of User Budgets.
+ * WalletList component to display list of User Wallets.
  */
-export default function BudgetList() {
-  document.title = 'Budgets';
-  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/`;
-  const { refreshTimestamp } = useContext(BudgetContext);
+export default function WalletList() {
+  document.title = 'Wallets';
+  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/`;
+  const { refreshTimestamp } = useContext(WalletContext);
   const { setAlert } = useContext(AlertContext);
-  const [deletedBudgetId, setDeletedBudgetId] = useState(null);
-  const [budgets, setBudgets] = useState([]);
+  const [deletedWalletId, setDeletedWalletId] = useState(null);
+  const [wallets, setWallets] = useState([]);
   const createFields = {
     name: {
       type: 'string',
@@ -38,19 +38,19 @@ export default function BudgetList() {
   };
 
   /**
-   * Fetches Budgets list from API.
+   * Fetches Wallets list from API.
    */
   useEffect(() => {
     const loadData = async () => {
       try {
-        const budgetsResponse = await getApiObjectsList(apiUrl);
-        setBudgets(budgetsResponse);
+        const walletsResponse = await getApiObjectsList(apiUrl);
+        setWallets(walletsResponse);
       } catch {
-        setAlert({ type: 'error', message: 'Failed to load Budgets.' });
+        setAlert({ type: 'error', message: 'Failed to load Wallets.' });
       }
     };
     loadData();
-  }, [refreshTimestamp, deletedBudgetId]);
+  }, [refreshTimestamp, deletedWalletId]);
 
   return (
     <Paper
@@ -68,24 +68,24 @@ export default function BudgetList() {
         mb={1}
       >
         <Typography variant="h4" sx={{ display: 'block', color: '#BD0000' }}>
-          Budgets
+          Wallets
         </Typography>
         <CreateButton
           fields={createFields}
           apiUrl={apiUrl}
-          objectType={'Budget'}
+          objectType={'Wallet'}
         />
       </Stack>
       <Divider />
       <Box
         sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start' }}
       >
-        {budgets.map((budget) => (
-          <Box key={budget.id} sx={{ width: 300, m: 1 }}>
-            <BudgetCard
-              budget={budget}
+        {wallets.map((wallet) => (
+          <Box key={wallet.id} sx={{ width: 300, m: 1 }}>
+            <WalletCard
+              wallet={wallet}
               apiUrl={apiUrl}
-              setDeletedBudgetId={setDeletedBudgetId}
+              setDeletedWalletId={setDeletedWalletId}
             />
           </Box>
         ))}

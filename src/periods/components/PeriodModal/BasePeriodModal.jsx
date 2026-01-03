@@ -2,12 +2,12 @@ import React from 'react';
 import FormModal from '../../../app_infrastructure/components/FormModal/FormModal';
 
 /**
- * BasePeriodModal component for displaying BudgetingPeriod form for adding and editing.
+ * BasePeriodModal component for displaying  Period form for adding and editing.
  * @param {object} props
  * @param {boolean} props.formOpen - Flag indicating if form is opened or not.
  * @param {function} props.setFormOpen - Setter for formOpen flag.
  * @param {function} props.callApi - Function to be called on form submit.
- * @param {object | undefined} [props.editedPeriod] - Edited BudgetingPeriod object.
+ * @param {object | undefined} [props.editedPeriod] - Edited  Period object.
  */
 export default function BasePeriodModal({
   formOpen,

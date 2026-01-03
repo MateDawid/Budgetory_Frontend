@@ -6,7 +6,7 @@ import TransferDataGrid from '../components/TransferDataGrid/TransferDataGrid';
 import TransferTypes from '../utils/TransferTypes';
 
 /**
- * ExpenseList component to display list of Budget EXPENSE Transfers.
+ * ExpenseList component to display list of Wallet EXPENSE Transfers.
  */
 export default function ExpenseList() {
   document.title = 'Expenses';

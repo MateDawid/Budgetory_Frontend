@@ -5,10 +5,9 @@ import './App.css';
 import BasePage from './app_infrastructure/pages/BasePage';
 import LoginForm from './app_users/pages/LoginForm';
 import RegisterForm from './app_users/pages/RegisterForm';
-import BudgetList from './budgets/pages/BudgetList';
+import WalletList from './wallets/pages/WalletList';
 import { AlertProvider } from './app_infrastructure/store/AlertContext';
-import BudgetingPeriodList from './budgets/pages/BudgetingPeriodList';
-import { ContextBudgetProvider } from './app_infrastructure/store/BudgetContext';
+import { ContextWalletProvider } from './app_infrastructure/store/WalletContext';
 import TransferCategoryList from './categories/pages/TransferCategoryList';
 import EntityList from './entities/pages/EntityList';
 import DepositList from './entities/pages/DepositList';
@@ -16,8 +15,7 @@ import IncomeList from './transfers/pages/IncomeList';
 import ExpenseList from './transfers/pages/ExpenseList';
 import { ThemeProvider } from '@mui/material';
 import { theme } from './theme';
-import BudgetDetail from './budgets/pages/BudgetDetail';
-import BudgetingPeriodDetail from './budgets/pages/BudgetingPeriodDetail';
+import WalletDetail from './wallets/pages/WalletDetail';
 import DepositDetail from './entities/pages/DepositDetail';
 import EntityDetail from './entities/pages/EntityDetail';
 import TransferCategoryDetail from './categories/pages/TransferCategoryDetail';
@@ -26,6 +24,8 @@ import LandingPage from './app_infrastructure/pages/LandingPage';
 import { DepositChoicesProvider } from './app_infrastructure/store/DepositChoicesContext';
 import { EntityChoicesProvider } from './app_infrastructure/store/EntityChoicesContext';
 import { PeriodChoicesProvider } from './app_infrastructure/store/PeriodChoicesContext';
+import PeriodList from './periods/pages/PeriodList';
+import PeriodDetail from './periods/pages/PeriodDetail';
 
 /**
  * App component handles routing of application.
@@ -34,7 +34,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <AlertProvider>
-        <ContextBudgetProvider>
+        <ContextWalletProvider>
           <Routes>
             <Route path="/" element={<BasePage />}>
               <Route
@@ -49,27 +49,27 @@ function App() {
                   </DepositChoicesProvider>
                 }
               />
-              <Route path="budgets">
-                <Route index element={<BudgetList />} />
+              <Route path="wallets">
+                <Route index element={<WalletList />} />
                 <Route
                   path=":id"
                   element={
                     <DepositChoicesProvider>
                       <PeriodChoicesProvider>
-                        <BudgetDetail />
+                        <WalletDetail />
                       </PeriodChoicesProvider>
                     </DepositChoicesProvider>
                   }
                 />
               </Route>
               <Route path="periods">
-                <Route index element={<BudgetingPeriodList />} />
+                <Route index element={<PeriodList />} />
                 <Route
                   path=":id"
                   element={
                     <DepositChoicesProvider>
                       <PeriodChoicesProvider>
-                        <BudgetingPeriodDetail />
+                        <PeriodDetail />
                       </PeriodChoicesProvider>
                     </DepositChoicesProvider>
                   }
@@ -112,7 +112,7 @@ function App() {
             <Route path="login" element={<LoginForm />} />
             <Route path="register" element={<RegisterForm />} />
           </Routes>
-        </ContextBudgetProvider>
+        </ContextWalletProvider>
       </AlertProvider>
     </ThemeProvider>
   );

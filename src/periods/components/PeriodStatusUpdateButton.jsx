@@ -10,7 +10,7 @@ import StyledButton from '../../app_infrastructure/components/StyledButton';
 import StyledModal from '../../app_infrastructure/components/StyledModal';
 import PeriodStatuses from '../utils/PeriodStatuses';
 import onEditableFieldSave from '../../app_infrastructure/utils/onEditableFieldSave';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../app_infrastructure/store/WalletContext';
 
 const statusesMapping = {
   [PeriodStatuses.ACTIVE]: {
@@ -30,13 +30,13 @@ const statusesMapping = {
 };
 
 /**
- * BudgetingPeriodCloseButton component to display Modal with warning before closing BudgetingPeriod.
+ *  PeriodCloseButton component to display Modal with warning before closing  Period.
  * @param {string} objectId - API ID of object to be closed.
- * @param {number} newPeriodStatus - Status of BudgetingPeriod to be set.
+ * @param {number} newPeriodStatus - Status of  Period to be set.
  * @param {string} apiUrl - Base API url to be called with PATCH method.
  * @param {string} objectName - Name of object to be closed.
  */
-const BudgetingPeriodStatusUpdateButton = ({
+const PeriodStatusUpdateButton = ({
   objectId,
   newPeriodStatus,
   apiUrl,
@@ -45,10 +45,10 @@ const BudgetingPeriodStatusUpdateButton = ({
   const [open, setOpen] = useState(false);
   const { handleSubmit } = useForm();
   const { setAlert } = useContext(AlertContext);
-  const { updateRefreshTimestamp } = useContext(BudgetContext);
+  const { updateRefreshTimestamp } = useContext(WalletContext);
 
   /**
-   * Function calling API to close BudgetingPeriod.
+   * Function calling API to close  Period.
    */
   const onSubmit = async () => {
     try {
@@ -113,4 +113,4 @@ const BudgetingPeriodStatusUpdateButton = ({
   );
 };
 
-export default BudgetingPeriodStatusUpdateButton;
+export default PeriodStatusUpdateButton;

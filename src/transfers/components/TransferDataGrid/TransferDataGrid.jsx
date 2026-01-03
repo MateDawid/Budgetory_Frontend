@@ -9,7 +9,7 @@ import {
 } from '../../../app_infrastructure/components/DataGrid/utils/FilterHandlers';
 import { getApiObjectsList } from '../../../app_infrastructure/services/APIService';
 import { AlertContext } from '../../../app_infrastructure/store/AlertContext';
-import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../../app_infrastructure/store/WalletContext';
 import StyledDataGrid from '../../../app_infrastructure/components/DataGrid/StyledDataGrid';
 import getSortFieldMapping from '../../../app_infrastructure/components/DataGrid/utils/getSortFieldMapping';
 import StyledGridActionsCellItem from '../../../app_infrastructure/components/DataGrid/StyledGridActionsCellItem';
@@ -29,17 +29,17 @@ const pageSizeOptions = [10, 50, 100];
 const TransferDataGrid = ({ transferType }) => {
   // Contexts
   const { setAlert } = useContext(AlertContext);
-  const { contextBudgetId, contextBudgetCurrency, refreshTimestamp } =
-    useContext(BudgetContext);
+  const { contextWalletId, contextWalletCurrency, refreshTimestamp } =
+    useContext(WalletContext);
 
   // API URL
   let apiUrl;
   switch (transferType) {
     case TransferTypes.INCOME:
-      apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/incomes/`;
+      apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/incomes/`;
       break;
     case TransferTypes.EXPENSE:
-      apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expenses/`;
+      apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/expenses/`;
       break;
   }
 
@@ -77,7 +77,7 @@ const TransferDataGrid = ({ transferType }) => {
     async function getPeriodsChoices() {
       try {
         const response = await getApiObjectsList(
-          `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`
+          `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/periods/`
         );
         setPeriodOptions(response);
       } catch {
@@ -86,7 +86,7 @@ const TransferDataGrid = ({ transferType }) => {
     }
     async function getCategories() {
       const response = await getApiObjectsList(
-        `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/?ordering=owner,name&category_type=${transferType === TransferTypes.EXPENSE ? '2' : '1'}`
+        `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/categories/?ordering=owner,name&category_type=${transferType === TransferTypes.EXPENSE ? '2' : '1'}`
       );
       setCategoryOptions([
         { value: -1, label: '[Without Category]' },
@@ -95,24 +95,24 @@ const TransferDataGrid = ({ transferType }) => {
     }
     async function getDeposits() {
       const response = await getApiObjectsList(
-        `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`
+        `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits/`
       );
       setDepositOptions(response);
     }
     async function getEntities() {
       const response = await getApiObjectsList(
-        `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?ordering=is_deposit,name`
+        `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/entities/?ordering=is_deposit,name`
       );
       setEntityOptions([{ value: -1, label: '[Without Entity]' }, ...response]);
     }
-    if (!contextBudgetId) {
+    if (!contextWalletId) {
       return;
     }
     getPeriodsChoices();
     getCategories();
     getDeposits();
     getEntities();
-  }, [contextBudgetId]);
+  }, [contextWalletId]);
 
   const columns = [
     {
@@ -211,7 +211,7 @@ const TransferDataGrid = ({ transferType }) => {
             fontWeight: 'bold',
           }}
         >
-          {params.value} {contextBudgetCurrency}
+          {params.value} {contextWalletCurrency}
         </span>
       ),
     },
@@ -268,7 +268,7 @@ const TransferDataGrid = ({ transferType }) => {
    */
   useEffect(() => {
     const loadData = async () => {
-      if (!contextBudgetId) {
+      if (!contextWalletId) {
         setLoading(false);
         return;
       }
@@ -287,12 +287,12 @@ const TransferDataGrid = ({ transferType }) => {
         setLoading(false);
       }
     };
-    if (!contextBudgetId) {
+    if (!contextWalletId) {
       return;
     }
     loadData();
   }, [
-    contextBudgetId,
+    contextWalletId,
     paginationModel,
     sortModel,
     filterModel,
