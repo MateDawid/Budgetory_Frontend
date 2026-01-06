@@ -181,7 +181,6 @@ const PeriodDataGrid = () => {
       headerName: 'Actions',
       cellClassName: 'actions',
       getActions: (params) => {
-        console.log(params);
         if (params.row.status === 1) {
           return [
             <StyledGridActionsCellItem
@@ -238,7 +237,7 @@ const PeriodDataGrid = () => {
         setRows(rowsResponse.results);
         setRowCount(rowsResponse.count);
       } catch {
-        setAlert({ type: 'error', message: 'Failed to load table rows.' });
+        setAlert({ type: 'error', message: 'Failed to load Periods.' });
       } finally {
         setLoading(false);
       }

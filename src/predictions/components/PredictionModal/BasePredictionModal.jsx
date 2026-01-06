@@ -106,7 +106,6 @@ export default function BasePredictionModal({
    */
   useEffect(() => {
     async function getCategories() {
-      console.log('getCategories');
       const filterModel = {
         category_type: CategoryTypes.EXPENSE,
         ordering: 'priority',

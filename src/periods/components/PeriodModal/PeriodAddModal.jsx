@@ -5,7 +5,7 @@ import { createApiObject } from '../../../app_infrastructure/services/APIService
 import BasePeriodModal from './BasePeriodModal';
 
 /**
- * TransferAddModal component for displaying add Transfer form.
+ * PeriodAddModal component for displaying add Transfer form.
  * @param {object} props
  * @param {string} props.apiUrl - URL to be called on form submit.
  * @param {boolean} props.formOpen - Flag indicating if form is opened or not.

@@ -199,7 +199,7 @@ const CategoryDataGrid = () => {
         setRows(rowsResponse.results);
         setRowCount(rowsResponse.count);
       } catch {
-        setAlert({ type: 'error', message: 'Failed to load table rows.' });
+        setAlert({ type: 'error', message: 'Failed to load Categories.' });
       } finally {
         setLoading(false);
       }

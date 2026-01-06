@@ -319,12 +319,12 @@ describe('TransferDataGrid', () => {
         return Promise.resolve([]);
       });
 
-      renderComponent();
+      renderComponent(TransferTypes.INCOME);
 
       await waitFor(() => {
         expect(mockSetAlert).toHaveBeenCalledWith({
           type: 'error',
-          message: 'Failed to load table rows.',
+          message: 'Failed to load Incomes.',
         });
       });
     });
