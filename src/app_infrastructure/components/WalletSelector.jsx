@@ -52,14 +52,14 @@ const WalletSelector = () => {
         );
         if (contextWallet) {
           setSelectedWallet(contextWallet);
-          setContextWalletCurrency(contextWallet.currency);
+          setContextWalletCurrency(contextWallet.currency_name);
         } else {
           setSelectedWallet(apiResponse[0]);
           setContextWalletId(apiResponse[0].id);
           localStorage.setItem('budgetory.contextWallet', apiResponse[0].id);
           localStorage.setItem(
             'budgetory.contextWalletCurrency',
-            apiResponse[0].currency
+            apiResponse[0].currency_name
           );
         }
       } catch {
@@ -79,11 +79,11 @@ const WalletSelector = () => {
       wallets.find((wallet) => wallet.id === event.target.value.id)
     );
     setContextWalletId(event.target.value.id);
-    setContextWalletCurrency(event.target.value.currency);
+    setContextWalletCurrency(event.target.value.currency_name);
     localStorage.setItem('budgetory.contextWallet', event.target.value.id);
     localStorage.setItem(
       'budgetory.contextWalletCurrency',
-      event.target.value.currency
+      event.target.value.currency_name
     );
     localStorage.removeItem('budgetory.periodFilter');
   };
