@@ -90,7 +90,7 @@ const WalletDepositsDataGrid = ({
         setRows(rowsResponse.results);
         setRowCount(rowsResponse.count);
       } catch {
-        setAlert({ type: 'error', message: 'Failed to load table rows.' });
+        setAlert({ type: 'error', message: 'Failed to load Wallet Deposits.' });
       } finally {
         setLoading(false);
       }

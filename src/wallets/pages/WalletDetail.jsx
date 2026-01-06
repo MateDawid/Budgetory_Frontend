@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import Divider from '@mui/material/Divider';
 import { AlertContext } from '../../app_infrastructure/store/AlertContext';
 import { Typography, Paper, Box, Stack } from '@mui/material';
-import { getApiObjectDetails } from '../../app_infrastructure/services/APIService';
+import { getApiObjectDetails, getApiObjectsList } from '../../app_infrastructure/services/APIService';
 import { useNavigate, useParams } from 'react-router-dom';
 import EditableTextField from '../../app_infrastructure/components/EditableTextField';
 import DeleteButton from '../../app_infrastructure/components/DeleteButton';
@@ -22,6 +22,7 @@ export default function WalletDetail() {
   const { updateRefreshTimestamp } = useContext(WalletContext);
   const { setAlert } = useContext(AlertContext);
   const [walletData, setWalletData] = useState([]);
+  const [currencyOptions, setCurrencyOptions] = useState([]);
   const depositsColumns = [
     {
       field: 'name',
@@ -67,6 +68,19 @@ export default function WalletDetail() {
       },
     },
   ];
+
+  /**
+   * Fetches select options for Category select fields from API.
+   */
+  useEffect(() => {
+    async function getCurrencies() {
+      const response = await getApiObjectsList(
+        `${process.env.REACT_APP_BACKEND_URL}/api/currencies/`
+      );
+      setCurrencyOptions(response);
+    }
+    getCurrencies();
+  }, []);
 
   /**
    * Fetches Wallet details from API.
@@ -151,10 +165,14 @@ export default function WalletDetail() {
           />
           <EditableTextField
             label="Currency"
-            initialValue={walletData.currency}
             apiFieldName="currency"
-            onSave={onSave}
+            initialValue={walletData.currency}
             fullWidth
+            onSave={onSave}
+            required
+            type="select"
+            options={currencyOptions}
+            select
           />
         </Stack>
         <EditableTextField
