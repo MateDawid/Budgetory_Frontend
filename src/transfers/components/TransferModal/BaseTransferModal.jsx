@@ -129,7 +129,7 @@ export default function BaseTransferModal({
   useEffect(() => {
     async function getDeposits() {
       const response = await getApiObjectsList(
-        `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits/?ordering=deposit_type,name`
+        `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits/?ordering=deposit_type,name&fields=value,label`
       );
       setDeposits(response);
     }

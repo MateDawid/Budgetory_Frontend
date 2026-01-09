@@ -98,7 +98,7 @@ export default function ExpensePredictionsPage() {
 
     async function getDeposits() {
       const depositsResponse = await getApiObjectsList(
-        `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits/`
+        `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits/?ordering=name&fields=value,label`
       );
       setDeposits(depositsResponse);
     }

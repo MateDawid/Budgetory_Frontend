@@ -26,7 +26,7 @@ const Rightbar = () => {
       }
       try {
         const response = await getApiObjectsList(
-          `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits/?ordering=name`
+          `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits/?ordering=name&fields=id,name,balance`
         );
         setDeposits(response);
       } catch (error) {

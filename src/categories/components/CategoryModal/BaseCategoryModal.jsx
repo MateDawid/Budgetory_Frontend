@@ -67,7 +67,7 @@ export default function BaseCategoryModal({
   useEffect(() => {
     async function getDeposits() {
       const response = await getApiObjectsList(
-        `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits/`
+        `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits/?ordering=name&fields=value,label`
       );
       setDepositOptions(response);
     }

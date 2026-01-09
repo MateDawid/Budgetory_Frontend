@@ -45,7 +45,7 @@ const EntityDataGrid = ({ entityType }) => {
       detailUrl = '/entities/';
       break;
     case EntityTypes.DEPOSIT:
-      apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits/`;
+      apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits/?fields=id,name,description,is_active,balance`;
       detailUrl = '/deposits/';
       break;
   }

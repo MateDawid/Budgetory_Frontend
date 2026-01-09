@@ -18,7 +18,7 @@ export default function DepositDetail() {
   const navigate = useNavigate();
   const { contextWalletId, refreshTimestamp, updateRefreshTimestamp } =
     useContext(WalletContext);
-  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits/`;
+  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits/?fields=id,name,description,is_active`;
   const { setAlert } = useContext(AlertContext);
   const [objectData, setObjectData] = useState([]);
 
@@ -28,7 +28,12 @@ export default function DepositDetail() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const apiResponse = await getApiObjectDetails(apiUrl, id);
+        const apiResponse = await getApiObjectDetails(apiUrl, id, [
+          'id',
+          'name',
+          'description',
+          'is_active',
+        ]);
         setObjectData(apiResponse);
         document.title = `Deposit • ${apiResponse.name}`;
       } catch {

@@ -149,7 +149,7 @@ describe('BasePredictionModal', () => {
 
       await waitFor(() => {
         expect(getApiObjectsList).toHaveBeenCalledWith(
-          `${process.env.REACT_APP_BACKEND_URL}/api/wallets/wallet-123/deposits/?ordering=deposit_type,name`
+          `${process.env.REACT_APP_BACKEND_URL}/api/wallets/wallet-123/deposits/?ordering=deposit_type,name&fields=value,label`
         );
       });
     });
