@@ -8,7 +8,7 @@ import EditableTextField from '../../app_infrastructure/components/EditableTextF
 import DeleteButton from '../../app_infrastructure/components/DeleteButton';
 import onEditableFieldSave from '../../app_infrastructure/utils/onEditableFieldSave';
 import { WalletContext } from '../../app_infrastructure/store/WalletContext';
-import WalletDepositsTable from '../components/WalletDepositsDataGrid';
+import WalletDepositsDataGrid from '../components/WalletDepositsDataGrid';
 import DepositsInPeriodsChart from '../../charts/components/DepositsInPeriodsChart';
 
 /**
@@ -23,51 +23,6 @@ export default function WalletDetail() {
   const { setAlert } = useContext(AlertContext);
   const [walletData, setWalletData] = useState([]);
   const [currencyOptions, setCurrencyOptions] = useState([]);
-  const depositsColumns = [
-    {
-      field: 'name',
-      type: 'string',
-      headerName: 'Name',
-      headerAlign: 'center',
-      align: 'left',
-      flex: 2,
-      filterable: true,
-      sortable: true,
-    },
-    {
-      field: 'description',
-      type: 'string',
-      headerName: 'Description',
-      headerAlign: 'center',
-      align: 'left',
-      flex: 3,
-      filterable: true,
-      sortable: false,
-    },
-    {
-      field: 'is_active',
-      type: 'boolean',
-      headerName: 'Active',
-      headerAlign: 'center',
-      align: 'center',
-      flex: 1,
-      filterable: true,
-      sortable: false,
-    },
-    {
-      field: 'balance',
-      type: 'number',
-      headerName: 'Balance',
-      headerAlign: 'center',
-      align: 'center',
-      flex: 1,
-      filterable: true,
-      sortable: true,
-      valueFormatter: (value) => {
-        return value !== undefined ? `${value} ${walletData.currency}` : '';
-      },
-    },
-  ];
 
   /**
    * Fetches select options for Category select fields from API.
@@ -191,12 +146,7 @@ export default function WalletDetail() {
         </Typography>
         <Divider sx={{ marginBottom: 2 }} />
         <DepositsInPeriodsChart />
-        <WalletDepositsTable
-          columns={depositsColumns}
-          apiUrl={`${process.env.REACT_APP_BACKEND_URL}/api/wallets/${id}/deposits/`}
-          clientUrl="/deposits/"
-          height={300}
-        />
+        <WalletDepositsDataGrid />
       </Box>
     </Paper>
   );
