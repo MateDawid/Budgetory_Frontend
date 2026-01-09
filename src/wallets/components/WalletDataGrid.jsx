@@ -76,6 +76,35 @@ const WalletDataGrid = () => {
       sortable: false,
       valueOptions: currencyOptions,
     },
+    {
+      field: 'balance',
+      type: 'number',
+      headerName: 'Balance',
+      headerAlign: 'center',
+      align: 'center',
+      flex: 1,
+      filterable: false,
+      sortable: false,
+      renderCell: (params) => (
+        <span
+          style={{
+            color: params.value < 0 ? '#BD0000' : '#008000',
+          }}
+        >
+          {params.value} {params.row.currency_name}
+        </span>
+      ),
+    },
+    {
+      field: 'deposits_count',
+      type: 'number',
+      headerName: 'Deposits',
+      headerAlign: 'center',
+      align: 'center',
+      flex: 1,
+      filterable: false,
+      sortable: false,
+    },
   ];
 
   const extendedColumns = [
