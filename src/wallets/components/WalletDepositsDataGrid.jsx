@@ -16,20 +16,12 @@ import StyledGridActionsCellItem from '../../app_infrastructure/components/DataG
 const pageSizeOptions = [10, 50, 100];
 
 /**
- * DataTable component for displaying DataGrid with data fectched from API.
- * @param {object} props
- * @param {object} props.columns - Columns settings.
- * @param {object} props.apiUrl - Base API url for fetching data.
- * @param {object} props.clientUrl - Frontend base url for redirects in readOnly mode.
- * @param {object} props.height - Height of DataTable.
+ * WalletDepositsDataGrid component for displaying DataGrid with data fectched from API.
  */
-const WalletDepositsDataGrid = ({
-  columns,
-  apiUrl,
-  clientUrl = null,
-  height = 600,
-}) => {
+const WalletDepositsDataGrid = () => {
   const navigate = useNavigate();
+  const { contextWalletId, contextWalletCurrency } = useContext(WalletContext);
+  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits/?fields=id,name,description,balance,wallet_percentage`;
   const [rows, setRows] = useState([]);
   const [rowCount, setRowCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -40,7 +32,55 @@ const WalletDepositsDataGrid = ({
   const [sortModel, setSortModel] = React.useState({});
   const [filterModel, setFilterModel] = React.useState({ items: [] });
   const { setAlert } = useContext(AlertContext);
-  const { contextWalletId } = useContext(WalletContext);
+
+  const columns = [
+    {
+      field: 'name',
+      type: 'string',
+      headerName: 'Name',
+      headerAlign: 'center',
+      align: 'left',
+      flex: 2,
+      filterable: true,
+      sortable: true,
+    },
+    {
+      field: 'description',
+      type: 'string',
+      headerName: 'Description',
+      headerAlign: 'center',
+      align: 'left',
+      flex: 3,
+      filterable: true,
+      sortable: false,
+    },
+    {
+      field: 'balance',
+      type: 'number',
+      headerName: 'Balance',
+      headerAlign: 'center',
+      align: 'center',
+      flex: 1,
+      filterable: true,
+      sortable: true,
+      valueFormatter: (value) => {
+        return value !== undefined ? `${value} ${contextWalletCurrency}` : '';
+      },
+    },
+    {
+      field: 'wallet_percentage',
+      type: 'number',
+      headerName: 'Wallet %',
+      headerAlign: 'center',
+      align: 'center',
+      flex: 1,
+      filterable: true,
+      sortable: true,
+      valueFormatter: (value) => {
+        return value !== undefined ? `${value} %` : '';
+      },
+    },
+  ];
 
   const visibleColumns = columns.filter((column) => !column.hide);
 
@@ -63,7 +103,7 @@ const WalletDepositsDataGrid = ({
             key={params.id}
             icon={<OpenInNewIcon />}
             label="Open"
-            onClick={() => navigate(`${clientUrl}${params.id}`)}
+            onClick={() => navigate(`/deposits/${params.id}`)}
           />,
         ];
       },
@@ -143,7 +183,7 @@ const WalletDepositsDataGrid = ({
           marginTop: 2,
           width: '100%',
           maxWidth: '100%',
-          height: height,
+          height: 300,
         }}
       >
         <StyledDataGrid
