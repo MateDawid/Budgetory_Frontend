@@ -2,7 +2,10 @@ import React, { useContext, useEffect, useState } from 'react';
 import Divider from '@mui/material/Divider';
 import { AlertContext } from '../../app_infrastructure/store/AlertContext';
 import { Typography, Paper, Box, Stack } from '@mui/material';
-import { getApiObjectDetails, getApiObjectsList } from '../../app_infrastructure/services/APIService';
+import {
+  getApiObjectDetails,
+  getApiObjectsList,
+} from '../../app_infrastructure/services/APIService';
 import { useNavigate, useParams } from 'react-router-dom';
 import EditableTextField from '../../app_infrastructure/components/EditableTextField';
 import DeleteButton from '../../app_infrastructure/components/DeleteButton';
