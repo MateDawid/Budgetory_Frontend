@@ -41,7 +41,7 @@ const WalletSelector = () => {
       try {
         const loadedWalletId = loadContextWallet();
         const apiResponse = await getApiObjectsList(
-          `${process.env.REACT_APP_BACKEND_URL}/api/wallets/`
+          `${process.env.REACT_APP_BACKEND_URL}/api/wallets/?fields=id,name,currency_name`
         );
         setWallets(apiResponse);
         if (apiResponse.length < 1) {

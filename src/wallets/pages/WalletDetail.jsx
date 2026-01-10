@@ -46,7 +46,11 @@ export default function WalletDetail() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const walletResponse = await getApiObjectDetails(apiUrl, id);
+        const walletResponse = await getApiObjectDetails(apiUrl, id, [
+          'name',
+          'currency',
+          'description',
+        ]);
         setWalletData(walletResponse);
         document.title = `Wallet • ${walletResponse.name}`;
       } catch {
