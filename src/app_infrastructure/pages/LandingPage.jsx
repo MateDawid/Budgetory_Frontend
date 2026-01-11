@@ -18,6 +18,8 @@ const StyledHeader = styled(Typography)(() => ({
  * LandingPage component displays home page of application.
  */
 function LandingPage() {
+  document.title = 'Budgetory';
+
   return (
     <>
       <Grid container spacing={2}>

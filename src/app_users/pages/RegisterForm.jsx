@@ -16,6 +16,8 @@ import { AlertContext } from '../../app_infrastructure/store/AlertContext';
  * validates the input, and performs registration process.
  */
 function RegisterForm() {
+  document.title = 'Budgetory';
+
   const navigate = useNavigate();
   const { register, handleSubmit } = useForm();
   const [formErrors, setFormErrors] = useState({});

@@ -15,6 +15,8 @@ import { AlertContext } from '../../app_infrastructure/store/AlertContext';
  * validates the input, and performs login process.
  */
 function LoginForm() {
+  document.title = 'Budgetory';
+
   const {
     register,
     handleSubmit,
