@@ -247,7 +247,7 @@ describe('ExpensePredictionsPage', () => {
       });
       await waitFor(() => {
         expect(getApiObjectsList).toHaveBeenCalledWith(
-          'http://localhost:8000/api/wallets/wallet-123/deposits/'
+          'http://localhost:8000/api/wallets/wallet-123/deposits/?ordering=name&fields=value,label'
         );
       });
     });
