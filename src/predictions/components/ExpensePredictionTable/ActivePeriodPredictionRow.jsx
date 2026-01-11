@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import React, { useContext, useState } from 'react';
 import ColouredLinearProgress from '../../../app_infrastructure/components/CustomLinearProgress/ColouredLinearProgress';
-import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../../app_infrastructure/store/WalletContext';
 import EditIcon from '@mui/icons-material/Edit';
 import SearchIcon from '@mui/icons-material/Search';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
@@ -25,7 +25,7 @@ import PredictionEditModal from '../PredictionModal/PredictionEditModal';
 export default function ActivePeriodPredictionRow({ row }) {
   const [editOpen, setEditOpen] = useState(false);
   const [inspectOpen, setInspectOpen] = useState(false);
-  const { contextBudgetCurrency } = useContext(BudgetContext);
+  const { contextWalletCurrency } = useContext(WalletContext);
 
   const fontColor = getFontColor(row.current_result, row.current_plan);
 
@@ -44,12 +44,12 @@ export default function ActivePeriodPredictionRow({ row }) {
           >
             <Typography variant="body2" color={fontColor}>
               {row.current_result}
-              {`\u00A0${contextBudgetCurrency}`} / {row.current_plan}
-              {`\u00A0${contextBudgetCurrency}`}
+              {`\u00A0${contextWalletCurrency}`} / {row.current_plan}
+              {`\u00A0${contextWalletCurrency}`}
             </Typography>
             {row.current_plan !== row.initial_plan && (
               <Tooltip
-                title={`Initial prediction value: ${row.initial_plan}\u00A0${contextBudgetCurrency}`}
+                title={`Initial prediction value: ${row.initial_plan}\u00A0${contextWalletCurrency}`}
                 placement="top"
               >
                 <HelpOutlineIcon />
@@ -59,7 +59,7 @@ export default function ActivePeriodPredictionRow({ row }) {
         </TableCell>
         <TableCell align="center" sx={{ color: fontColor }}>
           {row.current_funds_left}
-          {`\u00A0${contextBudgetCurrency}`}
+          {`\u00A0${contextWalletCurrency}`}
         </TableCell>
         <TableCell align="center">
           <Stack

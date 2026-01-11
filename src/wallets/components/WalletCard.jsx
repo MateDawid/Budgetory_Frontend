@@ -16,15 +16,15 @@ const truncateText = (text, maxLength) => {
 };
 
 /**
- * BudgetCard component to display single Budget card on Budgets list.
+ * WalletCard component to display single Wallet card on Wallets list.
  */
-const BudgetCard = ({ budget, apiUrl, setDeletedBudgetId }) => {
+const WalletCard = ({ wallet, apiUrl, setDeletedWalletId }) => {
   return (
     <Card variant="outlined" sx={{ marginTop: 2, borderColor: '#D0D0D0' }}>
       <Box
         sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
       >
-        <CardHeader title={truncateText(budget.name, 18)} />
+        <CardHeader title={truncateText(wallet.name, 18)} />
         <CardActions sx={{ width: '100%' }}>
           <Box
             sx={{
@@ -35,7 +35,7 @@ const BudgetCard = ({ budget, apiUrl, setDeletedBudgetId }) => {
           >
             <StyledButton
               component={Link}
-              to={`/budgets/${budget.id}`}
+              to={`/wallets/${wallet.id}`}
               variant="outlined"
               startIcon={<PageviewIcon />}
             >
@@ -43,10 +43,10 @@ const BudgetCard = ({ budget, apiUrl, setDeletedBudgetId }) => {
             </StyledButton>
             <DeleteButton
               apiUrl={apiUrl}
-              objectId={budget.id}
-              setDeletedObjectId={setDeletedBudgetId}
-              objectDisplayName="Budget"
-              rightbarBudgetsRefresh
+              objectId={wallet.id}
+              setDeletedObjectId={setDeletedWalletId}
+              objectDisplayName="Wallet"
+              rightbarWalletsRefresh
             />
           </Box>
         </CardActions>
@@ -55,4 +55,4 @@ const BudgetCard = ({ budget, apiUrl, setDeletedBudgetId }) => {
   );
 };
 
-export default BudgetCard;
+export default WalletCard;

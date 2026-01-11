@@ -2,84 +2,60 @@ import React, { useContext, useEffect, useState } from 'react';
 import Divider from '@mui/material/Divider';
 import { AlertContext } from '../../app_infrastructure/store/AlertContext';
 import { Typography, Paper, Box, Stack } from '@mui/material';
-import { getApiObjectDetails } from '../../app_infrastructure/services/APIService';
+import {
+  getApiObjectDetails,
+  getApiObjectsList,
+} from '../../app_infrastructure/services/APIService';
 import { useNavigate, useParams } from 'react-router-dom';
 import EditableTextField from '../../app_infrastructure/components/EditableTextField';
 import DeleteButton from '../../app_infrastructure/components/DeleteButton';
 import onEditableFieldSave from '../../app_infrastructure/utils/onEditableFieldSave';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
-import BudgetDepositsTable from '../components/BudgetDepositsDataGrid';
+import { WalletContext } from '../../app_infrastructure/store/WalletContext';
+import WalletDepositsDataGrid from '../components/WalletDepositsDataGrid';
 import DepositsInPeriodsChart from '../../charts/components/DepositsInPeriodsChart';
 
 /**
- * BudgetDetail component to display details of single Budget.
+ * WalletDetail component to display details of single Wallet.
  */
-export default function BudgetDetail() {
+export default function WalletDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/`;
+  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/`;
   const [updatedObjectParam, setUpdatedObjectParam] = useState(null);
-  const { updateRefreshTimestamp } = useContext(BudgetContext);
+  const { updateRefreshTimestamp } = useContext(WalletContext);
   const { setAlert } = useContext(AlertContext);
-  const [budgetData, setBudgetData] = useState([]);
-  const depositsColumns = [
-    {
-      field: 'name',
-      type: 'string',
-      headerName: 'Name',
-      headerAlign: 'center',
-      align: 'left',
-      flex: 2,
-      filterable: true,
-      sortable: true,
-    },
-    {
-      field: 'description',
-      type: 'string',
-      headerName: 'Description',
-      headerAlign: 'center',
-      align: 'left',
-      flex: 3,
-      filterable: true,
-      sortable: false,
-    },
-    {
-      field: 'is_active',
-      type: 'boolean',
-      headerName: 'Active',
-      headerAlign: 'center',
-      align: 'center',
-      flex: 1,
-      filterable: true,
-      sortable: false,
-    },
-    {
-      field: 'balance',
-      type: 'number',
-      headerName: 'Balance',
-      headerAlign: 'center',
-      align: 'center',
-      flex: 1,
-      filterable: true,
-      sortable: true,
-      valueFormatter: (value) => {
-        return value !== undefined ? `${value} ${budgetData.currency}` : '';
-      },
-    },
-  ];
+  const [walletData, setWalletData] = useState([]);
+  const [currencyOptions, setCurrencyOptions] = useState([]);
 
   /**
-   * Fetches Budget details from API.
+   * Fetches select options for Category select fields from API.
+   */
+  useEffect(() => {
+    async function getCurrencies() {
+      const response = await getApiObjectsList(
+        `${process.env.REACT_APP_BACKEND_URL}/api/currencies/`
+      );
+      setCurrencyOptions(response);
+    }
+    getCurrencies();
+  }, []);
+
+  /**
+   * Fetches Wallet details from API.
    */
   useEffect(() => {
     const loadData = async () => {
       try {
-        const budgetResponse = await getApiObjectDetails(apiUrl, id);
-        setBudgetData(budgetResponse);
-        document.title = `Budget • ${budgetResponse.name}`;
+        const walletResponse = await getApiObjectDetails(apiUrl, id, [
+          'name',
+          'currency',
+          'description',
+        ]);
+        setWalletData(walletResponse);
+        document.title = `Wallet • ${walletResponse.name}`;
       } catch {
-        setAlert({ type: 'error', message: 'Budget details loading failed.' });
-        navigate('/budgets');
+        setAlert({ type: 'error', message: 'Wallet details loading failed.' });
+        navigate('/wallets');
       }
     };
     loadData();
@@ -120,14 +96,14 @@ export default function BudgetDetail() {
         mb={1}
       >
         <Typography variant="h4" sx={{ display: 'block', color: '#BD0000' }}>
-          {budgetData.name}
+          {walletData.name}
         </Typography>
         <DeleteButton
           apiUrl={apiUrl}
           objectId={id}
-          objectDisplayName="Budget"
-          redirectOnSuccess={'/budgets'}
-          rightbarBudgetsRefresh
+          objectDisplayName="Wallet"
+          redirectOnSuccess={'/wallets'}
+          rightbarWalletsRefresh
         />
       </Stack>
       <Divider />
@@ -144,24 +120,28 @@ export default function BudgetDetail() {
         >
           <EditableTextField
             label="Name"
-            initialValue={budgetData.name}
+            initialValue={walletData.name}
             apiFieldName="name"
             onSave={onSave}
             fullWidth
           />
           <EditableTextField
             label="Currency"
-            initialValue={budgetData.currency}
             apiFieldName="currency"
-            onSave={onSave}
+            initialValue={walletData.currency}
             fullWidth
+            onSave={onSave}
+            required
+            type="select"
+            options={currencyOptions}
+            select
           />
         </Stack>
         <EditableTextField
           multiline
           rows={4}
           label="Description"
-          initialValue={budgetData.description}
+          initialValue={walletData.description}
           apiFieldName="description"
           onSave={onSave}
           fullWidth
@@ -173,12 +153,7 @@ export default function BudgetDetail() {
         </Typography>
         <Divider sx={{ marginBottom: 2 }} />
         <DepositsInPeriodsChart />
-        <BudgetDepositsTable
-          columns={depositsColumns}
-          apiUrl={`${process.env.REACT_APP_BACKEND_URL}/api/budgets/${id}/deposits/`}
-          clientUrl="/deposits/"
-          height={300}
-        />
+        <WalletDepositsDataGrid />
       </Box>
     </Paper>
   );

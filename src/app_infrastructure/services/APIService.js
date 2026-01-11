@@ -70,11 +70,15 @@ export const getApiObjectsList = async (
  * Function to fetch data from API detail endpoint.
  * @param {string} inputUrl - API list url.
  * @param {string} objectId - id of fetched object.
+ * @param {Array} fields - object fields to be returned.
  * @return {object} - JSON data with API response.
  */
-export const getApiObjectDetails = async (inputUrl, objectId) => {
+export const getApiObjectDetails = async (inputUrl, objectId, fields = []) => {
   const url = new URL(inputUrl);
-  const detailUrl = `${url.origin}${url.pathname}${objectId}/`;
+  let detailUrl = `${url.origin}${url.pathname}${objectId}/`;
+  if (fields.length > 0) {
+    detailUrl = `${detailUrl}?fields=${fields.join(',')}`;
+  }
   const requestOptions = {
     method: 'GET',
   };

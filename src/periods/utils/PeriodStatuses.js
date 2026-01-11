@@ -1,5 +1,5 @@
 /**
- * Mapping of BudgetingPeriod possible statuses.
+ * Mapping of  Period possible statuses.
  */
 const PeriodStatuses = {
   DRAFT: 1,

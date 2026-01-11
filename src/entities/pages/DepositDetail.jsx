@@ -5,7 +5,7 @@ import { Typography, Paper, Box, Stack, Chip } from '@mui/material';
 import { getApiObjectDetails } from '../../app_infrastructure/services/APIService';
 import { useNavigate, useParams } from 'react-router-dom';
 import EditableTextField from '../../app_infrastructure/components/EditableTextField';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../app_infrastructure/store/WalletContext';
 import DeleteButton from '../../app_infrastructure/components/DeleteButton';
 import onEditableFieldSave from '../../app_infrastructure/utils/onEditableFieldSave';
 import TransfersInPeriodsChart from '../../charts/components/TransfersInPeriodsChart';
@@ -16,19 +16,24 @@ import TransfersInPeriodsChart from '../../charts/components/TransfersInPeriodsC
 export default function DepositDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { contextBudgetId, refreshTimestamp, updateRefreshTimestamp } =
-    useContext(BudgetContext);
-  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`;
+  const { contextWalletId, refreshTimestamp, updateRefreshTimestamp } =
+    useContext(WalletContext);
+  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits/?fields=id,name,description,is_active`;
   const { setAlert } = useContext(AlertContext);
   const [objectData, setObjectData] = useState([]);
 
   /**
-   * Fetches Budgets list from API.
+   * Fetches Wallets list from API.
    */
   useEffect(() => {
     const loadData = async () => {
       try {
-        const apiResponse = await getApiObjectDetails(apiUrl, id);
+        const apiResponse = await getApiObjectDetails(apiUrl, id, [
+          'id',
+          'name',
+          'description',
+          'is_active',
+        ]);
         setObjectData(apiResponse);
         document.title = `Deposit • ${apiResponse.name}`;
       } catch {
@@ -36,11 +41,11 @@ export default function DepositDetail() {
         navigate('/entities');
       }
     };
-    if (!contextBudgetId) {
+    if (!contextWalletId) {
       return;
     }
     loadData();
-  }, [refreshTimestamp, contextBudgetId]);
+  }, [refreshTimestamp, contextWalletId]);
 
   /**
    * Function to save updated object via API call.

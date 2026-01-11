@@ -14,7 +14,7 @@ import {
 import getSortFieldMapping from '../../app_infrastructure/components/DataGrid/utils/getSortFieldMapping';
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
 import { AlertContext } from '../../app_infrastructure/store/AlertContext';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../app_infrastructure/store/WalletContext';
 import EntityAddModal from './EntityModal/EntityAddModal';
 import EntityEditModal from './EntityModal/EntityEditModal';
 import EntityDeleteModal from './EntityModal/EntityDeleteModal';
@@ -33,19 +33,19 @@ const EntityDataGrid = ({ entityType }) => {
   const navigate = useNavigate();
   // Contexts
   const { setAlert } = useContext(AlertContext);
-  const { contextBudgetId, contextBudgetCurrency, refreshTimestamp } =
-    useContext(BudgetContext);
+  const { contextWalletId, contextWalletCurrency, refreshTimestamp } =
+    useContext(WalletContext);
 
   // API URL
   let apiUrl;
   let detailUrl;
   switch (entityType) {
     case EntityTypes.ENTITY:
-      apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?is_deposit=false`;
+      apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/entities/?is_deposit=false`;
       detailUrl = '/entities/';
       break;
     case EntityTypes.DEPOSIT:
-      apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`;
+      apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits/?fields=id,name,description,is_active,balance`;
       detailUrl = '/deposits/';
       break;
   }
@@ -131,7 +131,7 @@ const EntityDataGrid = ({ entityType }) => {
             color: params.value < 0 ? '#BD0000' : '#008000',
           }}
         >
-          {params.value} {contextBudgetCurrency}
+          {params.value} {contextWalletCurrency}
         </span>
       ),
     });
@@ -184,7 +184,7 @@ const EntityDataGrid = ({ entityType }) => {
    */
   useEffect(() => {
     const loadData = async () => {
-      if (!contextBudgetId) {
+      if (!contextWalletId) {
         setLoading(false);
         return;
       }
@@ -198,17 +198,17 @@ const EntityDataGrid = ({ entityType }) => {
         setRows(rowsResponse.results);
         setRowCount(rowsResponse.count);
       } catch {
-        setAlert({ type: 'error', message: 'Failed to load table rows.' });
+        setAlert({ type: 'error', message: 'Failed to load Entities.' });
       } finally {
         setLoading(false);
       }
     };
-    if (!contextBudgetId) {
+    if (!contextWalletId) {
       return;
     }
     loadData();
   }, [
-    contextBudgetId,
+    contextWalletId,
     paginationModel,
     sortModel,
     filterModel,

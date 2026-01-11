@@ -1,6 +1,6 @@
 import { TableRow, TableCell, Stack, Typography } from '@mui/material';
 import React, { useContext } from 'react';
-import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../../app_infrastructure/store/WalletContext';
 import { getFontColor } from '../utils';
 import ColouredLinearProgress from '../../../app_infrastructure/components/CustomLinearProgress/ColouredLinearProgress';
 
@@ -10,7 +10,7 @@ import ColouredLinearProgress from '../../../app_infrastructure/components/Custo
  * @param {object} props.row - Table row object.
  */
 export default function PeriodResultsRow({ row }) {
-  const { contextBudgetCurrency } = useContext(BudgetContext);
+  const { contextWalletCurrency } = useContext(WalletContext);
 
   const predictionsFont = getFontColor(row.predictions_sum, row.period_balance);
   const expensesFont = getFontColor(row.period_expenses, row.predictions_sum);
@@ -27,8 +27,8 @@ export default function PeriodResultsRow({ row }) {
           }}
         >
           <Typography variant="body2" color={predictionsFont}>
-            {row.predictions_sum}&nbsp;{contextBudgetCurrency} /{' '}
-            {row.period_balance}&nbsp;{contextBudgetCurrency}
+            {row.predictions_sum}&nbsp;{contextWalletCurrency} /{' '}
+            {row.period_balance}&nbsp;{contextWalletCurrency}
           </Typography>
           <ColouredLinearProgress
             currentValue={row.predictions_sum}
@@ -40,7 +40,7 @@ export default function PeriodResultsRow({ row }) {
         align="center"
         sx={{ color: predictionsFont, fontWeight: 'bold' }}
       >
-        {row.funds_left_for_predictions}&nbsp;{contextBudgetCurrency}
+        {row.funds_left_for_predictions}&nbsp;{contextWalletCurrency}
       </TableCell>
       <TableCell align="center">
         <Stack
@@ -51,8 +51,8 @@ export default function PeriodResultsRow({ row }) {
           }}
         >
           <Typography variant="body2" color={expensesFont}>
-            {row.period_expenses}&nbsp;{contextBudgetCurrency} /{' '}
-            {row.predictions_sum}&nbsp;{contextBudgetCurrency}
+            {row.period_expenses}&nbsp;{contextWalletCurrency} /{' '}
+            {row.predictions_sum}&nbsp;{contextWalletCurrency}
           </Typography>
           <ColouredLinearProgress
             currentValue={row.period_expenses}
@@ -64,7 +64,7 @@ export default function PeriodResultsRow({ row }) {
         align="center"
         sx={{ color: expensesFont, fontWeight: 'bold' }}
       >
-        {row.funds_left_for_expenses}&nbsp;{contextBudgetCurrency}
+        {row.funds_left_for_expenses}&nbsp;{contextWalletCurrency}
       </TableCell>
     </TableRow>
   );
