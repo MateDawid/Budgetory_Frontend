@@ -37,7 +37,7 @@ const PeriodDataGrid = () => {
   const { contextWalletId, contextWalletCurrency, refreshTimestamp } =
     useContext(WalletContext);
   // API URL
-  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/periods/`;
+  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/periods/?fields=id,name,status,date_start,date_end,expenses_sum,incomes_sum`;
   // Data rows
   const [rows, setRows] = useState([]);
   const [rowCount, setRowCount] = useState(0);
@@ -125,19 +125,14 @@ const PeriodDataGrid = () => {
     {
       field: 'expenses_sum',
       type: 'number',
-      headerName: 'Period Expenses',
+      headerName: 'Expenses',
       headerAlign: 'center',
       align: 'center',
       flex: 1,
       filterable: true,
       sortable: true,
       renderCell: (params) => (
-        <span
-          style={{
-            color: '#BD0000',
-            fontWeight: 'bold',
-          }}
-        >
+        <span style={{ color: '#BD0000' }}>
           {params.value} {contextWalletCurrency}
         </span>
       ),
@@ -145,19 +140,14 @@ const PeriodDataGrid = () => {
     {
       field: 'incomes_sum',
       type: 'number',
-      headerName: 'Period Incomes',
+      headerName: 'Incomes',
       headerAlign: 'center',
       align: 'center',
       flex: 1,
       filterable: true,
       sortable: true,
       renderCell: (params) => (
-        <span
-          style={{
-            color: '#008000',
-            // fontWeight: 'bold',
-          }}
-        >
+        <span style={{ color: '#008000' }}>
           {params.value} {contextWalletCurrency}
         </span>
       ),

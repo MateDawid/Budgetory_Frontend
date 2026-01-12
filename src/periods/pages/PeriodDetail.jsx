@@ -30,7 +30,13 @@ export default function PeriodDetail() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const apiResponse = await getApiObjectDetails(apiUrl, id);
+        const apiResponse = await getApiObjectDetails(apiUrl, id, [
+          'name',
+          'date_start',
+          'date_end',
+          'status',
+          'status_display',
+        ]);
         setObjectData(apiResponse);
         document.title = `Period • ${apiResponse.name}`;
       } catch {

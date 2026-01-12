@@ -88,7 +88,7 @@ export default function ExpensePredictionsPage() {
     async function getPeriodsChoices() {
       try {
         const response = await getApiObjectsList(
-          `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/periods/`
+          `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/periods/?ordering=-date_start&fields=id,label,status,status_display`
         );
         setPeriods(response);
       } catch {

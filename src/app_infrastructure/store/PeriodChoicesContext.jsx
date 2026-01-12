@@ -15,7 +15,7 @@ export const PeriodChoicesProvider = ({ children }) => {
     const loadPeriodsChoices = async () => {
       try {
         const response = await getApiObjectsList(
-          `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/periods/`
+          `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/periods/?ordering=-date_start&fields=value,label`
         );
         setPeriodChoices(response);
       } catch {
