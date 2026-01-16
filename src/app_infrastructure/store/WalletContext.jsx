@@ -8,7 +8,7 @@ export const WalletContext = createContext();
 export const ContextWalletProvider = ({ children }) => {
   const [contextWalletId, setContextWalletId] = useState(null);
   const [contextWalletCurrency, setContextWalletCurrency] = useState(null);
-  const [refreshTimestamp, setRefreshTimestamp] = useState(null); // TODO: Verify usage
+  const [refreshTimestamp, setRefreshTimestamp] = useState(null);
 
   /**
    * Updates refreshTimestampt to current time.
