@@ -198,7 +198,10 @@ const EntityDataGrid = ({ entityType }) => {
         setRows(rowsResponse.results);
         setRowCount(rowsResponse.count);
       } catch {
-        setAlert({ type: 'error', message: 'Failed to load Entities.' });
+        setAlert({
+          type: 'error',
+          message: `Failed to load ${entityType === EntityTypes.ENTITY ? 'Entities' : 'Deposits'}.`,
+        });
       } finally {
         setLoading(false);
       }
