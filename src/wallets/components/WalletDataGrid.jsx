@@ -30,7 +30,7 @@ const WalletDataGrid = () => {
   const { setAlert } = useContext(AlertContext);
   const { refreshTimestamp } = useContext(WalletContext);
   // API URL
-  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/?fields=id,name,currency,balance,deposits_count`;
+  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/?fields=id,name,currency,currency_name,balance,deposits_count`;
   // Data rows
   const [rows, setRows] = useState([]);
   const [rowCount, setRowCount] = useState(0);
