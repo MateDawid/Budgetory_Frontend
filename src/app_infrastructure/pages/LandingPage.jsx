@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { CircularProgress, Grid, Link, Paper, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import DepositsInPeriodsChart from '../../charts/components/DepositsInPeriodsChart';
@@ -7,6 +7,7 @@ import CategoriesInPeriodsChart from '../../charts/components/CategoriesInPeriod
 import TopEntitiesInPeriodChart from '../../charts/components/TopEntitiesInPeriodChart';
 import WalletsSummaryTable from '../components/WalletsSummaryTable';
 import { getApiObjectsList } from '../services/APIService';
+import { WalletContext } from '../store/WalletContext';
 
 const StyledHeader = styled(Typography)(() => ({
   display: 'block',
@@ -21,6 +22,7 @@ const StyledHeader = styled(Typography)(() => ({
  */
 function LandingPage() {
   document.title = 'Budgetory';
+  const { contextWalletId } = useContext(WalletContext);
   const [loading, setLoading] = useState(true);
   const [wallets, setWallets] = useState([]);
 
@@ -72,7 +74,7 @@ function LandingPage() {
           </Paper>
         </Grid>
       )}
-      {!loading && wallets.length > 0 && (
+      {!loading && contextWalletId && wallets.length > 0 && (
         <>
           <Grid size={12}>
             <WalletsSummaryTable wallets={wallets} />
