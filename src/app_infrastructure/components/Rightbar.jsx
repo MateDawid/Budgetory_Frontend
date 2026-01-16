@@ -1,5 +1,14 @@
 import * as React from 'react';
-import { Box, Card, List, Divider } from '@mui/material';
+import {
+  Box,
+  Card,
+  List,
+  Divider,
+  Link,
+  Typography,
+  ListItem,
+  ListItemText,
+} from '@mui/material';
 import RightbarItem from './RightbarItem';
 import WalletSelector from './WalletSelector';
 import { useContext, useEffect, useState } from 'react';
@@ -34,6 +43,9 @@ const Rightbar = () => {
         setDeposits([]);
       }
     };
+    if (!contextWalletId) {
+      return;
+    }
     loadWalletDeposits();
   }, [contextWalletId, refreshTimestamp]);
 
@@ -57,6 +69,28 @@ const Rightbar = () => {
             <WalletSelector />
             <Divider variant="middle" />
             <List sx={{ width: '100%' }}>
+              {contextWalletId && deposits.length === 0 && (
+                <ListItem>
+                  <ListItemText
+                    primary={
+                      <Typography
+                        sx={{
+                          display: 'block',
+                          color: '#000000',
+                          width: '100%',
+                          textAlign: 'center',
+                        }}
+                      >
+                        {' '}
+                        Create first{' '}
+                        <Link href="/deposits" underline="hover">
+                          Deposit
+                        </Link>{' '}
+                      </Typography>
+                    }
+                  />
+                </ListItem>
+              )}
               {deposits.map((deposit) => (
                 <RightbarItem key={deposit.id} deposit={deposit} />
               ))}
