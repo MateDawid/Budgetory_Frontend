@@ -45,6 +45,8 @@ const WalletSelector = () => {
         );
         setWallets(apiResponse);
         if (apiResponse.length < 1) {
+          localStorage.removeItem('budgetory.contextWallet');
+          localStorage.removeItem('budgetory.contextWalletCurrency');
           return;
         }
         const contextWallet = apiResponse.find(
@@ -64,6 +66,8 @@ const WalletSelector = () => {
         }
       } catch {
         setWallets([]);
+        localStorage.removeItem('budgetory.contextWallet');
+        localStorage.removeItem('budgetory.contextWalletCurrency');
       }
     };
     loadWallets();
