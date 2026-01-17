@@ -8,7 +8,8 @@ export const DepositChoicesContext = createContext();
  * DepositChoicesProvider for storing choices fields options for DepositChoices purposes.
  */
 export const DepositChoicesProvider = ({ children }) => {
-  const { contextWalletId } = useContext(WalletContext);
+  const { getContextWalletId } = useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
   const [depositChoices, setDepositChoices] = useState([]);
 
   useEffect(() => {

@@ -20,6 +20,7 @@ import PredictionAddModal from '../components/PredictionModal/PredictionAddModal
 import StyledButton from '../../app_infrastructure/components/StyledButton';
 import AddIcon from '@mui/icons-material/Add';
 import PeriodStatuses from '../../periods/utils/PeriodStatuses';
+import { useNavigate } from 'react-router-dom';
 
 const UNCATEGORIZED_PRIORITY = -1;
 
@@ -49,7 +50,9 @@ const draftPeriodOrderingOptions = [
  * ExpensePredictionsPage component to display list of ExpensePredictions
  */
 export default function ExpensePredictionsPage() {
-  const { contextWalletId, refreshTimestamp } = useContext(WalletContext);
+  const navigate = useNavigate();
+  const { getContextWalletId, refreshTimestamp } = useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
   const { setAlert } = useContext(AlertContext);
   const [periodResultsLoading, setPeriodResultsLoading] = useState(false);
   const [predictionsLoading, setPredictionsLoading] = useState(false);
@@ -121,6 +124,11 @@ export default function ExpensePredictionsPage() {
     }
 
     if (!contextWalletId) {
+      navigate('/wallets');
+      setAlert({
+        type: 'warning',
+        message: 'Predictions are unavailable. Please create a Wallet first.',
+      });
       return;
     }
     getPeriodsChoices();

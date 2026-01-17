@@ -8,11 +8,12 @@ import { getApiObjectsList } from '../services/APIService';
  */
 const WalletSelector = () => {
   const {
-    contextWalletId,
+    getContextWalletId,
     setContextWalletId,
     setContextWalletCurrency,
     refreshTimestamp,
   } = useContext(WalletContext);
+  const loadedWalletId = getContextWalletId();
   const [wallets, setWallets] = useState([]);
   const [selectedWallet, setSelectedWallet] = useState('');
 
@@ -22,24 +23,8 @@ const WalletSelector = () => {
    * Fetches Wallets to be selected in Select component from API and tries to get contextWallet from fetched Wallets.
    */
   useEffect(() => {
-    const loadContextWallet = () => {
-      if (contextWalletId) {
-        return contextWalletId;
-      }
-      const storageContextWalletId = localStorage.getItem(
-        'budgetory.contextWallet'
-      )
-        ? parseInt(localStorage.getItem('budgetory.contextWallet'), 10)
-        : null;
-      const storageContextWalletCurrency =
-        localStorage.getItem('budgetory.contextWalletCurrency') || '';
-      setContextWalletId(storageContextWalletId);
-      setContextWalletCurrency(storageContextWalletCurrency);
-      return storageContextWalletId;
-    };
     const loadWallets = async () => {
       try {
-        const loadedWalletId = loadContextWallet();
         const apiResponse = await getApiObjectsList(
           `${process.env.REACT_APP_BACKEND_URL}/api/wallets/?fields=id,name,currency_name`
         );

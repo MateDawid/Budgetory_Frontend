@@ -30,7 +30,8 @@ const CategoryDataGrid = () => {
   const navigate = useNavigate();
   // Contexts
   const { setAlert } = useContext(AlertContext);
-  const { contextWalletId, refreshTimestamp } = useContext(WalletContext);
+  const { getContextWalletId, refreshTimestamp } = useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
 
   // API URL
   const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/categories/?ordering=category_type,priority,name`;
@@ -205,6 +206,11 @@ const CategoryDataGrid = () => {
       }
     };
     if (!contextWalletId) {
+      navigate('/wallets');
+      setAlert({
+        type: 'warning',
+        message: 'Categories are unavailable. Please create a Wallet first.',
+      });
       return;
     }
     loadData();

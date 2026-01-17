@@ -37,7 +37,8 @@ const PeriodFilterField = ({
   setPeriodStatus,
   setPeriodStatusLabel,
 }) => {
-  const { contextWalletId } = useContext(WalletContext);
+  const { getContextWalletId } = useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
 
   useEffect(() => {
     const loadStoragePeriodFilter = () => {

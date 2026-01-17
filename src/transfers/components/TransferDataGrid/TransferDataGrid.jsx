@@ -18,6 +18,7 @@ import TransferAddModal from '../TransferModal/TransferAddModal';
 import TransferEditModal from '../TransferModal/TransferEditModal';
 import TransferDeleteModal from '../TransferModal/TransferDeleteModal';
 import renderHyperlink from '../../../app_infrastructure/components/DataGrid/utils/renderHyperlink';
+import { useNavigate } from 'react-router-dom';
 
 const pageSizeOptions = [10, 50, 100];
 
@@ -27,10 +28,12 @@ const pageSizeOptions = [10, 50, 100];
  * @param {number} props.transferType - Type of Transfer. Options: TransferTypes.INCOME, TransferTypes.EXPENSE.
  */
 const TransferDataGrid = ({ transferType }) => {
+  const navigate = useNavigate();
   // Contexts
   const { setAlert } = useContext(AlertContext);
-  const { contextWalletId, contextWalletCurrency, refreshTimestamp } =
+  const { getContextWalletId, contextWalletCurrency, refreshTimestamp } =
     useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
 
   // API URL
   let apiUrl;
@@ -291,6 +294,11 @@ const TransferDataGrid = ({ transferType }) => {
       }
     };
     if (!contextWalletId) {
+      navigate('/wallets');
+      setAlert({
+        type: 'warning',
+        message: `${transferType === TransferTypes.EXPENSE ? 'Expenses' : 'Incomes'} are unavailable. Please create a Wallet first.`,
+      });
       return;
     }
     loadData();

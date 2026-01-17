@@ -8,7 +8,8 @@ export const PeriodChoicesContext = createContext();
  * PeriodChoicesProvider for storing choices fields options for PeriodChoices purposes.
  */
 export const PeriodChoicesProvider = ({ children }) => {
-  const { contextWalletId } = useContext(WalletContext);
+  const { getContextWalletId } = useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
   const [periodChoices, setPeriodChoices] = useState([]);
 
   useEffect(() => {

@@ -20,7 +20,9 @@ const pageSizeOptions = [10, 50, 100];
  */
 const WalletDepositsDataGrid = () => {
   const navigate = useNavigate();
-  const { contextWalletId, contextWalletCurrency } = useContext(WalletContext);
+  const { getContextWalletId, contextWalletCurrency } =
+    useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
   const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits/?fields=id,name,description,balance,wallet_percentage`;
   const [rows, setRows] = useState([]);
   const [rowCount, setRowCount] = useState(0);

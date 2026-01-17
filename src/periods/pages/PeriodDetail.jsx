@@ -18,8 +18,9 @@ import { WalletContext } from '../../app_infrastructure/store/WalletContext';
 export default function PeriodDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { contextWalletId, refreshTimestamp, updateRefreshTimestamp } =
+  const { getContextWalletId, refreshTimestamp, updateRefreshTimestamp } =
     useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
   const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/periods/`;
   const { setAlert } = useContext(AlertContext);
   const [objectData, setObjectData] = useState([]);
@@ -45,6 +46,11 @@ export default function PeriodDetail() {
       }
     };
     if (!contextWalletId) {
+      navigate('/wallets');
+      setAlert({
+        type: 'warning',
+        message: 'Periods are unavailable. Please create a Wallet first.',
+      });
       return;
     }
     loadData();

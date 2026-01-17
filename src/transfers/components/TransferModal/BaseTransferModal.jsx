@@ -24,8 +24,9 @@ export default function BaseTransferModal({
   callApi,
   editedTransfer = undefined,
 }) {
-  const { contextWalletId, contextWalletCurrency, refreshTimestamp } =
+  const { getContextWalletId, contextWalletCurrency, refreshTimestamp } =
     useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
 
   // Selectables
   const [categories, setCategories] = useState([]);

@@ -17,7 +17,8 @@ export default function BaseCategoryModal({
   callApi,
   editedCategory = undefined,
 }) {
-  const { contextWalletId } = useContext(WalletContext);
+  const { getContextWalletId } = useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
 
   // Selectables
   const [depositOptions, setDepositOptions] = useState([]);

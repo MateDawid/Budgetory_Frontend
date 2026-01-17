@@ -8,7 +8,8 @@ export const EntityChoicesContext = createContext();
  * EntityChoicesProvider for storing choices fields options for EntityChoices purposes.
  */
 export const EntityChoicesProvider = ({ children }) => {
-  const { contextWalletId } = useContext(WalletContext);
+  const { getContextWalletId } = useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
   const [entityChoices, setEntityChoices] = useState([]);
 
   useEffect(() => {

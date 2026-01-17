@@ -16,7 +16,9 @@ const DISPLAY_CHOICES = [
 ];
 
 export default function DepositsInPeriodsChart() {
-  const { contextWalletId, contextWalletCurrency } = useContext(WalletContext);
+  const { getContextWalletId, contextWalletCurrency } =
+    useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
   const { depositChoices } = useContext(DepositChoicesContext);
   const { periodChoices } = useContext(PeriodChoicesContext);
 

@@ -10,7 +10,9 @@ export default function PredictionDeleteModal({
   deleteOpen,
   setDeleteOpen,
 }) {
-  const { contextWalletId, updateRefreshTimestamp } = useContext(WalletContext);
+  const { getContextWalletId, updateRefreshTimestamp } =
+    useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
   const { setAlert } = useContext(AlertContext);
 
   const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/expense_predictions/`;

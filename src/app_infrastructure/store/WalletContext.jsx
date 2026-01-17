@@ -17,8 +17,27 @@ export const ContextWalletProvider = ({ children }) => {
     setRefreshTimestamp(Date.now());
   };
 
+  /**
+   * Gets context Wallet id from context or storage.
+   */
+  const getContextWalletId = () => {
+    if (contextWalletId) {
+      return contextWalletId;
+    }
+    const storageContextWalletId = localStorage.getItem(
+      'budgetory.contextWallet'
+    )
+      ? parseInt(localStorage.getItem('budgetory.contextWallet'), 10)
+      : null;
+    const storageContextWalletCurrency =
+      localStorage.getItem('budgetory.contextWalletCurrency') || '';
+    setContextWalletId(storageContextWalletId);
+    setContextWalletCurrency(storageContextWalletCurrency);
+    return storageContextWalletId;
+  };
+
   const value = {
-    contextWalletId,
+    getContextWalletId,
     setContextWalletId,
     contextWalletCurrency,
     setContextWalletCurrency,

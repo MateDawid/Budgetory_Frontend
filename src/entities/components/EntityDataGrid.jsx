@@ -33,8 +33,9 @@ const EntityDataGrid = ({ entityType }) => {
   const navigate = useNavigate();
   // Contexts
   const { setAlert } = useContext(AlertContext);
-  const { contextWalletId, contextWalletCurrency, refreshTimestamp } =
+  const { getContextWalletId, contextWalletCurrency, refreshTimestamp } =
     useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
 
   // API URL
   let apiUrl;
@@ -207,6 +208,11 @@ const EntityDataGrid = ({ entityType }) => {
       }
     };
     if (!contextWalletId) {
+      navigate('/wallets');
+      setAlert({
+        type: 'warning',
+        message: `${entityType === EntityTypes.ENTITY ? 'Entities' : 'Deposits'} are unavailable. Please create a Wallet first.`,
+      });
       return;
     }
     loadData();

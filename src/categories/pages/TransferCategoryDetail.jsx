@@ -20,8 +20,9 @@ import CategoryTypes from '../utils/CategoryTypes';
 export default function TransferCategoryDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { contextWalletId, refreshTimestamp, updateRefreshTimestamp } =
+  const { getContextWalletId, refreshTimestamp, updateRefreshTimestamp } =
     useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
   const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/categories/`;
   const { setAlert } = useContext(AlertContext);
   const [objectData, setObjectData] = useState([]);
@@ -44,6 +45,11 @@ export default function TransferCategoryDetail() {
       }
     };
     if (!contextWalletId) {
+      navigate('/wallets');
+      setAlert({
+        type: 'warning',
+        message: 'Categories are unavailable. Please create a Wallet first.',
+      });
       return;
     }
     loadData();

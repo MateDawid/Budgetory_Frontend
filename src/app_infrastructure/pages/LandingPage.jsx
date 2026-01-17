@@ -22,7 +22,8 @@ const StyledHeader = styled(Typography)(() => ({
  */
 function LandingPage() {
   document.title = 'Budgetory';
-  const { contextWalletId } = useContext(WalletContext);
+  const { getContextWalletId } = useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
   const [loading, setLoading] = useState(true);
   const [wallets, setWallets] = useState([]);
 

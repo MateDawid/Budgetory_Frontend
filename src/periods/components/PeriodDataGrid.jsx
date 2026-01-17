@@ -34,8 +34,9 @@ const PeriodDataGrid = () => {
   const navigate = useNavigate();
   // Contexts
   const { setAlert } = useContext(AlertContext);
-  const { contextWalletId, contextWalletCurrency, refreshTimestamp } =
+  const { getContextWalletId, contextWalletCurrency, refreshTimestamp } =
     useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
   // API URL
   const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/periods/?fields=id,name,status,date_start,date_end,expenses_sum,incomes_sum`;
   // Data rows
@@ -213,10 +214,6 @@ const PeriodDataGrid = () => {
    */
   useEffect(() => {
     const loadData = async () => {
-      if (!contextWalletId) {
-        setLoading(false);
-        return;
-      }
       try {
         const rowsResponse = await getApiObjectsList(
           apiUrl,
@@ -232,7 +229,13 @@ const PeriodDataGrid = () => {
         setLoading(false);
       }
     };
+    console.log(contextWalletId);
     if (!contextWalletId) {
+      navigate('/wallets');
+      setAlert({
+        type: 'warning',
+        message: 'Periods are unavailable. Please create a Wallet first.',
+      });
       return;
     }
     loadData();
