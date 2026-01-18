@@ -5,7 +5,7 @@ import Divider from '@mui/material/Divider';
 import CategoryDataGrid from '../components/CategoryDataGrid';
 
 /**
- * TransferCategoryList component to display list of Budget TransferCategories.
+ * TransferCategoryList component to display list of Wallet TransferCategories.
  */
 export default function TransferCategoryList() {
   document.title = 'Categories';

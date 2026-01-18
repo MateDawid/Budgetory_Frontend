@@ -1,16 +1,16 @@
 import { Autocomplete, Tooltip } from '@mui/material';
 import React, { useContext, useEffect } from 'react';
 import StyledTextField from '../../app_infrastructure/components/StyledTextField';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../app_infrastructure/store/WalletContext';
 
 /**
  * SearchField component to display search field for list pages.
  * @param {object} props
  * @param {object[]} props.periodOptions - Array of Periods to be selected.
  * @param {*} props.periodFilter - Current value of Period filter
- * @returns {object|null} - Returns Period object if given ID belongs to Budget. Null otherwise.
+ * @returns {object|null} - Returns Period object if given ID belongs to Wallet. Null otherwise.
  */
-const checkIfPeriodBelongsToBudget = (periodId, periodOptions) => {
+const checkIfPeriodBelongsToWallet = (periodId, periodOptions) => {
   let matchingPeriod = null;
   periodOptions.forEach((period) => {
     if (period.id === periodId) {
@@ -37,20 +37,21 @@ const PeriodFilterField = ({
   setPeriodStatus,
   setPeriodStatusLabel,
 }) => {
-  const { contextBudgetId } = useContext(BudgetContext);
+  const { getContextWalletId } = useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
 
   useEffect(() => {
     const loadStoragePeriodFilter = () => {
       if (
         periodFilter &&
-        checkIfPeriodBelongsToBudget(periodFilter, periodOptions)
+        checkIfPeriodBelongsToWallet(periodFilter, periodOptions)
       ) {
         return periodFilter;
       }
       const storagePeriodFilter = localStorage.getItem('budgetory.periodFilter')
         ? parseInt(localStorage.getItem('budgetory.periodFilter'), 10)
         : null;
-      const storagePeriodObject = checkIfPeriodBelongsToBudget(
+      const storagePeriodObject = checkIfPeriodBelongsToWallet(
         storagePeriodFilter,
         periodOptions
       );
@@ -70,11 +71,11 @@ const PeriodFilterField = ({
         setPeriodStatusLabel(null);
       }
     };
-    if (!contextBudgetId) {
+    if (!contextWalletId) {
       return;
     }
     loadStoragePeriodFilter();
-  }, [contextBudgetId, periodOptions]);
+  }, [contextWalletId, periodOptions]);
 
   return (
     <Autocomplete

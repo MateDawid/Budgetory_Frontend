@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import React from 'react';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../app_infrastructure/store/WalletContext';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
 import { Stack } from '@mui/material';
@@ -37,7 +37,9 @@ export default function CategoryResultsAndPredictionsInPeriodsChart({
   categoryId,
   categoryType,
 }) {
-  const { contextBudgetId, contextBudgetCurrency } = useContext(BudgetContext);
+  const { getContextWalletId, contextWalletCurrency } =
+    useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
   // Filters values
   const [displayValue, setDisplayValue] = useState(null);
   const [periodsOnChart, setPeriodsOnChart] = useState(12);
@@ -47,8 +49,8 @@ export default function CategoryResultsAndPredictionsInPeriodsChart({
 
   const valueFormatter = (value) =>
     value
-      ? `${value.toString()} ${contextBudgetCurrency}`
-      : `0 ${contextBudgetCurrency}`;
+      ? `${value.toString()} ${contextWalletCurrency}`
+      : `0 ${contextWalletCurrency}`;
 
   useEffect(() => {
     const loadChartData = async () => {
@@ -60,7 +62,7 @@ export default function CategoryResultsAndPredictionsInPeriodsChart({
         if (displayValue) filterModel['display_value'] = displayValue;
         if (periodsOnChart) filterModel['periods_count'] = periodsOnChart;
         const response = await getApiObjectsList(
-          `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/charts/category_results_and_predictions_in_periods/`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/charts/category_results_and_predictions_in_periods/`,
           {},
           {},
           filterModel
@@ -93,11 +95,11 @@ export default function CategoryResultsAndPredictionsInPeriodsChart({
         setSeries([]);
       }
     };
-    if (!contextBudgetId || !categoryId || !categoryType) {
+    if (!contextWalletId || !categoryId || !categoryType) {
       return;
     }
     loadChartData();
-  }, [contextBudgetId, displayValue, periodsOnChart, categoryId, categoryType]);
+  }, [contextWalletId, displayValue, periodsOnChart, categoryId, categoryType]);
 
   return (
     <Stack sx={{ width: '100%' }}>

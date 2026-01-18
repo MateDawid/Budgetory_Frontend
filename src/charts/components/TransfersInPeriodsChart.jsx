@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import React from 'react';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../app_infrastructure/store/WalletContext';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
 import { Stack } from '@mui/material';
@@ -33,7 +33,9 @@ export default function TransfersInPeriodsChart({
   depositId = null,
   entityId = null,
 }) {
-  const { contextBudgetId, contextBudgetCurrency } = useContext(BudgetContext);
+  const { getContextWalletId, contextWalletCurrency } =
+    useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
   const { depositChoices } = useContext(DepositChoicesContext);
   const { entityChoices } = useContext(EntityChoicesContext);
 
@@ -48,8 +50,8 @@ export default function TransfersInPeriodsChart({
 
   const valueFormatter = (value) =>
     value
-      ? `${value.toString()} ${contextBudgetCurrency}`
-      : `0 ${contextBudgetCurrency}`;
+      ? `${value.toString()} ${contextWalletCurrency}`
+      : `0 ${contextWalletCurrency}`;
 
   useEffect(() => {
     const loadDepositsResults = async () => {
@@ -62,7 +64,7 @@ export default function TransfersInPeriodsChart({
         if (transferType) filterModel['transfer_type'] = transferType;
         if (periodsOnChart) filterModel['periods_count'] = periodsOnChart;
         const response = await getApiObjectsList(
-          `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/charts/transfers_in_periods/`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/charts/transfers_in_periods/`,
           {},
           {},
           filterModel
@@ -91,11 +93,11 @@ export default function TransfersInPeriodsChart({
         setSeries([]);
       }
     };
-    if (!contextBudgetId) {
+    if (!contextWalletId) {
       return;
     }
     loadDepositsResults();
-  }, [contextBudgetId, transferType, periodsOnChart, deposit, entity]);
+  }, [contextWalletId, transferType, periodsOnChart, deposit, entity]);
 
   return (
     <Stack sx={{ width: '100%' }}>

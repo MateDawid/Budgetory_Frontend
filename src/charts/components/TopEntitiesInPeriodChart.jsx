@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import React from 'react';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../app_infrastructure/store/WalletContext';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
 import { Stack } from '@mui/material';
@@ -26,7 +26,9 @@ const ENTITIES_ON_CHART = [
  * @param {string} [props.periodId] - Optional Period ID value.
  */
 export default function TopEntitiesInPeriodChart({ periodId = null }) {
-  const { contextBudgetId, contextBudgetCurrency } = useContext(BudgetContext);
+  const { getContextWalletId, contextWalletCurrency } =
+    useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
   const { depositChoices } = useContext(DepositChoicesContext);
   const { periodChoices } = useContext(PeriodChoicesContext);
 
@@ -41,8 +43,8 @@ export default function TopEntitiesInPeriodChart({ periodId = null }) {
 
   const valueFormatter = (value) =>
     value
-      ? `${value.toString()} ${contextBudgetCurrency}`
-      : `0 ${contextBudgetCurrency}`;
+      ? `${value.toString()} ${contextWalletCurrency}`
+      : `0 ${contextWalletCurrency}`;
 
   /**
    * Set initial value for Period filter.
@@ -61,7 +63,7 @@ export default function TopEntitiesInPeriodChart({ periodId = null }) {
         if (transferType) filterModel['transfer_type'] = transferType;
         if (entitiesOnChart) filterModel['entities_count'] = entitiesOnChart;
         const response = await getApiObjectsList(
-          `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/charts/top_entities_in_period/`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/charts/top_entities_in_period/`,
           {},
           {},
           filterModel
@@ -80,11 +82,11 @@ export default function TopEntitiesInPeriodChart({ periodId = null }) {
         setSeries([]);
       }
     };
-    if (!contextBudgetId || (!periodId && !period)) {
+    if (!contextWalletId || (!periodId && !period)) {
       return;
     }
     loadEntitiesResults();
-  }, [contextBudgetId, transferType, entitiesOnChart, period, deposit]);
+  }, [contextWalletId, transferType, entitiesOnChart, period, deposit]);
 
   return (
     <Stack sx={{ width: '100%' }}>

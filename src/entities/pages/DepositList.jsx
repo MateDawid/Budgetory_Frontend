@@ -5,7 +5,7 @@ import Divider from '@mui/material/Divider';
 import EntityDataGrid, { EntityTypes } from '../components/EntityDataGrid';
 
 /**
- * DepositList component to display list of Budget Deposits.
+ * DepositList component to display list of Wallet Deposits.
  */
 export default function DepositList() {
   document.title = 'Deposits';

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { getApiObjectsList } from '../services/APIService';
-import { BudgetContext } from './BudgetContext';
+import { WalletContext } from './WalletContext';
 
 export const EntityChoicesContext = createContext();
 
@@ -8,25 +8,26 @@ export const EntityChoicesContext = createContext();
  * EntityChoicesProvider for storing choices fields options for EntityChoices purposes.
  */
 export const EntityChoicesProvider = ({ children }) => {
-  const { contextBudgetId } = useContext(BudgetContext);
+  const { getContextWalletId } = useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
   const [entityChoices, setEntityChoices] = useState([]);
 
   useEffect(() => {
     const loadEntityChoices = async () => {
       try {
         const response = await getApiObjectsList(
-          `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/?ordering=-is_deposit,name`
+          `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/entities/?ordering=-is_deposit,name`
         );
         setEntityChoices(response);
       } catch {
         setEntityChoices([]);
       }
     };
-    if (!contextBudgetId) {
+    if (!contextWalletId) {
       return;
     }
     loadEntityChoices();
-  }, [contextBudgetId]);
+  }, [contextWalletId]);
 
   const value = { entityChoices };
 

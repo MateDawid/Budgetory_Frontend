@@ -38,11 +38,11 @@ const Leftbar = () => {
         sx={{ backgroundColor: '#252525', overflow: 'auto' }}
       >
         <List>
-          <StyledListSubheader>Budgets</StyledListSubheader>
+          <StyledListSubheader>Wallets</StyledListSubheader>
           <LeftbarItem
-            url="/budgets"
-            displayText="Budgets"
-            icon={<AccountBalanceIcon />}
+            url="/wallets"
+            displayText="Wallets"
+            icon={<AccountBalanceWalletRoundedIcon />}
           />
           <LeftbarItem
             url="/periods"
@@ -53,7 +53,7 @@ const Leftbar = () => {
           <LeftbarItem
             url="/deposits"
             displayText="Deposits"
-            icon={<AccountBalanceWalletRoundedIcon />}
+            icon={<AccountBalanceIcon />}
           />
           <LeftbarItem
             url="/entities"

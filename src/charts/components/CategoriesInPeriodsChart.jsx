@@ -3,7 +3,7 @@ import { LineChart } from '@mui/x-charts/LineChart';
 import { useContext, useEffect, useState } from 'react';
 import React from 'react';
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../app_infrastructure/store/WalletContext';
 import FilterField from '../../app_infrastructure/components/FilterField';
 import CategoryTypes from '../../categories/utils/CategoryTypes';
 import { DepositChoicesContext } from '../../app_infrastructure/store/DepositChoicesContext';
@@ -15,7 +15,9 @@ const CATEGORY_TYPE_CHOICES = [
 ];
 
 export default function CategoriesInPeriodsChart() {
-  const { contextBudgetId, contextBudgetCurrency } = useContext(BudgetContext);
+  const { getContextWalletId, contextWalletCurrency } =
+    useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
   const { depositChoices } = useContext(DepositChoicesContext);
   const { periodChoices } = useContext(PeriodChoicesContext);
 
@@ -48,7 +50,7 @@ export default function CategoriesInPeriodsChart() {
     const loadCategoriesResults = async () => {
       try {
         const response = await getApiObjectsList(
-          `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/charts/categories_in_periods/`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/charts/categories_in_periods/`,
           {},
           {},
           getFilterModel()
@@ -57,8 +59,8 @@ export default function CategoriesInPeriodsChart() {
           ...serie,
           valueFormatter: (value) =>
             value
-              ? `${value.toString()} ${contextBudgetCurrency}`
-              : `0 ${contextBudgetCurrency}`,
+              ? `${value.toString()} ${contextWalletCurrency}`
+              : `0 ${contextWalletCurrency}`,
         }));
         setXAxis(response.xAxis);
         setSeries(formattedSeries);
@@ -67,11 +69,11 @@ export default function CategoriesInPeriodsChart() {
         setSeries([]);
       }
     };
-    if (!contextBudgetId) {
+    if (!contextWalletId) {
       return;
     }
     loadCategoriesResults();
-  }, [contextBudgetId, periodFrom, periodTo, categoryType, deposit]);
+  }, [contextWalletId, periodFrom, periodTo, categoryType, deposit]);
 
   return (
     <Stack sx={{ width: '100%' }}>

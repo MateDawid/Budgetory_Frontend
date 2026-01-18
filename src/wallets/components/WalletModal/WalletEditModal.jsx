@@ -1,46 +1,46 @@
 import React, { useContext } from 'react';
 import { AlertContext } from '../../../app_infrastructure/store/AlertContext';
-import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../../app_infrastructure/store/WalletContext';
 import { updateApiObject } from '../../../app_infrastructure/services/APIService';
-import BasePeriodModal from './BasePeriodModal';
+import BaseWalletModal from './BaseWalletModal';
 
 /**
- * PeriodEditModal component for displaying edit BudgetingPeriod form.
+ * WalletEditModal component for displaying edit  Wallet form.
  * @param {object} props
  * @param {string} props.apiUrl - URL to be called on form submit.
  * @param {boolean} props.formOpen - Flag indicating if form is opened or not.
  * @param {function} props.setFormOpen - Setter for formOpen flag.
- * @param {object} [props.editedPeriod] - Edited BudgetingPeriod object.
- * @param {function} [props.setEditedPeriod] - Setter for editedPeriod value.
+ * @param {object} [props.editedWallet] - Edited  Wallet object.
+ * @param {function} [props.setEditedWallet] - Setter for editedWallet value.
  */
-export default function PeriodEditModal({
+export default function WalletEditModal({
   apiUrl,
   formOpen,
   setFormOpen,
-  editedPeriod,
-  setEditedPeriod,
+  editedWallet,
+  setEditedWallet,
 }) {
-  const { updateRefreshTimestamp } = useContext(BudgetContext);
+  const { updateRefreshTimestamp } = useContext(WalletContext);
   const { setAlert } = useContext(AlertContext);
 
   const callApi = async (data) => {
-    data['id'] = editedPeriod.id;
+    data['id'] = editedWallet.id;
     const response = await updateApiObject(apiUrl, data);
     updateRefreshTimestamp();
-    setEditedPeriod(undefined);
+    setEditedWallet(undefined);
     setAlert({
       type: 'success',
-      message: 'Period updated successfully.',
+      message: 'Wallet updated successfully.',
     });
     return response;
   };
 
   return (
-    <BasePeriodModal
+    <BaseWalletModal
       formOpen={formOpen}
       setFormOpen={setFormOpen}
       callApi={callApi}
-      editedPeriod={editedPeriod}
+      editedWallet={editedWallet}
     />
   );
 }

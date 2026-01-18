@@ -8,36 +8,29 @@ import {
 import getSortFieldMapping from '../../app_infrastructure/components/DataGrid/utils/getSortFieldMapping';
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
 import { AlertContext } from '../../app_infrastructure/store/AlertContext';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
 import StyledGridActionsCellItem from '../../app_infrastructure/components/DataGrid/StyledGridActionsCellItem';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useNavigate } from 'react-router-dom';
 import DataGridFooterWithAdd from '../../app_infrastructure/components/DataGrid/DataGridFooterWithAdd';
-import PeriodAddModal from './PeriodModal/PeriodAddModal';
-import PeriodEditModal from './PeriodModal/PeriodEditModal';
-import PeriodDeleteModal from './PeriodModal/PeriodDeleteModal';
-
-const STATUS_OPTIONS = [
-  { value: 1, label: '📝 Draft' },
-  { value: 2, label: '🟢 Active' },
-  { value: 3, label: '🔒 Closed' },
-];
+import WalletAddModal from './WalletModal/WalletAddModal';
+import WalletEditModal from './WalletModal/WalletEditModal';
+import WalletDeleteModal from './WalletModal/WalletDeleteModal';
+import { WalletContext } from '../../app_infrastructure/store/WalletContext';
 
 const pageSizeOptions = [10, 50, 100];
 
 /**
  * DataTable component for displaying DataGrid with data fetched from API.
  */
-const BudgetingPeriodDataGrid = () => {
+const WalletDataGrid = () => {
   const navigate = useNavigate();
   // Contexts
   const { setAlert } = useContext(AlertContext);
-  const { contextBudgetId, contextBudgetCurrency, refreshTimestamp } =
-    useContext(BudgetContext);
+  const { refreshTimestamp } = useContext(WalletContext);
   // API URL
-  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`;
+  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/?fields=id,name,currency,currency_name,balance,deposits_count`;
   // Data rows
   const [rows, setRows] = useState([]);
   const [rowCount, setRowCount] = useState(0);
@@ -52,10 +45,11 @@ const BudgetingPeriodDataGrid = () => {
   // Filtering and sorting
   const [sortModel, setSortModel] = React.useState({});
   const [filterModel, setFilterModel] = React.useState({ items: [] });
+  const [currencyOptions, setCurrencyOptions] = useState([]);
 
   // Forms handlers
-  const [editedPeriod, setEditedPeriod] = useState();
-  const [deletedPeriodId, setDeletedPeriodId] = useState();
+  const [editedWallet, setEditedWallet] = useState();
+  const [deletedWalletId, setDeletedWalletId] = useState();
   const [addFormOpen, setAddFormOpen] = useState(false);
   const [editFormOpen, setEditFormOpen] = useState(false);
   const [deleteFormOpen, setDeleteFormOpen] = useState(false);
@@ -67,100 +61,49 @@ const BudgetingPeriodDataGrid = () => {
       headerName: 'Name',
       headerAlign: 'center',
       align: 'center',
-      flex: 1,
+      flex: 2,
       filterable: true,
       sortable: true,
     },
     {
-      field: 'status',
+      field: 'currency',
       type: 'singleSelect',
-      headerName: 'Status',
+      headerName: 'Currency',
       headerAlign: 'center',
       align: 'center',
       flex: 1,
-      filterable: true,
-      sortable: true,
-      valueOptions: STATUS_OPTIONS,
+      filterable: false,
+      sortable: false,
+      valueOptions: currencyOptions,
     },
     {
-      field: 'date_start',
-      type: 'date',
-      headerName: 'Date start',
-      headerAlign: 'center',
-      align: 'center',
-      flex: 1,
-      filterable: true,
-      sortable: true,
-      valueGetter: (value) => {
-        return new Date(value);
-      },
-      valueFormatter: (value) => {
-        try {
-          return value.toLocaleDateString('en-CA');
-        } catch {
-          return value;
-        }
-      },
-    },
-    {
-      field: 'date_end',
-      type: 'date',
-      headerName: 'Date end',
-      headerAlign: 'center',
-      align: 'center',
-      flex: 1,
-      filterable: true,
-      sortable: true,
-      valueGetter: (value) => {
-        return new Date(value);
-      },
-      valueFormatter: (value) => {
-        try {
-          return value.toLocaleDateString('en-CA');
-        } catch {
-          return value;
-        }
-      },
-    },
-    {
-      field: 'expenses_sum',
+      field: 'balance',
       type: 'number',
-      headerName: 'Period Expenses',
+      headerName: 'Balance',
       headerAlign: 'center',
       align: 'center',
       flex: 1,
-      filterable: true,
-      sortable: true,
+      filterable: false,
+      sortable: false,
       renderCell: (params) => (
         <span
           style={{
-            color: '#BD0000',
-            fontWeight: 'bold',
+            color: params.value < 0 ? '#BD0000' : '#008000',
           }}
         >
-          {params.value} {contextBudgetCurrency}
+          {params.value} {params.row.currency_name}
         </span>
       ),
     },
     {
-      field: 'incomes_sum',
+      field: 'deposits_count',
       type: 'number',
-      headerName: 'Period Incomes',
+      headerName: 'Deposits',
       headerAlign: 'center',
       align: 'center',
       flex: 1,
-      filterable: true,
-      sortable: true,
-      renderCell: (params) => (
-        <span
-          style={{
-            color: '#008000',
-            // fontWeight: 'bold',
-          }}
-        >
-          {params.value} {contextBudgetCurrency}
-        </span>
-      ),
+      filterable: false,
+      sortable: false,
     },
   ];
 
@@ -181,53 +124,50 @@ const BudgetingPeriodDataGrid = () => {
       headerName: 'Actions',
       cellClassName: 'actions',
       getActions: (params) => {
-        console.log(params);
-        if (params.row.status === 1) {
-          return [
-            <StyledGridActionsCellItem
-              key={params.id}
-              icon={<OpenInNewIcon />}
-              label="Open"
-              onClick={() => navigate(`/periods/${params.id}`)}
-            />,
+        return [
+          <StyledGridActionsCellItem
+            key={params.id}
+            icon={<OpenInNewIcon />}
+            label="Open"
+            onClick={() => navigate(`/wallets/${params.id}`)}
+          />,
 
-            <StyledGridActionsCellItem
-              key={params.id}
-              icon={<EditIcon />}
-              label="Edit"
-              onClick={handleEditClick(params.row)}
-            />,
-            <StyledGridActionsCellItem
-              key={params.id}
-              icon={<DeleteIcon />}
-              label="Delete"
-              onClick={() => handleDeleteClick(params.row)}
-            />,
-          ];
-        } else {
-          return [
-            <StyledGridActionsCellItem
-              key={params.id}
-              icon={<OpenInNewIcon />}
-              label="Open"
-              onClick={() => navigate(`/periods/${params.id}`)}
-            />,
-          ];
-        }
+          <StyledGridActionsCellItem
+            key={params.id}
+            icon={<EditIcon />}
+            label="Edit"
+            onClick={handleEditClick(params.row)}
+          />,
+          <StyledGridActionsCellItem
+            key={params.id}
+            icon={<DeleteIcon />}
+            label="Delete"
+            onClick={() => handleDeleteClick(params.row)}
+          />,
+        ];
       },
     },
   ];
   const sortFieldMapping = getSortFieldMapping(extendedColumns);
 
   /**
+   * Fetches select options for Wallet currency from API.
+   */
+  useEffect(() => {
+    async function getCurrencies() {
+      const response = await getApiObjectsList(
+        `${process.env.REACT_APP_BACKEND_URL}/api/currencies/`
+      );
+      setCurrencyOptions(response);
+    }
+    getCurrencies();
+  }, []);
+
+  /**
    * Fetches objects list from API.
    */
   useEffect(() => {
     const loadData = async () => {
-      if (!contextBudgetId) {
-        setLoading(false);
-        return;
-      }
       try {
         const rowsResponse = await getApiObjectsList(
           apiUrl,
@@ -238,21 +178,19 @@ const BudgetingPeriodDataGrid = () => {
         setRows(rowsResponse.results);
         setRowCount(rowsResponse.count);
       } catch {
-        setAlert({ type: 'error', message: 'Failed to load table rows.' });
+        setAlert({ type: 'error', message: 'Failed to load Wallets.' });
       } finally {
         setLoading(false);
       }
     };
-    if (!contextBudgetId) {
-      return;
-    }
+    if (currencyOptions.length < 1) return;
     loadData();
   }, [
-    contextBudgetId,
     paginationModel,
     sortModel,
     filterModel,
     refreshTimestamp,
+    currencyOptions,
   ]);
 
   /**
@@ -301,7 +239,7 @@ const BudgetingPeriodDataGrid = () => {
    * @param {object} row - Row data.
    */
   const handleEditClick = (row) => () => {
-    setEditedPeriod(row);
+    setEditedWallet(row);
     setEditFormOpen(true);
   };
 
@@ -310,7 +248,7 @@ const BudgetingPeriodDataGrid = () => {
    * @param {object} row - DataGrid row.
    */
   const handleDeleteClick = async (row) => {
-    setDeletedPeriodId(row.id);
+    setDeletedWalletId(row.id);
     setDeleteFormOpen(true);
   };
 
@@ -349,26 +287,26 @@ const BudgetingPeriodDataGrid = () => {
           }}
         />
       </Box>
-      <PeriodAddModal
+      <WalletAddModal
         apiUrl={apiUrl}
         formOpen={addFormOpen}
         setFormOpen={setAddFormOpen}
       />
-      <PeriodEditModal
+      <WalletEditModal
         apiUrl={apiUrl}
         formOpen={editFormOpen}
         setFormOpen={setEditFormOpen}
-        editedPeriod={editedPeriod}
-        setEditedPeriod={setEditedPeriod}
+        editedWallet={editedWallet}
+        setEditedWallet={setEditedWallet}
       />
-      <PeriodDeleteModal
+      <WalletDeleteModal
         apiUrl={apiUrl}
         formOpen={deleteFormOpen}
         setFormOpen={setDeleteFormOpen}
-        deletedPeriodId={deletedPeriodId}
-        setDeletedPeriodId={setDeletedPeriodId}
+        deletedWalletId={deletedWalletId}
+        setDeletedWalletId={setDeletedWalletId}
       />
     </>
   );
 };
-export default BudgetingPeriodDataGrid;
+export default WalletDataGrid;

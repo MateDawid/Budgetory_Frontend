@@ -10,7 +10,7 @@ import {
   TableRow,
 } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
-import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../../app_infrastructure/store/WalletContext';
 import StyledModal from '../../../app_infrastructure/components/StyledModal';
 import { getApiObjectsList } from '../../../app_infrastructure/services/APIService';
 
@@ -20,9 +20,11 @@ export default function PredictionInspectModal({
   inspectOpen,
   setInspectOpen,
 }) {
-  const { contextBudgetId, contextBudgetCurrency } = useContext(BudgetContext);
+  const { getContextWalletId, contextWalletCurrency } =
+    useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
   const [expenses, setExpenses] = useState([]);
-  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expenses/`;
+  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/expenses/`;
 
   /**
    * Fetches select options for ExpensePrediction select fields from API.
@@ -42,11 +44,11 @@ export default function PredictionInspectModal({
       }
     }
 
-    if (!contextBudgetId || !inspectOpen) {
+    if (!contextWalletId || !inspectOpen) {
       return;
     }
     getPeriodCategoryExpenses();
-  }, [contextBudgetId, inspectOpen]);
+  }, [contextWalletId, inspectOpen]);
 
   return (
     <StyledModal open={inspectOpen} onClose={() => setInspectOpen(false)}>
@@ -90,7 +92,7 @@ export default function PredictionInspectModal({
                       <TableRow key={row.name}>
                         <TableCell align="center">{row.date}</TableCell>
                         <TableCell align="center" sx={{ fontWeight: 'bold' }}>
-                          {row.value}&nbsp;{contextBudgetCurrency}
+                          {row.value}&nbsp;{contextWalletCurrency}
                         </TableCell>
                         <TableCell sx={{ maxWidth: 300 }}>
                           <Typography

@@ -1,18 +1,18 @@
 import React, { useContext } from 'react';
 import { AlertContext } from '../../../app_infrastructure/store/AlertContext';
-import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../../app_infrastructure/store/WalletContext';
 import { createApiObject } from '../../../app_infrastructure/services/APIService';
-import BasePeriodModal from './BasePeriodModal';
+import BaseWalletModal from './BaseWalletModal';
 
 /**
- * TransferAddModal component for displaying add Transfer form.
+ * WalletAddModal component for displaying add Transfer form.
  * @param {object} props
  * @param {string} props.apiUrl - URL to be called on form submit.
  * @param {boolean} props.formOpen - Flag indicating if form is opened or not.
  * @param {function} props.setFormOpen - Setter for formOpen flag.
  */
-export default function PeriodAddModal({ apiUrl, formOpen, setFormOpen }) {
-  const { updateRefreshTimestamp } = useContext(BudgetContext);
+export default function WalletAddModal({ apiUrl, formOpen, setFormOpen }) {
+  const { updateRefreshTimestamp } = useContext(WalletContext);
   const { setAlert } = useContext(AlertContext);
 
   const callApi = async (data) => {
@@ -20,13 +20,13 @@ export default function PeriodAddModal({ apiUrl, formOpen, setFormOpen }) {
     updateRefreshTimestamp();
     setAlert({
       type: 'success',
-      message: 'Period created successfully.',
+      message: 'Wallet created successfully.',
     });
     return response;
   };
 
   return (
-    <BasePeriodModal
+    <BaseWalletModal
       formOpen={formOpen}
       setFormOpen={setFormOpen}
       callApi={callApi}

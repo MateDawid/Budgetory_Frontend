@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import FormModal from '../../../app_infrastructure/components/FormModal/FormModal';
-import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../../app_infrastructure/store/WalletContext';
 import { getApiObjectsList } from '../../../app_infrastructure/services/APIService';
 
 /**
@@ -17,7 +17,8 @@ export default function BaseCategoryModal({
   callApi,
   editedCategory = undefined,
 }) {
-  const { contextBudgetId } = useContext(BudgetContext);
+  const { getContextWalletId } = useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
 
   // Selectables
   const [depositOptions, setDepositOptions] = useState([]);
@@ -67,7 +68,7 @@ export default function BaseCategoryModal({
   useEffect(() => {
     async function getDeposits() {
       const response = await getApiObjectsList(
-        `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`
+        `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits/?ordering=name&fields=value,label`
       );
       setDepositOptions(response);
     }
@@ -84,11 +85,11 @@ export default function BaseCategoryModal({
       setPriorityOptions(priorityResponse.results);
     }
 
-    if (!contextBudgetId || !formOpen) return;
+    if (!contextWalletId || !formOpen) return;
     getDeposits();
     getCategoryTypes();
     getPriorities();
-  }, [contextBudgetId, formOpen]);
+  }, [contextWalletId, formOpen]);
 
   return (
     <>

@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import BasePredictionModal from './BasePredictionModal';
-import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../../app_infrastructure/store/WalletContext';
 import { getApiObjectsList } from '../../../app_infrastructure/services/APIService';
 import CategoryTypes from '../../../categories/utils/CategoryTypes';
 
@@ -32,10 +32,11 @@ jest.mock('../../../app_infrastructure/components/FormModal/FormModal', () => {
 describe('BasePredictionModal', () => {
   const mockSetFormOpen = jest.fn();
   const mockCallApi = jest.fn();
+  const mockGetContextWalletId = jest.fn(() => 'wallet-123');
 
-  const mockBudgetContext = {
-    contextBudgetId: 'budget-123',
-    contextBudgetCurrency: 'USD',
+  const mockWalletContext = {
+    getContextWalletId: mockGetContextWalletId,
+    contextWalletCurrency: 'USD',
     refreshTimestamp: 1234567890,
   };
 
@@ -72,7 +73,7 @@ describe('BasePredictionModal', () => {
     deposit: 'deposit-1',
     category: 'category-1',
     current_plan: 500.0,
-    description: 'Monthly grocery budget',
+    description: 'Monthly grocery wallet',
   };
 
   const renderComponent = (props = {}) => {
@@ -84,9 +85,9 @@ describe('BasePredictionModal', () => {
     };
 
     return render(
-      <BudgetContext.Provider value={mockBudgetContext}>
+      <WalletContext.Provider value={mockWalletContext}>
         <BasePredictionModal {...defaultProps} {...props} />
-      </BudgetContext.Provider>
+      </WalletContext.Provider>
     );
   };
 
@@ -94,6 +95,7 @@ describe('BasePredictionModal', () => {
     jest.clearAllMocks();
     lastFormModalProps = null;
     getApiObjectsList.mockResolvedValue([]);
+    mockGetContextWalletId.mockReturnValue('wallet-123');
   });
 
   describe('Component Rendering', () => {
@@ -143,28 +145,32 @@ describe('BasePredictionModal', () => {
   });
 
   describe('API Data Fetching', () => {
-    it('should fetch deposits on mount when contextBudgetId exists', async () => {
+    it('should fetch deposits on mount when contextWalletId exists', async () => {
       getApiObjectsList.mockResolvedValue(mockDeposits);
       renderComponent();
 
       await waitFor(() => {
         expect(getApiObjectsList).toHaveBeenCalledWith(
-          `${process.env.REACT_APP_BACKEND_URL}/api/budgets/budget-123/deposits/?ordering=deposit_type,name`
+          `${process.env.REACT_APP_BACKEND_URL}/api/wallets/wallet-123/deposits/?ordering=deposit_type,name&fields=value,label`
         );
       });
     });
 
-    it('should not fetch deposits when contextBudgetId is missing', async () => {
-      const contextWithoutId = { ...mockBudgetContext, contextBudgetId: null };
+    it('should not fetch deposits when contextWalletId is missing', async () => {
+      const mockGetContextWalletIdNull = jest.fn(() => null);
+      const contextWithoutId = {
+        ...mockWalletContext,
+        getContextWalletId: mockGetContextWalletIdNull,
+      };
 
       render(
-        <BudgetContext.Provider value={contextWithoutId}>
+        <WalletContext.Provider value={contextWithoutId}>
           <BasePredictionModal
             formOpen={true}
             setFormOpen={mockSetFormOpen}
             callApi={mockCallApi}
           />
-        </BudgetContext.Provider>
+        </WalletContext.Provider>
       );
 
       await waitFor(() => {
@@ -183,18 +189,18 @@ describe('BasePredictionModal', () => {
       });
 
       const updatedContext = {
-        ...mockBudgetContext,
+        ...mockWalletContext,
         refreshTimestamp: 9876543210,
       };
 
       rerender(
-        <BudgetContext.Provider value={updatedContext}>
+        <WalletContext.Provider value={updatedContext}>
           <BasePredictionModal
             formOpen={true}
             setFormOpen={mockSetFormOpen}
             callApi={mockCallApi}
           />
-        </BudgetContext.Provider>
+        </WalletContext.Provider>
       );
 
       await waitFor(() => {
@@ -224,7 +230,7 @@ describe('BasePredictionModal', () => {
 
       await waitFor(() => {
         expect(getApiObjectsList).toHaveBeenCalledWith(
-          `${process.env.REACT_APP_BACKEND_URL}/api/budgets/budget-123/categories/`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/wallets/wallet-123/categories/`,
           {},
           {},
           {
@@ -414,14 +420,14 @@ describe('BasePredictionModal', () => {
       });
 
       rerender(
-        <BudgetContext.Provider value={mockBudgetContext}>
+        <WalletContext.Provider value={mockWalletContext}>
           <BasePredictionModal
             formOpen={true}
             setFormOpen={mockSetFormOpen}
             callApi={mockCallApi}
             editedPrediction={undefined}
           />
-        </BudgetContext.Provider>
+        </WalletContext.Provider>
       );
 
       // Should still be 2 calls (deposits only get fetched once per mount, not on editedPrediction change)
@@ -470,20 +476,22 @@ describe('BasePredictionModal', () => {
   });
 
   describe('Context Usage', () => {
-    it('should use contextBudgetCurrency in current_plan field', async () => {
+    it('should use contextWalletCurrency in current_plan field', async () => {
+      const mockGetContextWalletIdCustom = jest.fn(() => 'custom-wallet-id');
       const customContext = {
-        ...mockBudgetContext,
-        contextBudgetCurrency: 'EUR',
+        getContextWalletId: mockGetContextWalletIdCustom,
+        contextWalletCurrency: 'EUR',
+        refreshTimestamp: 1234567890,
       };
 
       render(
-        <BudgetContext.Provider value={customContext}>
+        <WalletContext.Provider value={customContext}>
           <BasePredictionModal
             formOpen={true}
             setFormOpen={mockSetFormOpen}
             callApi={mockCallApi}
           />
-        </BudgetContext.Provider>
+        </WalletContext.Provider>
       );
 
       await waitFor(() => {
@@ -492,27 +500,29 @@ describe('BasePredictionModal', () => {
       });
     });
 
-    it('should use contextBudgetId in API calls', async () => {
+    it('should use contextWalletId in API calls', async () => {
       getApiObjectsList.mockResolvedValue(mockDeposits);
 
+      const mockGetContextWalletIdCustom = jest.fn(() => 'custom-wallet-id');
       const customContext = {
-        ...mockBudgetContext,
-        contextBudgetId: 'custom-budget-id',
+        getContextWalletId: mockGetContextWalletIdCustom,
+        contextWalletCurrency: 'USD',
+        refreshTimestamp: 1234567890,
       };
 
       render(
-        <BudgetContext.Provider value={customContext}>
+        <WalletContext.Provider value={customContext}>
           <BasePredictionModal
             formOpen={true}
             setFormOpen={mockSetFormOpen}
             callApi={mockCallApi}
           />
-        </BudgetContext.Provider>
+        </WalletContext.Provider>
       );
 
       await waitFor(() => {
         expect(getApiObjectsList).toHaveBeenCalledWith(
-          expect.stringContaining('custom-budget-id')
+          expect.stringContaining('custom-wallet-id')
         );
       });
     });

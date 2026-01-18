@@ -1,9 +1,10 @@
 import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { MemoryRouter } from 'react-router-dom';
 import TransferDataGrid from './TransferDataGrid';
 import { AlertContext } from '../../../app_infrastructure/store/AlertContext';
-import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../../app_infrastructure/store/WalletContext';
 import { getApiObjectsList } from '../../../app_infrastructure/services/APIService';
 import TransferTypes from '../../utils/TransferTypes';
 import axios from 'axios';
@@ -124,17 +125,17 @@ jest.mock(
 
 describe('TransferDataGrid', () => {
   const mockSetAlert = jest.fn();
-  const mockContextBudgetId = 123;
-  const mockContextBudgetCurrency = 'USD';
+  const mockGetContextWalletId = jest.fn(() => 123);
+  const mockContextWalletCurrency = 'USD';
   const mockRefreshTimestamp = Date.now();
 
   const mockAlertContext = {
     setAlert: mockSetAlert,
   };
 
-  const mockBudgetContext = {
-    contextBudgetId: mockContextBudgetId,
-    contextBudgetCurrency: mockContextBudgetCurrency,
+  const mockWalletContext = {
+    getContextWalletId: mockGetContextWalletId,
+    contextWalletCurrency: mockContextWalletCurrency,
     refreshTimestamp: mockRefreshTimestamp,
   };
 
@@ -188,16 +189,19 @@ describe('TransferDataGrid', () => {
 
   const renderComponent = (transferType = TransferTypes.INCOME) => {
     return render(
-      <AlertContext.Provider value={mockAlertContext}>
-        <BudgetContext.Provider value={mockBudgetContext}>
-          <TransferDataGrid transferType={transferType} />
-        </BudgetContext.Provider>
-      </AlertContext.Provider>
+      <MemoryRouter>
+        <AlertContext.Provider value={mockAlertContext}>
+          <WalletContext.Provider value={mockWalletContext}>
+            <TransferDataGrid transferType={transferType} />
+          </WalletContext.Provider>
+        </AlertContext.Provider>
+      </MemoryRouter>
     );
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockGetContextWalletId.mockReturnValue(123);
     process.env.REACT_APP_BACKEND_URL = 'http://localhost:8000';
 
     // Setup default mock responses
@@ -319,28 +323,31 @@ describe('TransferDataGrid', () => {
         return Promise.resolve([]);
       });
 
-      renderComponent();
+      renderComponent(TransferTypes.INCOME);
 
       await waitFor(() => {
         expect(mockSetAlert).toHaveBeenCalledWith({
           type: 'error',
-          message: 'Failed to load table rows.',
+          message: 'Failed to load Incomes.',
         });
       });
     });
 
-    test('does not fetch data when contextBudgetId is not set', () => {
-      const contextWithoutBudget = {
-        ...mockBudgetContext,
-        contextBudgetId: null,
+    test('does not fetch data when contextWalletId is not set', () => {
+      const mockGetContextWalletIdNull = jest.fn(() => null);
+      const contextWithoutWallet = {
+        ...mockWalletContext,
+        getContextWalletId: mockGetContextWalletIdNull,
       };
 
       render(
-        <AlertContext.Provider value={mockAlertContext}>
-          <BudgetContext.Provider value={contextWithoutBudget}>
-            <TransferDataGrid transferType={TransferTypes.INCOME} />
-          </BudgetContext.Provider>
-        </AlertContext.Provider>
+        <MemoryRouter>
+          <AlertContext.Provider value={mockAlertContext}>
+            <WalletContext.Provider value={contextWithoutWallet}>
+              <TransferDataGrid transferType={TransferTypes.INCOME} />
+            </WalletContext.Provider>
+          </AlertContext.Provider>
+        </MemoryRouter>
       );
 
       expect(getApiObjectsList).not.toHaveBeenCalled();
@@ -496,17 +503,19 @@ describe('TransferDataGrid', () => {
         expect(getApiObjectsList).toHaveBeenCalledTimes(5); // 4 options + 1 data
       });
 
-      const newBudgetContext = {
-        ...mockBudgetContext,
+      const newWalletContext = {
+        ...mockWalletContext,
         refreshTimestamp: Date.now() + 1000,
       };
 
       rerender(
-        <AlertContext.Provider value={mockAlertContext}>
-          <BudgetContext.Provider value={newBudgetContext}>
-            <TransferDataGrid transferType={TransferTypes.INCOME} />
-          </BudgetContext.Provider>
-        </AlertContext.Provider>
+        <MemoryRouter>
+          <AlertContext.Provider value={mockAlertContext}>
+            <WalletContext.Provider value={newWalletContext}>
+              <TransferDataGrid transferType={TransferTypes.INCOME} />
+            </WalletContext.Provider>
+          </AlertContext.Provider>
+        </MemoryRouter>
       );
 
       await waitFor(() => {

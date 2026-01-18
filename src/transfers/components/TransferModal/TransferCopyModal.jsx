@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { AlertContext } from '../../../app_infrastructure/store/AlertContext';
-import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../../app_infrastructure/store/WalletContext';
 import TransferTypes from '../../utils/TransferTypes';
 import { Box, Typography, Button } from '@mui/material';
 import StyledModal from '../../../app_infrastructure/components/StyledModal';
@@ -22,7 +22,7 @@ export default function TransferCopyModal({
   setFormOpen,
   selectedRows,
 }) {
-  const { updateRefreshTimestamp } = useContext(BudgetContext);
+  const { updateRefreshTimestamp } = useContext(WalletContext);
   const { setAlert } = useContext(AlertContext);
 
   /**

@@ -2,12 +2,12 @@ import React from 'react';
 import Typography from '@mui/material/Typography';
 import { Paper } from '@mui/material';
 import Divider from '@mui/material/Divider';
-import BudgetingPeriodDataGrid from '../components/BudgetingPeriodDataGrid';
+import PeriodDataGrid from '../components/PeriodDataGrid';
 
 /**
- * BudgetingPeriodList component to display list of Budget BudgetingPeriods.
+ *  PeriodList component to display list of Wallet  Periods.
  */
-export default function BudgetingPeriodList() {
+export default function PeriodList() {
   document.title = 'Periods';
 
   return (
@@ -25,7 +25,7 @@ export default function BudgetingPeriodList() {
         Periods
       </Typography>
       <Divider />
-      <BudgetingPeriodDataGrid />
+      <PeriodDataGrid />
     </Paper>
   );
 }

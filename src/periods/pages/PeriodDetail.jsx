@@ -5,32 +5,39 @@ import { Typography, Paper, Box, Stack, Chip } from '@mui/material';
 import { getApiObjectDetails } from '../../app_infrastructure/services/APIService';
 import { useNavigate, useParams } from 'react-router-dom';
 import EditableTextField from '../../app_infrastructure/components/EditableTextField';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
 import DeleteButton from '../../app_infrastructure/components/DeleteButton';
 import PeriodStatuses from '../utils/PeriodStatuses';
-import BudgetingPeriodStatusUpdateButton from '../components/BudgetingPeriodStatusUpdateButton';
+import PeriodStatusUpdateButton from '../components/PeriodStatusUpdateButton';
 import onEditableFieldSave from '../../app_infrastructure/utils/onEditableFieldSave';
 import TopEntitiesInPeriodChart from '../../charts/components/TopEntitiesInPeriodChart';
+import { WalletContext } from '../../app_infrastructure/store/WalletContext';
 
 /**
- * BudgetingPeriodDetail component to display details of single BudgetingPeriod.
+ *  PeriodDetail component to display details of single  Period.
  */
-export default function BudgetingPeriodDetail() {
+export default function PeriodDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { contextBudgetId, refreshTimestamp, updateRefreshTimestamp } =
-    useContext(BudgetContext);
-  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/periods/`;
+  const { getContextWalletId, refreshTimestamp, updateRefreshTimestamp } =
+    useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
+  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/periods/`;
   const { setAlert } = useContext(AlertContext);
   const [objectData, setObjectData] = useState([]);
 
   /**
-   * Fetches BudgetingPeriod detail from API.
+   * Fetches  Period detail from API.
    */
   useEffect(() => {
     const loadData = async () => {
       try {
-        const apiResponse = await getApiObjectDetails(apiUrl, id);
+        const apiResponse = await getApiObjectDetails(apiUrl, id, [
+          'name',
+          'date_start',
+          'date_end',
+          'status',
+          'status_display',
+        ]);
         setObjectData(apiResponse);
         document.title = `Period • ${apiResponse.name}`;
       } catch {
@@ -38,11 +45,16 @@ export default function BudgetingPeriodDetail() {
         navigate('/periods');
       }
     };
-    if (!contextBudgetId) {
+    if (!contextWalletId) {
+      navigate('/wallets');
+      setAlert({
+        type: 'warning',
+        message: 'Periods are unavailable. Please create a Wallet first.',
+      });
       return;
     }
     loadData();
-  }, [refreshTimestamp, contextBudgetId]);
+  }, [refreshTimestamp, contextWalletId]);
 
   /**
    * Function to save updated object via API call.
@@ -95,7 +107,7 @@ export default function BudgetingPeriodDetail() {
           mb={1}
         >
           {objectData.status === PeriodStatuses.DRAFT && (
-            <BudgetingPeriodStatusUpdateButton
+            <PeriodStatusUpdateButton
               apiUrl={apiUrl}
               objectId={objectData.id}
               newPeriodStatus={PeriodStatuses.ACTIVE}
@@ -103,7 +115,7 @@ export default function BudgetingPeriodDetail() {
             />
           )}
           {objectData.status === PeriodStatuses.ACTIVE && (
-            <BudgetingPeriodStatusUpdateButton
+            <PeriodStatusUpdateButton
               apiUrl={apiUrl}
               objectId={objectData.id}
               newPeriodStatus={PeriodStatuses.CLOSED}

@@ -4,7 +4,7 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useNavigate } from 'react-router-dom';
 import { getApiObjectsList } from '../../app_infrastructure/services/APIService';
 import { AlertContext } from '../../app_infrastructure/store/AlertContext';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../app_infrastructure/store/WalletContext';
 import StyledDataGrid from '../../app_infrastructure/components/DataGrid/StyledDataGrid';
 import {
   formatFilterModel,
@@ -16,20 +16,14 @@ import StyledGridActionsCellItem from '../../app_infrastructure/components/DataG
 const pageSizeOptions = [10, 50, 100];
 
 /**
- * DataTable component for displaying DataGrid with data fectched from API.
- * @param {object} props
- * @param {object} props.columns - Columns settings.
- * @param {object} props.apiUrl - Base API url for fetching data.
- * @param {object} props.clientUrl - Frontend base url for redirects in readOnly mode.
- * @param {object} props.height - Height of DataTable.
+ * WalletDepositsDataGrid component for displaying DataGrid with data fectched from API.
  */
-const BudgetDepositsDataGrid = ({
-  columns,
-  apiUrl,
-  clientUrl = null,
-  height = 600,
-}) => {
+const WalletDepositsDataGrid = () => {
   const navigate = useNavigate();
+  const { getContextWalletId, contextWalletCurrency } =
+    useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
+  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits/?fields=id,name,description,balance,wallet_percentage`;
   const [rows, setRows] = useState([]);
   const [rowCount, setRowCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -40,7 +34,55 @@ const BudgetDepositsDataGrid = ({
   const [sortModel, setSortModel] = React.useState({});
   const [filterModel, setFilterModel] = React.useState({ items: [] });
   const { setAlert } = useContext(AlertContext);
-  const { contextBudgetId } = useContext(BudgetContext);
+
+  const columns = [
+    {
+      field: 'name',
+      type: 'string',
+      headerName: 'Name',
+      headerAlign: 'center',
+      align: 'left',
+      flex: 2,
+      filterable: true,
+      sortable: true,
+    },
+    {
+      field: 'description',
+      type: 'string',
+      headerName: 'Description',
+      headerAlign: 'center',
+      align: 'left',
+      flex: 3,
+      filterable: true,
+      sortable: false,
+    },
+    {
+      field: 'balance',
+      type: 'number',
+      headerName: 'Balance',
+      headerAlign: 'center',
+      align: 'center',
+      flex: 1,
+      filterable: true,
+      sortable: true,
+      valueFormatter: (value) => {
+        return value !== undefined ? `${value} ${contextWalletCurrency}` : '';
+      },
+    },
+    {
+      field: 'wallet_percentage',
+      type: 'number',
+      headerName: 'Wallet %',
+      headerAlign: 'center',
+      align: 'center',
+      flex: 1,
+      filterable: true,
+      sortable: true,
+      valueFormatter: (value) => {
+        return value !== undefined ? `${value} %` : '';
+      },
+    },
+  ];
 
   const visibleColumns = columns.filter((column) => !column.hide);
 
@@ -63,7 +105,7 @@ const BudgetDepositsDataGrid = ({
             key={params.id}
             icon={<OpenInNewIcon />}
             label="Open"
-            onClick={() => navigate(`${clientUrl}${params.id}`)}
+            onClick={() => navigate(`/deposits/${params.id}`)}
           />,
         ];
       },
@@ -76,7 +118,7 @@ const BudgetDepositsDataGrid = ({
    */
   useEffect(() => {
     const loadData = async () => {
-      if (!contextBudgetId) {
+      if (!contextWalletId) {
         setLoading(false);
         return;
       }
@@ -90,16 +132,16 @@ const BudgetDepositsDataGrid = ({
         setRows(rowsResponse.results);
         setRowCount(rowsResponse.count);
       } catch {
-        setAlert({ type: 'error', message: 'Failed to load table rows.' });
+        setAlert({ type: 'error', message: 'Failed to load Wallet Deposits.' });
       } finally {
         setLoading(false);
       }
     };
-    if (!contextBudgetId) {
+    if (!contextWalletId) {
       return;
     }
     loadData();
-  }, [contextBudgetId, paginationModel, sortModel, filterModel]);
+  }, [contextWalletId, paginationModel, sortModel, filterModel]);
 
   /**
    * Function to update DataGrid pagination model.
@@ -143,7 +185,7 @@ const BudgetDepositsDataGrid = ({
           marginTop: 2,
           width: '100%',
           maxWidth: '100%',
-          height: height,
+          height: 300,
         }}
       >
         <StyledDataGrid
@@ -167,4 +209,4 @@ const BudgetDepositsDataGrid = ({
     </>
   );
 };
-export default BudgetDepositsDataGrid;
+export default WalletDepositsDataGrid;

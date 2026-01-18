@@ -8,7 +8,7 @@ import {
 } from '../../app_infrastructure/services/APIService';
 import { useNavigate, useParams } from 'react-router-dom';
 import EditableTextField from '../../app_infrastructure/components/EditableTextField';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../app_infrastructure/store/WalletContext';
 import DeleteButton from '../../app_infrastructure/components/DeleteButton';
 import onEditableFieldSave from '../../app_infrastructure/utils/onEditableFieldSave';
 import CategoryResultsAndPredictionsInPeriodsChart from '../../charts/components/CategoryResultsAndPredictionsInPeriodsChart';
@@ -20,9 +20,10 @@ import CategoryTypes from '../utils/CategoryTypes';
 export default function TransferCategoryDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { contextBudgetId, refreshTimestamp, updateRefreshTimestamp } =
-    useContext(BudgetContext);
-  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/categories/`;
+  const { getContextWalletId, refreshTimestamp, updateRefreshTimestamp } =
+    useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
+  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/categories/`;
   const { setAlert } = useContext(AlertContext);
   const [objectData, setObjectData] = useState([]);
   const [typeOptions, setTypeOptions] = useState([]);
@@ -43,11 +44,16 @@ export default function TransferCategoryDetail() {
         navigate('/categories');
       }
     };
-    if (!contextBudgetId) {
+    if (!contextWalletId) {
+      navigate('/wallets');
+      setAlert({
+        type: 'warning',
+        message: 'Categories are unavailable. Please create a Wallet first.',
+      });
       return;
     }
     loadData();
-  }, [refreshTimestamp, contextBudgetId]);
+  }, [refreshTimestamp, contextWalletId]);
 
   /**
    * Fetches select options for Category select fields from API.
@@ -55,7 +61,7 @@ export default function TransferCategoryDetail() {
   useEffect(() => {
     async function getDeposits() {
       const response = await getApiObjectsList(
-        `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/deposits/`
+        `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/deposits/?ordering=name&fields=value,label`
       );
       setDepositOptions(response);
     }
@@ -72,13 +78,13 @@ export default function TransferCategoryDetail() {
       setPriorityOptions(priorityResponse.results);
     }
 
-    if (!contextBudgetId) {
+    if (!contextWalletId) {
       return;
     }
     getDeposits();
     getCategoryTypes();
     getPriorities();
-  }, [contextBudgetId]);
+  }, [contextWalletId]);
 
   /**
    * Function to save updated object via API call.

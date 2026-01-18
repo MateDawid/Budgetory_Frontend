@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { AlertContext } from '../../../app_infrastructure/store/AlertContext';
-import { BudgetContext } from '../../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../../app_infrastructure/store/WalletContext';
 import { updateApiObject } from '../../../app_infrastructure/services/APIService';
 import BasePredictionModal from './BasePredictionModal';
 
@@ -16,9 +16,11 @@ export default function PredictionEditModal({
   setFormOpen,
   editedPrediction,
 }) {
-  const { contextBudgetId, updateRefreshTimestamp } = useContext(BudgetContext);
+  const { getContextWalletId, updateRefreshTimestamp } =
+    useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
   const { setAlert } = useContext(AlertContext);
-  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/expense_predictions/`;
+  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/expense_predictions/`;
 
   const callApi = async (data) => {
     data['id'] = editedPrediction.id;

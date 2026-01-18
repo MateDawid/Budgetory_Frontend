@@ -5,7 +5,7 @@ import { Typography, Paper, Box, Stack, Chip } from '@mui/material';
 import { getApiObjectDetails } from '../../app_infrastructure/services/APIService';
 import { useNavigate, useParams } from 'react-router-dom';
 import EditableTextField from '../../app_infrastructure/components/EditableTextField';
-import { BudgetContext } from '../../app_infrastructure/store/BudgetContext';
+import { WalletContext } from '../../app_infrastructure/store/WalletContext';
 import DeleteButton from '../../app_infrastructure/components/DeleteButton';
 import onEditableFieldSave from '../../app_infrastructure/utils/onEditableFieldSave';
 import TransfersInPeriodsChart from '../../charts/components/TransfersInPeriodsChart';
@@ -16,14 +16,15 @@ import TransfersInPeriodsChart from '../../charts/components/TransfersInPeriodsC
 export default function EntityDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { contextBudgetId, refreshTimestamp, updateRefreshTimestamp } =
-    useContext(BudgetContext);
-  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/budgets/${contextBudgetId}/entities/`;
+  const { getContextWalletId, refreshTimestamp, updateRefreshTimestamp } =
+    useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
+  const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/wallets/${contextWalletId}/entities/`;
   const { setAlert } = useContext(AlertContext);
   const [objectData, setObjectData] = useState([]);
 
   /**
-   * Fetches Budgets list from API.
+   * Fetches Wallets list from API.
    */
   useEffect(() => {
     const loadData = async () => {
@@ -36,11 +37,16 @@ export default function EntityDetail() {
         navigate('/entities');
       }
     };
-    if (!contextBudgetId) {
+    if (!contextWalletId) {
+      navigate('/wallets');
+      setAlert({
+        type: 'warning',
+        message: 'Entities are unavailable. Please create a Wallet first.',
+      });
       return;
     }
     loadData();
-  }, [refreshTimestamp, contextBudgetId]);
+  }, [refreshTimestamp, contextWalletId]);
 
   /**
    * Function to save updated object via API call.
