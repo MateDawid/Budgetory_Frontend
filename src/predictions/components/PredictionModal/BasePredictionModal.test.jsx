@@ -32,9 +32,10 @@ jest.mock('../../../app_infrastructure/components/FormModal/FormModal', () => {
 describe('BasePredictionModal', () => {
   const mockSetFormOpen = jest.fn();
   const mockCallApi = jest.fn();
+  const mockGetContextWalletId = jest.fn(() => 'wallet-123');
 
   const mockWalletContext = {
-    contextWalletId: 'wallet-123',
+    getContextWalletId: mockGetContextWalletId,
     contextWalletCurrency: 'USD',
     refreshTimestamp: 1234567890,
   };
@@ -94,6 +95,7 @@ describe('BasePredictionModal', () => {
     jest.clearAllMocks();
     lastFormModalProps = null;
     getApiObjectsList.mockResolvedValue([]);
+    mockGetContextWalletId.mockReturnValue('wallet-123');
   });
 
   describe('Component Rendering', () => {
@@ -155,7 +157,11 @@ describe('BasePredictionModal', () => {
     });
 
     it('should not fetch deposits when contextWalletId is missing', async () => {
-      const contextWithoutId = { ...mockWalletContext, contextWalletId: null };
+      const mockGetContextWalletIdNull = jest.fn(() => null);
+      const contextWithoutId = {
+        ...mockWalletContext,
+        getContextWalletId: mockGetContextWalletIdNull,
+      };
 
       render(
         <WalletContext.Provider value={contextWithoutId}>
@@ -471,9 +477,11 @@ describe('BasePredictionModal', () => {
 
   describe('Context Usage', () => {
     it('should use contextWalletCurrency in current_plan field', async () => {
+      const mockGetContextWalletIdCustom = jest.fn(() => 'custom-wallet-id');
       const customContext = {
-        ...mockWalletContext,
+        getContextWalletId: mockGetContextWalletIdCustom,
         contextWalletCurrency: 'EUR',
+        refreshTimestamp: 1234567890,
       };
 
       render(
@@ -495,9 +503,11 @@ describe('BasePredictionModal', () => {
     it('should use contextWalletId in API calls', async () => {
       getApiObjectsList.mockResolvedValue(mockDeposits);
 
+      const mockGetContextWalletIdCustom = jest.fn(() => 'custom-wallet-id');
       const customContext = {
-        ...mockWalletContext,
-        contextWalletId: 'custom-wallet-id',
+        getContextWalletId: mockGetContextWalletIdCustom,
+        contextWalletCurrency: 'USD',
+        refreshTimestamp: 1234567890,
       };
 
       render(
