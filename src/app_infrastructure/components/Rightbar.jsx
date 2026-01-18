@@ -21,7 +21,8 @@ import { getApiObjectsList } from '../services/APIService';
  */
 const Rightbar = () => {
   const { setAlert } = useContext(AlertContext);
-  const { contextWalletId, refreshTimestamp } = useContext(WalletContext);
+  const { getContextWalletId, refreshTimestamp } = useContext(WalletContext);
+  const contextWalletId = getContextWalletId();
   const [deposits, setDeposits] = useState([]);
 
   useEffect(() => {
